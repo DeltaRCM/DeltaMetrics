@@ -1,0 +1,22 @@
+deltametrics.section.DipSection
+===============================
+
+.. currentmodule:: deltametrics.section
+
+.. autoclass:: DipSection
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DipSection.__init__
+   
+   
+
+   
+   
+   

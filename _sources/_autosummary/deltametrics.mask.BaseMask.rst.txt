@@ -1,0 +1,31 @@
+deltametrics.mask.BaseMask
+==========================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: BaseMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BaseMask.__init__
+      ~BaseMask.a_method
+      ~BaseMask.show
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BaseMask.data
+      ~BaseMask.time
+   
+   

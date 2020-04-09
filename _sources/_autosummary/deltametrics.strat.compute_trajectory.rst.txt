@@ -1,0 +1,6 @@
+deltametrics.strat.compute\_trajectory
+======================================
+
+.. currentmodule:: deltametrics.strat
+
+.. autofunction:: compute_trajectory

@@ -1,0 +1,33 @@
+deltametrics.mask.LandMask
+==========================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: LandMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~LandMask.__init__
+      ~LandMask.a_land_function
+      ~LandMask.a_method
+      ~LandMask.show
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~LandMask.data
+      ~LandMask.property_for_just_land
+      ~LandMask.time
+   
+   

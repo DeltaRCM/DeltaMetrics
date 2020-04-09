@@ -1,0 +1,33 @@
+deltametrics.mask.ChannelMask
+=============================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: ChannelMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ChannelMask.__init__
+      ~ChannelMask.a_channel_function
+      ~ChannelMask.a_method
+      ~ChannelMask.show
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ChannelMask.data
+      ~ChannelMask.property_for_just_channels
+      ~ChannelMask.time
+   
+   

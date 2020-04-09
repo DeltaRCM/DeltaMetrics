@@ -1,0 +1,23 @@
+deltametrics.sample\_data.cube
+==============================
+
+.. automodule:: deltametrics.sample_data.cube
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      rcm1
+      tdb12
+   
+   
+
+   
+   
+   
+
+   
+   
+   

@@ -1,0 +1,191 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>deltametrics.mask.ChannelMask &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="deltametrics.mask.LandMask" href="deltametrics.mask.LandMask.html" />
+    <link rel="prev" title="deltametrics.mask.BaseMask" href="deltametrics.mask.BaseMask.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.mask.LandMask.html" title="deltametrics.mask.LandMask"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.mask.BaseMask.html" title="deltametrics.mask.BaseMask"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" accesskey="U">Masking operations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.mask.BaseMask.html"
+                        title="previous chapter">deltametrics.mask.BaseMask</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.mask.LandMask.html"
+                        title="next chapter">deltametrics.mask.LandMask</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.mask.ChannelMask.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="deltametrics-mask-channelmask">
+<h1>deltametrics.mask.ChannelMask<a class="headerlink" href="#deltametrics-mask-channelmask" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="deltametrics.mask.ChannelMask">
+<em class="property">class </em><code class="sig-prename descclassname">deltametrics.mask.</code><code class="sig-name descname">ChannelMask</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">is_mask</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Channel mask.</p>
+<p>A channel mask object, helps enforce valid masking of channels.</p>
+<p class="rubric">Examples</p>
+<dl>
+<dt>Initialize the channel mask</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmsk</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">ChannelMask</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+<dt>And visualize the mask:</dt><dd><div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmsk</span><span class="o">.</span><span class="n">show_mask</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<p>(<a class="reference external" href="../pyplots/mask/channelmask.py">Source code</a>, <a class="reference external" href="../pyplots/mask/channelmask.png">png</a>, <a class="reference external" href="../pyplots/mask/channelmask.hires.png">hires.png</a>, <a class="reference external" href="../pyplots/mask/channelmask.pdf">pdf</a>)</p>
+<div class="figure align-default">
+<img alt="../_images/channelmask.png" src="../_images/channelmask.png" />
+</div>
+<dl class="py method">
+<dt id="deltametrics.mask.ChannelMask.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">arr</span></em>, <em class="sig-param"><span class="n">is_mask</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the ChannelMask.</p>
+<p>Intializing the channel mask requires an array of data, should be
+two-dimensional.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>arr</strong> (<em>ndarray</em>) – The data array to make the mask from.</p></li>
+<li><p><strong>routine</strong> (<em>str</em>) – Which routine to use to extract the mask.</p></li>
+<li><p><strong>is_mask</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the data in <code class="xref py py-obj docutils literal notranslate"><span class="pre">arr</span></code> is already a binary mask. For
+example, this should be set to True, if you have already binarized
+the data yourself, using custom routines, and want to just store
+the data in the ChannelMask object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.__init__" title="deltametrics.mask.ChannelMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(arr[, is_mask])</p></td>
+<td><p>Initialize the ChannelMask.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">a_channel_function</span></code>()</p></td>
+<td><p>This is a wrapper to the below function.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">a_method</span></code>()</p></td>
+<td><p>Does something?</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code>(**kwargs)</p></td>
+<td><p>Show the mask.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></p></td>
+<td><p>Values of the mask object.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">property_for_just_channels</span></code></p></td>
+<td><p>Who knows!</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">time</span></code></p></td>
+<td><p>Time when the mask is from.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.mask.LandMask.html" title="deltametrics.mask.LandMask"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.mask.BaseMask.html" title="deltametrics.mask.BaseMask"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" >Masking operations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.0.
+    </div>
+  </body>
+</html>

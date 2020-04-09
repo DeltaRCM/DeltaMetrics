@@ -1,0 +1,22 @@
+deltametrics.section.BaseSection
+================================
+
+.. currentmodule:: deltametrics.section
+
+.. autoclass:: BaseSection
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BaseSection.__init__
+   
+   
+
+   
+   
+   
