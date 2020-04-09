@@ -29,6 +29,7 @@ jobs:
       deploy:
         provider: pages:git
         github_token: $GITHUB_TOKEN
+        committer_from_gh: true
         verbose: true
         edge: true
         local-dir: docs/build/html
