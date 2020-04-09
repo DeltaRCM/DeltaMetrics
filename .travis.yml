@@ -33,4 +33,4 @@ jobs:
         edge: true
         local-dir: docs/build/html
         on:
-          branch: master
+          branch: develop
