@@ -9,8 +9,8 @@
 .. include:: ./meta/planning.rst
 
 
-Welcome to the Proffilo documentation
-#####################################
+Welcome to the DeltaMetrics documentation
+#########################################
 
 .. toctree::
    :maxdepth: 1
