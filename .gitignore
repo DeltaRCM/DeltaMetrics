@@ -125,3 +125,7 @@ tests/results/
 
 temp/
 playground*
+
+
+# TEMPORARILY: DO NOT TRACK SAMPLES FROM JAY!!
+deltametrics/sample_data/files/*

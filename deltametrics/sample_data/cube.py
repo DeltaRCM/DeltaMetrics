@@ -1,4 +1,4 @@
-"""Sample data cube
+"""Sample data cubes
 
 A sample of a data cube (x,y,t) for examples, tests, etc.
 
@@ -25,12 +25,23 @@ Example data cubes
 
 """
 
+import sys, os
 
 import numpy as np
+import netCDF4
+
+from ..cube import Cube
+from ..utils import NetCDF_IO, HDF_IO
+
+
 
 def tdb12():
-  return np.array([[]])
+    raise NotImplementedError
+    return np.array([[]])
 
 
-def rcm1():
-  return np.array([[]])
+def rcm8():
+    path = os.path.join(os.path.dirname(__file__), 'files', 'Output_8', 'pyDeltaRCM_output.nc')
+    cube = Cube(path)
+    return cube
+
