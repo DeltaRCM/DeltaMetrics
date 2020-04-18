@@ -5,7 +5,7 @@ API reference
 =============
 
 
-This page gives an overview of all public proffilo objects, functions and
+This page gives an overview of all public DeltaMetrics objects, functions and
 methods.
 
 .. toctree::

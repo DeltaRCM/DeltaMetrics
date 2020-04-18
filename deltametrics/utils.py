@@ -1,9 +1,11 @@
-import os, sys
-import abc
+import os
+import sys
 
-import netCDF4
 import numpy as np
-import matplotlib
+import matplotlib.cm as cm
+import matplotlib.colors as colors
+
+from . import io
 
 
 def _get_version():
@@ -13,177 +15,25 @@ def _get_version():
     from . import _version
     return _version.__version__()
 
-def known_variables():
-    return ['x', 'y', 'time', 'eta', 'stage', 'depth', 'discharge',
-            'velocity', 'strata_age', 'strata_sand_frac', 'strata_depth']
+
+def format_number(number):
+    integer = int(round(number, -1))
+    string = "{:,}".format(integer)
+    return(string)
 
 
-class Base_IO(abc.ABC):
-    """BaseIO object other file format wrappers inheririt from.
-
-    .. note::
-        This is an abstract class and cannot be instantiated directly. If you
-        wish to subclass to create a new IO format, you must implement the
-        following methods: ``load``, .
-    """
-    def __init__(self, data_path):
-        """Initialize the base IO.
-        """
-        self.known_variables = known_variables()
-        self.data_path = data_path
-
-        self.connect()
+def format_table(number):
+    integer = (round(number, 1))
+    string = str(integer)
+    return(string)
 
 
-    @property
-    def data_path(self):
-        """`str` : Path to data file.
-
-        Parameters
-        ----------
-        data_path : str
-            path to data file for IO operations.
-        """
-        return self._data_path
-    
-
-    @data_path.setter
-    def data_path(self, var):
-        self._data_path = var
-
-
-    @abc.abstractmethod
-    def connect(self):
-        """Should connect to the data file.
-
-        This function should initialize the file if it does not exist, or
-        connect to the file if it already exists---but *do not* load the file.
-        """
-        return
-
-
-    @abc.abstractmethod
-    def load(self):
-        """Should load data into memory.
-        """
-        return
-
-
-    @abc.abstractmethod
-    def write(self):
-        """Should write the data to file.
-
-        Take a :obj:`~deltametrics.cube.Cube` and write it to file.
-        """
-        return
-
-
-    @abc.abstractmethod
-    def __getitem__(self):
-        """Should slice the data from file.
-        """
-        return
-
-
-
-class NetCDF_IO(Base_IO):
-    """Utility for consistent IO with netCDF files.
-
-    This module wraps calls to the netCDF4 python module in a consistent API,
-    so the user can work seamlessly with either netCDF4 files or HDF5 files.
-    The public methods of this class are consistent with
-    :obj:`~deltametrics.utils.HDF_IO`.
-    """
-
-    def __init__(self, data_path, load, write=False):
-        """Initialize the NetCDF_IO handler.
-
-        Parameters
-        ----------
-        data_path : str
-            Path to file to read or write to.
-
-        write : bool, optional
-            Whether to allow writing to an existing file. Set to False by
-            default, if a file already exists at ``data_path``, writing is
-            disabled, unless ``write`` is set to True.
-
-        """
-        super().__init__(data_path=data_path)
-        self.write = write
-        self.type = 'netcdf'
-
-
-
-    def connect(self):
-        """Connect to the data file.
-
-        Initialize the file if it does not exist, or simply ``return`` if the
-        file already exists.
-
-        .. note::
-            This function is automatically called during initialization of a
-            :obj:`~deltametrics.cube.Cube`.
-        """
-        if not os.path.isfile(self.data_path):
-            self.dataset = netCDF4.Dataset(self.data_path, "w", format="NETCDF4")
-        else:
-            if self.write:
-                self.dataset = netCDF4.Dataset(self.data_path, "r+")
-            else:
-                self.dataset = netCDF4.Dataset(self.data_path, "r")
-
-
-    def load(self):
-        """Convert `variables` in netCDF file to `ndarray`.
-
-        This operation is usually used in preparation for coersion into a
-        :obj:`~deltametrics.cube.Cube` instance.
-        """
-        _data = {}
-        for var in self.dataset.variables:
-            _arr = self.dataset.variables[var]
-            _data[var] = np.array(_arr)
-
-        # REMOVE TIME!
-        return _data
-
-    """
-    NEED A DEFINITION FOR KEYS IF FROM FILE???
-
-
-    """
-    # def _convert_to_ndarray(self):
-        
-        
-    def write(self):
-        """Should write the data to file.
-
-        Take a :obj:`~deltametrics.cube.Cube` and write it to file.
-        """
-        raise NotImplementedError
-    
-    def __getitem__(self):
-        pass
-
-
-
-class HDF_IO(Base_IO):
-    """Utility for consistent IO with HDF5 files.
-
-    This module wraps calls to the hdf5 python module in a consistent API,
-    so the user can work seamlessly with either HDF5 files or netCDF4 files.
-    The public methods of this class are consistent with
-    :obj:`~deltametrics.utils.NetCDF_IO`.
-    """
-
-    def __init__(self, data_path):
-        """Initialize the HDF5_IO handler
-
-        parameters
-        """
-        raise NotImplementedError
-
+# class KnownVariable:
+#     """KnownVariable decorator.
+#     """
+#     def __init__(self, func):
+#         self.func = func
+#         self.name = str(self.__name__)
 
 
 class Colorset(object):
@@ -191,12 +41,6 @@ class Colorset(object):
 
     This makes it easy to have consistent plots.
     """
-    class _ColorsetDecorators(object):
-        @classmethod
-        def colormap(self, func=None):
-            """Decorator to register colormaps.
-            """
-            self.parent().variable_list.append(func.__name__)
 
     def __init__(self, override_list=None):
         """Initialize the Colorset.
@@ -215,22 +59,7 @@ class Colorset(object):
             or DeltaMetrics), a new matplotlib Colormap object, or an Mx3
             numpy array that can be coerced into a linear colormap.
         """
-        # self.known_variables = known_variables()
-        # self.variable_list = self.known_variables.copy()
-
-        # for var in self.known_list:
-        #     self.map[var] = 
-        #     # setattr(self, var, self.variable_list[var])
-
-        # self.map = {}
-        # # initialize to default values (set in each attr)
-        # for var in self.known_list:
-        #     self.map[var] = self[var]
-        #     # setattr(self, var, self.variable_list[var])
-
-
-
-        self.known_list = known_variables()
+        self.known_list = io.known_variables()
 
         # self.override_list = override_list
         # self.variable_list = {**self.known_list, **self.override_list}
@@ -239,45 +68,47 @@ class Colorset(object):
         if override_list:
             if not type(override_list) is dict:
                 raise TypeError('Invalid type for "override_list".'
-                                'Must be type dict, but was type: %s ' % \
+                                'Must be type dict, but was type: %s ' %
                                 type(self.override_list))
             for var in override_list:
                 if var in self.known_list:
                     setattr(self, var, override_list[var])
                 else:
                     setattr(self, var, override_list[var])
-    """A FALLBACK:
-                    self.map[var] = override_list[var]
-
-    def __getattr__(self, var):
-        return self.map[var]
-
-    """
-
-    def __getitem__(self, var):
-        print(var)
-        return getattr(self, var)
 
     @property
     def variable_list(self):
         return self._variable_list
-    
+
     @variable_list.setter
     def variable_list(self, var):
         if type(var) is dict:
             self._variable_list = var
         else:
             raise TypeError('Invalid type for "override_list".'
-                            'Must be type dict, but was type: %s ' % type(self.override_list))
+                            'Must be type dict, but was type: %s '
+                            % type(self.override_list))
+
+    def __getitem__(self, var):
+        # return getattr(self, var)
+        return self.__getattribute__(var)
 
     @property
     def net_to_gross(self):
-        return _net_to_gross
+        return self._net_to_gross
 
     @net_to_gross.setter
     def net_to_gross(self):
-        self._net_to_gross = matplotlib.cm.get_cmap('viridis', 512)
-
+        """Net-to-gross default colormap.
+        """
+        oranges = cm.get_cmap('Oranges', 64)
+        greys = cm.get_cmap('Greys_r', 64)
+        whiteblack = cm.get_cmap('Greys', 2)
+        combined = np.vstack((greys(np.linspace(0.3, 0.6, 2)),
+                              oranges(np.linspace(0.2, 0.8, 6))))
+        ntgcmap = colors.ListedColormap(combined, name='net_to_gross')
+        ntgcmap.set_bad("white")
+        self._net_to_gross = ntgcmap
 
     @property
     def x(self):
@@ -286,10 +117,9 @@ class Colorset(object):
     @x.setter
     def x(self, var):
         if not var:
-            self._x = matplotlib.cm.get_cmap('viridis', 512)
+            self._x = cm.get_cmap('viridis', 64)
         else:
             self._x = var
-
 
     @property
     def y(self):
@@ -298,10 +128,9 @@ class Colorset(object):
     @y.setter
     def y(self, var):
         if not var:
-            self._y = matplotlib.cm.get_cmap('viridis', 512)
+            self._y = cm.get_cmap('viridis', 64)
         else:
             self._y = var
-
 
     @property
     def time(self):
@@ -310,10 +139,9 @@ class Colorset(object):
     @time.setter
     def time(self, var):
         if not var:
-            self._time = matplotlib.cm.get_cmap('viridis', 512)
+            self._time = cm.get_cmap('viridis', 64)
         else:
             self._time = var
-
 
     @property
     def eta(self):
@@ -322,10 +150,9 @@ class Colorset(object):
     @eta.setter
     def eta(self, var):
         if not var:
-            self._eta = matplotlib.cm.get_cmap('cividis', 512)
+            self._eta = cm.get_cmap('cividis', 64)
         else:
             self._eta = var
-
 
     @property
     def stage(self):
@@ -334,10 +161,9 @@ class Colorset(object):
     @stage.setter
     def stage(self, var):
         if not var:
-            self._stage = matplotlib.cm.get_cmap('viridis', 512)
+            self._stage = cm.get_cmap('viridis', 64)
         else:
             self._stage = var
-
 
     @property
     def depth(self):
@@ -346,10 +172,9 @@ class Colorset(object):
     @depth.setter
     def depth(self, var):
         if not var:
-            self._depth = matplotlib.cm.get_cmap('viridis', 512)
+            self._depth = cm.get_cmap('viridis', 64)
         else:
             self._depth = var
-
 
     @property
     def discharge(self):
@@ -358,10 +183,9 @@ class Colorset(object):
     @discharge.setter
     def discharge(self, var):
         if not var:
-            self._discharge = matplotlib.cm.get_cmap('winter', 512)
+            self._discharge = cm.get_cmap('winter', 64)
         else:
             self._discharge = var
-
 
     @property
     def velocity(self):
@@ -370,10 +194,9 @@ class Colorset(object):
     @velocity.setter
     def velocity(self, var):
         if not var:
-            self._velocity = matplotlib.cm.get_cmap('plasma', 512)
+            self._velocity = cm.get_cmap('plasma', 64)
         else:
             self._velocity = var
-
 
     @property
     def strata_age(self):
@@ -382,10 +205,9 @@ class Colorset(object):
     @strata_age.setter
     def strata_age(self, var):
         if not var:
-            self._strata_age = matplotlib.cm.get_cmap('viridis', 512)
+            self._strata_age = cm.get_cmap('viridis', 64)
         else:
             self._strata_age = var
-
 
     @property
     def strata_sand_frac(self):
@@ -394,10 +216,13 @@ class Colorset(object):
     @strata_sand_frac.setter
     def strata_sand_frac(self, var):
         if not var:
-            self._strata_sand_frac = matplotlib.cm.get_cmap('viridis', 512)
+            sandfrac = colors.ListedColormap(
+                ['saddlebrown', 'sienna', 'goldenrod', 'gold'])
+            sandfrac.set_under('white')
+            bn = colors.BoundaryNorm([0, 1], sandfrac.N)
+            self._strata_sand_frac = sandfrac
         else:
             self._strata_sand_frac = var
-
 
     @property
     def strata_depth(self):
@@ -406,20 +231,6 @@ class Colorset(object):
     @strata_depth.setter
     def strata_depth(self, var):
         if not var:
-            self._strata_depth = matplotlib.cm.get_cmap('viridis', 512)
+            self._strata_depth = cm.get_cmap('viridis', 64)
         else:
             self._strata_depth = var
-
-
-
-def format_number(number):
-    integer = int(round(number, -1))
-    string = "{:,}".format(integer)
-    return(string)
-
-
-
-def format_table(number):
-    integer = (round(number, 1))
-    string = str(integer)
-    return(string)
