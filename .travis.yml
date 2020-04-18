@@ -23,7 +23,7 @@ jobs:
       python: "3.8"
       install: 
         - pip install -r requirements.txt 
-        - pip install sphinx sphinx-rtd-theme sphinx-automodapi solar-theme
+        - pip install sphinx sphinx-automodapi
         - sudo apt update -y && sudo apt install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended dvipng
       script: (cd docs && make html)
       deploy:
