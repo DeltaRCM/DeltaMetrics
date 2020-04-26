@@ -3,7 +3,6 @@ from scipy import stats
 import matplotlib.pyplot as plt
 
 
-
 def a_land_function(mask):
     """Compute a land-water function
 
@@ -20,7 +19,6 @@ def a_land_function(mask):
         something who knows what, maybe has math: :math:`\\alpha`.
     """
     pass
-
 
 
 def compute_delta_radius(mask):
@@ -41,7 +39,6 @@ def compute_delta_radius(mask):
     pass
 
 
-
 def a_channel_function(mask):
     """Compute a channel function
 
@@ -60,17 +57,16 @@ def a_channel_function(mask):
     pass
 
 
-
 def compute_shoreline_angles(mask, param2=False):
     """Compute shoreline angle.
-    
+
     Computes some stuff according to:
-   
+
     .. math::
-    
+
         \\theta = 7 \\frac{\\rho}{10-\\tau}
 
-    where :math:`\\rho` is something, :math:`\\tau` is another. 
+    where :math:`\\rho` is something, :math:`\\tau` is another.
 
     Parameters
     ----------
@@ -78,7 +74,7 @@ def compute_shoreline_angles(mask, param2=False):
     mask : :obj:`~deltametrics.land.LandMask`
         LandMask with shoreline to compute along.
 
-    param2 : float, optional 
+    param2 : float, optional
         Something else? It's assumed to be false.
 
 
@@ -92,7 +88,7 @@ def compute_shoreline_angles(mask, param2=False):
     Examples
     --------
 
-    >>> dm.coastline.compute_angles(landmask, true)
+    >>> dm.plan.compute_shoreline_angles(True, True)
     0.54
 
     """
