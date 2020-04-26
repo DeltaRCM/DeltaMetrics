@@ -25,7 +25,8 @@ Documentation Outline
 .. toctree::
    :maxdepth: 2
 
-   reference/getting_started
-   reference/userguide
+   guides/getting_started
+   guides/userguide
+   guides/visualization
    reference/index
 

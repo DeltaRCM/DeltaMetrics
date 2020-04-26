@@ -16,6 +16,8 @@ methods.
    mask/index
    section/index
    strat/index
+   io/index
+   plot/index
    utils/index
    sample_data/index
 
