@@ -12,8 +12,6 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../..'))
-sys.setrecursionlimit(1500)
 
 import deltametrics as dm
 
@@ -33,9 +31,9 @@ version = dm.__version__
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.doctest',
               'sphinx.ext.autosummary',
-              'sphinx_automodapi.automodapi',
               'sphinx.ext.napoleon',
               'sphinx.ext.graphviz',
               'sphinx.ext.imgmath',
@@ -53,7 +51,7 @@ exclude_patterns = []
 # Napoleon settings
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
-napoleon_include_init_with_doc = False
+napoleon_include_init_with_doc = True
 napoleon_include_private_with_doc = False
 napoleon_include_special_with_doc = True
 napoleon_use_admonition_for_examples = False
@@ -66,7 +64,21 @@ napoleon_use_rtype = True
 # Autosummary / Automodapi settings
 autosummary_generate = True
 automodapi_inheritance_diagram = False
-autodoc_default_flags = ['members','inherited-members','no-private-members']
+autodoc_default_flags = ['inherited-members', 'no-private-members']
+
+# doctest
+doctest_global_setup = '''import deltametrics as dm'''
+doctest_test_doctest_blocks = ''  # empty string disables testing all docstring
+
+## mpl plots
+plot_basedir = 'pyplots'
+plot_html_show_source_link = False
+plot_formats = ['png', ('hires.png', 300)]
+plot_pre_code = '''
+import numpy as np
+from matplotlib import pyplot as plt
+import deltametrics as dm
+'''
 
 # img math
 # imgmath_latex_preamble = '\\usepackage{fouriernc}' # newtxsf, mathptmx
