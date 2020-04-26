@@ -400,7 +400,7 @@ def append_colorbar(ci, ax, **kwargs):
 
     divider = axtk.axes_divider.make_axes_locatable(ax)
     cax = divider.append_axes("right", size="2%", pad=0.05)
-    cb = axtk.colorbar.colorbar(ci, cax=cax)
+    cb = plt.colorbar(ci, cax=cax)
     return cb
 
 
