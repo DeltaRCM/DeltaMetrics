@@ -22,7 +22,7 @@ Latest version install
 Follow these instructions to install the latest development version of DeltaMetrics.
 
 .. note:: 
-    Developers should follow the developer instructions in the :doc:`../guides/index`.
+    Developers should follow the developer instructions in the :doc:`../guides/devguide`.
 
 Install by cloning:
 

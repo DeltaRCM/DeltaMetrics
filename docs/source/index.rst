@@ -27,6 +27,7 @@ Documentation Outline
 
    guides/getting_started
    guides/userguide
+   guides/devguide
    guides/visualization
    reference/index
 
