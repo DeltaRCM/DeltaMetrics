@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-from setuptools import setup
+from setuptools import setup, find_packages
 
 from deltametrics import utils
 
@@ -9,7 +9,7 @@ setup(name='DeltaMetrics',
       license='MIT',
       description="Tools for manipulating sedimentologic data cubes.",
       long_description=open('README.rst').read(),
-      packages=['deltametrics'],
+      packages=find_packages(exclude=['*.tests']),
       include_package_data=True,
       url='https://github.com/DeltaRCM/DeltaMetrics',
       install_requires=['matplotlib', 'netCDF4',
