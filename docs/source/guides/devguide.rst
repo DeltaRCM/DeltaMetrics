@@ -31,3 +31,9 @@ Check that your installation worked by running the tests.
 
     $ pip install pytest
     $ pytest
+
+You may wish to add the upstream repository for easy ``push``/``pull``.
+
+.. code:: console
+
+    $ git remote add upstream https://github.com/DeltaRCM/DeltaMetrics.git

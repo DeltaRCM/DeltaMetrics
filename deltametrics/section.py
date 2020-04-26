@@ -106,13 +106,14 @@ class SectionVariable(object):
         self._data = np.ma.MaskedArray(_data, ~_psvd_idx)
         self._mask = self._data._mask
 
-        self._psvd_flld = _psvd_flld
         self._psvd_data = _data[_psvd_idx]  # actual data, where preserved
         self._s = _j[0, :]                  # along-section coord
         self._s_sp = _j[_psvd_idx]          # along-section coord, sparse
         self._z_sp = _i[_psvd_idx]          # vertical coord, sparse
         self._sp = sparse.coo_matrix((self._psvd_data,
                                       (self._z_sp, self._s_sp)))
+        self._psvd_flld = _psvd_flld[:self._sp.shape[0], ...]
+
 
     def __getitem__(self, item):
         return self._data[item]
@@ -273,6 +274,11 @@ class BaseSection(abc.ABC):
     def show(self, SectionAttribute, style='mesh', **kwargs):
         """Show the section.
 
+        .. warning::
+            The documentation around this method is not correct. Many
+            unsupported features are listed. Need to impplement all options,
+            then document with examples and tests.
+
         Parameters
         ----------
 
@@ -311,7 +317,7 @@ class BaseSection(abc.ABC):
         if style == 'mesh':
             _arr = SectionVariable.as_stratigraphy()
             _arr_Y = SectionVariable._psvd_flld
-            _arr_X = np.tile(SectionVariable._s, (46, 1))
+            _arr_X = np.tile(SectionVariable._s, (_arr.shape[0], 1))
             # print("_s shape:", SectionVariable._s.shape)
             # print("_arr:", _arr.shape)
             # print("_arr_Y:", _arr_Y.shape)
