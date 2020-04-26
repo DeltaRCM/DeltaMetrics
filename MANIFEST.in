@@ -1,0 +1,2 @@
+include deltametrics/sample_data/files/pyDeltaRCM_Output_8.nc
+exclude *.yml

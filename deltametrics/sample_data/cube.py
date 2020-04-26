@@ -7,8 +7,13 @@ Example
 
 A Data cube can be instantiated as, for example::
 
-  >>> import deltametrics as dm
-  >>> _tulane = dm.sample_data.cube.tdb12()
+.. doctest::
+
+    >>> import deltametrics as dm
+    >>> rcm8cube = dm.sample_data.cube.rcm8()
+    >>> rcm8cube
+    <deltametrics.cube.Cube at 0x...>
+
 
 Available information on the data cubes is enumerated in the following
 section.
@@ -18,10 +23,10 @@ Example data cubes
 ------------------------
 
 :meth:`tdb12` : `ndarray`
-  This data cube is from Tulane Delta Basin expt 12. 
+    This data cube is from Tulane Delta Basin expt 12.
 
-:meth:`rcm1` : `ndarray`
-  This data cube is from the DeltaRCM model. 
+:meth:`rcm8` : `ndarray`
+    This data cube is from the pyDeltaRCM model.
 
 """
 
@@ -32,7 +37,7 @@ import numpy as np
 import netCDF4
 
 from ..cube import Cube
-from ..io import NetCDF_IO, HDF_IO
+from ..io import NetCDFIO, HDFIO
 
 
 def tdb12():
@@ -41,7 +46,9 @@ def tdb12():
 
 
 def rcm8():
+    """A sample pyDeltaRCM file, as netCDF.
+    """
     path = os.path.join(os.path.dirname(__file__), 'files',
-                        'Output_8', 'pyDeltaRCM_output.nc')
+                        'pyDeltaRCM_Output_8.nc')
     cube = Cube(path)
     return cube

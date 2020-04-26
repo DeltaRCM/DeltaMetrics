@@ -126,6 +126,5 @@ tests/results/
 temp/
 playground*
 
-
-# TEMPORARILY: DO NOT TRACK SAMPLES FROM JAY!!
+# ignore any files in here by default, use -f to add anything.
 deltametrics/sample_data/files/*
