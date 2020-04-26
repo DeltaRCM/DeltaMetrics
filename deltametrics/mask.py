@@ -3,8 +3,8 @@ from scipy import stats
 import matplotlib.pyplot as plt
 
 
-
 class BaseMask(object):
+
     def __init__(self, mask_type, data):
         """Initialize the base mask attributes and methods.
 
@@ -12,7 +12,6 @@ class BaseMask(object):
         self.mask_type = mask_type
         self.data = data
 
-        
     @property
     def data(self):
         """ndarray : Values of the mask object.
@@ -22,27 +21,23 @@ class BaseMask(object):
         """
         return self._data
 
-
     @data.setter
     def data(self, var):
         self._data = var
-
 
     @property
     def time(self):
         """float : Time when the mask is from.
         """
         return self._time
-        
 
     @time.setter
     def time(self, var):
         self._time = var
 
-
     def a_method(self):
         """Does something?
-        
+
         """
         pass
 
@@ -57,7 +52,6 @@ class BaseMask(object):
         plt.show()
 
 
-
 class ChannelMask(BaseMask):
     """Channel mask.
 
@@ -65,21 +59,22 @@ class ChannelMask(BaseMask):
 
     Examples
     --------
-    
+
     Initialize the channel mask
-        >>> cmsk = dm.ChannelMask(arr)
+        >>> cmsk = dm.mask.ChannelMask(arr)
 
     And visualize the mask:
         >>> cmsk.show_mask()
 
-    .. plot:: pyplots/mask/channelmask.py
+    .. plot:: mask/channelmask.py
 
     """
+
     def __init__(self, arr, is_mask=False):
         """Initialize the ChannelMask.
 
         Intializing the channel mask requires an array of data, should be
-        two-dimensional. 
+        two-dimensional.
 
         Parameters
         ----------
@@ -99,19 +94,16 @@ class ChannelMask(BaseMask):
 
         self.other_atts = 10
 
-
     @property
     def property_for_just_channels(self):
         """Who knows!
         """
         return self._property_for_just_channels
 
-
     def a_channel_function(self):
         """This is a wrapper to the below function.
         """
         return a_channel_function(self.data)
-
 
 
 class LandMask(BaseMask):
@@ -121,26 +113,27 @@ class LandMask(BaseMask):
 
     Examples
     --------
-    >>> lmsk = dm.LandMask(arr)
+
+    Initialize the mask.
+        >>> lmsk = dm.mask.LandMask(arr)
 
     """
+
     def __init__(self, arr):
         """Initialize the LandMask.
 
         Intializing the land-water mask requires an array of data, should be
-        two-dimensional. 
+        two-dimensional.
         """
         super().__init__(mask_type='land-water', data=arr)
 
         self.other_atts = 10
 
-
     @property
     def property_for_just_land(self):
         """Who knows!
         """
-        return self._property_for_just_land *3
-
+        return self._property_for_just_land * 3
 
     def a_land_function(self):
         """This is a wrapper to the below function.
