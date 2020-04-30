@@ -101,6 +101,18 @@ of the Cube at the fortieth (40th) timestep:
 Section data
 ------------
 
+We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
+In DeltaMetrics, we refer to this preserved history as the "stratigraphy", and we provide a number of convenient routines for computing stratigraphy and analyzing the deposits.
+
+Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created. 
+We must directly tell the Cube instance to compute stratigraphy, by specifying which variable contains the spatiotemporal bed elevation history that dictates preservation.
+
+.. doctest::
+
+    >>> rcm8cube.stratigraphy_from('eta')
+
+For this example, the stratigraphic computation is relatively fast (< one second), but for large data domains covering a large amount of time, this computation may not be as rapid.
+
 For the sake of simplicity, this documentation uses the :obj:`~deltametrics.section.StrikeSection` as an example, but the following lexicon generalizes across the Section classes.
 
 For a data cube, sections are most often instantiated by the :obj:`~deltametrics.cube.Cube.register_section` method:
