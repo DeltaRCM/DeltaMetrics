@@ -270,13 +270,13 @@ class BaseSection(abc.ABC):
         """
         pass
 
-    def connect(self, _cube):
+    def connect(self, CubeInstance):
         """Connect this Section instance to a Cube instance.
         """
-        if not type(_cube) is cube.Cube:
+        if not issubclass(type(CubeInstance), cube.BaseCube):
             raise TypeError('Expected type was {_exptype}, but received was {_gottype}.'
-                            .format(_exptype=type(cube.Cube), _gottype=type(_cube)))
-        self.cube = _cube
+                            .format(_exptype=type(cube.Cube), _gottype=type(CubeInstance)))
+        self.cube = CubeInstance
         self._variables = self.cube.variables
         self._compute_section_coords()
         self._compute_section_attrs()

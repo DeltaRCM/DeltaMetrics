@@ -1,4 +1,4 @@
-from .cube import Cube
+from . import cube
 from . import plan
 from . import mask
 from . import section

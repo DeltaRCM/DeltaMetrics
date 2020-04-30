@@ -16,7 +16,7 @@ rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
 
 
 def test_init_cube_from_path_rcm8():
-    rcm8cube = cube.Cube(rcm8_path)
+    rcm8cube = cube.DataCube(rcm8_path)
     assert rcm8cube._data_path == rcm8_path
     assert rcm8cube.dataio.type == 'netcdf'
     assert rcm8cube._plan_set == {}
@@ -26,23 +26,23 @@ def test_init_cube_from_path_rcm8():
 
 @pytest.mark.xfail(raises=TypeError, strict=True)
 def test_error_init_empty_cube():
-    nocube = cube.Cube()
+    nocube = cube.DataCube()
 
 
 @pytest.mark.xfail(raises=FileNotFoundError, strict=True)
 def test_error_init_bad_path():
-    nocube = cube.Cube('./nonexistent/path.nc')
+    nocube = cube.DataCube('./nonexistent/path.nc')
 
 
 @pytest.mark.xfail(raises=ValueError, strict=True)
 def test_error_init_bad_extension():
-    nocube = cube.Cube('./nonexistent/path.doc')
+    nocube = cube.DataCube('./nonexistent/path.doc')
 
 
 def test_init_with_shared_varset_prior():
     shared_varset = plot.VariableSet()
-    rcm8cube1 = cube.Cube(rcm8_path, varset=shared_varset)
-    rcm8cube2 = cube.Cube(rcm8_path, varset=shared_varset)
+    rcm8cube1 = cube.DataCube(rcm8_path, varset=shared_varset)
+    rcm8cube2 = cube.DataCube(rcm8_path, varset=shared_varset)
     assert type(rcm8cube1.varset) is plot.VariableSet
     assert type(rcm8cube2.varset) is plot.VariableSet
     assert rcm8cube1.varset is shared_varset
@@ -50,15 +50,15 @@ def test_init_with_shared_varset_prior():
 
 
 def test_init_with_shared_varset_from_first():
-    rcm8cube1 = cube.Cube(rcm8_path)
-    rcm8cube2 = cube.Cube(rcm8_path, varset=rcm8cube1.varset)
+    rcm8cube1 = cube.DataCube(rcm8_path)
+    rcm8cube2 = cube.DataCube(rcm8_path, varset=rcm8cube1.varset)
     assert type(rcm8cube1.varset) is plot.VariableSet
     assert type(rcm8cube2.varset) is plot.VariableSet
     assert rcm8cube1.varset is rcm8cube2.varset
 
 
 def test_slice_op():
-    rcm8cube = cube.Cube(rcm8_path)
+    rcm8cube = cube.DataCube(rcm8_path)
     slc = rcm8cube['eta']
     assert type(slc) is cube.CubeVariable
     assert slc.ndim == 3
@@ -67,12 +67,12 @@ def test_slice_op():
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_slice_op_invalid_name():
-    rcm8cube = cube.Cube(rcm8_path)
+    rcm8cube = cube.DataCube(rcm8_path)
     slc = rcm8cube['nonexistentattribute']
 
 
 def test_register_section():
-    rcm8cube = cube.Cube(rcm8_path)
+    rcm8cube = cube.DataCube(rcm8_path)
     rcm8cube.register_section('testsection', section.StrikeSection(y=10))
     assert rcm8cube.sections is rcm8cube.section_set
     assert len(rcm8cube.sections.keys()) == 1
@@ -80,7 +80,7 @@ def test_register_section():
 
 
 def test_sections_slice_op():
-    rcm8cube = cube.Cube(rcm8_path)
+    rcm8cube = cube.DataCube(rcm8_path)
     rcm8cube.register_section('testsection', section.StrikeSection(y=10))
     assert 'testsection' in rcm8cube.sections.keys()
     slc = rcm8cube.sections['testsection']
@@ -89,7 +89,7 @@ def test_sections_slice_op():
 # test plotting routines
 # @pytest.mark.mpl_image_compare()
 # def test_show_plan():
-#     rcm8cube = cube.Cube(rcm8_path)
+#     rcm8cube = cube.DataCube(rcm8_path)
 #     rcm8cube
 
 #     gui = GUI()
@@ -97,7 +97,7 @@ def test_sections_slice_op():
 
 
 # create a fixed cube for variable existing, type checks
-fixedcube = cube.Cube(rcm8_path)
+fixedcube = cube.DataCube(rcm8_path)
 
 
 def test_fixedcube_init_preserved_index():

@@ -1,6 +1,7 @@
 import os
 import warnings
 import time
+import abc
 
 import numpy as np
 import scipy as sp
@@ -37,6 +38,8 @@ class CubeVariable(np.ndarray):
         <class 'deltametrics.cube.CubeVariable'>
         >>> type(rcm8cube['velocity'].base)
         <class 'numpy.ndarray'>
+        >>> rcm8cube['velocity'].variable
+        velocity
     """
 
     def __new__(cls, *args, **kwargs):
@@ -49,32 +52,46 @@ class CubeVariable(np.ndarray):
         return obj
 
     def __array_finalize__(self, obj):
-        """Place thing that must always happen here.
+        """Place things that must always happen here.
+
+        This method is called when any new array is cast. The ``__new__``
+        method is not called when views are case of an existing
+        `CubeVariable`, so anything special about the `CubeVariable` needs to
+        implemented here additionally. This could be configured to return a
+        standard ndarray if a view is cast, but currently, it will return
+        another CubeVariable instance.
         """
-        pass
+        if obj is None:
+            return
+        self.variable = getattr(obj, 'variable', None)
 
-    def placehold_method(self):
-        """Placeholder for more to come.
-        """
-        pass
+    def __repr__(self):
+        if self.size > 50:
+            return str(type(self)) + ' variable: `' + self.variable \
+                + '`; dtype: ' + str(self.dtype) + ' size: ' + str(self.size)
+        else:
+            return str(self)
 
 
-class Cube(utils.AttributeChecker):
-    """Data cube object.
+class BaseCube(abc.ABC):
+    """Base cube object.
 
-    Data cube object that contains t-x-y information. It may have any
-    number of attached attributes (grain size, mud frac, elevation).
+    Cube objects contain t-x-y or z-x-y information.
+
+    This base class should not be used directly, but is subclassed below,
+    providing convenient obejcts for maniplating common data types.
 
     .. note::
         `Cube` does not load any data into memory by default. This means that
         slicing is handled "behind the scenes" by an :doc:`I/O file handler
-        </reference/io/index>`. Optionally, you can load files into memory for (sometimes) faster operations.
+        </reference/io/index>`. Optionally, you can load files into memory for
+        (sometimes) faster operations.
         See the :meth:`read` for more information.
 
     """
 
     def __init__(self, data, read=[], varset=None):
-        """Initialize the Cube.
+        """Initialize the BaseCube.
 
         Parameters
         ----------
@@ -90,17 +107,14 @@ class Cube(utils.AttributeChecker):
             for ``read=True`` to read all available variables into memory.
 
         varset : :class:`~deltametrics.plot.VariableSet`, optional
-            Pass a valid `~deltametrics.plot.VariableSet` instance if you wish
+            Pass a `~deltametrics.plot.VariableSet` instance if you wish
             to style this cube similarly to another cube.
         """
 
-        # self.data = data
-        # self.data = _DataDict({})
         if type(data) is str:
             self._data_path = data
             self._connect_to_file(data_path=data)
             self._read_meta_from_file()
-            # self._connect_vars_to_file(self.variables)
             self._compute_strata()
         elif type(data) is dict:
             # handle a dict, arrays set up already, make an io class to wrap it
@@ -168,11 +182,6 @@ class Cube(utils.AttributeChecker):
         navigating the variable trees in the stored files.
         """
         self._variables = self._dataio.keys
-
-    def _connect_vars_to_file(self, var_list=[]):
-        raise NotImplementedError
-        # for var in var_list:
-        #     pass
 
     def read(self, variables):
         """Read variable into memory
@@ -404,3 +413,42 @@ class Cube(utils.AttributeChecker):
             if not issubclass(type(SectionInstance), section.BaseSection):
                 raise TypeError
             SectionInstance.show(**kwargs)
+
+
+
+
+class DataCube(BaseCube):
+    """DataCube object.
+
+    DataCube contains t-x-y information. It may have any
+    number of attached attributes (grain size, mud frac, elevation).
+    """
+
+    def __init__(self, data, read=[], varset=None, stratigraphy_from=None):
+        """Initialize the BaseCube.
+
+        Parameters
+        ----------
+        data : :obj:`str`, :obj:`dict`
+            If data is type `str`, the string points to a NetCDF or HDF5 file
+            that can be read. Typically this is used to directly import files
+            output from the pyDeltaRCM model. Alternatively, pass a
+            :obj:`dict` with keys indicating variable names, and values with
+            corresponding t-x-y `ndarray` of data.
+
+        read : :obj:`bool`, optional
+            Which variables to read from dataset into memory. Special option
+            for ``read=True`` to read all available variables into memory.
+
+        varset : :class:`~deltametrics.plot.VariableSet`, optional
+            Pass a `~deltametrics.plot.VariableSet` instance if you wish
+            to style this cube similarly to another cube. If no argument is
+            supplied, a new default VariableSet instance is created.
+
+        stratigraphy_from : :obj:`str`, optional
+            Pass a string that matches a variable name in the dataset to
+            compute preservation and stratigraphy using that variable as
+            elevation data. Typically, this is ``'eta'`` in pyDeltaRCM model
+            outputs.
+        """
+        super().__init__(data, read, varset)

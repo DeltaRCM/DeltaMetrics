@@ -17,7 +17,9 @@ Cube types
 .. autosummary:: 
     :toctree: ../../_autosummary
 
-    Cube
+    DataCube
+        :special-members:
+    BaseCube
     	:special-members:
 
 

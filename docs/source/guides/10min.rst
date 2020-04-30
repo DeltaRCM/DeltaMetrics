@@ -7,6 +7,21 @@ learn DeltaMetrics in ten minutes!
 .. testsetup:: *
 
    import deltametrics as dm
+   import numpy as np
+
+All of the documentation in this package assumes that you have imported the DeltaMetrics package as ``dm``:
+
+.. doctest::
+    
+    >>> import deltametrics as dm
+
+Additionally, we frequently rely on the `numpy` package, and `matplotlib`. We will assume you have imported these packages by their common shorthand as well; if we import other packages, or other modules from `matplotlib`, these imports will be declared!
+
+.. doctest::
+
+    >>> import numpy as np
+    >>> import matplotlib.pyplot as plt
+
 
 Connect to data
 ===============
@@ -15,17 +30,16 @@ In your application, you will want to connect to a your own dataset, but more on
 For now, let's use a sample dataset that is distributed with DeltaMetrics.
 
 .. doctest::
-    
-    >>> import deltametrics as dm
 
     >>> rcm8cube = dm.sample_data.cube.rcm8()
     >>> type(rcm8cube)
-    <class 'deltametrics.cube.Cube'>
+    <class 'deltametrics.cube.DataCube'>
 
-This creates an instance of a :obj:`~deltametrics.cube.Cube` object, which is the central office in many operations in using DeltaMetrics.
-Creating the `rcm8cube` connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets.
+This creates an instance of a :obj:`~deltametrics.cube.DataCube` object, which is the simplest and most commonly used type of cube.
+"Cubes" in DeltaMetrics language are the central office that connects all the different modules and workflows together.
+Creating the ``rcm8cube`` connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets.
 
-Inspect which variables are available in the `rcm8cube`.
+Inspect which variables are available in the ``rcm8cube``.
 
 .. doctest::
 
@@ -33,11 +47,11 @@ Inspect which variables are available in the `rcm8cube`.
     ['x', 'y', 'time', 'eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_age', 'strata_sand_frac', 'strata_depth']
     
 
-Accessing data from Cube
-========================
+Accessing data from a DataCube
+==============================
 
-A :obj:`~deltametrics.cube.Cube` can be sliced directly by variable name.
-Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, which is a numpy ``ndarray`` compatible object; this means that it can be manipulated exactly as a standard ``ndarray``.
+A :obj:`~deltametrics.cube.DataCube` can be sliced directly by variable name.
+Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, which is a numpy ``ndarray`` compatible object; this means that it can be manipulated exactly as a standard ``ndarray``, supporting any arbitrary math.
 
 .. doctest::
 
@@ -46,8 +60,14 @@ Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, wh
     >>> type(rcm8cube['velocity'].base)
     <class 'numpy.ndarray'>
 
+For example, we could determine how much the bed elevation of the model changed on average, at a specific location in the model domain ``(43, 123)``, by slicing the ``eta`` variable, and subtracting.
 
-The data cube is most often interacted with by taking horizontal or vertical "cuts" of the cube. 
+.. doctest::
+
+    >>> np.mean( rcm8cube['eta'][1:,43,123] - rcm8cube['eta'][:-1,43,123] )
+    0.08364895
+
+The DataCube is often used by taking horizontal or vertical "cuts" of the cube. 
 In this package, we refer to horizontal cuts as "plans" or (`Planform` data) and vertical cuts as "sections" (`Section` data). 
 
 The :doc:`Planform <../reference/plan/index>` and :doc:`Section <../reference/section/index>` data types have a series of helpful classes and functions, which are fully documented in their respective pages.
@@ -60,6 +80,10 @@ Planform data
 We can visualize Planform data of the cube with a number of built-in
 functions. Let's inspect the state of several variables
 of the Cube at the fortieth (40th) timestep:
+
+.. note::
+
+    This API will change to be consistent with the ``show_section`` API below. Users will ``register_plan`` and then call it, or pass a freshly instantiated plan instance.
 
 .. doctest::
 
