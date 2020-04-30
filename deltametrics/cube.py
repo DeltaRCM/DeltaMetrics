@@ -115,7 +115,6 @@ class BaseCube(abc.ABC):
             self._data_path = data
             self._connect_to_file(data_path=data)
             self._read_meta_from_file()
-            self._compute_strata()
         elif type(data) is dict:
             # handle a dict, arrays set up already, make an io class to wrap it
             self._data_path = None
@@ -200,75 +199,6 @@ class BaseCube(abc.ABC):
 
         for var in variables:
             self._dataio.read(var)
-
-    def _compute_strata(self):
-        """Compute stratigraphy attributes.
-
-        Compute what is preserved. We can precompute several attributes of the
-        stratigraphy, including which voxels are preserved, what their row
-        indicies in the sparse stratigraphy matrix are, and what the elevation
-        of each elevation entry in the final stratigraphy are. *This allows
-        placing of any t-x-y stored variable into the section.*
-
-        Currently, we store many of these computations as private attributes
-        of the Cube itself. This is fine for a small cube, but may become
-        cumbersome or intractable for large datasets.
-        problematic as the matrix becomes very large.
-
-        .. note::
-            This could be ported out to wrap around a generalized function for
-            computing stratigraphic representations of cubes. E.g., wrapping
-            some function in :obj:`~deltametrics.strat`.
-        """
-
-        # copy out _eta for faster access, not retained in memory (?)
-        _eta = np.array(self['eta'], copy=True)
-        _psvd = np.zeros_like(_eta)  # boolean for if retained
-        _strata = np.zeros_like(_eta)  # elevation of surface at each t
-
-        nt = _strata.shape[0]
-        _strata[-1, :, :] = _eta[-1, :, :]
-        _psvd[-1, :, :] = True
-        for j in np.arange(nt - 2, -1, -1):
-            _strata[j, ...] = np.minimum(_eta[j, ...],
-                                         _strata[j + 1, ...])
-            _psvd[j, :, :] = np.less(_eta[j, ...],
-                                     _strata[j + 1, ...])
-
-        self._psvd_vxl_cnt = _psvd.sum(axis=0, dtype=np.int)
-        self._psvd_vxl_idx = _psvd.cumsum(axis=0, dtype=np.int)
-        self._psvd_vxl_cnt_max = int(self._psvd_vxl_cnt.max())
-        self._psvd_idx = _psvd.astype(np.bool)  # guarantee bool
-
-        # Determine the elevation of any voxel that is preserved.
-        # These are matrices that are size n_preserved-x-y.
-        #    psvd_vxl_eta : records eta for each entry in the preserved matrix.
-        #    psvd_flld    : fills above with final eta entry (for pcolormesh).
-        self._psvd_vxl_eta = np.full((self._psvd_vxl_cnt_max,
-                                      *_eta.shape[1:]), np.nan)
-        self._psvd_flld = np.full((self._psvd_vxl_cnt_max,
-                                   *_eta.shape[1:]), np.nan)
-        for i in np.arange(_eta.shape[1]):
-            for j in np.arange(_eta.shape[2]):
-                self._psvd_vxl_eta[0:self._psvd_vxl_cnt[i, j], i, j] = _eta[
-                    self._psvd_idx[:, i, j], i, j].copy()
-                self._psvd_flld[0:self._psvd_vxl_cnt[i, j], i, j] = _eta[
-                    self._psvd_idx[:, i, j], i, j].copy()
-                self._psvd_flld[self._psvd_vxl_cnt[
-                    i, j]:, i, j] = self._psvd_flld[
-                    self._psvd_vxl_cnt[i, j] - 1, i, j]
-
-    @property
-    def preserved_index(self):
-        """:obj:`ndarray` : Boolean array indicating preservation.
-        """
-        return self._psvd_idx
-
-    @property
-    def preserved_voxel_count(self):
-        """:obj:`ndarray` : X-Y array indicating number of preserved voxels per x-y pair.
-        """
-        return self._psvd_vxl_cnt
 
     @property
     def varset(self):
@@ -449,6 +379,100 @@ class DataCube(BaseCube):
             Pass a string that matches a variable name in the dataset to
             compute preservation and stratigraphy using that variable as
             elevation data. Typically, this is ``'eta'`` in pyDeltaRCM model
-            outputs.
+            outputs. Stratigraphy can be computed on an existing data cube
+            with the :meth:`~deltametrics.cube.DataCube.stratigraphy_from`
+            method.
         """
         super().__init__(data, read, varset)
+
+        if stratigraphy_from:
+            self._compute_strata(variable=stratigraphy_from)
+
+    def stratigraphy_from(self, variable='eta'):
+        """Compute stratigraphy attributes.
+
+        .. note:: This method wraps the private method ``_compute_strata``.
+
+        Parameters
+        ----------
+        variable : :obj:`str, optional
+            Which variable to use as elevation data for computing
+            preservation. If no value is given for this parameter, we try to
+            find a variable `eta` and use that for elevation data if it
+            exists.
+
+        """
+        self._compute_strata(variable)
+
+    def _compute_strata(self, variable):
+        """Compute stratigraphy attributes.
+
+        Compute what is preserved. We can precompute several attributes of the
+        stratigraphy, including which voxels are preserved, what their row
+        indicies in the sparse stratigraphy matrix are, and what the elevation
+        of each elevation entry in the final stratigraphy are. *This allows
+        placing of any t-x-y stored variable into the section.*
+
+        Currently, we store many of these computations as private attributes
+        of the Cube itself. This is fine for a small cube, but may become
+        cumbersome or intractable for large datasets.
+        problematic as the matrix becomes very large.
+
+        .. note::
+            This could be ported out to wrap around a generalized function for
+            computing stratigraphic representations of cubes. E.g., wrapping
+            some function in :obj:`~deltametrics.strat`.
+        """
+
+        # copy out _eta for faster access, not retained in memory (?)
+        _eta = np.array(self[variable], copy=True)
+        _psvd = np.zeros_like(_eta)  # boolean for if retained
+        _strata = np.zeros_like(_eta)  # elevation of surface at each t
+
+        nt = _strata.shape[0]
+        _strata[-1, :, :] = _eta[-1, :, :]
+        _psvd[-1, :, :] = True
+        for j in np.arange(nt - 2, -1, -1):
+            _strata[j, ...] = np.minimum(_eta[j, ...],
+                                         _strata[j + 1, ...])
+            _psvd[j, :, :] = np.less(_eta[j, ...],
+                                     _strata[j + 1, ...])
+
+        self._psvd_vxl_cnt = _psvd.sum(axis=0, dtype=np.int)
+        self._psvd_vxl_idx = _psvd.cumsum(axis=0, dtype=np.int)
+        self._psvd_vxl_cnt_max = int(self._psvd_vxl_cnt.max())
+        self._psvd_idx = _psvd.astype(np.bool)  # guarantee bool
+
+        # Determine the elevation of any voxel that is preserved.
+        # These are matrices that are size n_preserved-x-y.
+        #    psvd_vxl_eta : records eta for each entry in the preserved matrix.
+        #    psvd_flld    : fills above with final eta entry (for pcolormesh).
+        self._psvd_vxl_eta = np.full((self._psvd_vxl_cnt_max,
+                                      *_eta.shape[1:]), np.nan)
+        self._psvd_flld = np.full((self._psvd_vxl_cnt_max,
+                                   *_eta.shape[1:]), np.nan)
+        for i in np.arange(_eta.shape[1]):
+            for j in np.arange(_eta.shape[2]):
+                self._psvd_vxl_eta[0:self._psvd_vxl_cnt[i, j], i, j] = _eta[
+                    self._psvd_idx[:, i, j], i, j].copy()
+                self._psvd_flld[0:self._psvd_vxl_cnt[i, j], i, j] = _eta[
+                    self._psvd_idx[:, i, j], i, j].copy()
+                self._psvd_flld[self._psvd_vxl_cnt[
+                    i, j]:, i, j] = self._psvd_flld[
+                    self._psvd_vxl_cnt[i, j] - 1, i, j]
+
+    @property
+    def preserved_index(self):
+        """:obj:`ndarray` : Boolean array indicating preservation.
+
+        True where data is preserved in final stratigraphy.
+        """
+        return self._psvd_idx
+
+    @property
+    def preserved_voxel_count(self):
+        """:obj:`ndarray` : Nmber of preserved voxels per x-y.
+
+        X-Y array indicating number of preserved voxels per x-y pair.
+        """
+        return self._psvd_vxl_cnt

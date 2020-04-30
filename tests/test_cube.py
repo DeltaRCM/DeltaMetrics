@@ -100,14 +100,6 @@ def test_sections_slice_op():
 fixedcube = cube.DataCube(rcm8_path)
 
 
-def test_fixedcube_init_preserved_index():
-    assert type(fixedcube.preserved_index) is np.ndarray
-
-
-def test_fixedcube_init_preserved_voxel_count():
-    assert type(fixedcube.preserved_voxel_count) is np.ndarray
-
-
 def test_fixedcube_init_varset():
     assert type(fixedcube.varset) is plot.VariableSet
 
@@ -142,6 +134,18 @@ def test_fixedcube_init_section_set():
 def test_fixedcube_init_sections():
     assert type(fixedcube.sections) is dict
     assert fixedcube.sections is fixedcube.section_set
+
+
+# compute stratigraphy for the cube
+fixedcube.stratigraphy_from('eta')
+
+
+def test_fixedcube_init_preserved_index():
+    assert type(fixedcube.preserved_index) is np.ndarray
+
+
+def test_fixedcube_init_preserved_voxel_count():
+    assert type(fixedcube.preserved_voxel_count) is np.ndarray
 
 
 # test setting all the properties / attributes
