@@ -306,6 +306,7 @@ class BaseCube(abc.ABC):
         .. warning::
             NEEDS TO BE PORTED OVER TO WRAP THE .show() METHOD OF PLAN!
         """
+
         _plan = self[var][t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
 
         if not ax:
@@ -328,6 +329,7 @@ class BaseCube(abc.ABC):
         Wraps the Section's :meth:`~deltametrics.section.BaseSection.show`
         method.
         """
+
         if len(args) == 0:
             raise ValueError
         elif len(args) == 1:
@@ -343,8 +345,6 @@ class BaseCube(abc.ABC):
             if not issubclass(type(SectionInstance), section.BaseSection):
                 raise TypeError
             SectionInstance.show(**kwargs)
-
-
 
 
 class DataCube(BaseCube):
@@ -383,28 +383,35 @@ class DataCube(BaseCube):
             with the :meth:`~deltametrics.cube.DataCube.stratigraphy_from`
             method.
         """
+
         super().__init__(data, read, varset)
 
+        self._knows_spacetime = True
+        self._knows_stratigraphy = False
+
         if stratigraphy_from:
-            self._compute_strata(variable=stratigraphy_from)
+            self.stratigraphy_from(variable=stratigraphy_from)
 
     def stratigraphy_from(self, variable='eta'):
         """Compute stratigraphy attributes.
 
-        .. note:: This method wraps the private method ``_compute_strata``.
+        .. note::
+
+            This method wraps the private method ``_compute_stratigraphy``.
 
         Parameters
         ----------
-        variable : :obj:`str, optional
+        variable : :obj:`str`, optional
             Which variable to use as elevation data for computing
             preservation. If no value is given for this parameter, we try to
             find a variable `eta` and use that for elevation data if it
             exists.
-
         """
-        self._compute_strata(variable)
 
-    def _compute_strata(self, variable):
+        self._compute_stratigraphy(variable)
+        self._knows_stratigraphy = True
+
+    def _compute_stratigraphy(self, variable):
         """Compute stratigraphy attributes.
 
         Compute what is preserved. We can precompute several attributes of the
@@ -476,3 +483,43 @@ class DataCube(BaseCube):
         X-Y array indicating number of preserved voxels per x-y pair.
         """
         return self._psvd_vxl_cnt
+
+
+class StratigraphicCube(BaseCube):
+    """StratigraphicCube object.
+
+    A cube of precomputed stratigraphy. This is a z-x-y matrix defining
+    variables at specific voxel locations.
+
+    .. warning::
+
+        This class has not been implemented.
+    """
+
+    def __init__(self, data, read=[], varset=None):
+        """Initialize the StratigraphicCube.
+
+        Parameters
+        ----------
+        data : :obj:`str`, :obj:`dict`
+            If data is type `str`, the string points to a NetCDF or HDF5 file
+            that can be read. Typically this is used to directly import files
+            output from the pyDeltaRCM model. Alternatively, pass a
+            :obj:`dict` with keys indicating variable names, and values with
+            corresponding t-x-y `ndarray` of data.
+
+        read : :obj:`bool`, optional
+            Which variables to read from dataset into memory. Special option
+            for ``read=True`` to read all available variables into memory.
+
+        varset : :class:`~deltametrics.plot.VariableSet`, optional
+            Pass a `~deltametrics.plot.VariableSet` instance if you wish
+            to style this cube similarly to another cube. If no argument is
+            supplied, a new default VariableSet instance is created.
+        """
+
+        raise NotImplementedError
+        super().__init__(data, read, varset)
+
+        self._knows_spacetime = False
+        self._knows_stratigraphy = True
