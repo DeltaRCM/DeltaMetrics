@@ -34,7 +34,7 @@ and then ``cd`` into the directory and install editable copy.
 
 .. code:: console
 
-    $ cd deltametrics
+    $ cd DeltaMetrics
     $ pip install -e .
 
 Check that your installation worked by running the tests.

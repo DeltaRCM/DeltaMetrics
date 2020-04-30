@@ -225,6 +225,12 @@ class BaseSection(abc.ABC):
     def coords(self):
         return self._coords
 
+    @property
+    def variables(self):
+        """List of variables.
+        """
+        return self._variables
+
     def __getitem__(self, var):
         """Get a slice of the section.
 
@@ -259,14 +265,19 @@ class BaseSection(abc.ABC):
     def _compute_section_attrs(self):
         """Compute attrs
 
-        Compute the down-strike coordinate array from x-y pts pairs definining the section
+        Compute the down-strike coordinate array from x-y pts pairs definining
+        the section.
         """
         pass
 
     def connect(self, _cube):
+        """Connect this Section instance to a Cube instance.
+        """
         if not type(_cube) is cube.Cube:
-            raise TypeError
+            raise TypeError('Expected type was {_exptype}, but received was {_gottype}.'
+                            .format(_exptype=type(cube.Cube), _gottype=type(_cube)))
         self.cube = _cube
+        self._variables = self.cube.variables
         self._compute_section_coords()
         self._compute_section_attrs()
         # self.preserved_index = self.cube.preserved_index

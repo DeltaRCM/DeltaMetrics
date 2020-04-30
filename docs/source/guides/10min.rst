@@ -83,8 +83,6 @@ For a data cube, sections are most often instantiated by the :obj:`~deltametrics
 
 .. doctest::
 
-    >>> rcm8cube = dm.sample_data.cube.rcm8()
-
     >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=10))
 
 which can then be accessed via the :obj:`~deltametrics.cube.Cube.sections` attribute of the Cube.
