@@ -11,15 +11,84 @@ from . import io
 
 # plotting utilities
 
-# def register_VariableInfo(func):
-
 
 class VariableInfo(object):
+    """Variable styling and information.
+
+    This class holds information for a specific underlying data variable
+    (e.g., ``eta`` or ``velocity``). Properties are used throughout
+    DeltaMetrics for plotting.
+
+    Examples
+    --------
+
+    You can override any of the parameters by passing a value during
+    instantiation of the VariableInfo. For example, to set the colormap
+    for a variable ``vegetation_density`` as a range of green shades we
+    would create the VariableInfo as:
+
+    .. doctest::
+
+        >>> from deltametrics.plot import VariableInfo
+        >>> veg = VariableInfo('vegetation_density',
+        ...                    cmap='Greens')
+
+        >>> veg.cmap
+        <matplotlib.colors.LinearSegmentedColormap object at 0x...>
+
+        >>> veg.cmap.N
+        64
+
+    which creates a 64 interval colormap from the matplotlib `Greens`
+    colormap. If instead we wanted just three colors, we could specify the
+    colormap manually:
+
+    .. doctest::
+
+        >>> veg3 = VariableInfo('vegetation_density',
+        ...                     cmap=plt.cm.get_cmap('Greens', 3))
+        >>> veg3.cmap.N
+        3
+
+    We can then set a more human-readable label for the variable:
+
+    .. doctest::
+
+        >>> veg3.label = 'vegetation density'
+
+    """
 
     def __init__(self, name, **kwargs):
+        """Initialize the VariableInfo.
+
+        Parameters
+        ----------
+        name : :obj:`str`
+            Name for variable to access from.
+
+        cmap : :obj:`matplotlib.colors.Colormap`, :obj:`str`, optional
+            Colormap to use to diplay the variable.
+
+        label : :obj:`str`, optional
+            How to display the variable name when plotting (i.e., a
+            human-readable name). If not specified, the value of `name` is
+            used.
+
+        norm : :obj:`matplotlib.colors.Norm`, optional
+            ???
+
+        vmin : :obj:`float`, optional
+            Limit the colormap or axes to this lower-bound value.
+
+        vmax : :obj:`float`, optional
+            Limit the colormap or axes to this upper-bound value.
+
+        """
+        if not type(name) is str:
+            raise TypeError('name argument must be type `str`, but was %s' % type(name))
         self._name = name
 
-        self.cmap = kwargs.pop('cmap', cm.get_cmap('viridis', 10))
+        self.cmap = kwargs.pop('cmap', cm.get_cmap('viridis', 64))
         self.label = kwargs.pop('label', None)
         self.norm = kwargs.pop('norm', None)
         self.vmin = kwargs.pop('vmin', None)
@@ -27,16 +96,24 @@ class VariableInfo(object):
 
     @property
     def name(self):
+        """Name for variable to access from.
+        """
         return self._name
 
     @property
     def cmap(self):
+        """Colormap to use to diplay the variable.
+        """
         return self._cmap
 
     @cmap.setter
     def cmap(self, var):
+        if type(var) is tuple:
+            var, N = var
+        else:
+            N = 64
         if type(var) is str:
-            raise NotImplementedError
+            self._cmap = cm.get_cmap(var, N)
         elif issubclass(type(var), colors.Colormap):
             self._cmap = var
         else:
@@ -44,6 +121,8 @@ class VariableInfo(object):
 
     @property
     def label(self):
+        """How to display the variable name when plotting.
+        """
         return self._label
 
     @label.setter
@@ -57,6 +136,8 @@ class VariableInfo(object):
 
     @property
     def norm(self):
+        """???
+        """
         return self._norm
 
     @norm.setter
@@ -65,6 +146,8 @@ class VariableInfo(object):
 
     @property
     def vmin(self):
+        """Limit the colormap or axes to this lower-bound value.
+        """
         return self._vmin
 
     @vmin.setter
@@ -73,6 +156,8 @@ class VariableInfo(object):
 
     @property
     def vmax(self):
+        """Limit the colormap or axes to this upper-bound value.
+        """
         return self._vmax
 
     @vmax.setter
@@ -92,16 +177,28 @@ class VariableSet(object):
     Additionally, you can create a VariableSet, and assign it to multiple
     :obj:`~deltametrics.cube.Cube` instances, so that each shares the same
     colormaps, etc.
-    """
 
-    def __init__(self, override_list=None):
+    Examples
+    --------
+
+    Create a default variable set object.
+
+    .. doctest::
+
+        >>> dm.plot.VariableSet()
+        <deltametrics.plot.VariableSet object at 0x...>
+
+    """
+    _after_init = False  # for "freezing" instance after init
+
+    def __init__(self, override_dict=None):
         """Initialize the VariableSet.
 
         Initialize the set with default colormaps.
 
         .. note::
-            It is expected that any attribute added to known_list has a valid
-            property defined in this class.
+            It is expected that any attribute added to the `known_list` has a
+            valid property defined in this class.
 
         .. note::
             We need an improved way to document each of the defaults. Want to
@@ -117,90 +214,63 @@ class VariableSet(object):
 
         Parameters
         ----------
-        override : :obj:`dict`, optional
-            Dictionary defining variable-property sets. Dictionary value must
-            be either a string (and then match defined colormaps in matplotlib
-            or DeltaMetrics), a new matplotlib Colormap object, or an Mx3
-            numpy array that can be coerced into a linear colormap.
+        override_dict : :obj:`dict`, optional
+            Dictionary defining variable-property sets. Dictionary key should
+            set the  must be either a string (and then match defined colormaps
+            in matplotlib or DeltaMetrics), a new matplotlib Colormap object,
+            or an Mx3 numpy array that can be coerced into a linear colormap.
         """
+
         _added_list = ['net_to_gross']
         self.known_list = io.known_variables() + io.known_coords() + _added_list
 
-        # self.override_list = override_list
-        # self.variable_list = {**self.known_list, **self.override_list}
         for var in self.known_list:
-            setattr(self, var, None)
-        if override_list:
-            raise NotImplementedError
-            if not type(override_list) is dict:
-                raise TypeError('Invalid type for "override_list".'
-                                'Must be type dict, but was type: %s ' %
-                                type(self.override_list))
-            for var in override_list:
-                if var in self.known_list:
-                    setattr(self, var, override_list[var])
-                else:
-                    setattr(self, var, override_list[var])
+            setattr(self, var, None)  # set to defaults defined below (or None if no default)
+
+        if override_dict:  # loop override to set if given
+            if not type(override_dict) is dict:
+                raise TypeError('Invalid type for "override_dict".'
+                                'Must be type dict, but was type: %s '
+                                % type(override_dict))
+            for var in override_dict:
+                setattr(self, var, override_dict[var])
+
+        self._after_init = True
 
     @property
-    def variable_list(self):
-        return self._variable_list
-
-    @variable_list.setter
-    def variable_list(self, var):
-        raise NotImplementedError
-        if type(var) is dict:
-            self._variable_list = var
-        else:
-            raise TypeError('Invalid type for "override_list".'
-                            'Must be type dict, but was type: %s '
-                            % type(self.override_list))
+    def variables(self):
+        return self._variables
 
     def __getitem__(self, var):
         """Get the attribute.
 
-        This enables accessing variables by a variable name, in evaluation,
-        rather than explicit typing of variable names.
+        Variable styling (i.e., the `VariableInfo` instances can be accessed by
+        slicing the VariableSet with a string matching the VariableInfo `name`
+        field. This enables accessing variables in evaluation, rather than
+        explicit typing of variable names.
         """
+
         return self.__getattribute__(var)
 
-    @property
-    def net_to_gross(self):
-        """Net-to-gross style.
+    def __setattr__(self, key, var):
+        """Set, with check for types.
 
-        .. plot::
-
-            vs = dm.plot.VariableSet()
-            gradient = np.linspace(0, 1, 256)
-            gradient = np.vstack((gradient, gradient))
-            fig, ax = plt.subplots(figsize=(4,0.5))
-            ax.imshow(gradient, aspect='auto', cmap=vs.net_to_gross.cmap)
-            ax.set_yticks([])
-            ax.set_xticks([])
-            plt.show()
-
+        This prevents setting non-VariableInfo attributes.
         """
-        return self._net_to_gross
-
-    @net_to_gross.setter
-    def net_to_gross(self, _):
-        oranges = cm.get_cmap('Oranges', 64)
-        greys = cm.get_cmap('Greys_r', 64)
-        whiteblack = cm.get_cmap('Greys', 2)
-        combined = np.vstack((greys(np.linspace(0.3, 0.6, 2)),
-                              oranges(np.linspace(0.2, 0.8, 6))))
-        ntgcmap = colors.ListedColormap(combined, name='net_to_gross')
-        ntgcmap.set_bad("white")
-        self._net_to_gross = VariableInfo('net_to_gross',
-                                          cmap=ntgcmap,
-                                          label='net-to-gross')
+        if not self._after_init:
+            object.__setattr__(self, key, var)
+        else:
+            if type(var) is VariableInfo or var is None:
+                object.__setattr__(self, key, var)
+            else:
+                raise TypeError('Can only set attributes of type VariableInfo.')
 
     @property
     def x(self):
         return self._x
 
     @x.setter
-    def x(self, _):
+    def x(self, var):
         self._x = VariableInfo('x')
 
     @property
@@ -208,176 +278,165 @@ class VariableSet(object):
         return self._y
 
     @y.setter
-    def y(self, _):
+    def y(self, var):
         self._y = VariableInfo('y')
 
     @property
     def time(self):
         """Temporal history style.
-
-        .. plot::
-
-            vs = dm.plot.VariableSet()
-            gradient = np.linspace(0, 1, 256)
-            gradient = np.vstack((gradient, gradient))
-            fig, ax = plt.subplots(figsize=(4,0.5))
-            ax.imshow(gradient, aspect='auto', cmap=vs.time.cmap)
-            ax.set_yticks([])
-            ax.set_xticks([])
-            plt.show()
         """
         return self._time
 
     @time.setter
-    def time(self, _):
-        self._time = VariableInfo('time')
+    def time(self, var):
+        if not var:
+            self._time = VariableInfo('time')
+        elif type(var) is VariableInfo:
+            self._time = var
+        else:
+            raise TypeError
 
     @property
     def eta(self):
         """Bed elevation style.
-
-        .. plot::
-
-            vs = dm.plot.VariableSet()
-            gradient = np.linspace(0, 1, 256)
-            gradient = np.vstack((gradient, gradient))
-            fig, ax = plt.subplots(figsize=(4,0.5))
-            ax.imshow(gradient, aspect='auto', cmap=vs.eta.cmap)
-            ax.set_yticks([])
-            ax.set_xticks([])
-            plt.show()
         """
         return self._eta
 
     @eta.setter
-    def eta(self, _):
-        cmap = cm.get_cmap('cividis', 64)
-        self._eta = VariableInfo('eta', cmap=cmap)
+    def eta(self, var):
+        if not var:
+            cmap = cm.get_cmap('cividis', 64)
+            self._eta = VariableInfo('eta', cmap=cmap,
+                                     label='bed elevation')
+        elif type(var) is VariableInfo:
+            self._eta = var
+        else:
+            raise TypeError
 
     @property
     def stage(self):
         """Flow stage style.
-
-        .. plot::
-
-            vs = dm.plot.VariableSet()
-            gradient = np.linspace(0, 1, 256)
-            gradient = np.vstack((gradient, gradient))
-            fig, ax = plt.subplots(figsize=(4,0.5))
-            ax.imshow(gradient, aspect='auto', cmap=vs.stage.cmap)
-            ax.set_yticks([])
-            ax.set_xticks([])
-            plt.show()
         """
         return self._stage
 
     @stage.setter
-    def stage(self, _):
-        self._stage = VariableInfo('stage')
+    def stage(self, var):
+        if not var:
+            self._stage = VariableInfo('stage')
+        elif type(var) is VariableInfo:
+            self._stage = var
+        else:
+            raise TypeError
 
     @property
     def depth(self):
         """Flow depth style.
-
-        .. plot::
-
-            vs = dm.plot.VariableSet()
-            gradient = np.linspace(0, 1, 256)
-            gradient = np.vstack((gradient, gradient))
-            fig, ax = plt.subplots(figsize=(4,0.5))
-            ax.imshow(gradient, aspect='auto', cmap=vs.depth.cmap)
-            ax.set_yticks([])
-            ax.set_xticks([])
-            plt.show()
         """
         return self._depth
 
     @depth.setter
-    def depth(self, _):
-        cmap = cm.get_cmap('Blues', 64)
-        self._depth = VariableInfo('depth', cmap=cmap)
+    def depth(self, var):
+        if not var:
+            cmap = cm.get_cmap('Blues', 64)
+            self._depth = VariableInfo('depth', cmap=cmap,
+                                       vmin=0, label='flow depth')
+        elif type(var) is VariableInfo:
+            self._depth = var
+        else:
+            raise TypeError
 
     @property
     def discharge(self):
         """Flow discharge style.
-
-        .. plot::
-
-            vs = dm.plot.VariableSet()
-            gradient = np.linspace(0, 1, 256)
-            gradient = np.vstack((gradient, gradient))
-            fig, ax = plt.subplots(figsize=(4,0.5))
-            ax.imshow(gradient, aspect='auto', cmap=vs.discharge.cmap)
-            ax.set_yticks([])
-            ax.set_xticks([])
-            plt.show()
         """
         return self._discharge
 
     @discharge.setter
-    def discharge(self, _):
-        cmap = cm.get_cmap('winter', 64)
-        self._discharge = VariableInfo('discharge', cmap=cmap)
+    def discharge(self, var):
+        if not var:
+            cmap = cm.get_cmap('winter', 64)
+            self._discharge = VariableInfo('discharge', cmap=cmap,
+                                           label='flow discharge')
+        elif type(var) is VariableInfo:
+            self._discharge = var
+        else:
+            raise TypeError
 
     @property
     def velocity(self):
         """Flow velocity style.
-
-        .. plot::
-
-            vs = dm.plot.VariableSet()
-            gradient = np.linspace(0, 1, 256)
-            gradient = np.vstack((gradient, gradient))
-            fig, ax = plt.subplots(figsize=(4,0.5))
-            ax.imshow(gradient, aspect='auto', cmap=vs.velocity.cmap)
-            # plt.subplots_adjust(bottom = 0.5)
-            ax.set_yticks([])
-            ax.set_xticks([])
-            plt.show()
         """
         return self._velocity
 
     @velocity.setter
-    def velocity(self, _):
-        cmap = cm.get_cmap('plasma', 64)
-        self._velocity = VariableInfo('velocity', cmap=cmap)
+    def velocity(self, var):
+        if not var:
+            cmap = cm.get_cmap('plasma', 64)
+            self._velocity = VariableInfo('velocity', cmap=cmap,
+                                          label='flow velocity')
+        elif type(var) is VariableInfo:
+            self._velocity = var
+        else:
+            raise TypeError
 
     @property
     def strata_sand_frac(self):
         """Sand fraction style.
-
-        .. plot::
-
-            vs = dm.plot.VariableSet()
-            gradient = np.linspace(0, 1, 256)
-            gradient = np.vstack((gradient, gradient))
-            fig, ax = plt.subplots(figsize=(4,0.5))
-            ax.imshow(gradient, aspect='auto', cmap=vs.strata_sand_frac.cmap)
-            # plt.subplots_adjust(bottom = 0.5)
-            ax.set_yticks([])
-            ax.set_xticks([])
-            plt.show()
-
         """
         return self._strata_sand_frac
 
     @strata_sand_frac.setter
-    def strata_sand_frac(self, _):
-        sandfrac = colors.ListedColormap(
-            ['saddlebrown', 'sienna', 'goldenrod', 'gold'])
-        sandfrac.set_under('saddlebrown')
-        bn = colors.BoundaryNorm([1e-6, 1], sandfrac.N)
-        self._strata_sand_frac = VariableInfo('strata_sand_frac',
-                                              cmap=sandfrac,
-                                              norm=None, vmin=0)
+    def strata_sand_frac(self, var):
+        if not var:
+            sandfrac = colors.ListedColormap(
+                ['saddlebrown', 'sienna', 'goldenrod', 'gold'])
+            sandfrac.set_under('saddlebrown')
+            bn = colors.BoundaryNorm([1e-6, 1], sandfrac.N)
+            self._strata_sand_frac = VariableInfo('strata_sand_frac',
+                                                  cmap=sandfrac,
+                                                  norm=None, vmin=0,
+                                                  label='sand fraction')
+        elif type(var) is VariableInfo:
+            self._strata_sand_frac = var
+        else:
+            raise TypeError
 
     @property
     def strata_depth(self):
         return self._strata_depth
 
     @strata_depth.setter
-    def strata_depth(self, _):
-        self._strata_depth = VariableInfo('strata_depth')
+    def strata_depth(self, var):
+        if not var:
+            self._strata_depth = VariableInfo('strata_depth')
+        elif type(var) is VariableInfo:
+            self._strata_depth = var
+        else:
+            raise TypeError
+
+    @property
+    def net_to_gross(self):
+        """Net-to-gross style.
+        """
+        return self._net_to_gross
+
+    @net_to_gross.setter
+    def net_to_gross(self, var):
+        if not var:
+            oranges = cm.get_cmap('Oranges', 64)
+            greys = cm.get_cmap('Greys_r', 64)
+            whiteblack = cm.get_cmap('Greys', 2)
+            combined = np.vstack((greys(np.linspace(0.3, 0.6, 2)),
+                                  oranges(np.linspace(0.2, 0.8, 6))))
+            ntgcmap = colors.ListedColormap(combined, name='net_to_gross')
+            ntgcmap.set_bad("white")
+            self._net_to_gross = VariableInfo('net_to_gross',
+                                              cmap=ntgcmap,
+                                              label='net-to-gross')
+        elif type(var) is VariableInfo:
+            self.__net_to_gross = var
+        else:
+            raise TypeError
 
 
 def append_colorbar(ci, ax, **kwargs):

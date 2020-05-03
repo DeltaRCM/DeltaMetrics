@@ -12,6 +12,13 @@ This reference page documents the lower-level utilities used to make this happen
 
 The functions are defined in ``deltametrics.plot``. 
 
+Default styling
+===============
+
+By default, each variable receives a set of styling definitions.
+The default parameters of each styling variable are defined below:
+
+.. plot:: plot/document_variableset.py
 
 
 Plotting utility objects
