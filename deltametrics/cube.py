@@ -36,36 +36,50 @@ class CubeVariable(np.ndarray):
 
         >>> type(rcm8cube['velocity'])
         <class 'deltametrics.cube.CubeVariable'>
+
         >>> type(rcm8cube['velocity'].base)
         <class 'numpy.ndarray'>
+
         >>> rcm8cube['velocity'].variable
-        velocity
+        'velocity'
     """
 
     def __new__(cls, *args, **kwargs):
         """Initialize the ndarray.
         """
+
         variable = kwargs.pop('variable', None)
+        coords = kwargs.pop('coords', None)
         obj = np.array(*args, **kwargs)
         obj = np.asarray(obj).view(cls)
         obj.variable = variable
+        if not coords:
+            obj.t, obj.x, obj.y = [np.arange(l) for l in obj.shape]
+        else:
+            obj.t, obj.x, obj.y = coords['t'], coords['x'], coords['y']
         return obj
 
     def __array_finalize__(self, obj):
         """Place things that must always happen here.
 
         This method is called when any new array is cast. The ``__new__``
-        method is not called when views are case of an existing
+        method is not called when views are cast of an existing
         `CubeVariable`, so anything special about the `CubeVariable` needs to
-        implemented here additionally. This could be configured to return a
-        standard ndarray if a view is cast, but currently, it will return
-        another CubeVariable instance.
+        implemented here in addition to in ``__new__``.
+
+        This method could be configured to return a standard ndarray if a view
+        is cast, but currently, it will return another CubeVariable instance.
         """
+
         if obj is None:
             return
         self.variable = getattr(obj, 'variable', None)
+        self.t, self.x, self.y = getattr(obj, 'coords', range(3))
 
     def __repr__(self):
+        """Lighterweight repr
+        """
+
         if self.size > 50:
             return str(type(self)) + ' variable: `' + self.variable \
                 + '`; dtype: ' + str(self.dtype) + ' size: ' + str(self.size)
@@ -330,6 +344,7 @@ class BaseCube(abc.ABC):
         method.
         """
 
+        # parse arguments
         if len(args) == 0:
             raise ValueError
         elif len(args) == 1:
@@ -339,11 +354,14 @@ class BaseCube(abc.ABC):
             SectionInstance = args[0]
             SectionAttribute = args[1]
 
+        # call `show()` from string or by instance
         if type(SectionInstance) is str:
             self.sections[SectionInstance].show(SectionAttribute, **kwargs)
         else:
             if not issubclass(type(SectionInstance), section.BaseSection):
-                raise TypeError
+                raise TypeError('You must pass a Section instance, '
+                                'or a string matching the name of a '
+                                'section registered to the cube.')
             SectionInstance.show(**kwargs)
 
 
@@ -394,10 +412,6 @@ class DataCube(BaseCube):
 
     def stratigraphy_from(self, variable='eta'):
         """Compute stratigraphy attributes.
-
-        .. note::
-
-            This method wraps the private method ``_compute_stratigraphy``.
 
         Parameters
         ----------
@@ -485,15 +499,14 @@ class DataCube(BaseCube):
         return self._psvd_vxl_cnt
 
 
-class StratigraphicCube(BaseCube):
-    """StratigraphicCube object.
+class StratigraphyCube(DataCube):
+    """StratigraphyCube object.
 
     A cube of precomputed stratigraphy. This is a z-x-y matrix defining
     variables at specific voxel locations.
 
-    .. warning::
+    This is a special case of the data cube.
 
-        This class has not been implemented.
     """
 
     def __init__(self, data, read=[], varset=None):
@@ -523,3 +536,9 @@ class StratigraphicCube(BaseCube):
 
         self._knows_spacetime = False
         self._knows_stratigraphy = True
+
+    @staticmethod
+    def from_DataCube(DataCubeInstance, stratigraphy_from=None):
+        raise NotImplementedError
+        # this should create a cube, with "frozen" stratigraphy (boxy I guess??)
+        StratigraphicCube(DataCubeInstance, stratigraphy_from=stratigraphy_from)

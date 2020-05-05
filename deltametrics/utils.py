@@ -28,6 +28,37 @@ def format_table(number):
     return(string)
 
 
+class NoStratigraphyError(AttributeError):
+    def __init__(self, var):
+        """
+
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which variable user tried to access.
+
+        obj : :obj:`str`
+            Which object user tried to access.
+        """
+        print(var)
+        message = "'" + type(obj).__name__ +"'" + " object has no attribute " \
+                  "'" + var
+
+        # Call the base class constructor with the parameters it needs
+        super().__init__(message)
+
+
+def needs_stratigraphy(func):
+    """Decorator for properties requiring stratigraphy.
+    """
+    def decorator(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except AttributeError as e:
+            raise NoStratigraphyError(e)
+    return decorator
+
+
 class AttributeChecker(object):
     """Mixin attribute checker class.
 
