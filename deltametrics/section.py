@@ -43,6 +43,14 @@ class BaseSectionVariable(np.ma.MaskedArray):
     def __getitem__(self, item):
         return self._data[item]
 
+    @property
+    def t(self):
+        return self._t
+
+    @property
+    def z(self):
+        return self._z
+
 
 class DataSectionVariable(BaseSectionVariable):
     """Variable returned from a DataCube Section.
@@ -193,15 +201,8 @@ class BaseSection(abc.ABC):
 
         Parameters
         ----------
-
-        pts : `ndarray`, optional
-            two column ndarray defining the x-y coordinates to extract the
-            section.
-
-        limit : `list`, `ndarray`, optional
-            Vertical limits to extract the section over. Use None or np.nan to
-            specify the lowermost or uppermost lines. Default is to extract
-            full section.
+        CubeInstance : :obj:`~deltametrics.cube.Cube` subclass instance, optional
+            Connect to this cube. No connection is made if cube is not provided.
 
         Notes
         -----
@@ -209,12 +210,16 @@ class BaseSection(abc.ABC):
         If no arguments are passed, and empty section is returned, which is
         not connected to any cube, and will need to be manually connected to
         have any functionality.
-
-        ``limit`` option is not implemented currently.
         """
 
+        self.cube = None  # begin unconnected
+
+        if len(args) > 1:
+            raise ValueError('Expected single argument to %s instantiation.'
+                             % type(self))
+
         if len(args) > 0:
-            self._compute_section_coords()
+            self.connect(args[0])
         else:
             pass
 
@@ -254,9 +259,8 @@ class BaseSection(abc.ABC):
         the section.
         """
 
-        self._s = np.sqrt((self._x[1:] - self._x[:-1])**2
-                          + (self._y[1:] - self._y[:-1])**2)
-
+        self._s = np.hstack((0, np.sqrt((self._x[1:] - self._x[:-1])**2
+                                       + (self._y[1:] - self._y[:-1])**2)))
         self.strat_attrs = {}
         if type(self.cube) is cube.DataCube:
             if self.cube._knows_stratigraphy:
@@ -275,16 +279,14 @@ class BaseSection(abc.ABC):
             raise TypeError
 
     @property
-    def coords(self):
-        return self._coords
+    def trace(self):
+        """Coordinates of the section in the x-y plane.
+        """
+        return np.column_stack((self._x, self._y))
 
     @property
     def s(self):
         return self._s
-
-    @property
-    def z(self):
-        return self._z
 
     @property
     def variables(self):
@@ -325,6 +327,8 @@ class BaseSection(abc.ABC):
             return StratigraphySectionVariable(_data=self.cube[var][:, self._y, self._x],
                                                _mask=np.ones_like(self.cube[var][:, self._y, self._x], dtype=np.bool),
                                                strat_attrs=self.strat_attrs)
+        elif self.cube is None:
+            raise AttributeError('No cube connected. Are you sure you ran `.connect()`?')
         else:
             raise TypeError('Unknown Cube type encountered: %s'
                             % type(self.cube))
@@ -370,13 +374,13 @@ class BaseSection(abc.ABC):
         else:
             _varinfo = utils.VariableSet()[SectionAttribute]
 
-        SectionVariable = self[SectionAttribute]
+        SectionVariableInstance = self[SectionAttribute]
 
         if style == 'mesh':
-            _arr = SectionVariable.as_stratigraphy()
-            _arr_Y = SectionVariable._psvd_flld
-            _arr_X = np.tile(SectionVariable._s, (_arr.shape[0], 1))
-            # print("_s shape:", SectionVariable._s.shape)
+            _arr = SectionVariableInstance.as_stratigraphy()
+            _arr_Y = SectionVariableInstance._psvd_flld
+            _arr_X = np.tile(SectionVariableInstance._s, (_arr.shape[0], 1))
+            # print("_s shape:", SectionVariableInstance._s.shape)
             # print("_arr:", _arr.shape)
             # print("_arr_Y:", _arr_Y.shape)
             # print("_arr_X:", _arr_X.shape)
@@ -395,7 +399,7 @@ class BaseSection(abc.ABC):
                     transform=ax.transAxes)
         elif style in ['line', 'lines']:
             raise NotImplementedError
-            _arr = SectionVariable
+            _arr = SectionVariableInstance
             nt = _arr.shape[0]
             cmap = plt.cm.get_cmap('viridis', nt)
             for t in np.arange(nt):
@@ -417,24 +421,54 @@ class PathSection(BaseSection):
         center of the surface area of a grid cell.
     """
 
-    def __init__(self, path):
-        pass
+    def __init__(self, *args, path):
+        """Instantiate.
 
+        Parameters
+        ----------
+        path : :obj:`ndarray`
+            An Mx2 `ndarray` specifying the x-y pairs of coordinates to
+            extract the section from.
 
-class StrikeSection(BaseSection):
-    """Strike section object.
+        Notes
+        -----
 
-    """
+        `path` must be supplied as a keyword argument.
 
-    def __init__(self, *args, y=0):
+        """
 
-        self.y = y
+        self._path = path
 
         super().__init__(*args)
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.
+        """
 
+        self._x = self._path[:, 1]
+        self._y = self._path[:, 0]
+
+    @property
+    def path(self):
+        """Path of the PathSection.
+
+        Returns same as `trace` property, but setter validates some settings.
+        """
+        return self._trace
+
+
+class StrikeSection(BaseSection):
+    """Strike section object.
+    """
+
+    def __init__(self, *args, y=0):
+
+        self.y = y  # strike coord scalar
+
+        super().__init__(*args)
+
+    def _compute_section_coords(self):
+        """Calculate coordinates of the strike section.
         """
 
         _nx = self.cube['eta'].shape[2]

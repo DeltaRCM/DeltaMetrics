@@ -300,6 +300,16 @@ class BaseCube(abc.ABC):
 
         SectionInstance : :obj:`~deltametrics.section.BaseSection` subclass instance
             The section instance that will be registered.
+
+        Notes
+        -----
+
+        When the API for instantiation of the different section types is
+        settled, we should enable the ability to pass section kwargs to this
+        method, and then instantiate the section internally. This avoids the
+        user having to specify ``dm.section.StrikeSection(y=5)`` in the
+        ``register_Section()`` call, and instead can do something like
+        ``rcm8cube.register_section('trial', trace='strike', y=5)``.
         """
 
         if not issubclass(type(SectionInstance), section.BaseSection):
@@ -332,7 +342,6 @@ class BaseCube(abc.ABC):
                   vmin=self.varset[var].vmin,
                   vmax=self.varset[var].vmax)
         ax.set_xlabel('')
-        # ax.set_title(self.varset[var])
 
     def show_section(self, *args, **kwargs):
         """Show a section.
