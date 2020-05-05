@@ -39,6 +39,23 @@ def test_error_init_bad_extension():
     nocube = cube.DataCube('./nonexistent/path.doc')
 
 
+def test_stratigraphy_from_eta():
+    rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube.stratigraphy_from('eta')
+    assert rcm8cube._knows_stratigraphy is True
+
+
+def test_init_cube_stratigraphy_argument():
+    rcm8cube = cube.DataCube(rcm8_path, stratigraphy_from='eta')
+    assert rcm8cube._knows_stratigraphy is True
+
+
+def test_stratigraphy_from_default_noargument():
+    rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube.stratigraphy_from()
+    assert rcm8cube._knows_stratigraphy is True
+
+
 def test_init_with_shared_varset_prior():
     shared_varset = plot.VariableSet()
     rcm8cube1 = cube.DataCube(rcm8_path, varset=shared_varset)
@@ -73,6 +90,7 @@ def test_slice_op_invalid_name():
 
 def test_register_section():
     rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube.stratigraphy_from('eta')
     rcm8cube.register_section('testsection', section.StrikeSection(y=10))
     assert rcm8cube.sections is rcm8cube.section_set
     assert len(rcm8cube.sections.keys()) == 1
@@ -81,10 +99,12 @@ def test_register_section():
 
 def test_sections_slice_op():
     rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube.stratigraphy_from('eta')
     rcm8cube.register_section('testsection', section.StrikeSection(y=10))
     assert 'testsection' in rcm8cube.sections.keys()
     slc = rcm8cube.sections['testsection']
     assert issubclass(type(slc), section.BaseSection)
+
 
 # test plotting routines
 # @pytest.mark.mpl_image_compare()
@@ -96,128 +116,142 @@ def test_sections_slice_op():
 #     return gui.fig
 
 
+def test_nostratigraphy_default():
+    rcm8cube = cube.DataCube(rcm8_path)
+    assert rcm8cube._knows_stratigraphy is False
+
+
+@pytest.mark.xfail(raises=AttributeError, strict=True)
+def test_nostratigraphy_default_attribute():
+    """Fix this test once section is fully implemented"""
+    rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube.register_section('testsection', section.StrikeSection(y=10))
+    assert rcm8cube._knows_stratigraphy is False
+    rcm8cube.sections['testsection']['velocity'].as_stratigraphy()
+
+
 # create a fixed cube for variable existing, type checks
-fixedcube = cube.DataCube(rcm8_path)
+fixeddatacube = cube.DataCube(rcm8_path)
 
 
-def test_fixedcube_init_varset():
-    assert type(fixedcube.varset) is plot.VariableSet
+def test_fixeddatacube_init_varset():
+    assert type(fixeddatacube.varset) is plot.VariableSet
 
 
-def test_fixedcube_init_data_path():
-    assert fixedcube.data_path == rcm8_path
+def test_fixeddatacube_init_data_path():
+    assert fixeddatacube.data_path == rcm8_path
 
 
-def test_fixedcube_init_dataio():
-    assert hasattr(fixedcube, 'dataio')
+def test_fixeddatacube_init_dataio():
+    assert hasattr(fixeddatacube, 'dataio')
 
 
-def test_fixedcube_init_variables():
-    assert type(fixedcube.variables) is list
+def test_fixeddatacube_init_variables():
+    assert type(fixeddatacube.variables) is list
 
 
-def test_fixedcube_init_plan_set():
-    assert type(fixedcube.plan_set) is dict
+def test_fixeddatacube_init_plan_set():
+    assert type(fixeddatacube.plan_set) is dict
 
 
-def test_fixedcube_init_plans():
-    assert type(fixedcube.plans) is dict
-    assert fixedcube.plans is fixedcube.plan_set
-    assert len(fixedcube.plans) == 0
+def test_fixeddatacube_init_plans():
+    assert type(fixeddatacube.plans) is dict
+    assert fixeddatacube.plans is fixeddatacube.plan_set
+    assert len(fixeddatacube.plans) == 0
 
 
-def test_fixedcube_init_section_set():
-    assert type(fixedcube.section_set) is dict
-    assert len(fixedcube.section_set) == 0
+def test_fixeddatacube_init_section_set():
+    assert type(fixeddatacube.section_set) is dict
+    assert len(fixeddatacube.section_set) == 0
 
 
-def test_fixedcube_init_sections():
-    assert type(fixedcube.sections) is dict
-    assert fixedcube.sections is fixedcube.section_set
+def test_fixeddatacube_init_sections():
+    assert type(fixeddatacube.sections) is dict
+    assert fixeddatacube.sections is fixeddatacube.section_set
 
 
 # compute stratigraphy for the cube
-fixedcube.stratigraphy_from('eta')
+fixeddatacube.stratigraphy_from('eta')
 
 
-def test_fixedcube_init_preserved_index():
-    assert type(fixedcube.preserved_index) is np.ndarray
+def test_fixeddatacube_init_preserved_index():
+    assert type(fixeddatacube.preserved_index) is np.ndarray
 
 
-def test_fixedcube_init_preserved_voxel_count():
-    assert type(fixedcube.preserved_voxel_count) is np.ndarray
+def test_fixeddatacube_init_preserved_voxel_count():
+    assert type(fixeddatacube.preserved_voxel_count) is np.ndarray
 
 
 # test setting all the properties / attributes
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_preserved_index():
-    fixedcube.preserved_index = 10
+def test_fixeddatacube_set_preserved_index():
+    fixeddatacube.preserved_index = 10
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_preserved_voxel_count():
-    fixedcube.preserved_voxel_count = 10
+def test_fixeddatacube_set_preserved_voxel_count():
+    fixeddatacube.preserved_voxel_count = 10
 
 
-def test_fixedcube_set_varset():
+def test_fixeddatacube_set_varset():
     new_varset = plot.VariableSet()
-    fixedcube.varset = new_varset
-    assert hasattr(fixedcube, 'varset')
-    assert type(fixedcube.varset) is plot.VariableSet
-    assert fixedcube.varset is new_varset
+    fixeddatacube.varset = new_varset
+    assert hasattr(fixeddatacube, 'varset')
+    assert type(fixeddatacube.varset) is plot.VariableSet
+    assert fixeddatacube.varset is new_varset
 
 
 @pytest.mark.xfail(raises=TypeError, strict=True)
-def test_fixedcube_set_varset_bad_type():
-    fixedcube.varset = np.zeros(10)
+def test_fixeddatacube_set_varset_bad_type():
+    fixeddatacube.varset = np.zeros(10)
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_data_path():
-    fixedcube.data_path = '/trying/to/change/path.nc'
+def test_fixeddatacube_set_data_path():
+    fixeddatacube.data_path = '/trying/to/change/path.nc'
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_dataio():
-    fixedcube.dataio = 10  # io.NetCDF_IO(rcm8_path)
+def test_fixeddatacube_set_dataio():
+    fixeddatacube.dataio = 10  # io.NetCDF_IO(rcm8_path)
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_variables_list():
-    fixedcube.variables = ['is', 'a', 'list']
+def test_fixeddatacube_set_variables_list():
+    fixeddatacube.variables = ['is', 'a', 'list']
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_variables_dict():
-    fixedcube.variables = {'is': True, 'a': True, 'dict': True}
+def test_fixeddatacube_set_variables_dict():
+    fixeddatacube.variables = {'is': True, 'a': True, 'dict': True}
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_plan_set_list():
-    fixedcube.plan_set = ['is', 'a', 'list']
+def test_fixeddatacube_set_plan_set_list():
+    fixeddatacube.plan_set = ['is', 'a', 'list']
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_plan_set_dict():
-    fixedcube.plan_set = {'is': True, 'a': True, 'dict': True}
+def test_fixeddatacube_set_plan_set_dict():
+    fixeddatacube.plan_set = {'is': True, 'a': True, 'dict': True}
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_plans():
-    fixedcube.plans = 10
+def test_fixeddatacube_set_plans():
+    fixeddatacube.plans = 10
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_section_set_list():
-    fixedcube.section_set = ['is', 'a', 'list']
+def test_fixeddatacube_set_section_set_list():
+    fixeddatacube.section_set = ['is', 'a', 'list']
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixedcube_set_section_set_dict():
-    fixedcube.section_set = {'is': True, 'a': True, 'dict': True}
+def test_fixeddatacube_set_section_set_dict():
+    fixeddatacube.section_set = {'is': True, 'a': True, 'dict': True}
 
 
 @pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixedset_set_sections():
-    fixedcube.sections = 10
+    fixeddatacube.sections = 10

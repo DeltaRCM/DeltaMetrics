@@ -8,9 +8,6 @@ import matplotlib.pyplot as plt
 
 from deltametrics import plot
 
-rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
-                         'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
-
 
 def test_initialize_default_VariableInfo():
     vi = plot.VariableInfo('testinfo')
