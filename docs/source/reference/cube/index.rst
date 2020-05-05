@@ -1,10 +1,14 @@
-.. api.observation:
+.. api.cube:
 
 *********************************
-The data Cube
+The Cube
 *********************************
 
-The package makes available a `Cube` object, which is the central office to all of the other functionality of DeltaMetrics. These data cubes can hold any single, or many attributes, for an ``x-y-v`` `ndarray` a value specifies the type of data stored in ``v``. ``v`` could be, lidar scans, overhead photos, grain size maps (DeltaRCM), flow velocity (DeltaRCM), etc.
+The package makes available `Cube` objects, which are the central office to all of the other functionality of DeltaMetrics. 
+
+The cubes keep track of underlying data, which may represent any number of unique variables. 
+For example, the :obj:`~deltametrics.cube.DataCube` connects to a set of data in the form of a ``t-x-y`` `ndarray`, and associated metadata defining the array coordinates, type, and data units. 
+So, variables in the underlying data might be lidar scans, overhead photos, grain size maps (pyDeltaRCM), or flow velocity records (pyDeltaRCM), etc.
 
 The functions are defined in ``deltametrics.cube``. 
 
@@ -19,6 +23,8 @@ Cube types
 
     DataCube
         :special-members:
+    StratigraphyCube
+        :special-members:
     BaseCube
     	:special-members:
 
@@ -30,4 +36,4 @@ Cube returns
     :toctree: ../../_autosummary
 
 	CubeVariable
-		:special-members:
+		:no-members:

@@ -34,5 +34,7 @@ Section returns
 .. autosummary:: 
     :toctree: ../../_autosummary
 
-    SectionVariable
+    BaseSectionVariable
+    DataSectionVariable
+    StratigraphySectionVariable
 

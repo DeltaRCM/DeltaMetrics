@@ -51,7 +51,7 @@ exclude_patterns = []
 # Napoleon settings
 napoleon_google_docstring = False
 napoleon_numpy_docstring = True
-napoleon_include_init_with_doc = True
+napoleon_include_init_with_doc = False
 napoleon_include_private_with_doc = False
 napoleon_include_special_with_doc = True
 napoleon_use_admonition_for_examples = False
@@ -67,8 +67,12 @@ automodapi_inheritance_diagram = False
 autodoc_default_flags = ['inherited-members', 'no-private-members']
 
 # doctest
-doctest_global_setup = '''import deltametrics as dm'''
-doctest_test_doctest_blocks = ''  # empty string disables testing all docstring
+doctest_global_setup = '''
+import deltametrics as dm
+import numpy as np
+from matplotlib import pyplot as plt
+'''
+doctest_test_doctest_blocks = ''  # empty string disables testing all code in any docstring
 
 ## mpl plots
 plot_basedir = 'pyplots'

@@ -57,10 +57,11 @@ Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, wh
 
     >>> type(rcm8cube['velocity'])
     <class 'deltametrics.cube.CubeVariable'>
+
     >>> type(rcm8cube['velocity'].base)
     <class 'numpy.ndarray'>
 
-For example, we could determine how much the bed elevation of the model changed on average, at a specific location in the model domain ``(43, 123)``, by slicing the ``eta`` variable, and subtracting.
+For example, we could determine how much the average bed elevation change at a specific location in the model domain (43, 123), by slicing the ``eta`` variable, and differencing timesteps.
 
 .. doctest::
 
@@ -68,7 +69,7 @@ For example, we could determine how much the bed elevation of the model changed 
     0.08364895
 
 The DataCube is often used by taking horizontal or vertical "cuts" of the cube. 
-In this package, we refer to horizontal cuts as "plans" or (`Planform` data) and vertical cuts as "sections" (`Section` data). 
+In this package, we refer to horizontal cuts as "plans" (`Planform` data) and vertical cuts as "sections" (`Section` data). 
 
 The :doc:`Planform <../reference/plan/index>` and :doc:`Section <../reference/section/index>` data types have a series of helpful classes and functions, which are fully documented in their respective pages.
 
@@ -105,17 +106,17 @@ We are often interested in not only the spatiotemporal changes in the planform o
 In DeltaMetrics, we refer to this preserved history as the "stratigraphy", and we provide a number of convenient routines for computing stratigraphy and analyzing the deposits.
 
 Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created. 
-We must directly tell the Cube instance to compute stratigraphy, by specifying which variable contains the spatiotemporal bed elevation history that dictates preservation.
+We must directly tell the Cube instance to compute stratigraphy by specifying which variable contains the bed elevation history, because this history dictates preservation.
 
 .. doctest::
 
     >>> rcm8cube.stratigraphy_from('eta')
 
-For this example, the stratigraphic computation is relatively fast (< one second), but for large data domains covering a large amount of time, this computation may not be as rapid.
+For this example, the stratigraphic computation is relatively fast (< one second), but for large data domains covering a large amount of time, this computation may not be as fast.
 
 For the sake of simplicity, this documentation uses the :obj:`~deltametrics.section.StrikeSection` as an example, but the following lexicon generalizes across the Section classes.
 
-For a data cube, sections are most often instantiated by the :obj:`~deltametrics.cube.Cube.register_section` method:
+For a data cube, sections are most easily instantiated by the :obj:`~deltametrics.cube.Cube.register_section` method:
 
 .. doctest::
 

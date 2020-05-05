@@ -37,3 +37,10 @@ You may wish to add the upstream repository for easy ``push``/``pull``.
 .. code:: console
 
     $ git remote add upstream https://github.com/DeltaRCM/DeltaMetrics.git
+
+
+Developing
+----------
+
+We explicitly ignore a folder called ``temp`` at the root of the project directory.
+You should place any development projects, jupyter notebooks, images, sample files, etc that you want to work with, but are not part of the package itself, here.
