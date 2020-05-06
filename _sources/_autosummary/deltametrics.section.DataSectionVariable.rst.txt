@@ -1,0 +1,126 @@
+deltametrics.section.DataSectionVariable
+========================================
+
+.. currentmodule:: deltametrics.section
+
+.. autoclass:: DataSectionVariable
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DataSectionVariable.__init__
+      ~DataSectionVariable.all
+      ~DataSectionVariable.anom
+      ~DataSectionVariable.any
+      ~DataSectionVariable.argmax
+      ~DataSectionVariable.argmin
+      ~DataSectionVariable.argpartition
+      ~DataSectionVariable.argsort
+      ~DataSectionVariable.as_spacetime
+      ~DataSectionVariable.as_stratigraphy
+      ~DataSectionVariable.astype
+      ~DataSectionVariable.byteswap
+      ~DataSectionVariable.choose
+      ~DataSectionVariable.clip
+      ~DataSectionVariable.compress
+      ~DataSectionVariable.compressed
+      ~DataSectionVariable.conj
+      ~DataSectionVariable.conjugate
+      ~DataSectionVariable.copy
+      ~DataSectionVariable.count
+      ~DataSectionVariable.cumprod
+      ~DataSectionVariable.cumsum
+      ~DataSectionVariable.diagonal
+      ~DataSectionVariable.dot
+      ~DataSectionVariable.dump
+      ~DataSectionVariable.dumps
+      ~DataSectionVariable.fill
+      ~DataSectionVariable.filled
+      ~DataSectionVariable.flatten
+      ~DataSectionVariable.get_fill_value
+      ~DataSectionVariable.get_imag
+      ~DataSectionVariable.get_real
+      ~DataSectionVariable.getfield
+      ~DataSectionVariable.harden_mask
+      ~DataSectionVariable.ids
+      ~DataSectionVariable.iscontiguous
+      ~DataSectionVariable.item
+      ~DataSectionVariable.itemset
+      ~DataSectionVariable.max
+      ~DataSectionVariable.mean
+      ~DataSectionVariable.min
+      ~DataSectionVariable.mini
+      ~DataSectionVariable.newbyteorder
+      ~DataSectionVariable.nonzero
+      ~DataSectionVariable.partition
+      ~DataSectionVariable.prod
+      ~DataSectionVariable.product
+      ~DataSectionVariable.ptp
+      ~DataSectionVariable.put
+      ~DataSectionVariable.ravel
+      ~DataSectionVariable.repeat
+      ~DataSectionVariable.reshape
+      ~DataSectionVariable.resize
+      ~DataSectionVariable.round
+      ~DataSectionVariable.searchsorted
+      ~DataSectionVariable.set_fill_value
+      ~DataSectionVariable.setfield
+      ~DataSectionVariable.setflags
+      ~DataSectionVariable.shrink_mask
+      ~DataSectionVariable.soften_mask
+      ~DataSectionVariable.sort
+      ~DataSectionVariable.squeeze
+      ~DataSectionVariable.std
+      ~DataSectionVariable.sum
+      ~DataSectionVariable.swapaxes
+      ~DataSectionVariable.take
+      ~DataSectionVariable.tobytes
+      ~DataSectionVariable.tofile
+      ~DataSectionVariable.toflex
+      ~DataSectionVariable.tolist
+      ~DataSectionVariable.torecords
+      ~DataSectionVariable.tostring
+      ~DataSectionVariable.trace
+      ~DataSectionVariable.transpose
+      ~DataSectionVariable.unshare_mask
+      ~DataSectionVariable.var
+      ~DataSectionVariable.view
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~DataSectionVariable.T
+      ~DataSectionVariable.base
+      ~DataSectionVariable.baseclass
+      ~DataSectionVariable.ctypes
+      ~DataSectionVariable.data
+      ~DataSectionVariable.dtype
+      ~DataSectionVariable.fill_value
+      ~DataSectionVariable.flags
+      ~DataSectionVariable.flat
+      ~DataSectionVariable.hardmask
+      ~DataSectionVariable.imag
+      ~DataSectionVariable.itemsize
+      ~DataSectionVariable.mask
+      ~DataSectionVariable.nbytes
+      ~DataSectionVariable.ndim
+      ~DataSectionVariable.real
+      ~DataSectionVariable.recordmask
+      ~DataSectionVariable.shape
+      ~DataSectionVariable.sharedmask
+      ~DataSectionVariable.size
+      ~DataSectionVariable.strides
+      ~DataSectionVariable.t
+      ~DataSectionVariable.z
+   
+   

@@ -1,0 +1,44 @@
+deltametrics.cube.DataCube
+==========================
+
+.. currentmodule:: deltametrics.cube
+
+.. autoclass:: DataCube
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DataCube.__init__
+      ~DataCube.read
+      ~DataCube.register_plan
+      ~DataCube.register_section
+      ~DataCube.show_cube
+      ~DataCube.show_plan
+      ~DataCube.show_section
+      ~DataCube.stratigraphy_from
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~DataCube.data_path
+      ~DataCube.dataio
+      ~DataCube.plan_set
+      ~DataCube.plans
+      ~DataCube.preserved_index
+      ~DataCube.preserved_voxel_count
+      ~DataCube.section_set
+      ~DataCube.sections
+      ~DataCube.variables
+      ~DataCube.varset
+   
+   

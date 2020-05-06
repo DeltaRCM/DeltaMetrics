@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>deltametrics.section.DipSection &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.section.RadialSection" href="deltametrics.section.RadialSection.html" />
-    <link rel="prev" title="deltametrics.section.BaseSection" href="deltametrics.section.BaseSection.html" /> 
+    <link rel="prev" title="deltametrics.section.StrikeSection" href="deltametrics.section.StrikeSection.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -32,7 +32,7 @@
           <a href="deltametrics.section.RadialSection.html" title="deltametrics.section.RadialSection"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="deltametrics.section.BaseSection.html" title="deltametrics.section.BaseSection"
+          <a href="deltametrics.section.StrikeSection.html" title="deltametrics.section.StrikeSection"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
@@ -42,8 +42,8 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="deltametrics.section.BaseSection.html"
-                        title="previous chapter">deltametrics.section.BaseSection</a></p>
+  <p class="topless"><a href="deltametrics.section.StrikeSection.html"
+                        title="previous chapter">deltametrics.section.StrikeSection</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="deltametrics.section.RadialSection.html"
                         title="next chapter">deltametrics.section.RadialSection</a></p>
@@ -77,12 +77,20 @@
 <dl class="py class">
 <dt id="deltametrics.section.DipSection">
 <em class="property">class </em><code class="sig-prename descclassname">deltametrics.section.</code><code class="sig-name descname">DipSection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">apex</span></em>, <em class="sig-param"><span class="n">angle</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DipSection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base section object.</p>
-<p>Defines common attributes and methods of a section object.</p>
+<dd><p>Dip section object.</p>
 <dl class="py method">
 <dt id="deltametrics.section.DipSection.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">apex</span></em>, <em class="sig-param"><span class="n">angle</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DipSection.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><p>Identify coordinates defining the section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>CubeInstance</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> subclass instance, optional) – Connect to this cube. No connection is made if cube is not provided.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If no arguments are passed, and empty section is returned, which is
+not connected to any cube, and will need to be manually connected to
+have any functionality.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -93,7 +101,31 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.__init__" title="deltametrics.section.DipSection.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(apex, angle)</p></td>
-<td><p>Initialize self.</p></td>
+<td><p>Identify coordinates defining the section.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code>(CubeInstance)</p></td>
+<td><p>Connect this Section instance to a Cube instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code>(SectionAttribute[, style])</p></td>
+<td><p>Show the section.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">s</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></p></td>
+<td><p>Coordinates of the section in the x-y plane.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></p></td>
+<td><p>List of variables.</p></td>
 </tr>
 </tbody>
 </table>
@@ -120,7 +152,7 @@
           <a href="deltametrics.section.RadialSection.html" title="deltametrics.section.RadialSection"
              >next</a> |</li>
         <li class="right" >
-          <a href="deltametrics.section.BaseSection.html" title="deltametrics.section.BaseSection"
+          <a href="deltametrics.section.StrikeSection.html" title="deltametrics.section.StrikeSection"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
@@ -129,7 +161,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
   </body>
 </html>

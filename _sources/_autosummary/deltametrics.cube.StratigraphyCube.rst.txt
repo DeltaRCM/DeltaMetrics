@@ -1,0 +1,45 @@
+deltametrics.cube.StratigraphyCube
+==================================
+
+.. currentmodule:: deltametrics.cube
+
+.. autoclass:: StratigraphyCube
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~StratigraphyCube.__init__
+      ~StratigraphyCube.from_DataCube
+      ~StratigraphyCube.read
+      ~StratigraphyCube.register_plan
+      ~StratigraphyCube.register_section
+      ~StratigraphyCube.show_cube
+      ~StratigraphyCube.show_plan
+      ~StratigraphyCube.show_section
+      ~StratigraphyCube.stratigraphy_from
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~StratigraphyCube.data_path
+      ~StratigraphyCube.dataio
+      ~StratigraphyCube.plan_set
+      ~StratigraphyCube.plans
+      ~StratigraphyCube.preserved_index
+      ~StratigraphyCube.preserved_voxel_count
+      ~StratigraphyCube.section_set
+      ~StratigraphyCube.sections
+      ~StratigraphyCube.variables
+      ~StratigraphyCube.varset
+   
+   

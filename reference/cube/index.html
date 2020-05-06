@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
-    <title>The data Cube &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <title>The Cube &#8212; DeltaMetrics 0.1.0 documentation</title>
     <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -16,7 +16,7 @@
     <script src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="deltametrics.cube.Cube" href="../../_autosummary/deltametrics.cube.Cube.html" />
+    <link rel="next" title="deltametrics.cube.DataCube" href="../../_autosummary/deltametrics.cube.DataCube.html" />
     <link rel="prev" title="API reference" href="../index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,7 +29,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../../_autosummary/deltametrics.cube.Cube.html" title="deltametrics.cube.Cube"
+          <a href="../../_autosummary/deltametrics.cube.DataCube.html" title="deltametrics.cube.DataCube"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../index.html" title="API reference"
@@ -40,12 +40,21 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">The Cube</a><ul>
+<li><a class="reference internal" href="#cube-types">Cube types</a></li>
+<li><a class="reference internal" href="#cube-returns">Cube returns</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="../index.html"
                         title="previous chapter">API reference</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../../_autosummary/deltametrics.cube.Cube.html"
-                        title="next chapter">deltametrics.cube.Cube</a></p>
+  <p class="topless"><a href="../../_autosummary/deltametrics.cube.DataCube.html"
+                        title="next chapter">deltametrics.cube.DataCube</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -71,21 +80,47 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="the-data-cube">
-<h1>The data Cube<a class="headerlink" href="#the-data-cube" title="Permalink to this headline">¶</a></h1>
-<p>The package makes available a <cite>Cube</cite> object, which is the central office to all of the other functionality of DeltaMetrics. These data cubes can hold any single, or many attributes, for an <code class="docutils literal notranslate"><span class="pre">x-y-v</span></code> <cite>ndarray</cite> a value specifies the type of data stored in <code class="docutils literal notranslate"><span class="pre">v</span></code>. <code class="docutils literal notranslate"><span class="pre">v</span></code> could be, lidar scans, overhead photos, grain size maps (DeltaRCM), flow velocity (DeltaRCM), etc.</p>
+  <div class="section" id="the-cube">
+<h1>The Cube<a class="headerlink" href="#the-cube" title="Permalink to this headline">¶</a></h1>
+<p>The package makes available <cite>Cube</cite> objects, which are the central office to all of the other functionality of DeltaMetrics.</p>
+<p>The cubes keep track of underlying data, which may represent any number of unique variables.
+For example, the <a class="reference internal" href="../../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a> connects to a set of data in the form of a <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code> <cite>ndarray</cite>, and associated metadata defining the array coordinates, type, and data units.
+So, variables in the underlying data might be lidar scans, overhead photos, grain size maps (pyDeltaRCM), or flow velocity records (pyDeltaRCM), etc.</p>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.cube</span></code>.</p>
+<div class="section" id="cube-types">
+<h2>Cube types<a class="headerlink" href="#cube-types" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.cube.Cube.html#deltametrics.cube.Cube" title="deltametrics.cube.Cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code></a>(*args)</p></td>
-<td><p>Data cube object.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a>(data[, read, varset, stratigraphy_from])</p></td>
+<td><p>DataCube object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.cube.StratigraphyCube.html#deltametrics.cube.StratigraphyCube" title="deltametrics.cube.StratigraphyCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StratigraphyCube</span></code></a>(data[, read, varset])</p></td>
+<td><p>StratigraphyCube object.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.cube.BaseCube.html#deltametrics.cube.BaseCube" title="deltametrics.cube.BaseCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseCube</span></code></a>(data[, read, varset])</p></td>
+<td><p>Base cube object.</p></td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="cube-returns">
+<h2>Cube returns<a class="headerlink" href="#cube-returns" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.cube.CubeVariable.html#deltametrics.cube.CubeVariable" title="deltametrics.cube.CubeVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CubeVariable</span></code></a></p></td>
+<td><p>Slice of a Cube.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -104,7 +139,7 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../../_autosummary/deltametrics.cube.Cube.html" title="deltametrics.cube.Cube"
+          <a href="../../_autosummary/deltametrics.cube.DataCube.html" title="deltametrics.cube.DataCube"
              >next</a> |</li>
         <li class="right" >
           <a href="../index.html" title="API reference"
@@ -115,7 +150,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
   </body>
 </html>

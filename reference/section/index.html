@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>Section operations and classes &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -40,6 +40,15 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Section operations and classes</a><ul>
+<li><a class="reference internal" href="#section-types">Section types</a></li>
+<li><a class="reference internal" href="#section-returns">Section returns</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="../../_autosummary/deltametrics.mask.LandMask.html"
                         title="previous chapter">deltametrics.mask.LandMask</a></p>
@@ -76,23 +85,87 @@
 <p>The package makes available models for vertical sections of deposits and strata.</p>
 <p>All classes inherit from <code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSection</span></code>, and redefine methods and attributes for their own types.</p>
 <p>The classes are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.section</span></code>.</p>
+<p class="rubric">Section lexicon</p>
+<p>The <cite>Section</cite> module defines some terms that are used throughout the code and rest of the documentation.</p>
+<p>Most importantly, a Section is defined by a set of coordinates in the x-y plane of a cube.</p>
+<p>Therefore, we transform variable definitions when extracting the section, and the coordinate system of the section is defined by the along-section direction <img class="math" src="../../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/> and a vertical section coordinate, which is <img class="math" src="../../_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> when viewing stratigraphy, and <img class="math" src="../../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/> when viewing a spacetime section.</p>
+<p>The data that make up the section can view the section as a <cite>spacetime</cite> section by simply calling the</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
+
+<span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<span class="n">rcm8cube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
+<span class="n">rcm8cube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_spacetime</span><span class="p">(),</span>
+             <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$t$ coordinate&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_spacetime</span><span class="p">(</span><span class="n">preserved</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+             <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$t$ coordinate&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_stratigraphy</span><span class="p">(),</span>
+             <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;undefined</span><span class="se">\n</span><span class="s1">coordinate&#39;</span><span class="p">)</span>
+
+<span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;mesh&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$z$ coordinate&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$s$ coordinate&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../../pyplots/section/section_lexicon.png">png</a>, <a class="reference external" href="../../pyplots/section/section_lexicon.hires.png">hires.png</a>)</p>
+<div class="figure align-default">
+<img alt="../../_images/section_lexicon.png" src="../../_images/section_lexicon.png" />
+</div>
+<div class="section" id="section-types">
+<h2>Section types<a class="headerlink" href="#section-types" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSection.html#deltametrics.section.BaseSection" title="deltametrics.section.BaseSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSection</span></code></a>(pts[, attribute, limit])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSection.html#deltametrics.section.BaseSection" title="deltametrics.section.BaseSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSection</span></code></a>(*args)</p></td>
 <td><p>Base section object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.section.DipSection.html#deltametrics.section.DipSection" title="deltametrics.section.DipSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DipSection</span></code></a>(apex, angle)</p></td>
-<td><p>Base section object.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.section.StrikeSection.html#deltametrics.section.StrikeSection" title="deltametrics.section.StrikeSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StrikeSection</span></code></a>(*args[, y])</p></td>
+<td><p>Strike section object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.section.RadialSection.html#deltametrics.section.RadialSection" title="deltametrics.section.RadialSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RadialSection</span></code></a>(apex, radius)</p></td>
-<td><p>Base section object.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.section.DipSection.html#deltametrics.section.DipSection" title="deltametrics.section.DipSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DipSection</span></code></a>(apex, angle)</p></td>
+<td><p>Dip section object.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.section.RadialSection.html#deltametrics.section.RadialSection" title="deltametrics.section.RadialSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RadialSection</span></code></a>(apex, radius)</p></td>
+<td><p>Radial section object.</p></td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="section-returns">
+<h2>Section returns<a class="headerlink" href="#section-returns" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a></p></td>
+<td><p>Section variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.section.DataSectionVariable.html#deltametrics.section.DataSectionVariable" title="deltametrics.section.DataSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataSectionVariable</span></code></a>(_data, _mask, strat_attrs)</p></td>
+<td><p>Variable returned from a DataCube Section.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.section.StratigraphySectionVariable.html#deltametrics.section.StratigraphySectionVariable" title="deltametrics.section.StratigraphySectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StratigraphySectionVariable</span></code></a>(*args, **kwargs)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 
 
@@ -122,7 +195,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
   </body>
 </html>

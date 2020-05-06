@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>10-minute tutorial &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="User Guide" href="userguide.html" />
+    <link rel="prev" title="Getting Started" href="getting_started.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="userguide.html" title="User Guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" accesskey="U">Getting Started</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">10-minute tutorial</a><ul>
+<li><a class="reference internal" href="#connect-to-data">Connect to data</a></li>
+<li><a class="reference internal" href="#accessing-data-from-a-datacube">Accessing data from a DataCube</a><ul>
+<li><a class="reference internal" href="#planform-data">Planform data</a></li>
+<li><a class="reference internal" href="#section-data">Section data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="previous chapter">Getting Started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="userguide.html"
+                        title="next chapter">User Guide</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/guides/10min.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="minute-tutorial">
+<h1>10-minute tutorial<a class="headerlink" href="#minute-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>learn DeltaMetrics in ten minutes!</p>
+<p>All of the documentation in this package assumes that you have imported the DeltaMetrics package as <code class="docutils literal notranslate"><span class="pre">dm</span></code>:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
+</pre></div>
+</div>
+<p>Additionally, we frequently rely on the <cite>numpy</cite> package, and <cite>matplotlib</cite>. We will assume you have imported these packages by their common shorthand as well; if we import other packages, or other modules from <cite>matplotlib</cite>, these imports will be declared!</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+<div class="section" id="connect-to-data">
+<h2>Connect to data<a class="headerlink" href="#connect-to-data" title="Permalink to this headline">¶</a></h2>
+<p>In your application, you will want to connect to a your own dataset, but more on that later.
+For now, let’s use a sample dataset that is distributed with DeltaMetrics.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">)</span>
+<span class="go">&lt;class &#39;deltametrics.cube.DataCube&#39;&gt;</span>
+</pre></div>
+</div>
+<p>This creates an instance of a <a class="reference internal" href="../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a> object, which is the simplest and most commonly used type of cube.
+“Cubes” in DeltaMetrics language are the central office that connects all the different modules and workflows together.
+Creating the <code class="docutils literal notranslate"><span class="pre">rcm8cube</span></code> connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets.</p>
+<p>Inspect which variables are available in the <code class="docutils literal notranslate"><span class="pre">rcm8cube</span></code>.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">variables</span>
+<span class="go">[&#39;x&#39;, &#39;y&#39;, &#39;time&#39;, &#39;eta&#39;, &#39;stage&#39;, &#39;depth&#39;, &#39;discharge&#39;, &#39;velocity&#39;, &#39;strata_age&#39;, &#39;strata_sand_frac&#39;, &#39;strata_depth&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="accessing-data-from-a-datacube">
+<h2>Accessing data from a DataCube<a class="headerlink" href="#accessing-data-from-a-datacube" title="Permalink to this headline">¶</a></h2>
+<p>A <a class="reference internal" href="../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a> can be sliced directly by variable name.
+Slicing a cube returns an instance of <a class="reference internal" href="../_autosummary/deltametrics.cube.CubeVariable.html#deltametrics.cube.CubeVariable" title="deltametrics.cube.CubeVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CubeVariable</span></code></a>, which is a numpy <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> compatible object; this means that it can be manipulated exactly as a standard <code class="docutils literal notranslate"><span class="pre">ndarray</span></code>, supporting any arbitrary math.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">])</span>
+<span class="go">&lt;class &#39;deltametrics.cube.CubeVariable&#39;&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">base</span><span class="p">)</span>
+<span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
+</pre></div>
+</div>
+<p>For example, we could determine how much the average bed elevation change at a specific location in the model domain (43, 123), by slicing the <code class="docutils literal notranslate"><span class="pre">eta</span></code> variable, and differencing timesteps.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">:,</span><span class="mi">43</span><span class="p">,</span><span class="mi">123</span><span class="p">]</span> <span class="o">-</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">43</span><span class="p">,</span><span class="mi">123</span><span class="p">]</span> <span class="p">)</span>
+<span class="go">0.08364895</span>
+</pre></div>
+</div>
+<p>The DataCube is often used by taking horizontal or vertical “cuts” of the cube.
+In this package, we refer to horizontal cuts as “plans” (<cite>Planform</cite> data) and vertical cuts as “sections” (<cite>Section</cite> data).</p>
+<p>The <a class="reference internal" href="../reference/plan/index.html"><span class="doc">Planform</span></a> and <a class="reference internal" href="../reference/section/index.html"><span class="doc">Section</span></a> data types have a series of helpful classes and functions, which are fully documented in their respective pages.</p>
+<div class="section" id="planform-data">
+<h3>Planform data<a class="headerlink" href="#planform-data" title="Permalink to this headline">¶</a></h3>
+<p>We can visualize Planform data of the cube with a number of built-in
+functions. Let’s inspect the state of several variables
+of the Cube at the fortieth (40th) timestep:</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This API will change to be consistent with the <code class="docutils literal notranslate"><span class="pre">show_section</span></code> API below. Users will <code class="docutils literal notranslate"><span class="pre">register_plan</span></code> and then call it, or pass a freshly instantiated plan instance.</p>
+</div>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/10min_three_plans.png">png</a>, <a class="reference external" href="../pyplots/guides/10min_three_plans.hires.png">hires.png</a>)</p>
+<div class="figure align-default">
+<img alt="../_images/10min_three_plans.png" src="../_images/10min_three_plans.png" />
+</div>
+</div>
+<div class="section" id="section-data">
+<h3>Section data<a class="headerlink" href="#section-data" title="Permalink to this headline">¶</a></h3>
+<p>We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
+In DeltaMetrics, we refer to this preserved history as the “stratigraphy”, and we provide a number of convenient routines for computing stratigraphy and analyzing the deposits.</p>
+<p>Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created.
+We must directly tell the Cube instance to compute stratigraphy by specifying which variable contains the bed elevation history, because this history dictates preservation.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>For this example, the stratigraphic computation is relatively fast (&lt; one second), but for large data domains covering a large amount of time, this computation may not be as fast.</p>
+<p>For the sake of simplicity, this documentation uses the <a class="reference internal" href="../_autosummary/deltametrics.section.StrikeSection.html#deltametrics.section.StrikeSection" title="deltametrics.section.StrikeSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StrikeSection</span></code></a> as an example, but the following lexicon generalizes across the Section classes.</p>
+<p>For a data cube, sections are most easily instantiated by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code> method:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>which can then be accessed via the <code class="xref py py-obj docutils literal notranslate"><span class="pre">sections</span></code> attribute of the Cube.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span>
+<span class="go">&lt;deltametrics.section.StrikeSection object at 0x...&gt;</span>
+</pre></div>
+</div>
+<p>Visualize all of the available sections as stratigraphy:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">dataio</span><span class="o">.</span><span class="n">known_variables</span><span class="p">):</span>
+<span class="gp">... </span>   <span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="userguide.html" title="User Guide"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting Started"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="getting_started.html" >Getting Started</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

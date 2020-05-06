@@ -9,7 +9,7 @@ deltametrics.sample\_data.cube
 
    .. autosummary::
    
-      rcm1
+      rcm8
       tdb12
    
    

@@ -1,0 +1,32 @@
+deltametrics.io.BaseIO
+======================
+
+.. currentmodule:: deltametrics.io
+
+.. autoclass:: BaseIO
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BaseIO.__init__
+      ~BaseIO.connect
+      ~BaseIO.read
+      ~BaseIO.write
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BaseIO.data_path
+      ~BaseIO.keys
+   
+   

@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>deltametrics.plot.VariableInfo &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="deltametrics.plot.VariableSet" href="deltametrics.plot.VariableSet.html" />
+    <link rel="prev" title="Plotting utilities and functions" href="../reference/plot/index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.plot.VariableSet.html" title="deltametrics.plot.VariableSet"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../reference/plot/index.html" title="Plotting utilities and functions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/plot/index.html" accesskey="U">Plotting utilities and functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../reference/plot/index.html"
+                        title="previous chapter">Plotting utilities and functions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.plot.VariableSet.html"
+                        title="next chapter">deltametrics.plot.VariableSet</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.plot.VariableInfo.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="deltametrics-plot-variableinfo">
+<h1>deltametrics.plot.VariableInfo<a class="headerlink" href="#deltametrics-plot-variableinfo" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="deltametrics.plot.VariableInfo">
+<em class="property">class </em><code class="sig-prename descclassname">deltametrics.plot.</code><code class="sig-name descname">VariableInfo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableInfo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Variable styling and information.</p>
+<p>This class holds information for a specific underlying data variable
+(e.g., <code class="docutils literal notranslate"><span class="pre">eta</span></code> or <code class="docutils literal notranslate"><span class="pre">velocity</span></code>). Properties are used throughout
+DeltaMetrics for plotting.</p>
+<p class="rubric">Examples</p>
+<p>You can override any of the parameters by passing a value during
+instantiation of the VariableInfo. For example, to set the colormap
+for a variable <code class="docutils literal notranslate"><span class="pre">vegetation_density</span></code> as a range of green shades we
+would create the VariableInfo as:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">deltametrics.plot</span> <span class="kn">import</span> <span class="n">VariableInfo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">veg</span> <span class="o">=</span> <span class="n">VariableInfo</span><span class="p">(</span><span class="s1">&#39;vegetation_density&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                   <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greens&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">veg</span><span class="o">.</span><span class="n">cmap</span>
+<span class="go">&lt;matplotlib.colors.LinearSegmentedColormap object at 0x...&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">veg</span><span class="o">.</span><span class="n">cmap</span><span class="o">.</span><span class="n">N</span>
+<span class="go">64</span>
+</pre></div>
+</div>
+<p>which creates a 64 interval colormap from the matplotlib <cite>Greens</cite>
+colormap. If instead we wanted just three colors, we could specify the
+colormap manually:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span> <span class="o">=</span> <span class="n">VariableInfo</span><span class="p">(</span><span class="s1">&#39;vegetation_density&#39;</span><span class="p">,</span>
+<span class="gp">... </span>                    <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;Greens&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span><span class="o">.</span><span class="n">cmap</span><span class="o">.</span><span class="n">N</span>
+<span class="go">3</span>
+</pre></div>
+</div>
+<p>We can then set a more human-readable label for the variable:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;vegetation density&#39;</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="deltametrics.plot.VariableInfo.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableInfo.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the VariableInfo.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Name for variable to access from.</p></li>
+<li><p><strong>cmap</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.colors.Colormap</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Colormap to use to diplay the variable.</p></li>
+<li><p><strong>label</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – How to display the variable name when plotting (i.e., a
+human-readable name). If not specified, the value of <cite>name</cite> is
+used.</p></li>
+<li><p><strong>norm</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.colors.Norm</span></code>, optional) – <p>???</p>
+</p></li>
+<li><p><strong>vmin</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Limit the colormap or axes to this lower-bound value.</p></li>
+<li><p><strong>vmax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Limit the colormap or axes to this upper-bound value.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plot.VariableInfo.__init__" title="deltametrics.plot.VariableInfo.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(name, **kwargs)</p></td>
+<td><p>Initialize the VariableInfo.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmap</span></code></p></td>
+<td><p>Colormap to use to diplay the variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">label</span></code></p></td>
+<td><p>How to display the variable name when plotting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p>Name for variable to access from.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></p></td>
+<td><p><p>???</p>
+</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">vmax</span></code></p></td>
+<td><p>Limit the colormap or axes to this upper-bound value.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">vmin</span></code></p></td>
+<td><p>Limit the colormap or axes to this lower-bound value.</p></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.plot.VariableSet.html" title="deltametrics.plot.VariableSet"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../reference/plot/index.html" title="Plotting utilities and functions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/plot/index.html" >Plotting utilities and functions</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

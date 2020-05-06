@@ -11,14 +11,30 @@ All classes inherit from :obj:`BaseSection`, and redefine methods and attributes
 The classes are defined in ``deltametrics.section``. 
 
 
-.. Profile models
-.. ==============
+.. include:: lexicon.rst
+
+
+Section types
+==============
 
 .. currentmodule:: deltametrics.section
 
 .. autosummary:: 
-	:toctree: ../../_autosummary
+    :toctree: ../../_autosummary
+    
+    BaseSection
+    StrikeSection
+    DipSection
+    RadialSection
 
-	BaseSection
-	DipSection
-	RadialSection
+
+Section returns
+===============
+
+.. autosummary:: 
+    :toctree: ../../_autosummary
+
+    BaseSectionVariable
+    DataSectionVariable
+    StratigraphySectionVariable
+

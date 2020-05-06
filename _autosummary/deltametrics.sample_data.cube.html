@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>deltametrics.sample_data.cube &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -75,12 +75,17 @@
             
   <div class="section" id="module-deltametrics.sample_data.cube">
 <span id="deltametrics-sample-data-cube"></span><h1>deltametrics.sample_data.cube<a class="headerlink" href="#module-deltametrics.sample_data.cube" title="Permalink to this headline">¶</a></h1>
-<p>Sample data cube</p>
+<p>Sample data cubes</p>
 <p>A sample of a data cube (x,y,t) for examples, tests, etc.</p>
 <p class="rubric">Example</p>
 <p>A Data cube can be instantiated as, for example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">_tulane</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">tdb12</span><span class="p">()</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">doctest</span><span class="p">::</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span>
+<span class="go">&lt;deltametrics.cube.DataCube at 0x...&gt;</span>
 </pre></div>
 </div>
 <p>Available information on the data cubes is enumerated in the following
@@ -90,7 +95,7 @@ section.</p>
 <dl>
 <dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">tdb12()</span></code><span class="classifier"><cite>ndarray</cite></span></dt><dd><p>This data cube is from Tulane Delta Basin expt 12.</p>
 </dd>
-<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">rcm1()</span></code><span class="classifier"><cite>ndarray</cite></span></dt><dd><p>This data cube is from the DeltaRCM model.</p>
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">rcm8()</span></code><span class="classifier"><cite>ndarray</cite></span></dt><dd><p>This data cube is from the pyDeltaRCM model.</p>
 </dd>
 </dl>
 <p class="rubric">Functions</p>
@@ -100,8 +105,8 @@ section.</p>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rcm1</span></code>()</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rcm8</span></code>()</p></td>
+<td><p>A sample pyDeltaRCM file, as netCDF.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tdb12</span></code>()</p></td>
 <td><p></p></td>
@@ -136,7 +141,7 @@ section.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
   </body>
 </html>

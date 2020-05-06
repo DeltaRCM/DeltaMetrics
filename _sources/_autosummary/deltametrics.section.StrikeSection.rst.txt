@@ -1,0 +1,32 @@
+deltametrics.section.StrikeSection
+==================================
+
+.. currentmodule:: deltametrics.section
+
+.. autoclass:: StrikeSection
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~StrikeSection.__init__
+      ~StrikeSection.connect
+      ~StrikeSection.show
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~StrikeSection.s
+      ~StrikeSection.trace
+      ~StrikeSection.variables
+   
+   

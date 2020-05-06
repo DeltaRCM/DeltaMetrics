@@ -1,4 +1,4 @@
-.. api.concentration:
+.. api.plan:
 
 *********************************
 Planview operations

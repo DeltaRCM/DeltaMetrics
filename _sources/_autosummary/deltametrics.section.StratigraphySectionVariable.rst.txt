@@ -1,0 +1,124 @@
+deltametrics.section.StratigraphySectionVariable
+================================================
+
+.. currentmodule:: deltametrics.section
+
+.. autoclass:: StratigraphySectionVariable
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~StratigraphySectionVariable.__init__
+      ~StratigraphySectionVariable.all
+      ~StratigraphySectionVariable.anom
+      ~StratigraphySectionVariable.any
+      ~StratigraphySectionVariable.argmax
+      ~StratigraphySectionVariable.argmin
+      ~StratigraphySectionVariable.argpartition
+      ~StratigraphySectionVariable.argsort
+      ~StratigraphySectionVariable.astype
+      ~StratigraphySectionVariable.byteswap
+      ~StratigraphySectionVariable.choose
+      ~StratigraphySectionVariable.clip
+      ~StratigraphySectionVariable.compress
+      ~StratigraphySectionVariable.compressed
+      ~StratigraphySectionVariable.conj
+      ~StratigraphySectionVariable.conjugate
+      ~StratigraphySectionVariable.copy
+      ~StratigraphySectionVariable.count
+      ~StratigraphySectionVariable.cumprod
+      ~StratigraphySectionVariable.cumsum
+      ~StratigraphySectionVariable.diagonal
+      ~StratigraphySectionVariable.dot
+      ~StratigraphySectionVariable.dump
+      ~StratigraphySectionVariable.dumps
+      ~StratigraphySectionVariable.fill
+      ~StratigraphySectionVariable.filled
+      ~StratigraphySectionVariable.flatten
+      ~StratigraphySectionVariable.get_fill_value
+      ~StratigraphySectionVariable.get_imag
+      ~StratigraphySectionVariable.get_real
+      ~StratigraphySectionVariable.getfield
+      ~StratigraphySectionVariable.harden_mask
+      ~StratigraphySectionVariable.ids
+      ~StratigraphySectionVariable.iscontiguous
+      ~StratigraphySectionVariable.item
+      ~StratigraphySectionVariable.itemset
+      ~StratigraphySectionVariable.max
+      ~StratigraphySectionVariable.mean
+      ~StratigraphySectionVariable.min
+      ~StratigraphySectionVariable.mini
+      ~StratigraphySectionVariable.newbyteorder
+      ~StratigraphySectionVariable.nonzero
+      ~StratigraphySectionVariable.partition
+      ~StratigraphySectionVariable.prod
+      ~StratigraphySectionVariable.product
+      ~StratigraphySectionVariable.ptp
+      ~StratigraphySectionVariable.put
+      ~StratigraphySectionVariable.ravel
+      ~StratigraphySectionVariable.repeat
+      ~StratigraphySectionVariable.reshape
+      ~StratigraphySectionVariable.resize
+      ~StratigraphySectionVariable.round
+      ~StratigraphySectionVariable.searchsorted
+      ~StratigraphySectionVariable.set_fill_value
+      ~StratigraphySectionVariable.setfield
+      ~StratigraphySectionVariable.setflags
+      ~StratigraphySectionVariable.shrink_mask
+      ~StratigraphySectionVariable.soften_mask
+      ~StratigraphySectionVariable.sort
+      ~StratigraphySectionVariable.squeeze
+      ~StratigraphySectionVariable.std
+      ~StratigraphySectionVariable.sum
+      ~StratigraphySectionVariable.swapaxes
+      ~StratigraphySectionVariable.take
+      ~StratigraphySectionVariable.tobytes
+      ~StratigraphySectionVariable.tofile
+      ~StratigraphySectionVariable.toflex
+      ~StratigraphySectionVariable.tolist
+      ~StratigraphySectionVariable.torecords
+      ~StratigraphySectionVariable.tostring
+      ~StratigraphySectionVariable.trace
+      ~StratigraphySectionVariable.transpose
+      ~StratigraphySectionVariable.unshare_mask
+      ~StratigraphySectionVariable.var
+      ~StratigraphySectionVariable.view
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~StratigraphySectionVariable.T
+      ~StratigraphySectionVariable.base
+      ~StratigraphySectionVariable.baseclass
+      ~StratigraphySectionVariable.ctypes
+      ~StratigraphySectionVariable.data
+      ~StratigraphySectionVariable.dtype
+      ~StratigraphySectionVariable.fill_value
+      ~StratigraphySectionVariable.flags
+      ~StratigraphySectionVariable.flat
+      ~StratigraphySectionVariable.hardmask
+      ~StratigraphySectionVariable.imag
+      ~StratigraphySectionVariable.itemsize
+      ~StratigraphySectionVariable.mask
+      ~StratigraphySectionVariable.nbytes
+      ~StratigraphySectionVariable.ndim
+      ~StratigraphySectionVariable.real
+      ~StratigraphySectionVariable.recordmask
+      ~StratigraphySectionVariable.shape
+      ~StratigraphySectionVariable.sharedmask
+      ~StratigraphySectionVariable.size
+      ~StratigraphySectionVariable.strides
+      ~StratigraphySectionVariable.t
+      ~StratigraphySectionVariable.z
+   
+   

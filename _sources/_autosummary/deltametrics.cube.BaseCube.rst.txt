@@ -1,0 +1,41 @@
+deltametrics.cube.BaseCube
+==========================
+
+.. currentmodule:: deltametrics.cube
+
+.. autoclass:: BaseCube
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BaseCube.__init__
+      ~BaseCube.read
+      ~BaseCube.register_plan
+      ~BaseCube.register_section
+      ~BaseCube.show_cube
+      ~BaseCube.show_plan
+      ~BaseCube.show_section
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~BaseCube.data_path
+      ~BaseCube.dataio
+      ~BaseCube.plan_set
+      ~BaseCube.plans
+      ~BaseCube.section_set
+      ~BaseCube.sections
+      ~BaseCube.variables
+      ~BaseCube.varset
+   
+   

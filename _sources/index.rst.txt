@@ -1,7 +1,4 @@
-.. proffilo documentation master file, created by
-   sphinx-quickstart on Thu Mar 19 20:54:36 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. deltametrics documentation master file
 
 .. include:: ../../README.rst
 
@@ -9,8 +6,8 @@
 .. include:: ./meta/planning.rst
 
 
-Welcome to the Proffilo documentation
-#####################################
+Welcome to the DeltaMetrics documentation
+#########################################
 
 .. toctree::
    :maxdepth: 1
@@ -28,7 +25,9 @@ Documentation Outline
 .. toctree::
    :maxdepth: 2
 
-   reference/getting_started
-   reference/userguide
+   guides/getting_started
+   guides/userguide
+   guides/devguide
+   guides/visualization
    reference/index
 

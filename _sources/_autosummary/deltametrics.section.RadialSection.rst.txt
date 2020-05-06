@@ -14,9 +14,19 @@ deltametrics.section.RadialSection
    .. autosummary::
    
       ~RadialSection.__init__
+      ~RadialSection.connect
+      ~RadialSection.show
    
    
 
    
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~RadialSection.s
+      ~RadialSection.trace
+      ~RadialSection.variables
    
    

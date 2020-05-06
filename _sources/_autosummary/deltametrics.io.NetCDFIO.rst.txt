@@ -1,0 +1,32 @@
+deltametrics.io.NetCDFIO
+========================
+
+.. currentmodule:: deltametrics.io
+
+.. autoclass:: NetCDFIO
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~NetCDFIO.__init__
+      ~NetCDFIO.connect
+      ~NetCDFIO.read
+      ~NetCDFIO.write
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~NetCDFIO.data_path
+      ~NetCDFIO.keys
+   
+   

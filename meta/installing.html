@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>Installing &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -39,6 +39,14 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Installing</a><ul>
+<li><a class="reference internal" href="#latest-version-install">Latest version install</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="../index.html"
                         title="previous chapter">DeltaMetrics</a></p>
@@ -72,13 +80,37 @@
             
   <div class="section" id="installing">
 <h1>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h1>
-<p>Install the package:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install deltametrics
-</pre></div>
-</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>THE PACKAGE IS NOT AVAILABLE ON PYPI YET</p>
+<p>There is no pypi or conda candidate for this package yet.</p>
+</div>
+<p>You can install the development version of the software by following the instructions below.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>DeltaMetrics is currently in development, with a constantly changing API.
+We make no guarantee of stability, correctness, or functionality.</p>
+</div>
+<div class="section" id="latest-version-install">
+<h2>Latest version install<a class="headerlink" href="#latest-version-install" title="Permalink to this headline">¶</a></h2>
+<p>Follow these instructions to install the latest development version of DeltaMetrics.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Developers should follow the developer instructions in the <a class="reference internal" href="../guides/devguide.html"><span class="doc">Developer Guide</span></a>.</p>
+</div>
+<p>Install by cloning:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> git clone https://github.com/DeltaRCM/DeltaMetrics.git
+</pre></div>
+</div>
+<p>and then <code class="docutils literal notranslate"><span class="pre">cd</span></code> into the directory and install editable copy.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> <span class="nb">cd</span> DeltaMetrics
+<span class="gp">$</span> pip install -e .
+</pre></div>
+</div>
+<p>Check that your installation worked by running the tests.</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> pip install pytest
+<span class="gp">$</span> pytest
+</pre></div>
+</div>
 </div>
 </div>
 
@@ -108,7 +140,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
   </body>
 </html>

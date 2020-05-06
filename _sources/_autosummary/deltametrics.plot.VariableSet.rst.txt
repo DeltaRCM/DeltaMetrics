@@ -1,0 +1,39 @@
+deltametrics.plot.VariableSet
+=============================
+
+.. currentmodule:: deltametrics.plot
+
+.. autoclass:: VariableSet
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~VariableSet.__init__
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~VariableSet.depth
+      ~VariableSet.discharge
+      ~VariableSet.eta
+      ~VariableSet.net_to_gross
+      ~VariableSet.stage
+      ~VariableSet.strata_depth
+      ~VariableSet.strata_sand_frac
+      ~VariableSet.time
+      ~VariableSet.variables
+      ~VariableSet.velocity
+      ~VariableSet.x
+      ~VariableSet.y
+   
+   

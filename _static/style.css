@@ -1,35 +1,83 @@
 @import url("default.css"); /* make sure to sync this with the base theme's css filename */
 
+:root {
+  --main-bg-color: #8A8E91;
+  --h1-color: #855A5C;
+  --hplus-color: #855A5C;
+  --url-color: #66101F;
+  --url-color-hover: #855A5C;
+  --sidebar-box-bg-color: #B8D4E3;
+  --sidebar-border-color: Black;
+  --sidebar-text-color: #4f4f4f;
+  --footer-bg-color: #B8D4E3;
+  --footer-text-color: #4f4f4f;
+}
+
+
 body {
-    background-color: #a1afc2;
+    background-color: var(--main-bg-color);
+}
+
+h1 {
+    margin: 0;
+    padding: 0.7em 0 0.3em 0;
+    font-size: 1.5em;
+    color: var(--h1-color);
+}
+
+div.body h1 a, div.body h2 a, div.body h3 a, div.body h4 a, div.body h5 a, div.body h6 a {
+    color: var(--hplus-color)!important;
 }
 
 a {
-    color: #005a8f;
+    color: var(--url-color);
     text-decoration: none;
+}
+
+a:hover {
+    color: var(--url-color-hover);
 }
 
 a code {
     border: 0;
-    color: #005a8f;
+    color: var(--url-color);
 }
 
+a code:hover {
+    color: var(--url-color-hover);
+}
 
+a.headerlink {
+    color: PeachPuff!important;
+    font-size: 1em;
+    margin-left: 6px;
+    padding: 0 4px 0 4px;
+    text-decoration: none!important;
+}
 
 div.related ul li a {
     margin: 0;
     padding: 0 5px 0 5px;
     line-height: 1.75em;
-    color: #005a8f;
+    color: var(--url-color);
+}
+
+div.related ul li a:hover {
+    color: var(--url-color-hover);
 }
 
 div.sphinxsidebar h3, div.sphinxsidebar h4 {
-    margin: 1em 0 0.5em 0;
-    font-size: 1em;
-    padding: 0.1em 0 0.1em 0.5em;
-    color: white;
-    border: 1px solid #3b3a30;
-    background-color: #b2c2bf;
+    color: var(--sidebar-text-color);
+    border: 1px solid var(--sidebar-border-color);
+    background-color: var(--sidebar-box-bg-color);
+}
+
+div.sphinxsidebar h3 a {
+    color: var(--sidebar-text-color);
+}
+
+div.sphinxsidebar input {
+    border: 1px solid var(--sidebar-border-color);
 }
 
 pre {
@@ -46,3 +94,17 @@ pre {
 pre span gp { 
     color: red;
  }
+
+div.footer {
+    background-color: var(--footer-bg-color);
+    color: var(--footer-text-color);
+    padding: 3px 8px 3px 0;
+    clear: both;
+    font-size: 0.8em;
+    text-align: right;
+}
+
+div.footer a {
+    color: var(--footer-text-color);
+    text-decoration: underline;
+}

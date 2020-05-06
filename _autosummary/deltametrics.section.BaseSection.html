@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>deltametrics.section.BaseSection &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -16,7 +16,7 @@
     <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="deltametrics.section.DipSection" href="deltametrics.section.DipSection.html" />
+    <link rel="next" title="deltametrics.section.StrikeSection" href="deltametrics.section.StrikeSection.html" />
     <link rel="prev" title="Section operations and classes" href="../reference/section/index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,7 +29,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="deltametrics.section.DipSection.html" title="deltametrics.section.DipSection"
+          <a href="deltametrics.section.StrikeSection.html" title="deltametrics.section.StrikeSection"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../reference/section/index.html" title="Section operations and classes"
@@ -45,8 +45,8 @@
   <p class="topless"><a href="../reference/section/index.html"
                         title="previous chapter">Section operations and classes</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="deltametrics.section.DipSection.html"
-                        title="next chapter">deltametrics.section.DipSection</a></p>
+  <p class="topless"><a href="deltametrics.section.StrikeSection.html"
+                        title="next chapter">deltametrics.section.StrikeSection</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -76,27 +76,24 @@
 <h1>deltametrics.section.BaseSection<a class="headerlink" href="#deltametrics-section-basesection" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="deltametrics.section.BaseSection">
-<em class="property">class </em><code class="sig-prename descclassname">deltametrics.section.</code><code class="sig-name descname">BaseSection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pts</span></em>, <em class="sig-param"><span class="n">attribute</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">limit</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.BaseSection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">deltametrics.section.</code><code class="sig-name descname">BaseSection</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.BaseSection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base section object.</p>
 <p>Defines common attributes and methods of a section object.</p>
 <p>This object should wrap around many of the functions available from
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">strat</span></code>.</p>
 <dl class="py method">
 <dt id="deltametrics.section.BaseSection.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pts</span></em>, <em class="sig-param"><span class="n">attribute</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">limit</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.BaseSection.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract values from Cube at pts.</p>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.BaseSection.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify coordinates defining the section.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pts</strong> (<em>ndarray</em>) – two column ndarray defining the x-y coordinates to extract the section.</p></li>
-<li><p><strong>attribute</strong> (<em>str</em><em>, </em><em>list</em><em>, </em><em>optional</em>) – Which attributes to extract from Cube at pts. If attribute is
-None, then get all of the availabe values in the cube.</p></li>
-<li><p><strong>limit</strong> (<em>list</em><em>, </em><em>ndarray</em>) – Vertical limits to extract the section over. Use None or np.nan to
-specify the lowermost or uppermost lines. Default is to extract
-full section.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>CubeInstance</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> subclass instance, optional) – Connect to this cube. No connection is made if cube is not provided.</p>
 </dd>
 </dl>
+<p class="rubric">Notes</p>
+<p>If no arguments are passed, and empty section is returned, which is
+not connected to any cube, and will need to be manually connected to
+have any functionality.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -106,8 +103,32 @@ full section.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.BaseSection.__init__" title="deltametrics.section.BaseSection.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(pts[, attribute, limit])</p></td>
-<td><p>Extract values from Cube at pts.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.BaseSection.__init__" title="deltametrics.section.BaseSection.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args)</p></td>
+<td><p>Identify coordinates defining the section.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code>(CubeInstance)</p></td>
+<td><p>Connect this Section instance to a Cube instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code>(SectionAttribute[, style])</p></td>
+<td><p>Show the section.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">s</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></p></td>
+<td><p>Coordinates of the section in the x-y plane.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></p></td>
+<td><p>List of variables.</p></td>
 </tr>
 </tbody>
 </table>
@@ -131,7 +152,7 @@ full section.</p></li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="deltametrics.section.DipSection.html" title="deltametrics.section.DipSection"
+          <a href="deltametrics.section.StrikeSection.html" title="deltametrics.section.StrikeSection"
              >next</a> |</li>
         <li class="right" >
           <a href="../reference/section/index.html" title="Section operations and classes"
@@ -143,7 +164,7 @@ full section.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
   </body>
 </html>

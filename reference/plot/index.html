@@ -1,0 +1,205 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Plotting utilities and functions &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="deltametrics.plot.VariableInfo" href="../../_autosummary/deltametrics.plot.VariableInfo.html" />
+    <link rel="prev" title="deltametrics.io.HDFIO" href="../../_autosummary/deltametrics.io.HDFIO.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../_autosummary/deltametrics.plot.VariableInfo.html" title="deltametrics.plot.VariableInfo"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../../_autosummary/deltametrics.io.HDFIO.html" title="deltametrics.io.HDFIO"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">API reference</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Plotting utilities and functions</a><ul>
+<li><a class="reference internal" href="#default-styling">Default styling</a></li>
+<li><a class="reference internal" href="#plotting-utility-objects">Plotting utility objects</a></li>
+<li><a class="reference internal" href="#plotting-utility-functions">Plotting utility functions</a></li>
+<li><a class="reference internal" href="#deltametrics-colormaps">DeltaMetrics colormaps</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../../_autosummary/deltametrics.io.HDFIO.html"
+                        title="previous chapter">deltametrics.io.HDFIO</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../_autosummary/deltametrics.plot.VariableInfo.html"
+                        title="next chapter">deltametrics.plot.VariableInfo</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/reference/plot/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="plotting-utilities-and-functions">
+<h1>Plotting utilities and functions<a class="headerlink" href="#plotting-utilities-and-functions" title="Permalink to this headline">¶</a></h1>
+<p>The package uses a few utility classes and functions to make consistent plotting easy thoughout the package.
+This reference page documents the lower-level utilities used to make this happen.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The built-in routines to plot <code class="docutils literal notranslate"><span class="pre">Section</span></code> and <code class="docutils literal notranslate"><span class="pre">Plan</span></code> objects are not documented here, look for documentation on those high-level methods in their respective module documentation.</p>
+</div>
+<p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.plot</span></code>.</p>
+<div class="section" id="default-styling">
+<h2>Default styling<a class="headerlink" href="#default-styling" title="Permalink to this headline">¶</a></h2>
+<p>By default, each variable receives a set of styling definitions.
+The default parameters of each styling variable are defined below:</p>
+<p>(<a class="reference external" href="../../pyplots/plot/document_variableset.png">png</a>, <a class="reference external" href="../../pyplots/plot/document_variableset.hires.png">hires.png</a>)</p>
+<div class="figure align-default">
+<img alt="../../_images/document_variableset.png" src="../../_images/document_variableset.png" />
+</div>
+</div>
+<div class="section" id="plotting-utility-objects">
+<h2>Plotting utility objects<a class="headerlink" href="#plotting-utility-objects" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plot.VariableInfo.html#deltametrics.plot.VariableInfo" title="deltametrics.plot.VariableInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableInfo</span></code></a>(name, **kwargs)</p></td>
+<td><p>Variable styling and information.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a>([override_dict])</p></td>
+<td><p>A default set of properties for variables.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="plotting-utility-functions">
+<h2>Plotting utility functions<a class="headerlink" href="#plotting-utility-functions" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="deltametrics.plot.append_colorbar">
+<code class="sig-prename descclassname">deltametrics.plot.</code><code class="sig-name descname">append_colorbar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ci</span></em>, <em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a colorbar, consistently placed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ci</strong> (<cite>matplotlib.pyplot.pcolormesh</cite>, <cite>matplotlib.pyplot.ImageAxes</cite>) – The colored object generated via matplotlib that the colormap should
+be stolen from.</p></li>
+<li><p><strong>ax</strong> (<cite>matplotlib.Axes</cite>) – The instance of axes to place the colorbar next to.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>cb</strong> – The colorbar instance created.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><cite>matplotlib.colorbar</cite> instance.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="deltametrics-colormaps">
+<h2>DeltaMetrics colormaps<a class="headerlink" href="#deltametrics-colormaps" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="deltametrics.plot.cartographic_colormap">
+<code class="sig-prename descclassname">deltametrics.plot.</code><code class="sig-name descname">cartographic_colormap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.cartographic_colormap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Colormap for an elevation map style.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Not implemented.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This should implement <a class="reference external" href="https://matplotlib.org/3.2.1/tutorials/colors/colormapnorms.html#twoslopenorm-different-mapping-on-either-side-of-a-center">something that looks like this</a>,
+and should be configured to always setting the break to whatever
+sea-level is (or zero?).</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="deltametrics.plot.aerial_colormap">
+<code class="sig-prename descclassname">deltametrics.plot.</code><code class="sig-name descname">aerial_colormap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.aerial_colormap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Colormap for a pesudorealistic looking aerial shot.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Not implemented.</p>
+</div>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../_autosummary/deltametrics.plot.VariableInfo.html" title="deltametrics.plot.VariableInfo"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../../_autosummary/deltametrics.io.HDFIO.html" title="deltametrics.io.HDFIO"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >API reference</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+    </div>
+  </body>
+</html>

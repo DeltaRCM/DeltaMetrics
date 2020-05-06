@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>deltametrics.section.RadialSection &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -16,7 +16,7 @@
     <script src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Stratigraphy functions" href="../reference/strat/index.html" />
+    <link rel="next" title="deltametrics.section.BaseSectionVariable" href="deltametrics.section.BaseSectionVariable.html" />
     <link rel="prev" title="deltametrics.section.DipSection" href="deltametrics.section.DipSection.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,7 +29,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../reference/strat/index.html" title="Stratigraphy functions"
+          <a href="deltametrics.section.BaseSectionVariable.html" title="deltametrics.section.BaseSectionVariable"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="deltametrics.section.DipSection.html" title="deltametrics.section.DipSection"
@@ -45,8 +45,8 @@
   <p class="topless"><a href="deltametrics.section.DipSection.html"
                         title="previous chapter">deltametrics.section.DipSection</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../reference/strat/index.html"
-                        title="next chapter">Stratigraphy functions</a></p>
+  <p class="topless"><a href="deltametrics.section.BaseSectionVariable.html"
+                        title="next chapter">deltametrics.section.BaseSectionVariable</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -77,12 +77,20 @@
 <dl class="py class">
 <dt id="deltametrics.section.RadialSection">
 <em class="property">class </em><code class="sig-prename descclassname">deltametrics.section.</code><code class="sig-name descname">RadialSection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">apex</span></em>, <em class="sig-param"><span class="n">radius</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base section object.</p>
-<p>Defines common attributes and methods of a section object.</p>
+<dd><p>Radial section object.</p>
 <dl class="py method">
 <dt id="deltametrics.section.RadialSection.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">apex</span></em>, <em class="sig-param"><span class="n">radius</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dd><p>Identify coordinates defining the section.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>CubeInstance</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> subclass instance, optional) – Connect to this cube. No connection is made if cube is not provided.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>If no arguments are passed, and empty section is returned, which is
+not connected to any cube, and will need to be manually connected to
+have any functionality.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -93,7 +101,31 @@
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.__init__" title="deltametrics.section.RadialSection.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(apex, radius)</p></td>
-<td><p>Initialize self.</p></td>
+<td><p>Identify coordinates defining the section.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code>(CubeInstance)</p></td>
+<td><p>Connect this Section instance to a Cube instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code>(SectionAttribute[, style])</p></td>
+<td><p>Show the section.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">s</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></p></td>
+<td><p>Coordinates of the section in the x-y plane.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></p></td>
+<td><p>List of variables.</p></td>
 </tr>
 </tbody>
 </table>
@@ -117,7 +149,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../reference/strat/index.html" title="Stratigraphy functions"
+          <a href="deltametrics.section.BaseSectionVariable.html" title="deltametrics.section.BaseSectionVariable"
              >next</a> |</li>
         <li class="right" >
           <a href="deltametrics.section.DipSection.html" title="deltametrics.section.DipSection"
@@ -129,7 +161,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
   </body>
 </html>

@@ -2,7 +2,7 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
     <meta charset="utf-8" />
     <title>Index &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -58,28 +58,56 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#H"><strong>H</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#R"><strong>R</strong></a>
+ | <a href="#S"><strong>S</strong></a>
+ | <a href="#V"><strong>V</strong></a>
  
 </div>
 <h2 id="_">_</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/deltametrics.cube.Cube.html#deltametrics.cube.Cube.__init__">__init__() (deltametrics.cube.Cube method)</a>
+      <li><a href="_autosummary/deltametrics.cube.BaseCube.html#deltametrics.cube.BaseCube.__init__">__init__() (deltametrics.cube.BaseCube method)</a>
 
       <ul>
+        <li><a href="_autosummary/deltametrics.cube.CubeVariable.html#deltametrics.cube.CubeVariable.__init__">(deltametrics.cube.CubeVariable method)</a>
+</li>
+        <li><a href="_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube.__init__">(deltametrics.cube.DataCube method)</a>
+</li>
+        <li><a href="_autosummary/deltametrics.cube.StratigraphyCube.html#deltametrics.cube.StratigraphyCube.__init__">(deltametrics.cube.StratigraphyCube method)</a>
+</li>
+        <li><a href="_autosummary/deltametrics.io.BaseIO.html#deltametrics.io.BaseIO.__init__">(deltametrics.io.BaseIO method)</a>
+</li>
+        <li><a href="_autosummary/deltametrics.io.HDFIO.html#deltametrics.io.HDFIO.__init__">(deltametrics.io.HDFIO method)</a>
+</li>
+        <li><a href="_autosummary/deltametrics.io.NetCDFIO.html#deltametrics.io.NetCDFIO.__init__">(deltametrics.io.NetCDFIO method)</a>
+</li>
         <li><a href="_autosummary/deltametrics.mask.BaseMask.html#deltametrics.mask.BaseMask.__init__">(deltametrics.mask.BaseMask method)</a>
 </li>
         <li><a href="_autosummary/deltametrics.mask.ChannelMask.html#deltametrics.mask.ChannelMask.__init__">(deltametrics.mask.ChannelMask method)</a>
 </li>
         <li><a href="_autosummary/deltametrics.mask.LandMask.html#deltametrics.mask.LandMask.__init__">(deltametrics.mask.LandMask method)</a>
 </li>
+        <li><a href="_autosummary/deltametrics.plot.VariableInfo.html#deltametrics.plot.VariableInfo.__init__">(deltametrics.plot.VariableInfo method)</a>
+</li>
+        <li><a href="_autosummary/deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet.__init__">(deltametrics.plot.VariableSet method)</a>
+</li>
         <li><a href="_autosummary/deltametrics.section.BaseSection.html#deltametrics.section.BaseSection.__init__">(deltametrics.section.BaseSection method)</a>
+</li>
+        <li><a href="_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable.__init__">(deltametrics.section.BaseSectionVariable method)</a>
+</li>
+        <li><a href="_autosummary/deltametrics.section.DataSectionVariable.html#deltametrics.section.DataSectionVariable.__init__">(deltametrics.section.DataSectionVariable method)</a>
 </li>
         <li><a href="_autosummary/deltametrics.section.DipSection.html#deltametrics.section.DipSection.__init__">(deltametrics.section.DipSection method)</a>
 </li>
         <li><a href="_autosummary/deltametrics.section.RadialSection.html#deltametrics.section.RadialSection.__init__">(deltametrics.section.RadialSection method)</a>
+</li>
+        <li><a href="_autosummary/deltametrics.section.StratigraphySectionVariable.html#deltametrics.section.StratigraphySectionVariable.__init__">(deltametrics.section.StratigraphySectionVariable method)</a>
+</li>
+        <li><a href="_autosummary/deltametrics.section.StrikeSection.html#deltametrics.section.StrikeSection.__init__">(deltametrics.section.StrikeSection method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -90,9 +118,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/deltametrics.plan.a_channel_function.html#deltametrics.plan.a_channel_function">a_channel_function() (in module deltametrics.plan)</a>
 </li>
+      <li><a href="_autosummary/deltametrics.plan.a_land_function.html#deltametrics.plan.a_land_function">a_land_function() (in module deltametrics.plan)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/deltametrics.plan.a_land_function.html#deltametrics.plan.a_land_function">a_land_function() (in module deltametrics.plan)</a>
+      <li><a href="reference/plot/index.html#deltametrics.plot.aerial_colormap">aerial_colormap() (in module deltametrics.plot)</a>
+</li>
+      <li><a href="reference/plot/index.html#deltametrics.plot.append_colorbar">append_colorbar() (in module deltametrics.plot)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -100,11 +132,17 @@
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="_autosummary/deltametrics.mask.BaseMask.html#deltametrics.mask.BaseMask">BaseMask (class in deltametrics.mask)</a>
+      <li><a href="_autosummary/deltametrics.cube.BaseCube.html#deltametrics.cube.BaseCube">BaseCube (class in deltametrics.cube)</a>
+</li>
+      <li><a href="_autosummary/deltametrics.io.BaseIO.html#deltametrics.io.BaseIO">BaseIO (class in deltametrics.io)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/deltametrics.mask.BaseMask.html#deltametrics.mask.BaseMask">BaseMask (class in deltametrics.mask)</a>
+</li>
       <li><a href="_autosummary/deltametrics.section.BaseSection.html#deltametrics.section.BaseSection">BaseSection (class in deltametrics.section)</a>
+</li>
+      <li><a href="_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable">BaseSectionVariable (class in deltametrics.section)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -112,25 +150,33 @@
 <h2 id="C">C</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="reference/plot/index.html#deltametrics.plot.cartographic_colormap">cartographic_colormap() (in module deltametrics.plot)</a>
+</li>
       <li><a href="_autosummary/deltametrics.mask.ChannelMask.html#deltametrics.mask.ChannelMask">ChannelMask (class in deltametrics.mask)</a>
 </li>
       <li><a href="_autosummary/deltametrics.strat.compute_compensation.html#deltametrics.strat.compute_compensation">compute_compensation() (in module deltametrics.strat)</a>
 </li>
-      <li><a href="_autosummary/deltametrics.plan.compute_delta_radius.html#deltametrics.plan.compute_delta_radius">compute_delta_radius() (in module deltametrics.plan)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/deltametrics.plan.compute_delta_radius.html#deltametrics.plan.compute_delta_radius">compute_delta_radius() (in module deltametrics.plan)</a>
+</li>
       <li><a href="_autosummary/deltametrics.plan.compute_shoreline_angles.html#deltametrics.plan.compute_shoreline_angles">compute_shoreline_angles() (in module deltametrics.plan)</a>
 </li>
       <li><a href="_autosummary/deltametrics.strat.compute_trajectory.html#deltametrics.strat.compute_trajectory">compute_trajectory() (in module deltametrics.strat)</a>
 </li>
-      <li><a href="_autosummary/deltametrics.cube.Cube.html#deltametrics.cube.Cube">Cube (class in deltametrics.cube)</a>
+      <li><a href="_autosummary/deltametrics.cube.CubeVariable.html#deltametrics.cube.CubeVariable">CubeVariable (class in deltametrics.cube)</a>
 </li>
   </ul></td>
 </tr></table>
 
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube">DataCube (class in deltametrics.cube)</a>
+</li>
+      <li><a href="_autosummary/deltametrics.section.DataSectionVariable.html#deltametrics.section.DataSectionVariable">DataSectionVariable (class in deltametrics.section)</a>
+</li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     deltametrics.sample_data.cube
@@ -139,9 +185,15 @@
         <li><a href="_autosummary/deltametrics.sample_data.cube.html#module-deltametrics.sample_data.cube">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/deltametrics.section.DipSection.html#deltametrics.section.DipSection">DipSection (class in deltametrics.section)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="H">H</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/deltametrics.io.HDFIO.html#deltametrics.io.HDFIO">HDFIO (class in deltametrics.io)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -167,10 +219,44 @@
   </ul></td>
 </tr></table>
 
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/deltametrics.io.NetCDFIO.html#deltametrics.io.NetCDFIO">NetCDFIO (class in deltametrics.io)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="_autosummary/deltametrics.section.RadialSection.html#deltametrics.section.RadialSection">RadialSection (class in deltametrics.section)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="S">S</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/deltametrics.cube.StratigraphyCube.html#deltametrics.cube.StratigraphyCube">StratigraphyCube (class in deltametrics.cube)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/deltametrics.section.StratigraphySectionVariable.html#deltametrics.section.StratigraphySectionVariable">StratigraphySectionVariable (class in deltametrics.section)</a>
+</li>
+      <li><a href="_autosummary/deltametrics.section.StrikeSection.html#deltametrics.section.StrikeSection">StrikeSection (class in deltametrics.section)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="V">V</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/deltametrics.plot.VariableInfo.html#deltametrics.plot.VariableInfo">VariableInfo (class in deltametrics.plot)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="_autosummary/deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet">VariableSet (class in deltametrics.plot)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -196,7 +282,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.0.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
     </div>
   </body>
 </html>
