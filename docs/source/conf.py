@@ -12,8 +12,6 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../..'))
-sys.setrecursionlimit(1500)
 
 import deltametrics as dm
 
@@ -33,9 +31,9 @@ version = dm.__version__
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc', 
+extensions = ['sphinx.ext.autodoc',
+              'sphinx.ext.doctest',
               'sphinx.ext.autosummary',
-              'sphinx_automodapi.automodapi',
               'sphinx.ext.napoleon',
               'sphinx.ext.graphviz',
               'sphinx.ext.imgmath',
@@ -66,7 +64,25 @@ napoleon_use_rtype = True
 # Autosummary / Automodapi settings
 autosummary_generate = True
 automodapi_inheritance_diagram = False
-autodoc_default_flags = ['members','inherited-members','no-private-members']
+autodoc_default_flags = ['inherited-members', 'no-private-members']
+
+# doctest
+doctest_global_setup = '''
+import deltametrics as dm
+import numpy as np
+from matplotlib import pyplot as plt
+'''
+doctest_test_doctest_blocks = ''  # empty string disables testing all code in any docstring
+
+## mpl plots
+plot_basedir = 'pyplots'
+plot_html_show_source_link = False
+plot_formats = ['png', ('hires.png', 300)]
+plot_pre_code = '''
+import numpy as np
+from matplotlib import pyplot as plt
+import deltametrics as dm
+'''
 
 # img math
 # imgmath_latex_preamble = '\\usepackage{fouriernc}' # newtxsf, mathptmx
