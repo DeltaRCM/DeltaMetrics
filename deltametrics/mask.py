@@ -52,7 +52,12 @@ class BaseMask(object):
         """
         cmap = kwargs.pop('cmap', 'gray')
         fig, ax = plt.subplots()
-        ax.imshow(self.data, cmap=cmap, **kwargs)
+        if hasattr(self, 'mask'):
+            ax.imshow(self.mask, cmap=cmap, **kwargs)
+            ax.set_title('A ' + self.mask_type + ' mask')
+        else:
+            ax.imshow(self.data, cmap=cmap, **kwargs)
+            ax.set_title('No mask computed, input data shown')
         plt.show()
 
     def compute_shoremask(self):
@@ -110,13 +115,8 @@ class BaseMask(object):
     def Seaangles_mod(self, numviews, thresholdimg):
         """Extract the opening angle map from an image.
 
-        Adapted from the Matlab implementation in [1]_. Takes an image
+        Adapted from the Matlab implementation in [2]_. Takes an image
         and extracts its opening angle map.
-
-        .. [1] Liang, Man, Corey Van Dyk, and Paola Passalacqua.
-           "Quantifying the patterns and dynamics of river deltas under
-           conditions of steady forcing and relative sea level rise." Journal
-           of Geophysical Research: Earth Surface 121.2 (2016): 465-496.
 
         Parameters
         ----------
@@ -237,7 +237,7 @@ class ChannelMask(BaseMask):
         >>> cmsk = dm.mask.ChannelMask(arr)
 
     And visualize the mask:
-        >>> cmsk.show_mask()
+        >>> cmsk.show()
 
     .. plot:: mask/channelmask.py
 
@@ -296,7 +296,9 @@ class WetMask(BaseMask):
         >>> wmsk = dm.mask.WetMask(arr)
 
     And visualize the mask:
-        >>> wmsk.show_mask()
+        >>> wmsk.show()
+
+    .. plot:: mask/wetmask.py
 
     """
 
@@ -304,18 +306,18 @@ class WetMask(BaseMask):
         """Initialize the WetMask.
 
         Intializing the wet mask requires either a 2-D array of data, or it
-        can be computed if a :obj: `LandMask` has been previously computed.
+        can be computed if a :obj:`LandMask` has been previously computed.
 
         Parameters
         ----------
         arr : ndarray
             The data array to make the mask from.
 
-        **kwargs
-        --------
-        landmask : :obj: `LandMask`, optional
-            A :obj: `LandMask` object with a defined binary shoreline mask.
-            If given, the :obj: `LandMask` object will be checked for the
+        Other Parameters
+        ----------------
+        landmask : :obj:`LandMask`, optional
+            A :obj:`LandMask` object with a defined binary shoreline mask.
+            If given, the :obj:`LandMask` object will be checked for the
             `shore_image` and `angle_threshold` attributes.
 
         topo_threshold : float, optional
@@ -328,7 +330,7 @@ class WetMask(BaseMask):
             Defines the number of times to 'look' for the OAM. Default is 3.
 
         is_mask : bool, optional
-            Whether the data in :obj:`topo` is already a binary mask. For
+            Whether the data in :obj:`arr` is already a binary mask. For
             example, this should be set to True, if you have already binarized
             the data yourself, using custom routines, and want to just store
             the data in the LandMask object.
@@ -389,13 +391,18 @@ class LandMask(BaseMask):
     Initialize the mask.
         >>> lmsk = dm.mask.LandMask(arr)
 
+    And visualize the mask:
+        >>> lmsk.show()
+
+    .. plot:: mask/landmask.py
+
     """
 
     def __init__(self, arr, **kwargs):
         """Initialize the LandMask.
 
         Intializing the land mask requires an array of data, should be
-        two-dimensional. If a shoreline mask (:obj: `ShoreMask`) has been
+        two-dimensional. If a shoreline mask (:obj:`ShoreMask`) has been
         computed, then this can be used to define the land mask. Otherwise the
         necessary computations will occur from scratch.
 
@@ -404,11 +411,11 @@ class LandMask(BaseMask):
         arr : ndarray
             2-D topographic array to make the mask from.
 
-        **kwargs
-        --------
-        shoremask : :obj: `ShoreMask`, optional
-            A :obj: `ShoreMask` object with a defined binary shoreline mask.
-            If given, the :obj: `ShoreMask` object will be checked for the
+        Other Parameters
+        ----------------
+        shoremask : :obj:`ShoreMask`, optional
+            A :obj:`ShoreMask` object with a defined binary shoreline mask.
+            If given, the :obj:`ShoreMask` object will be checked for the
             `shore_image` and `angle_threshold` attributes.
 
         topo_threshold : float, optional
@@ -421,7 +428,7 @@ class LandMask(BaseMask):
             Defines the number of times to 'look' for the OAM. Default is 3.
 
         is_mask : bool, optional
-            Whether the data in :obj:`topo` is already a binary mask. For
+            Whether the data in :obj:`arr` is already a binary mask. For
             example, this should be set to True, if you have already binarized
             the data yourself, using custom routines, and want to just store
             the data in the LandMask object.
@@ -490,6 +497,11 @@ class ShoreMask(BaseMask):
     Initialize the mask.
         >>> shrmsk = dm.mask.ShoreMask(arr)
 
+    Visualize the mask:
+        >>> shrmsk.show()
+
+    .. plot:: mask/shoremask.py
+
     """
 
     def __init__(self, arr, **kwargs):
@@ -500,22 +512,13 @@ class ShoreMask(BaseMask):
         described in [1]_. The default parameters are designed for
         DeltaRCM and follow the implementation described in [2]_.
 
-        .. [1] Shaw, John B., et al. "An image‐based method for
-           shoreline mapping on complex coasts." Geophysical Research Letters
-           35.12 (2008).
-
-        .. [2] Liang, Man, Corey Van Dyk, and Paola Passalacqua.
-           "Quantifying the patterns and dynamics of river deltas under
-           conditions of steady forcing and relative sea level rise." Journal
-           of Geophysical Research: Earth Surface 121.2 (2016): 465-496.
-
         Parameters
         ----------
         arr : ndarray
             2-D topographic array to make the mask from.
 
-        **kwargs
-        --------
+        Other Parameters
+        ----------------
         topo_threshold : float, optional
             Threshold depth to use for the OAM. Default is -0.5.
 
@@ -526,7 +529,7 @@ class ShoreMask(BaseMask):
             Defines the number of times to 'look' for the OAM. Default is 3.
 
         is_mask : bool, optional
-            Whether the data in :obj:`topo` is already a binary mask. For
+            Whether the data in :obj:`arr` is already a binary mask. For
             example, this should be set to True, if you have already binarized
             the data yourself, using custom routines, and want to just store
             the data in the ShoreMask object.

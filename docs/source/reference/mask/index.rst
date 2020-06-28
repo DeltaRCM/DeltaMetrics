@@ -20,5 +20,6 @@ Mask classes
 
 	BaseMask
 	ChannelMask
+	WetMask
 	LandMask
-
+	ShoreMask
