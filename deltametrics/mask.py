@@ -550,4 +550,4 @@ class ShoreMask(BaseMask):
             self.mask = self.data
         else:
             raise ValueError('is_mask must be a `bool`,'
-                             'but was: ' + is_mask)
+                             'but was: ' + self.is_mask)
