@@ -119,7 +119,8 @@ class OAM(object):
         self.mask = np.zeros(self.data.shape)
         self.mask[trim_idx:, :] = shoremap
         # assign shore_image to the mask object
-        self.shore_image = shore_image
+        self.shore_image = np.zeros(self.data.shape)
+        self.shore_image[trim_idx:, :] = shore_image
 
     def Seaangles_mod(self, numviews, thresholdimg):
         """Extract the opening angle map from an image.
@@ -235,13 +236,12 @@ class OAM(object):
 
 
 class ChannelMask(BaseMask, OAM):
-    """Channel mask.
+    """Identify a binary channel mask.
 
     A channel mask object, helps enforce valid masking of channels.
 
     Examples
     --------
-
     Initialize the channel mask
         >>> cmsk = dm.mask.ChannelMask(arr)
 
@@ -252,30 +252,104 @@ class ChannelMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, arr, **kwargs):
+    def __init__(self, velocity, topo, **kwargs):
         """Initialize the ChannelMask.
 
-        Intializing the channel mask requires an array of data, should be
-        two-dimensional.
+        Intializing the channel mask requires a flow velocity field and an
+        array of the delta topography.
 
         Parameters
         ----------
-        arr : ndarray
-            The data array to make the mask from.
+        velocity : ndarray
+            The velocity array to be used for mask creation.
 
-        routine : str
-            Which routine to use to extract the mask.
+        topo : ndarray
+            The model topography to be used for mask creation.
+
+        Other Parameters
+        ----------------
+        velocity_threshold : float, optional
+            Threshold velocity above which flow is considered 'channelized'.
+            The default value is 0.3 m/s based on DeltaRCM default parameters
+            for sediment transport.
+
+        landmask : :obj:`LandMask`, optional
+            A :obj:`LandMask` object with a defined binary land mask.
+            If given, it will be used to help define the channel mask.
+
+        wetmask : :obj:`WetMask`, optional
+            A :obj:`WetMask` object with a defined binary wet mask.
+            If given, the landmask attribute it contains will be used to
+            determine the channel mask.
+
+        topo_threshold : float, optional
+            Threshold depth to use for the OAM. Default is -0.5.
+
+        angle_threshold : int, optional
+            Threshold opening angle used in the OAM. Default is 75 degrees.
+
+        numviews : int, optional
+            Defines the number of times to 'look' for the OAM. Default is 3.
 
         is_mask : bool, optional
             Whether the data in :obj:`arr` is already a binary mask. For
             example, this should be set to True, if you have already binarized
             the data yourself, using custom routines, and want to just store
-            the data in the ChannelMask object.
+            the data in the LandMask object.
 
         """
-        super().__init__(mask_type='channel', data=arr)
+        super().__init__(mask_type='channel', data=topo)
+        self.velocity = velocity
 
-        self.other_atts = 10
+        # assign **kwargs to self
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        # set default values for **kwargs if they do not exist
+        self.velocity_threshold = getattr(self, 'velocity_threshold', 0.3)
+        self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
+        self.angle_threshold = getattr(self, 'angle_threshold', 75)
+        self.numviews = getattr(self, 'numviews', 3)
+        self.is_mask = getattr(self, 'is_mask', False)
+
+        if self.is_mask is False:
+            self.compute_channelmask()
+        elif self.is_mask is True:
+            self.mask = self.data
+        else:
+            raise ValueError('is_mask must be a `bool`,'
+                             'but was: ' + self.is_mask)
+
+    def compute_channelmask(self):
+        """Compute the ChannelMask.
+
+        Either uses an existing landmask, or recomputes it to use with the flow
+        velocity threshold to calculate a binary channelmask.
+        """
+        # check if a 'landmask' is available
+        if hasattr(self, 'landmask'):
+            try:
+                self.oceanmap = self.landmask.oceanmap
+                self.landmask = self.landmask.mask
+            except Exception:
+                self.compute_shoremask()
+                self.landmask = (self.shore_image < self.angle_threshold) * 1
+        elif hasattr(self, 'wetmask'):
+            try:
+                self.landmask = self.wetmask.landmask
+            except Exception:
+                self.compute_shoremask()
+                self.landmask = (self.shore_image < self.angle_threshold) * 1
+        else:
+            self.compute_shoremask()
+            self.landmask = (self.shore_image < self.angle_threshold) * 1
+
+        # compute a flowmap of cells where flow exceeds the velocity threshold
+        self.flowmap = (self.velocity > self.velocity_threshold) * 1.
+
+        # calculate the channelmask as the cells exceeding the threshold
+        # within the topset of the delta (ignoring flow in ocean)
+        self.mask = np.minimum(self.landmask, self.flowmap)
 
     @property
     def property_for_just_channels(self):

@@ -1,13 +1,8 @@
-import sys
-import os
-
-import matplotlib.pyplot as plt
-
+"""Visual for ChannelMask."""
+import deltametrics as dm
 from deltametrics.mask import ChannelMask
 
-
-_arr = np.ones((50, 50))
-_arr[:40, 30:36] = 0
-cmsk = ChannelMask(_arr)
-
-cmsk.show()
+rcm8cube = dm.sample_data.cube.rcm8()
+channel_mask = ChannelMask(rcm8cube['velocity'][-1, :, :],
+                           rcm8cube['eta'][-1, :, :])
+channel_mask.show()
