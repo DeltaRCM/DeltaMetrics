@@ -23,3 +23,4 @@ Mask classes
 	WetMask
 	LandMask
 	ShoreMask
+	EdgeMask

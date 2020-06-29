@@ -1,10 +1,10 @@
 """Classes and methods to create masks of planform features and attributes."""
 import numpy as np
-from scipy import stats
 import matplotlib.pyplot as plt
 from scipy.spatial import ConvexHull
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
+from skimage import feature
 
 
 class BaseMask(object):
@@ -118,9 +118,13 @@ class OAM(object):
         # write shoreline map out to data.mask
         self.mask = np.zeros(self.data.shape)
         self.mask[trim_idx:, :] = shoremap
-        # assign shore_image to the mask object
+        # assign shore_image to the mask object with proper size
         self.shore_image = np.zeros(self.data.shape)
         self.shore_image[trim_idx:, :] = shore_image
+        # resize the oceanmap
+        oceanmap_temp = self.oceanmap.copy()
+        self.oceanmap = np.zeros(self.data.shape)
+        self.oceanmap[trim_idx:, :] = oceanmap_temp
 
     def Seaangles_mod(self, numviews, thresholdimg):
         """Extract the opening angle map from an image.
@@ -243,7 +247,7 @@ class ChannelMask(BaseMask, OAM):
     Examples
     --------
     Initialize the channel mask
-        >>> cmsk = dm.mask.ChannelMask(arr)
+        >>> cmsk = dm.mask.ChannelMask(velocity, topo)
 
     And visualize the mask:
         >>> cmsk.show()
@@ -637,3 +641,110 @@ class ShoreMask(BaseMask, OAM):
         else:
             raise ValueError('is_mask must be a `bool`,'
                              'but was: ' + self.is_mask)
+
+
+class EdgeMask(BaseMask, OAM):
+    """Identify the land-water edges.
+
+    An edge mask object, delineates the boundaries between land and water.
+
+    Examples
+    --------
+    Initialize the edge mask
+        >>> emsk = dm.mask.EdgeMask(arr)
+
+    Visualize the mask:
+        >>> emsk.show()
+
+    .. plot:: mask/edgemask.py
+
+    """
+
+    def __init__(self, arr, **kwargs):
+        """Initialize the EdgeMask.
+
+        Initializing the edge mask requires either a 2-D array of topographic
+        data, or it can be computed using the :obj:`LandMask` and the
+        :obj:`WetMask`.
+
+        Parameters
+        ----------
+        arr : ndarray
+            The data array to make the mask from.
+
+        Other Parameters
+        ----------------
+        landmask : :obj:`LandMask`, optional
+            A :obj:`LandMask` object with the land identified
+
+        wetmask : :obj:`WetMask`, optional
+            A :obj:`WetMask` object with the surface water identified
+
+        topo_threshold : float, optional
+            Threshold depth to use for the OAM. Default is -0.5.
+
+        angle_threshold : int, optional
+            Threshold opening angle used in the OAM. Default is 75 degrees.
+
+        numviews : int, optional
+            Defines the number of times to 'look' for the OAM. Default is 3.
+
+        is_mask : bool, optional
+            Whether the data in :obj:`arr` is already a binary mask. For
+            example, this should be set to True, if you have already binarized
+            the data yourself, using custom routines, and want to just store
+            the data in the LandMask object.
+
+        """
+        super().__init__(mask_type='edge', data=arr)
+
+        # assign **kwargs to self
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        # set default values for **kwargs if they do not exist
+        self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
+        self.angle_threshold = getattr(self, 'angle_threshold', 75)
+        self.numviews = getattr(self, 'numviews', 3)
+        self.is_mask = getattr(self, 'is_mask', False)
+
+        if self.is_mask is False:
+            self.compute_edgemask()
+        elif self.is_mask is True:
+            self.mask = self.data
+        else:
+            raise ValueError('is_mask must be a `bool`,'
+                             'but was: ' + self.is_mask)
+
+    def compute_edgemask(self):
+        """Compute the EdgeMask.
+
+        Either computes it from just the topographic array, or uses information
+        from :obj:`LandMask` and :obj:`WetMask` to create the edge mask.
+
+        """
+        # if landmask and edgemask exist it is quick
+        if hasattr(self, 'landmask') and hasattr(self, 'wetmask'):
+            try:
+                self.landmask = self.landmask.mask
+                self.wetmask = self.wetmask.mask
+            except Exception:
+                self.compute_shoremask()
+                self.landmask = (self.shore_image < self.angle_threshold) * 1
+                self.wetmask = self.oceanmap * self.landmask
+        elif hasattr(self, 'wetmask'):
+            try:
+                self.wetmask = self.wetmask.mask
+                self.landmask = self.wetmask.landmask
+            except Exception:
+                self.compute_shoremask()
+                self.landmask = (self.shore_image < self.angle_threshold) * 1
+                self.wetmask = self.oceanmap * self.landmask
+        else:
+            self.compute_shoremask()
+            self.landmask = (self.shore_image < self.angle_threshold) * 1
+            self.wetmask = self.oceanmap * self.landmask
+        # compute the edge mask
+        self.mask = np.maximum(0,
+                               feature.canny(self.wetmask)*1 -
+                               feature.canny(self.landmask)*1)
