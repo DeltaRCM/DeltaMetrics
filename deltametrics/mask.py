@@ -60,6 +60,15 @@ class BaseMask(object):
             ax.set_title('No mask computed, input data shown')
         plt.show()
 
+
+class OAM(object):
+    """Class for methods related to the Opening Angle Method [1]_."""
+
+    def __init__(self, mask_type, data):
+        """Initialize the same way as the :obj:`BaseMask` class."""
+        self.mask_type = mask_type
+        self.data = data
+
     def compute_shoremask(self):
         """Compute the shoreline mask.
 
@@ -225,7 +234,7 @@ class BaseMask(object):
         return shoreangles, seaangles
 
 
-class ChannelMask(BaseMask):
+class ChannelMask(BaseMask, OAM):
     """Channel mask.
 
     A channel mask object, helps enforce valid masking of channels.
@@ -280,7 +289,7 @@ class ChannelMask(BaseMask):
         return a_channel_function(self.data)
 
 
-class WetMask(BaseMask):
+class WetMask(BaseMask, OAM):
     """Compute the wet mask.
 
     A wet mask object, identifies all wet pixels on the delta topset. Starts
@@ -378,7 +387,7 @@ class WetMask(BaseMask):
         self.mask = self.oceanmap * self.landmask
 
 
-class LandMask(BaseMask):
+class LandMask(BaseMask, OAM):
     """Identify a binary mask of the delta topset.
 
     A land mask object, helps enforce valid masking of delta topset.
@@ -486,7 +495,7 @@ class LandMask(BaseMask):
         return a_land_function(self.data)
 
 
-class ShoreMask(BaseMask):
+class ShoreMask(BaseMask, OAM):
     """Identify the shoreline as a binary mask.
 
     A shoreline mask object, provides a binary identification of shoreline
