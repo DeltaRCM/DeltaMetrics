@@ -24,3 +24,4 @@ Mask classes
 	LandMask
 	ShoreMask
 	EdgeMask
+	CenterlineMask

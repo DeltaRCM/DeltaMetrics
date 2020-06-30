@@ -5,6 +5,7 @@ from scipy.spatial import ConvexHull
 from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from skimage import feature
+from skimage import morphology
 
 
 class BaseMask(object):
@@ -748,3 +749,143 @@ class EdgeMask(BaseMask, OAM):
         self.mask = np.maximum(0,
                                feature.canny(self.wetmask)*1 -
                                feature.canny(self.landmask)*1)
+
+
+class CenterlineMask(BaseMask):
+    """Identify channel centerline mask.
+
+    A centerline mask object, provides the location of channel centerlines.
+
+    Examples
+    --------
+    Initialize the centerline mask
+        >>> clmsk = dm.mask.CenterlineMask(channelmask)
+
+    Visualize the mask
+        >>> clmsk.show()
+
+    .. plot:: mask/centerlinemask.py
+
+    """
+
+    def __init__(self, channelmask, **kwargs):
+        """Initialize the CenterlineMask.
+
+        Initialization of the centerline mask object requires a 2-D channel
+        mask (can be the :obj:`ChannelMask` object or a binary 2-D array).
+
+        Parameters
+        ----------
+        channelmask : :obj:`ChannelMask` or ndarray
+            The channel mask to derive the centerlines from
+
+        Other Parameters
+        ----------------
+        method : str, optional
+            The method to use for the centerline mask computation. The default
+            method ('skeletonize') is a morphological skeletonization of the
+            channel mask.
+
+        is_mask : bool, optional
+            Whether the data in :obj:`arr` is already a binary mask. For
+            example, this should be set to True, if you have already binarized
+            the data yourself, using custom routines, and want to just store
+            the data in the LandMask object.
+
+        """
+        if isinstance(channelmask, np.ndarray):
+            super().__init__(mask_type='centerline', data=channelmask)
+        elif isinstance(channelmask, ChannelMask):
+            super().__init__(mask_type='centerline',
+                             data=channelmask.mask.__array__())
+        else:
+            raise ValueError('Input channelmask parameter is invalid. Must be'
+                             'a np.ndarray or ChannelMask object but it was'
+                             'a: ' + type(channelmask))
+
+        # assign **kwargs to self
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        # set default values for **kwargs if they do not exist
+        self.method = getattr(self, 'method', 'skeletonize')
+        self.is_mask = getattr(self, 'is_mask', False)
+
+        if self.is_mask is False:
+            self.compute_centerlinemask()
+        elif self.is_mask is True:
+            self.mask = self.data
+        else:
+            raise ValueError('is_mask must be a `bool`,'
+                             'but was: ' + self.is_mask)
+
+    def compute_centerlinemask(self, method='skeletonize'):
+        """Compute the centerline mask.
+
+        Function for computing the centerline mask. The default implementation
+        is a morphological skeletonization operation using the
+        `skimage.morphology.skeletonize` function.
+
+        Alternatively, the method of  centerline extraction based on non-maxima
+        suppression of the singularity index, as described in [3]_ can be
+        specified. This requires the optional dependency `RivaMap`_.
+
+        .. [3] Isikdogan, Furkan, Alan Bovik, and Paola Passalacqua. "RivaMap:
+               An automated river analysis and mapping engine." Remote Sensing
+               of Environment 202 (2017): 88-97.
+
+        .. _Rivamap: https://github.com/isikdogan/rivamap
+
+        Parameters
+        ----------
+        method : str, optional
+            The method to be used for the centerline definition. Default is
+            'skeletonize'. Other option is 'rivamap'.
+
+        Other Parameters
+        ----------------
+        minScale : float
+            Minimum scale to use for the singularity index extraction, see [3]_
+
+        nrScales : int
+            Number of scales to use for singularity index, see [3]_
+
+        nms_threshold : float between 0 and 1, optional
+            Threshold to convert the non-maxima suppression results into a
+            binary mask. Default value is 0.1 which means that the lowest 10%
+            non-maxima suppression values are ignored when making the binary
+            centerline mask.
+
+        """
+        # skimage.morphology.skeletonize() method
+        if method == 'skeletonize':
+            self.mask = morphology.skeletonize(self.data)
+
+        if method == 'rivamap':
+            # rivamap based method - first check for import error
+            try:
+                from rivamap.singularity_index import applyMMSI as MMSI
+                from rivamap.singularity_index import SingularityIndexFilters as SF
+                from rivamap.delinate import extractCenterlines as eCL
+            except Exception:
+                raise ImportError('You must install the optional dependency'
+                                  'rivamap to use this centerline extraction'
+                                  'method')
+
+            # default values for **kwargs if they do not exist
+            self.minScale = getattr(self, 'minScale', 1.5)
+            self.nrScales = getattr(self, 'nrScales', 15)
+            self.nms_threshold = getattr(self, 'nms_threshold', 0.1)
+
+            # now do the computation - first change type and do psi extraction
+            if self.data.dtype == 'int64':
+                self.data = self.data.astype('float')/(2**64 - 1)
+            self.psi, widths, orient = MMSI(self.data,
+                                            filters=SF(minScale=self.minScale,
+                                                       nrScales=self.nrScales))
+            # compute non-maxima suppresion then normalize/threshold to
+            # make binary
+            self.nms = eCL(orient, self.psi)
+            nms_norm = self.nms/self.nms.max()
+            # compute mask
+            self.mask = (nms_norm > self.nms_threshold) * 1
