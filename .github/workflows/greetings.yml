@@ -1,0 +1,13 @@
+name: Greetings
+
+on: [pull_request, issues]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/first-interaction@v1
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        issue-message: 'Welcome to DeltaMetrics, thanks for posting your first issue! Please describe your issue as specifically as possible so that we can better help troubleshoot or resolve the problem.'
+        pr-message: 'Thanks for opening a pull request and contributing to the DeltaMetrics project!'

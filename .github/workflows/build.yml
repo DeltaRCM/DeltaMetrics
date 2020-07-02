@@ -1,0 +1,82 @@
+# Workflow to automate installation and unit testing of DeltaMetrics on various python versions and operating systems
+
+name: build
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.6, 3.7, 3.8]
+    env:
+      OS: ${{ matrix.os }}
+      PYTHON: ${{ matrix.python-version }}
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest pytest-cov coveralls
+        pip install -r requirements.txt
+    - name: Install DeltaMetrics
+      run: |
+        pip install -e .
+    - name: Test with pytest
+      run: |
+        pytest --cov=deltametrics/ --cov-report=xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        env_vars: OS,PYTHON
+        name: codecov-umbrella
+        fail_ci_if_error: true
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        persist-credentials: false
+    - name: Set up Python 3.x
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install sphinx==2.0.1
+        sudo apt update -y && sudo apt install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended dvipng
+    - name: Install DeltaMetrics
+      run: |
+        python setup.py install
+    - name: Build and test documentation
+      run: |
+        (cd docs && make docs)
+    - name: Debug
+      run: |
+        echo $REF
+        echo $EVENT_NAME
+        echo ${{ github.event_name == 'push' }}
+        echo ${{ github.ref == 'refs/heads/develop' }}
+        echo ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
+    - name: Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@3.5.5
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/develop' }}
+      with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+          BRANCH: gh-pages
+          FOLDER: docs/build/html
