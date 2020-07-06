@@ -812,7 +812,7 @@ class CenterlineMask(BaseMask):
         self.is_mask = getattr(self, 'is_mask', False)
 
         if self.is_mask is False:
-            self.compute_centerlinemask()
+            self.compute_centerlinemask(method=self.method)
         elif self.is_mask is True:
             self.mask = self.data
         else:
@@ -866,15 +866,15 @@ class CenterlineMask(BaseMask):
             try:
                 from rivamap.singularity_index import applyMMSI as MMSI
                 from rivamap.singularity_index import SingularityIndexFilters as SF
-                from rivamap.delinate import extractCenterlines as eCL
+                from rivamap.delineate import extractCenterlines as eCL
             except Exception:
-                raise ImportError('You must install the optional dependency'
-                                  'rivamap to use this centerline extraction'
-                                  'method')
+                raise ImportError('You must install the optional dependency:'
+                                  ' rivamap, to use this centerline extraction'
+                                  ' method')
 
             # default values for **kwargs if they do not exist
             self.minScale = getattr(self, 'minScale', 1.5)
-            self.nrScales = getattr(self, 'nrScales', 15)
+            self.nrScales = getattr(self, 'nrScales', 12)
             self.nms_threshold = getattr(self, 'nms_threshold', 0.1)
 
             # now do the computation - first change type and do psi extraction
