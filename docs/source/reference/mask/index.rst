@@ -22,6 +22,6 @@ Mask classes
 	ChannelMask
 	WetMask
 	LandMask
-	ShoreMask
+	ShorelineMask
 	EdgeMask
 	CenterlineMask

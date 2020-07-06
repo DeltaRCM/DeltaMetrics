@@ -6,6 +6,7 @@ from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
 from skimage import feature
 from skimage import morphology
+from skimage import measure
 
 
 class BaseMask(object):
@@ -101,14 +102,13 @@ class OAM(object):
                                                             shore_image.shape),
                              seaangles[:2, :].T.astype(int)))
         shore_image.flat[flat_inds] = seaangles[-1, :]
-        # grab contour from seaangles plot corresponding to angle threshold
-        cs = plt.contour(shore_image, [self.angle_threshold])
-        plt.close()
-        C = cs.allsegs[0][0]
+        # grab contour from seaangles corresponding to angle threshold
+        cs = measure.find_contours(shore_image, self.angle_threshold)
+        C = cs[0]
         # convert this extracted contour to the shoreline mask
         shoremap = np.zeros_like(data_trim)
         flat_inds = list(map(lambda x: np.ravel_multi_index(x, shoremap.shape),
-                             np.fliplr(np.round(C).astype(int))))
+                             np.round(C).astype(int)))
         shoremap.flat[flat_inds] = 1
 
         # write shoreline map out to data.mask
