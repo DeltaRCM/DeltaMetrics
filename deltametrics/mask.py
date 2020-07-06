@@ -63,7 +63,7 @@ class OAM(object):
         self.mask_type = mask_type
         self.data = data
 
-    def compute_shoremask(self):
+    def compute_shoremask(self, angle_threshold=75, **kwargs):
         """Compute the shoreline mask.
 
         Applies the opening angle method [1]_ to compute the shoreline mask.
@@ -78,7 +78,27 @@ class OAM(object):
            conditions of steady forcing and relative sea level rise." Journal
            of Geophysical Research: Earth Surface 121.2 (2016): 465-496.
 
+        Parameters
+        ----------
+        angle_threshold : int, optional
+            Threshold opening angle used in the OAM. Default is 75 degrees.
+
+        Other Parameters
+        ----------------
+        topo_threshold : float, optional
+            Threshold depth to use for the OAM. Default is -0.5.
+
+        numviews : int, optional
+            Defines the number of times to 'look' for the OAM. Default is 3.
+
         """
+        # pop the kwargs
+        self.topo_threshold = kwargs.pop('topo_threshold', -0.5)
+        self.numviews = kwargs.pop('numviews', 3)
+
+        # write the parameters to self
+        self.angle_threshold = angle_threshold
+
         # use the first column to trim the land_width
         # (or, can we assume access to the DeltaRCM variable `L0`?)
         i = 0
@@ -103,7 +123,7 @@ class OAM(object):
                              seaangles[:2, :].T.astype(int)))
         shore_image.flat[flat_inds] = seaangles[-1, :]
         # grab contour from seaangles corresponding to angle threshold
-        cs = measure.find_contours(shore_image, self.angle_threshold)
+        cs = measure.find_contours(shore_image, np.float(self.angle_threshold))
         C = cs[0]
         # convert this extracted contour to the shoreline mask
         shoremap = np.zeros_like(data_trim)
@@ -253,7 +273,13 @@ class ChannelMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, velocity, topo, is_mask=False, **kwargs):
+    def __init__(self,
+                 velocity,
+                 topo,
+                 velocity_threshold=0.3,
+                 angle_threshold=75,
+                 is_mask=False,
+                 **kwargs):
         """Initialize the ChannelMask.
 
         Intializing the channel mask requires a flow velocity field and an
@@ -267,6 +293,14 @@ class ChannelMask(BaseMask, OAM):
         topo : ndarray
             The model topography to be used for mask creation.
 
+        velocity_threshold : float, optional
+            Threshold velocity above which flow is considered 'channelized'.
+            The default value is 0.3 m/s based on DeltaRCM default parameters
+            for sediment transport.
+
+        angle_threshold : int, optional
+            Threshold opening angle used in the OAM. Default is 75 degrees.
+
         is_mask : bool, optional
             Whether the data in :obj:`arr` is already a binary mask. Default is
             False. This should be set to True, if you have already binarized
@@ -275,11 +309,6 @@ class ChannelMask(BaseMask, OAM):
 
         Other Parameters
         ----------------
-        velocity_threshold : float, optional
-            Threshold velocity above which flow is considered 'channelized'.
-            The default value is 0.3 m/s based on DeltaRCM default parameters
-            for sediment transport.
-
         landmask : :obj:`LandMask`, optional
             A :obj:`LandMask` object with a defined binary land mask.
             If given, it will be used to help define the channel mask.
@@ -292,9 +321,6 @@ class ChannelMask(BaseMask, OAM):
         topo_threshold : float, optional
             Threshold depth to use for the OAM. Default is -0.5.
 
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
-
         numviews : int, optional
             Defines the number of times to 'look' for the OAM. Default is 3.
 
@@ -302,29 +328,33 @@ class ChannelMask(BaseMask, OAM):
         super().__init__(mask_type='channel', data=topo)
         self.velocity = velocity
 
-        # assign **kwargs to self
+        # assign **kwargs to self incase there are masks
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-        # set default values for **kwargs if they do not exist
-        self.velocity_threshold = getattr(self, 'velocity_threshold', 0.3)
-        self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
-        self.angle_threshold = getattr(self, 'angle_threshold', 75)
-        self.numviews = getattr(self, 'numviews', 3)
+        # write parameter values to self so they don't get lost
+        self.velocity_threshold = velocity_threshold
+        self.angle_threshold = angle_threshold
 
-        if not is_mask:
-            self.compute_channelmask()
+        if is_mask is False:
+            self.compute_channelmask(**kwargs)
         elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
                             'but was: ' + type(is_mask))
 
-    def compute_channelmask(self):
+    def compute_channelmask(self, **kwargs):
         """Compute the ChannelMask.
 
         Either uses an existing landmask, or recomputes it to use with the flow
         velocity threshold to calculate a binary channelmask.
+
+        Other Parameters
+        ----------------
+        kwargs : optional
+            Keyword arguments for :obj:`OAM.compute_shoremask`.
+
         """
         # check if a 'landmask' is available
         if hasattr(self, 'landmask'):
@@ -332,16 +362,16 @@ class ChannelMask(BaseMask, OAM):
                 self.oceanmap = self.landmask.oceanmap
                 self.landmask = self.landmask.mask
             except Exception:
-                self.compute_shoremask()
+                self.compute_shoremask(self.angle_threshold, **kwargs)
                 self.landmask = (self.shore_image < self.angle_threshold) * 1
         elif hasattr(self, 'wetmask'):
             try:
                 self.landmask = self.wetmask.landmask
             except Exception:
-                self.compute_shoremask()
+                self.compute_shoremask(self.angle_threshold, **kwargs)
                 self.landmask = (self.shore_image < self.angle_threshold) * 1
         else:
-            self.compute_shoremask()
+            self.compute_shoremask(self.angle_threshold, **kwargs)
             self.landmask = (self.shore_image < self.angle_threshold) * 1
 
         # compute a flowmap of cells where flow exceeds the velocity threshold
@@ -375,7 +405,11 @@ class WetMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, arr, is_mask=False, **kwargs):
+    def __init__(self,
+                 arr,
+                 angle_threshold=75,
+                 is_mask=False,
+                 **kwargs):
         """Initialize the WetMask.
 
         Intializing the wet mask requires either a 2-D array of data, or it
@@ -385,6 +419,9 @@ class WetMask(BaseMask, OAM):
         ----------
         arr : ndarray
             The data array to make the mask from.
+
+        angle_threshold : int, optional
+            Threshold opening angle used in the OAM. Default is 75 degrees.
 
         is_mask : bool, optional
             Whether the data in :obj:`arr` is already a binary mask. Default is
@@ -402,33 +439,28 @@ class WetMask(BaseMask, OAM):
         topo_threshold : float, optional
             Threshold depth to use for the OAM. Default is -0.5.
 
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
-
         numviews : int, optional
             Defines the number of times to 'look' for the OAM. Default is 3.
 
         """
         super().__init__(mask_type='wet', data=arr)
 
-        # assign **kwargs to self
+        # assign **kwargs to self in case the landmask was passed
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-        # set default values for **kwargs if they do not exist
-        self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
-        self.angle_threshold = getattr(self, 'angle_threshold', 75)
-        self.numviews = getattr(self, 'numviews', 3)
+        # put angle_threshold in self
+        self.angle_threshold = angle_threshold
 
-        if not is_mask:
-            self.compute_wetmask()
+        if is_mask is False:
+            self.compute_wetmask(**kwargs)
         elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
                             'but was: ' + type(is_mask))
 
-    def compute_wetmask(self):
+    def compute_wetmask(self, **kwargs):
         """Compute the WetMask.
 
         Either recomputes the landmask, or uses precomputed information from
@@ -441,10 +473,10 @@ class WetMask(BaseMask, OAM):
                 self.oceanmap = self.landmask.oceanmap
                 self.landmask = self.landmask.mask
             except Exception:
-                self.compute_shoremask()
+                self.compute_shoremask(self.angle_threshold, **kwargs)
                 self.landmask = (self.shore_image < self.angle_threshold) * 1
         else:
-            self.compute_shoremask()
+            self.compute_shoremask(self.angle_threshold, **kwargs)
             self.landmask = (self.shore_image < self.angle_threshold) * 1
         # set wet mask as data.mask
         self._mask = self.oceanmap * self.landmask
@@ -471,7 +503,11 @@ class LandMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, arr, is_mask=False, **kwargs):
+    def __init__(self,
+                 arr,
+                 angle_threshold=75,
+                 is_mask=False,
+                 **kwargs):
         """Initialize the LandMask.
 
         Intializing the land mask requires an array of data, should be
@@ -483,6 +519,9 @@ class LandMask(BaseMask, OAM):
         ----------
         arr : ndarray
             2-D topographic array to make the mask from.
+
+        angle_threshold : int, optional
+            Threshold opening angle used in the OAM. Default is 75 degrees.
 
         is_mask : bool, optional
             Whether the data in :obj:`arr` is already a binary mask. Default
@@ -500,33 +539,28 @@ class LandMask(BaseMask, OAM):
         topo_threshold : float, optional
             Threshold depth to use for the OAM. Default is -0.5.
 
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
-
         numviews : int, optional
             Defines the number of times to 'look' for the OAM. Default is 3.
 
         """
         super().__init__(mask_type='land', data=arr)
 
-        # assign **kwargs to self
+        # assign **kwargs to self in event a mask was passed
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-        # set default values for **kwargs if they do not exist
-        self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
-        self.angle_threshold = getattr(self, 'angle_threshold', 75)
-        self.numviews = getattr(self, 'numviews', 3)
+        # set parameter value to self so it is kept
+        self.angle_threshold = angle_threshold
 
         if not is_mask:
-            self.compute_landmask()
+            self.compute_landmask(**kwargs)
         elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
                             'but was: ' + type(is_mask))
 
-    def compute_landmask(self):
+    def compute_landmask(self, **kwargs):
         """Compute the LandMask.
 
         Uses data from the shoreline computation or recomputes the shoreline
@@ -540,9 +574,9 @@ class LandMask(BaseMask, OAM):
                 self.shore_image = self.shoremask.shore_image
                 self.angle_threshold = self.shoremask.angle_threshold
             except Exception:
-                self.compute_shoremask()
+                self.compute_shoremask(self.angle_threshold, **kwargs)
         else:
-            self.compute_shoremask()
+            self.compute_shoremask(self.angle_threshold, **kwargs)
         # set the land mask to data.mask
         self._mask = (self.shore_image < self.angle_threshold) * 1
 
@@ -566,7 +600,11 @@ class ShorelineMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, arr, is_mask=False, **kwargs):
+    def __init__(self,
+                 arr,
+                 angle_threshold=75,
+                 is_mask=False,
+                 **kwargs):
         """Initialize the ShorelineMask.
 
         Initializing the shoreline mask requires a 2-D array of data. The
@@ -579,6 +617,9 @@ class ShorelineMask(BaseMask, OAM):
         arr : ndarray
             2-D topographic array to make the mask from.
 
+        angle_threshold : int, optional
+            Threshold opening angle used in the OAM. Default is 75 degrees.
+
         is_mask : bool, optional
             Whether the data in :obj:`arr` is already a binary mask. Default
             value is False. This should be set to True, if you have already
@@ -587,29 +628,14 @@ class ShorelineMask(BaseMask, OAM):
 
         Other Parameters
         ----------------
-        topo_threshold : float, optional
-            Threshold depth to use for the OAM. Default is -0.5.
-
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
-
-        numviews : int, optional
-            Defines the number of times to 'look' for the OAM. Default is 3.
+        kwargs : optional
+            Keyword arguments for :obj:`OAM.compute_shoremask`.
 
         """
         super().__init__(mask_type='shore', data=arr)
 
-        # assign **kwargs to self
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-        # set default values for **kwargs if they do not exist
-        self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
-        self.angle_threshold = getattr(self, 'angle_threshold', 75)
-        self.numviews = getattr(self, 'numviews', 3)
-
-        if not is_mask:
-            self.compute_shoremask()
+        if is_mask is False:
+            self.compute_shoremask(angle_threshold, **kwargs)
         elif is_mask is True:
             self._mask = self.data
         else:
@@ -635,7 +661,11 @@ class EdgeMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, arr, is_mask=False, **kwargs):
+    def __init__(self,
+                 arr,
+                 angle_threshold=75,
+                 is_mask=False,
+                 **kwargs):
         """Initialize the EdgeMask.
 
         Initializing the edge mask requires either a 2-D array of topographic
@@ -646,6 +676,9 @@ class EdgeMask(BaseMask, OAM):
         ----------
         arr : ndarray
             The data array to make the mask from.
+
+        angle_threshold : int, optional
+            Threshold opening angle used in the OAM. Default is 75 degrees.
 
         is_mask : bool, optional
             Whether the data in :obj:`arr` is already a binary mask. Default
@@ -664,33 +697,24 @@ class EdgeMask(BaseMask, OAM):
         topo_threshold : float, optional
             Threshold depth to use for the OAM. Default is -0.5.
 
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
-
         numviews : int, optional
             Defines the number of times to 'look' for the OAM. Default is 3.
 
         """
         super().__init__(mask_type='edge', data=arr)
 
-        # assign **kwargs to self
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+        # write parameter to self so it is not lost
+        self.angle_threshold = angle_threshold
 
-        # set default values for **kwargs if they do not exist
-        self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
-        self.angle_threshold = getattr(self, 'angle_threshold', 75)
-        self.numviews = getattr(self, 'numviews', 3)
-
-        if not is_mask:
-            self.compute_edgemask()
+        if is_mask is False:
+            self.compute_edgemask(**kwargs)
         elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
                             'but was: ' + type(is_mask))
 
-    def compute_edgemask(self):
+    def compute_edgemask(self, **kwargs):
         """Compute the EdgeMask.
 
         Either computes it from just the topographic array, or uses information
@@ -703,7 +727,7 @@ class EdgeMask(BaseMask, OAM):
                 self.landmask = self.landmask.mask
                 self.wetmask = self.wetmask.mask
             except Exception:
-                self.compute_shoremask()
+                self.compute_shoremask(self.angle_threshold, **kwargs)
                 self.landmask = (self.shore_image < self.angle_threshold) * 1
                 self.wetmask = self.oceanmap * self.landmask
         elif hasattr(self, 'wetmask'):
@@ -711,11 +735,11 @@ class EdgeMask(BaseMask, OAM):
                 self.wetmask = self.wetmask.mask
                 self.landmask = self.wetmask.landmask
             except Exception:
-                self.compute_shoremask()
+                self.compute_shoremask(self.angle_threshold, **kwargs)
                 self.landmask = (self.shore_image < self.angle_threshold) * 1
                 self.wetmask = self.oceanmap * self.landmask
         else:
-            self.compute_shoremask()
+            self.compute_shoremask(self.angle_threshold, **kwargs)
             self.landmask = (self.shore_image < self.angle_threshold) * 1
             self.wetmask = self.oceanmap * self.landmask
         # compute the edge mask
@@ -743,7 +767,11 @@ class CenterlineMask(BaseMask):
 
     """
 
-    def __init__(self, channelmask, is_mask=False, **kwargs):
+    def __init__(self,
+                 channelmask,
+                 is_mask=False,
+                 method='skeletonize',
+                 **kwargs):
         """Initialize the CenterlineMask.
 
         Initialization of the centerline mask object requires a 2-D channel
@@ -760,12 +788,15 @@ class CenterlineMask(BaseMask):
             binarized the data yourself, using custom routines, and want to
             just store the data in the CenterlineMask object.
 
-        Other Parameters
-        ----------------
         method : str, optional
             The method to use for the centerline mask computation. The default
             method ('skeletonize') is a morphological skeletonization of the
             channel mask.
+
+        Other Parameters
+        ----------------
+        kwargs : optional
+            Keyword arguments for the 'rivamap' functionality.
 
         """
         if isinstance(channelmask, np.ndarray):
@@ -778,22 +809,18 @@ class CenterlineMask(BaseMask):
                              'a np.ndarray or ChannelMask object but it was'
                              'a: ' + type(channelmask))
 
-        # assign **kwargs to self
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+        # save method type value to self
+        self.method = method
 
-        # set default values for **kwargs if they do not exist
-        self.method = getattr(self, 'method', 'skeletonize')
-
-        if not is_mask:
-            self.compute_centerlinemask(method=self.method)
+        if is_mask is False:
+            self.compute_centerlinemask(**kwargs)
         elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
                             'but was: ' + type(is_mask))
 
-    def compute_centerlinemask(self, method='skeletonize'):
+    def compute_centerlinemask(self, **kwargs):
         """Compute the centerline mask.
 
         Function for computing the centerline mask. The default implementation
@@ -810,18 +837,12 @@ class CenterlineMask(BaseMask):
 
         .. _Rivamap: https://github.com/isikdogan/rivamap
 
-        Parameters
-        ----------
-        method : str, optional
-            The method to be used for the centerline definition. Default is
-            'skeletonize'. Other option is 'rivamap'.
-
         Other Parameters
         ----------------
-        minScale : float
+        minScale : float, optional
             Minimum scale to use for the singularity index extraction, see [3]_
 
-        nrScales : int
+        nrScales : int, optional
             Number of scales to use for singularity index, see [3]_
 
         nms_threshold : float between 0 and 1, optional
@@ -832,10 +853,10 @@ class CenterlineMask(BaseMask):
 
         """
         # skimage.morphology.skeletonize() method
-        if method == 'skeletonize':
+        if self.method == 'skeletonize':
             self._mask = morphology.skeletonize(self.data)
 
-        if method == 'rivamap':
+        if self.method == 'rivamap':
             # rivamap based method - first check for import error
             try:
                 from rivamap.singularity_index import applyMMSI as MMSI
@@ -846,10 +867,10 @@ class CenterlineMask(BaseMask):
                                   ' rivamap, to use this centerline extraction'
                                   ' method')
 
-            # default values for **kwargs if they do not exist
-            self.minScale = getattr(self, 'minScale', 1.5)
-            self.nrScales = getattr(self, 'nrScales', 12)
-            self.nms_threshold = getattr(self, 'nms_threshold', 0.1)
+            # pop the kwargs
+            self.minScale = kwargs.pop('minScale', 1.5)
+            self.nrScales = kwargs.pop('nrScales', 12)
+            self.nms_threshold = kwargs.pop('nms_threshold', 0.1)
 
             # now do the computation - first change type and do psi extraction
             if self.data.dtype == 'int64':

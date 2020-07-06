@@ -102,12 +102,12 @@ class TestLandMask:
         """Test that specified values are assigned."""
         # define the mask
         landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
-                                 topo_threshold=-1.0,
                                  angle_threshold=100,
+                                 topo_threshold=-1.0,
                                  numviews=5)
         # make assertions
-        assert landmask.topo_threshold == -1.0
         assert landmask.angle_threshold == 100
+        assert landmask.topo_threshold == -1.0
         assert landmask.numviews == 5
 
     def test_land(self):
