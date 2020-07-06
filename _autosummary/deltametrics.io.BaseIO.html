@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>deltametrics.io.BaseIO &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.io.NetCDFIO" href="deltametrics.io.NetCDFIO.html" />
@@ -55,15 +55,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -74,9 +74,9 @@
             
   <div class="section" id="deltametrics-io-baseio">
 <h1>deltametrics.io.BaseIO<a class="headerlink" href="#deltametrics-io-baseio" title="Permalink to this headline">¶</a></h1>
-<dl class="py class">
+<dl class="class">
 <dt id="deltametrics.io.BaseIO">
-<em class="property">class </em><code class="sig-prename descclassname">deltametrics.io.</code><code class="sig-name descname">BaseIO</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_path</span></em>, <em class="sig-param"><span class="n">write</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">deltametrics.io.</code><code class="descname">BaseIO</code><span class="sig-paren">(</span><em>data_path</em>, <em>write</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO" title="Permalink to this definition">¶</a></dt>
 <dd><p>BaseIO object other file format wrappers inheririt from.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -84,14 +84,14 @@
 wish to subclass to create a new IO format, you must implement the
 methods <code class="docutils literal notranslate"><span class="pre">connect</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>, <code class="docutils literal notranslate"><span class="pre">write</span></code>, and <code class="docutils literal notranslate"><span class="pre">keys</span></code>.</p>
 </div>
-<dl class="py method">
+<dl class="method">
 <dt id="deltametrics.io.BaseIO.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_path</span></em>, <em class="sig-param"><span class="n">write</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_path</em>, <em>write</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the base IO.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -100,32 +100,84 @@ methods <code class="docutils literal notranslate"><span class="pre">connect</sp
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.__init__" title="deltametrics.io.BaseIO.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data_path, write)</p></td>
 <td><p>Initialize the base IO.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.connect" title="deltametrics.io.BaseIO.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>()</p></td>
 <td><p>Should connect to the data file.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.read" title="deltametrics.io.BaseIO.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>()</p></td>
 <td><p>Should read data into memory.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.write" title="deltametrics.io.BaseIO.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>()</p></td>
 <td><p>Should write the data to file.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
+<table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_path</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.data_path" title="deltametrics.io.BaseIO.data_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_path</span></code></a></p></td>
 <td><p>Path to data file.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.keys" title="deltametrics.io.BaseIO.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a></p></td>
 <td><p>Should link to all key _names_ stored in file.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="deltametrics.io.BaseIO.__getitem__">
+<code class="descname">__getitem__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should slice the data from file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.io.BaseIO.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should connect to the data file.</p>
+<p>This function should initialize the file if it does not exist, or
+connect to the file if it already exists—but <em>do not</em> read the file.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.io.BaseIO.data_path">
+<code class="descname">data_path</code><a class="headerlink" href="#deltametrics.io.BaseIO.data_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Path to data file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data_path</strong> (<em>str</em>) – path to data file for IO operations.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The setter method validates the path, and returns a <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> if
+the file is not found.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><cite>str</cite></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.io.BaseIO.keys">
+<code class="descname">keys</code><a class="headerlink" href="#deltametrics.io.BaseIO.keys" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should link to all key _names_ stored in file.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.io.BaseIO.read">
+<code class="descname">read</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should read data into memory.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.io.BaseIO.write">
+<code class="descname">write</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should write the data to file.</p>
+<p>Take a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> and write it to file.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -158,7 +210,7 @@ methods <code class="docutils literal notranslate"><span class="pre">connect</sp
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

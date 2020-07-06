@@ -13,7 +13,6 @@ deltametrics.cube.CubeVariable
 
    .. autosummary::
    
-      ~CubeVariable.__init__
       ~CubeVariable.all
       ~CubeVariable.any
       ~CubeVariable.argmax

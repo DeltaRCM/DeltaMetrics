@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>Plotting utilities and functions &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
     <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="deltametrics.plot.VariableInfo" href="../../_autosummary/deltametrics.plot.VariableInfo.html" />
@@ -65,15 +65,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -96,13 +96,13 @@ This reference page documents the lower-level utilities used to make this happen
 <p>By default, each variable receives a set of styling definitions.
 The default parameters of each styling variable are defined below:</p>
 <p>(<a class="reference external" href="../../pyplots/plot/document_variableset.png">png</a>, <a class="reference external" href="../../pyplots/plot/document_variableset.hires.png">hires.png</a>)</p>
-<div class="figure align-default">
+<div class="figure align-center">
 <img alt="../../_images/document_variableset.png" src="../../_images/document_variableset.png" />
 </div>
 </div>
 <div class="section" id="plotting-utility-objects">
 <h2>Plotting utility objects<a class="headerlink" href="#plotting-utility-objects" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
+<table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -119,9 +119,9 @@ The default parameters of each styling variable are defined below:</p>
 </div>
 <div class="section" id="plotting-utility-functions">
 <h2>Plotting utility functions<a class="headerlink" href="#plotting-utility-functions" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
+<dl class="function">
 <dt id="deltametrics.plot.append_colorbar">
-<code class="sig-prename descclassname">deltametrics.plot.</code><code class="sig-name descname">append_colorbar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ci</span></em>, <em class="sig-param"><span class="n">ax</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">deltametrics.plot.</code><code class="descname">append_colorbar</code><span class="sig-paren">(</span><em>ci</em>, <em>ax</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append a colorbar, consistently placed.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -143,9 +143,9 @@ be stolen from.</p></li>
 </div>
 <div class="section" id="deltametrics-colormaps">
 <h2>DeltaMetrics colormaps<a class="headerlink" href="#deltametrics-colormaps" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
+<dl class="function">
 <dt id="deltametrics.plot.cartographic_colormap">
-<code class="sig-prename descclassname">deltametrics.plot.</code><code class="sig-name descname">cartographic_colormap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.cartographic_colormap" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">deltametrics.plot.</code><code class="descname">cartographic_colormap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.cartographic_colormap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Colormap for an elevation map style.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -159,9 +159,9 @@ sea-level is (or zero?).</p>
 </div>
 </dd></dl>
 
-<dl class="py function">
+<dl class="function">
 <dt id="deltametrics.plot.aerial_colormap">
-<code class="sig-prename descclassname">deltametrics.plot.</code><code class="sig-name descname">aerial_colormap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.aerial_colormap" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">deltametrics.plot.</code><code class="descname">aerial_colormap</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.aerial_colormap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Colormap for a pesudorealistic looking aerial shot.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -199,7 +199,7 @@ sea-level is (or zero?).</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

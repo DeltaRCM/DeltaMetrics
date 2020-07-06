@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>deltametrics.plot.VariableSet &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Utility functions" href="../reference/utils/index.html" />
@@ -55,15 +55,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -74,9 +74,9 @@
             
   <div class="section" id="deltametrics-plot-variableset">
 <h1>deltametrics.plot.VariableSet<a class="headerlink" href="#deltametrics-plot-variableset" title="Permalink to this headline">¶</a></h1>
-<dl class="py class">
+<dl class="class">
 <dt id="deltametrics.plot.VariableSet">
-<em class="property">class </em><code class="sig-prename descclassname">deltametrics.plot.</code><code class="sig-name descname">VariableSet</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">override_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">deltametrics.plot.</code><code class="descname">VariableSet</code><span class="sig-paren">(</span><em>override_dict=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>A default set of properties for variables.</p>
 <p>This makes it easy to have consistent plots.</p>
 <p>This class defines a dictionary of VariableInfo objects, which store
@@ -91,9 +91,9 @@ colormaps, etc.</p>
 <span class="go">&lt;deltametrics.plot.VariableSet object at 0x...&gt;</span>
 </pre></div>
 </div>
-<dl class="py method">
+<dl class="method">
 <dt id="deltametrics.plot.VariableSet.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">override_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>override_dict=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the VariableSet.</p>
 <p>Initialize the set with default colormaps.</p>
 <div class="admonition note">
@@ -125,7 +125,7 @@ or an Mx3 numpy array that can be coerced into a linear colormap.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -137,40 +137,40 @@ or an Mx3 numpy array that can be coerced into a linear colormap.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
+<table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">depth</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plot.VariableSet.depth" title="deltametrics.plot.VariableSet.depth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">depth</span></code></a></p></td>
 <td><p>Flow depth style.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">discharge</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plot.VariableSet.discharge" title="deltametrics.plot.VariableSet.discharge"><code class="xref py py-obj docutils literal notranslate"><span class="pre">discharge</span></code></a></p></td>
 <td><p>Flow discharge style.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">eta</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plot.VariableSet.eta" title="deltametrics.plot.VariableSet.eta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eta</span></code></a></p></td>
 <td><p>Bed elevation style.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">net_to_gross</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plot.VariableSet.net_to_gross" title="deltametrics.plot.VariableSet.net_to_gross"><code class="xref py py-obj docutils literal notranslate"><span class="pre">net_to_gross</span></code></a></p></td>
 <td><p>Net-to-gross style.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">stage</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plot.VariableSet.stage" title="deltametrics.plot.VariableSet.stage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stage</span></code></a></p></td>
 <td><p>Flow stage style.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">strata_depth</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">strata_sand_frac</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plot.VariableSet.strata_sand_frac" title="deltametrics.plot.VariableSet.strata_sand_frac"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strata_sand_frac</span></code></a></p></td>
 <td><p>Sand fraction style.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">time</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plot.VariableSet.time" title="deltametrics.plot.VariableSet.time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time</span></code></a></p></td>
 <td><p>Temporal history style.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">velocity</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plot.VariableSet.velocity" title="deltametrics.plot.VariableSet.velocity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">velocity</span></code></a></p></td>
 <td><p>Flow velocity style.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></p></td>
@@ -181,6 +181,71 @@ or an Mx3 numpy array that can be coerced into a linear colormap.</p>
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="deltametrics.plot.VariableSet.__getitem__">
+<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>var</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the attribute.</p>
+<p>Variable styling (i.e., the <cite>VariableInfo</cite> instances can be accessed by
+slicing the VariableSet with a string matching the VariableInfo <cite>name</cite>
+field. This enables accessing variables in evaluation, rather than
+explicit typing of variable names.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.plot.VariableSet.__setattr__">
+<code class="descname">__setattr__</code><span class="sig-paren">(</span><em>key</em>, <em>var</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set, with check for types.</p>
+<p>This prevents setting non-VariableInfo attributes.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableSet.depth">
+<code class="descname">depth</code><a class="headerlink" href="#deltametrics.plot.VariableSet.depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flow depth style.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableSet.discharge">
+<code class="descname">discharge</code><a class="headerlink" href="#deltametrics.plot.VariableSet.discharge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flow discharge style.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableSet.eta">
+<code class="descname">eta</code><a class="headerlink" href="#deltametrics.plot.VariableSet.eta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bed elevation style.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableSet.net_to_gross">
+<code class="descname">net_to_gross</code><a class="headerlink" href="#deltametrics.plot.VariableSet.net_to_gross" title="Permalink to this definition">¶</a></dt>
+<dd><p>Net-to-gross style.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableSet.stage">
+<code class="descname">stage</code><a class="headerlink" href="#deltametrics.plot.VariableSet.stage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flow stage style.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableSet.strata_sand_frac">
+<code class="descname">strata_sand_frac</code><a class="headerlink" href="#deltametrics.plot.VariableSet.strata_sand_frac" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sand fraction style.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableSet.time">
+<code class="descname">time</code><a class="headerlink" href="#deltametrics.plot.VariableSet.time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Temporal history style.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableSet.velocity">
+<code class="descname">velocity</code><a class="headerlink" href="#deltametrics.plot.VariableSet.velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Flow velocity style.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -213,7 +278,7 @@ or an Mx3 numpy array that can be coerced into a linear colormap.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

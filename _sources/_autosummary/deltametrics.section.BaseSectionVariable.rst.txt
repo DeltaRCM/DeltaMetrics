@@ -13,7 +13,6 @@ deltametrics.section.BaseSectionVariable
 
    .. autosummary::
    
-      ~BaseSectionVariable.__init__
       ~BaseSectionVariable.all
       ~BaseSectionVariable.anom
       ~BaseSectionVariable.any

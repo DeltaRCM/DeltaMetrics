@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>deltametrics.section.RadialSection &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.section.BaseSectionVariable" href="deltametrics.section.BaseSectionVariable.html" />
@@ -55,15 +55,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -74,13 +74,13 @@
             
   <div class="section" id="deltametrics-section-radialsection">
 <h1>deltametrics.section.RadialSection<a class="headerlink" href="#deltametrics-section-radialsection" title="Permalink to this headline">¶</a></h1>
-<dl class="py class">
+<dl class="class">
 <dt id="deltametrics.section.RadialSection">
-<em class="property">class </em><code class="sig-prename descclassname">deltametrics.section.</code><code class="sig-name descname">RadialSection</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">apex</span></em>, <em class="sig-param"><span class="n">radius</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">deltametrics.section.</code><code class="descname">RadialSection</code><span class="sig-paren">(</span><em>apex</em>, <em>radius</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection" title="Permalink to this definition">¶</a></dt>
 <dd><p>Radial section object.</p>
-<dl class="py method">
+<dl class="method">
 <dt id="deltametrics.section.RadialSection.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">apex</span></em>, <em class="sig-param"><span class="n">radius</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>apex</em>, <em>radius</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identify coordinates defining the section.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -94,7 +94,7 @@ have any functionality.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -103,16 +103,16 @@ have any functionality.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.__init__" title="deltametrics.section.RadialSection.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(apex, radius)</p></td>
 <td><p>Identify coordinates defining the section.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code>(CubeInstance)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.connect" title="deltametrics.section.RadialSection.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(CubeInstance)</p></td>
 <td><p>Connect this Section instance to a Cube instance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code>(SectionAttribute[, style])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.show" title="deltametrics.section.RadialSection.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(SectionAttribute[, style])</p></td>
 <td><p>Show the section.</p></td>
 </tr>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
+<table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -121,14 +121,83 @@ have any functionality.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">s</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.trace" title="deltametrics.section.RadialSection.trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></a></p></td>
 <td><p>Coordinates of the section in the x-y plane.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.variables" title="deltametrics.section.RadialSection.variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></a></p></td>
 <td><p>List of variables.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="deltametrics.section.RadialSection.__getitem__">
+<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>var</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a slice of the section.</p>
+<p>Slicing the section instance creates a
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">SectionVariable</span></code> instance from data for
+variable <code class="docutils literal notranslate"><span class="pre">var</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We only support slicing by string.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to slice.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>SectionVariable</strong> – SectionVariable instance for variable <code class="docutils literal notranslate"><span class="pre">var</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SectionVariable</span></code> instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.section.RadialSection.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>CubeInstance</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect this Section instance to a Cube instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.section.RadialSection.show">
+<code class="descname">show</code><span class="sig-paren">(</span><em>SectionAttribute</em>, <em>style='mesh'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the section.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The documentation around this method is not correct. Many
+unsupported features are listed. Need to impplement all options,
+then document with examples and tests.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>SectionAttribute</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which attribute to show.</p></li>
+<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – What style to display the section with. Choices are ‘mesh’ or ‘line’.</p></li>
+<li><p><strong>**kwargs</strong> – <p>Passed to matplotlib plotting functions.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Not implemented.</p>
+</div>
+</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.section.RadialSection.trace">
+<code class="descname">trace</code><a class="headerlink" href="#deltametrics.section.RadialSection.trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Coordinates of the section in the x-y plane.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.section.RadialSection.variables">
+<code class="descname">variables</code><a class="headerlink" href="#deltametrics.section.RadialSection.variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of variables.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -161,7 +230,7 @@ have any functionality.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

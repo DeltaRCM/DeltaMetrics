@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>deltametrics.plan.compute_shoreline_angles &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Masking operations" href="../reference/mask/index.html" />
@@ -55,15 +55,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -74,14 +74,14 @@
             
   <div class="section" id="deltametrics-plan-compute-shoreline-angles">
 <h1>deltametrics.plan.compute_shoreline_angles<a class="headerlink" href="#deltametrics-plan-compute-shoreline-angles" title="Permalink to this headline">¶</a></h1>
-<dl class="py function">
+<dl class="function">
 <dt id="deltametrics.plan.compute_shoreline_angles">
-<code class="sig-prename descclassname">deltametrics.plan.</code><code class="sig-name descname">compute_shoreline_angles</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mask</span></em>, <em class="sig-param"><span class="n">param2</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.compute_shoreline_angles" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">deltametrics.plan.</code><code class="descname">compute_shoreline_angles</code><span class="sig-paren">(</span><em>mask</em>, <em>param2=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.compute_shoreline_angles" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute shoreline angle.</p>
 <p>Computes some stuff according to:</p>
 <div class="math">
-<p><img src="../_images/math/473c7bc345dcb83d3a7979974a6c0ac44aa81b9d.png" alt="\theta = 7 \frac{\rho}{10-\tau}"/></p>
-</div><p>where <img class="math" src="../_images/math/27dc86f9f1b1c3435b2403a869b5870c582facea.png" alt="\rho"/> is something, <img class="math" src="../_images/math/914b2d4b6659b86d3153d5510839dfb254dfc8a3.png" alt="\tau"/> is another.</p>
+<p><img src="../_images/math/697d6e2080240e2e78bf5cb43b981072b0c6817c.png" alt="\theta = 7 \frac{\rho}{10-\tau}"/></p>
+</div><p>where <img class="math" src="../_images/math/9a51ab9a0b521705e1e8762fac6bdd6f11771758.png" alt="\rho"/> is something, <img class="math" src="../_images/math/557d5fad862c9046d26e1a930f45a550c146d592.png" alt="\tau"/> is another.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -97,7 +97,7 @@
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">compute_shoreline_angles</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">compute_shoreline_angles</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
 <span class="go">0.54</span>
 </pre></div>
 </div>
@@ -133,7 +133,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

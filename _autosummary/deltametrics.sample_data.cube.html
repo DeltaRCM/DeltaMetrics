@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>deltametrics.sample_data.cube &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="prev" title="Sample data" href="../reference/sample_data/index.html" /> 
@@ -56,15 +56,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -82,7 +82,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">..</span> <span class="n">doctest</span><span class="p">::</span>
 </pre></div>
 </div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span>
 <span class="go">&lt;deltametrics.cube.DataCube at 0x...&gt;</span>
@@ -95,17 +95,17 @@ section.</p>
 <dl>
 <dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">tdb12()</span></code><span class="classifier"><cite>ndarray</cite></span></dt><dd><p>This data cube is from Tulane Delta Basin expt 12.</p>
 </dd>
-<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">rcm8()</span></code><span class="classifier"><cite>ndarray</cite></span></dt><dd><p>This data cube is from the pyDeltaRCM model.</p>
+<dt><a class="reference internal" href="#deltametrics.sample_data.cube.rcm8" title="deltametrics.sample_data.cube.rcm8"><code class="xref py py-meth docutils literal notranslate"><span class="pre">rcm8()</span></code></a><span class="classifier"><cite>ndarray</cite></span></dt><dd><p>This data cube is from the pyDeltaRCM model.</p>
 </dd>
 </dl>
 <p class="rubric">Functions</p>
-<table class="longtable docutils align-default">
+<table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">rcm8</span></code>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.sample_data.cube.rcm8" title="deltametrics.sample_data.cube.rcm8"><code class="xref py py-obj docutils literal notranslate"><span class="pre">rcm8</span></code></a>()</p></td>
 <td><p>A sample pyDeltaRCM file, as netCDF.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tdb12</span></code>()</p></td>
@@ -113,6 +113,12 @@ section.</p>
 </tr>
 </tbody>
 </table>
+<dl class="function">
+<dt id="deltametrics.sample_data.cube.rcm8">
+<code class="descclassname">deltametrics.sample_data.cube.</code><code class="descname">rcm8</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.sample_data.cube.rcm8" title="Permalink to this definition">¶</a></dt>
+<dd><p>A sample pyDeltaRCM file, as netCDF.</p>
+</dd></dl>
+
 </div>
 </div>
 
@@ -141,7 +147,7 @@ section.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

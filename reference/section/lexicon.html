@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>&lt;no title&gt; &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
     <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
@@ -39,15 +39,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -59,7 +59,7 @@
   <p class="rubric">Section lexicon</p>
 <p>The <cite>Section</cite> module defines some terms that are used throughout the code and rest of the documentation.</p>
 <p>Most importantly, a Section is defined by a set of coordinates in the x-y plane of a cube.</p>
-<p>Therefore, we transform variable definitions when extracting the section, and the coordinate system of the section is defined by the along-section direction <img class="math" src="../../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/> and a vertical section coordinate, which is <img class="math" src="../../_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> when viewing stratigraphy, and <img class="math" src="../../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/> when viewing a spacetime section.</p>
+<p>Therefore, we transform variable definitions when extracting the section, and the coordinate system of the section is defined by the along-section direction <img class="math" src="../../_images/math/63751cb2e98ba393b0f22e45ca127c3cebb61487.png" alt="s"/> and a vertical section coordinate, which is <img class="math" src="../../_images/math/683f2dd9129a91d21aaf1c04afa6f78b39d4cb0a.png" alt="z"/> when viewing stratigraphy, and <img class="math" src="../../_images/math/5ec053cf70dc1c98cc297322250569eda193e7a4.png" alt="t"/> when viewing a spacetime section.</p>
 <p>The data that make up the section can view the section as a <cite>spacetime</cite> section by simply calling the</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
@@ -91,7 +91,7 @@
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../../pyplots/section/section_lexicon.png">png</a>, <a class="reference external" href="../../pyplots/section/section_lexicon.hires.png">hires.png</a>)</p>
-<div class="figure align-default">
+<div class="figure align-center">
 <img alt="../../_images/section_lexicon.png" src="../../_images/section_lexicon.png" />
 </div>
 
@@ -115,7 +115,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>

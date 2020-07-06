@@ -1,7 +1,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta charset="utf-8" />
     <title>deltametrics.plot.VariableInfo &#8212; DeltaMetrics 0.1.0 documentation</title>
@@ -9,11 +9,11 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.plot.VariableSet" href="deltametrics.plot.VariableSet.html" />
@@ -55,15 +55,15 @@
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3 id="searchlabel">Quick search</h3>
+  <h3>Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
 
@@ -74,9 +74,9 @@
             
   <div class="section" id="deltametrics-plot-variableinfo">
 <h1>deltametrics.plot.VariableInfo<a class="headerlink" href="#deltametrics-plot-variableinfo" title="Permalink to this headline">¶</a></h1>
-<dl class="py class">
+<dl class="class">
 <dt id="deltametrics.plot.VariableInfo">
-<em class="property">class </em><code class="sig-prename descclassname">deltametrics.plot.</code><code class="sig-name descname">VariableInfo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableInfo" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">deltametrics.plot.</code><code class="descname">VariableInfo</code><span class="sig-paren">(</span><em>name</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableInfo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Variable styling and information.</p>
 <p>This class holds information for a specific underlying data variable
 (e.g., <code class="docutils literal notranslate"><span class="pre">eta</span></code> or <code class="docutils literal notranslate"><span class="pre">velocity</span></code>). Properties are used throughout
@@ -110,9 +110,9 @@ colormap manually:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;vegetation density&#39;</span>
 </pre></div>
 </div>
-<dl class="py method">
+<dl class="method">
 <dt id="deltametrics.plot.VariableInfo.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableInfo.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>name</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableInfo.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the VariableInfo.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -132,7 +132,7 @@ used.</p></li>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
+<table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -144,33 +144,69 @@ used.</p></li>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-default">
+<table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmap</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plot.VariableInfo.cmap" title="deltametrics.plot.VariableInfo.cmap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cmap</span></code></a></p></td>
 <td><p>Colormap to use to diplay the variable.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">label</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plot.VariableInfo.label" title="deltametrics.plot.VariableInfo.label"><code class="xref py py-obj docutils literal notranslate"><span class="pre">label</span></code></a></p></td>
 <td><p>How to display the variable name when plotting.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plot.VariableInfo.name" title="deltametrics.plot.VariableInfo.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
 <td><p>Name for variable to access from.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plot.VariableInfo.norm" title="deltametrics.plot.VariableInfo.norm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">norm</span></code></a></p></td>
 <td><p><p>???</p>
 </p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">vmax</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plot.VariableInfo.vmax" title="deltametrics.plot.VariableInfo.vmax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vmax</span></code></a></p></td>
 <td><p>Limit the colormap or axes to this upper-bound value.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">vmin</span></code></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plot.VariableInfo.vmin" title="deltametrics.plot.VariableInfo.vmin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vmin</span></code></a></p></td>
 <td><p>Limit the colormap or axes to this lower-bound value.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableInfo.cmap">
+<code class="descname">cmap</code><a class="headerlink" href="#deltametrics.plot.VariableInfo.cmap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Colormap to use to diplay the variable.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableInfo.label">
+<code class="descname">label</code><a class="headerlink" href="#deltametrics.plot.VariableInfo.label" title="Permalink to this definition">¶</a></dt>
+<dd><p>How to display the variable name when plotting.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableInfo.name">
+<code class="descname">name</code><a class="headerlink" href="#deltametrics.plot.VariableInfo.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Name for variable to access from.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableInfo.norm">
+<code class="descname">norm</code><a class="headerlink" href="#deltametrics.plot.VariableInfo.norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>???</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableInfo.vmax">
+<code class="descname">vmax</code><a class="headerlink" href="#deltametrics.plot.VariableInfo.vmax" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the colormap or axes to this upper-bound value.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plot.VariableInfo.vmin">
+<code class="descname">vmin</code><a class="headerlink" href="#deltametrics.plot.VariableInfo.vmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Limit the colormap or axes to this lower-bound value.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -203,7 +239,7 @@ used.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.0.3.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
     </div>
   </body>
 </html>
