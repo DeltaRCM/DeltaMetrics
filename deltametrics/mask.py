@@ -89,6 +89,9 @@ class OAM(object):
         data_trim = self.data[trim_idx:, :]
         # use topo_threshold to identify oceanmap
         self.oceanmap = (data_trim < self.topo_threshold) * 1.
+        # if all ocean, there is no shore to be found - exit function
+        if (self.oceanmap == 1).all():
+            return
         # apply seaangles function
         _, seaangles = self.Seaangles_mod(self.numviews,
                                           self.oceanmap)
@@ -250,7 +253,7 @@ class ChannelMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, velocity, topo, **kwargs):
+    def __init__(self, velocity, topo, is_mask=False, **kwargs):
         """Initialize the ChannelMask.
 
         Intializing the channel mask requires a flow velocity field and an
@@ -263,6 +266,12 @@ class ChannelMask(BaseMask, OAM):
 
         topo : ndarray
             The model topography to be used for mask creation.
+
+        is_mask : bool, optional
+            Whether the data in :obj:`arr` is already a binary mask. Default is
+            False. This should be set to True, if you have already binarized
+            the data yourself, using custom routines, and want to just store
+            the data in the ChannelMask object.
 
         Other Parameters
         ----------------
@@ -289,12 +298,6 @@ class ChannelMask(BaseMask, OAM):
         numviews : int, optional
             Defines the number of times to 'look' for the OAM. Default is 3.
 
-        is_mask : bool, optional
-            Whether the data in :obj:`arr` is already a binary mask. For
-            example, this should be set to True, if you have already binarized
-            the data yourself, using custom routines, and want to just store
-            the data in the LandMask object.
-
         """
         super().__init__(mask_type='channel', data=topo)
         self.velocity = velocity
@@ -308,15 +311,14 @@ class ChannelMask(BaseMask, OAM):
         self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
         self.angle_threshold = getattr(self, 'angle_threshold', 75)
         self.numviews = getattr(self, 'numviews', 3)
-        self.is_mask = getattr(self, 'is_mask', False)
 
-        if not self.is_mask:
+        if not is_mask:
             self.compute_channelmask()
-        elif self.is_mask is True:
+        elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(self.is_mask))
+                            'but was: ' + type(is_mask))
 
     def compute_channelmask(self):
         """Compute the ChannelMask.
@@ -373,7 +375,7 @@ class WetMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, arr, **kwargs):
+    def __init__(self, arr, is_mask=False, **kwargs):
         """Initialize the WetMask.
 
         Intializing the wet mask requires either a 2-D array of data, or it
@@ -383,6 +385,12 @@ class WetMask(BaseMask, OAM):
         ----------
         arr : ndarray
             The data array to make the mask from.
+
+        is_mask : bool, optional
+            Whether the data in :obj:`arr` is already a binary mask. Default is
+            False. This should be set to True, if you have already binarized
+            the data yourself, using custom routines, and want to just store
+            the data in the WetMask object.
 
         Other Parameters
         ----------------
@@ -400,12 +408,6 @@ class WetMask(BaseMask, OAM):
         numviews : int, optional
             Defines the number of times to 'look' for the OAM. Default is 3.
 
-        is_mask : bool, optional
-            Whether the data in :obj:`arr` is already a binary mask. For
-            example, this should be set to True, if you have already binarized
-            the data yourself, using custom routines, and want to just store
-            the data in the LandMask object.
-
         """
         super().__init__(mask_type='wet', data=arr)
 
@@ -417,15 +419,14 @@ class WetMask(BaseMask, OAM):
         self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
         self.angle_threshold = getattr(self, 'angle_threshold', 75)
         self.numviews = getattr(self, 'numviews', 3)
-        self.is_mask = getattr(self, 'is_mask', False)
 
-        if not self.is_mask:
+        if not is_mask:
             self.compute_wetmask()
-        elif self.is_mask is True:
+        elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(self.is_mask))
+                            'but was: ' + type(is_mask))
 
     def compute_wetmask(self):
         """Compute the WetMask.
@@ -470,7 +471,7 @@ class LandMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, arr, **kwargs):
+    def __init__(self, arr, is_mask=False, **kwargs):
         """Initialize the LandMask.
 
         Intializing the land mask requires an array of data, should be
@@ -482,6 +483,12 @@ class LandMask(BaseMask, OAM):
         ----------
         arr : ndarray
             2-D topographic array to make the mask from.
+
+        is_mask : bool, optional
+            Whether the data in :obj:`arr` is already a binary mask. Default
+            value is False. This should be set to True, if you have already
+            binarized the data yourself, using custom routines, and want to
+            just store the data in the LandMask object.
 
         Other Parameters
         ----------------
@@ -499,12 +506,6 @@ class LandMask(BaseMask, OAM):
         numviews : int, optional
             Defines the number of times to 'look' for the OAM. Default is 3.
 
-        is_mask : bool, optional
-            Whether the data in :obj:`arr` is already a binary mask. For
-            example, this should be set to True, if you have already binarized
-            the data yourself, using custom routines, and want to just store
-            the data in the LandMask object.
-
         """
         super().__init__(mask_type='land', data=arr)
 
@@ -516,15 +517,14 @@ class LandMask(BaseMask, OAM):
         self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
         self.angle_threshold = getattr(self, 'angle_threshold', 75)
         self.numviews = getattr(self, 'numviews', 3)
-        self.is_mask = getattr(self, 'is_mask', False)
 
-        if not self.is_mask:
+        if not is_mask:
             self.compute_landmask()
-        elif self.is_mask is True:
+        elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(self.is_mask))
+                            'but was: ' + type(is_mask))
 
     def compute_landmask(self):
         """Compute the LandMask.
@@ -566,7 +566,7 @@ class ShorelineMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, arr, **kwargs):
+    def __init__(self, arr, is_mask=False, **kwargs):
         """Initialize the ShorelineMask.
 
         Initializing the shoreline mask requires a 2-D array of data. The
@@ -579,6 +579,12 @@ class ShorelineMask(BaseMask, OAM):
         arr : ndarray
             2-D topographic array to make the mask from.
 
+        is_mask : bool, optional
+            Whether the data in :obj:`arr` is already a binary mask. Default
+            value is False. This should be set to True, if you have already
+            binarized the data yourself, using custom routines, and want to
+            just store the data in the ShorelineMask object.
+
         Other Parameters
         ----------------
         topo_threshold : float, optional
@@ -589,12 +595,6 @@ class ShorelineMask(BaseMask, OAM):
 
         numviews : int, optional
             Defines the number of times to 'look' for the OAM. Default is 3.
-
-        is_mask : bool, optional
-            Whether the data in :obj:`arr` is already a binary mask. For
-            example, this should be set to True, if you have already binarized
-            the data yourself, using custom routines, and want to just store
-            the data in the ShoreMask object.
 
         """
         super().__init__(mask_type='shore', data=arr)
@@ -607,15 +607,14 @@ class ShorelineMask(BaseMask, OAM):
         self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
         self.angle_threshold = getattr(self, 'angle_threshold', 75)
         self.numviews = getattr(self, 'numviews', 3)
-        self.is_mask = getattr(self, 'is_mask', False)
 
-        if not self.is_mask:
+        if not is_mask:
             self.compute_shoremask()
-        elif self.is_mask is True:
+        elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(self.is_mask))
+                            'but was: ' + type(is_mask))
 
 
 class EdgeMask(BaseMask, OAM):
@@ -636,7 +635,7 @@ class EdgeMask(BaseMask, OAM):
 
     """
 
-    def __init__(self, arr, **kwargs):
+    def __init__(self, arr, is_mask=False, **kwargs):
         """Initialize the EdgeMask.
 
         Initializing the edge mask requires either a 2-D array of topographic
@@ -647,6 +646,12 @@ class EdgeMask(BaseMask, OAM):
         ----------
         arr : ndarray
             The data array to make the mask from.
+
+        is_mask : bool, optional
+            Whether the data in :obj:`arr` is already a binary mask. Default
+            value is False. This should be set to True, if you have already
+            binarized the data yourself, using custom routines, and want to
+            just store the data in the EdgeMask object.
 
         Other Parameters
         ----------------
@@ -665,12 +670,6 @@ class EdgeMask(BaseMask, OAM):
         numviews : int, optional
             Defines the number of times to 'look' for the OAM. Default is 3.
 
-        is_mask : bool, optional
-            Whether the data in :obj:`arr` is already a binary mask. For
-            example, this should be set to True, if you have already binarized
-            the data yourself, using custom routines, and want to just store
-            the data in the LandMask object.
-
         """
         super().__init__(mask_type='edge', data=arr)
 
@@ -682,15 +681,14 @@ class EdgeMask(BaseMask, OAM):
         self.topo_threshold = getattr(self, 'topo_threshold', -0.5)
         self.angle_threshold = getattr(self, 'angle_threshold', 75)
         self.numviews = getattr(self, 'numviews', 3)
-        self.is_mask = getattr(self, 'is_mask', False)
 
-        if not self.is_mask:
+        if not is_mask:
             self.compute_edgemask()
-        elif self.is_mask is True:
+        elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(self.is_mask))
+                            'but was: ' + type(is_mask))
 
     def compute_edgemask(self):
         """Compute the EdgeMask.
@@ -745,7 +743,7 @@ class CenterlineMask(BaseMask):
 
     """
 
-    def __init__(self, channelmask, **kwargs):
+    def __init__(self, channelmask, is_mask=False, **kwargs):
         """Initialize the CenterlineMask.
 
         Initialization of the centerline mask object requires a 2-D channel
@@ -756,18 +754,18 @@ class CenterlineMask(BaseMask):
         channelmask : :obj:`ChannelMask` or ndarray
             The channel mask to derive the centerlines from
 
+        is_mask : bool, optional
+            Whether the data in :obj:`arr` is already a binary mask. Default
+            value is False. This should be set to True, if you have already
+            binarized the data yourself, using custom routines, and want to
+            just store the data in the CenterlineMask object.
+
         Other Parameters
         ----------------
         method : str, optional
             The method to use for the centerline mask computation. The default
             method ('skeletonize') is a morphological skeletonization of the
             channel mask.
-
-        is_mask : bool, optional
-            Whether the data in :obj:`arr` is already a binary mask. For
-            example, this should be set to True, if you have already binarized
-            the data yourself, using custom routines, and want to just store
-            the data in the LandMask object.
 
         """
         if isinstance(channelmask, np.ndarray):
@@ -786,15 +784,14 @@ class CenterlineMask(BaseMask):
 
         # set default values for **kwargs if they do not exist
         self.method = getattr(self, 'method', 'skeletonize')
-        self.is_mask = getattr(self, 'is_mask', False)
 
-        if not self.is_mask:
+        if not is_mask:
             self.compute_centerlinemask(method=self.method)
-        elif self.is_mask is True:
+        elif is_mask is True:
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(self.is_mask))
+                            'but was: ' + type(is_mask))
 
     def compute_centerlinemask(self, method='skeletonize'):
         """Compute the centerline mask.

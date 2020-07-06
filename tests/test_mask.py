@@ -24,7 +24,6 @@ class TestShorelineMask:
         assert shoremask.topo_threshold == -0.5
         assert shoremask.angle_threshold == 75
         assert shoremask.numviews == 3
-        assert shoremask.is_mask is False
         assert shoremask.mask_type == 'shore'
 
     def test_maskError(self):
@@ -52,7 +51,6 @@ class TestShorelineMask:
         assert shoremask.topo_threshold == -1.0
         assert shoremask.angle_threshold == 100
         assert shoremask.numviews == 5
-        assert shoremask.is_mask is False
 
     def test_shoreline(self):
         """Check for important variables and the final mask."""
@@ -68,9 +66,9 @@ class TestShorelineMask:
     def test_submergedLand(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
+        shoremask = mask.ShorelineMask(rcm8cube['eta'][0, :, :])
         # assert - expect all values to be 0s
-        assert np.all(shoremask.mask) == 0
+        assert np.all(shoremask.mask == 0)
 
 
 class TestLandMask:
@@ -84,7 +82,6 @@ class TestLandMask:
         assert landmask.topo_threshold == -0.5
         assert landmask.angle_threshold == 75
         assert landmask.numviews == 3
-        assert landmask.is_mask is False
         assert landmask.mask_type == 'land'
 
     def test_maskError(self):
@@ -112,7 +109,6 @@ class TestLandMask:
         assert landmask.topo_threshold == -1.0
         assert landmask.angle_threshold == 100
         assert landmask.numviews == 5
-        assert landmask.is_mask is False
 
     def test_land(self):
         """Check for important variables and the final mask."""
@@ -150,7 +146,6 @@ class TestWetMask:
         assert wetmask.topo_threshold == -0.5
         assert wetmask.angle_threshold == 75
         assert wetmask.numviews == 3
-        assert wetmask.is_mask is False
         assert wetmask.mask_type == 'wet'
 
     def test_maskError(self):
@@ -178,7 +173,6 @@ class TestWetMask:
         assert wetmask.topo_threshold == -1.0
         assert wetmask.angle_threshold == 100
         assert wetmask.numviews == 5
-        assert wetmask.is_mask is False
 
     def test_land(self):
         """Check for important variables and the final mask."""
@@ -217,7 +211,6 @@ class TestChannelMask:
         assert channelmask.topo_threshold == -0.5
         assert channelmask.angle_threshold == 75
         assert channelmask.numviews == 3
-        assert channelmask.is_mask is False
         assert channelmask.mask_type == 'channel'
 
     def test_maskError(self):
@@ -250,7 +243,6 @@ class TestChannelMask:
         assert channelmask.topo_threshold == -1.0
         assert channelmask.angle_threshold == 100
         assert channelmask.numviews == 5
-        assert channelmask.is_mask is False
 
     def test_imp_vars(self):
         """Check for important variables and the final mask."""
@@ -306,7 +298,6 @@ class TestEdgeMask:
         assert edgemask.topo_threshold == -0.5
         assert edgemask.angle_threshold == 75
         assert edgemask.numviews == 3
-        assert edgemask.is_mask is False
         assert edgemask.mask_type == 'edge'
 
     def test_maskError(self):
@@ -334,7 +325,6 @@ class TestEdgeMask:
         assert edgemask.topo_threshold == -1.0
         assert edgemask.angle_threshold == 100
         assert edgemask.numviews == 5
-        assert edgemask.is_mask is False
 
     def test_imp_vars(self):
         """Check for important variables and the final mask."""
@@ -384,7 +374,6 @@ class TestCenterlineMask:
         centerlinemask = mask.CenterlineMask(channelmask)
         # make assertions
         assert centerlinemask.method == 'skeletonize'
-        assert centerlinemask.is_mask is False
 
     def test_maskError(self):
         """Test that TypeError is raised if is_mask is invalid."""
