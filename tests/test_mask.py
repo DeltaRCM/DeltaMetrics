@@ -410,7 +410,7 @@ class TestCenterlineMask:
         assert np.array_equal(centerlinemask.mask,
                               centerlinemask.mask.astype(bool)) is True
 
-    # @pytest.mark.xfail()
+    @pytest.mark.xfail()
     def test_rivamapDefaults(self):
         """Test rivamap extraction of centerlines."""
         # define channel mask
@@ -428,7 +428,7 @@ class TestCenterlineMask:
         assert hasattr(centerlinemask, 'nms') is True
         assert hasattr(centerlinemask, 'mask') is True
 
-    # @pytest.mark.xfail()
+    @pytest.mark.xfail()
     def test_rivamapCustom(self):
         """Test rivamap extraction of centerlines with custom values."""
         # define channel mask
