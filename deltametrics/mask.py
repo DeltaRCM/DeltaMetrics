@@ -16,6 +16,7 @@ class BaseMask(object):
         """
         self.mask_type = mask_type
         self.data = data
+        self._mask = np.zeros(self.data.shape)
 
     @property
     def data(self):
@@ -31,20 +32,12 @@ class BaseMask(object):
         self._data = var
 
     @property
-    def time(self):
-        """float : Time when the mask is from.
+    def mask(self):
+        """ndarray : Binary mask values.
+
+        Read-only mask attribute.
         """
-        return self._time
-
-    @time.setter
-    def time(self, var):
-        self._time = var
-
-    def a_method(self):
-        """Does something?
-
-        """
-        pass
+        return self._mask
 
     def show(self, **kwargs):
         """Show the mask.
@@ -57,8 +50,7 @@ class BaseMask(object):
             ax.imshow(self.mask, cmap=cmap, **kwargs)
             ax.set_title('A ' + self.mask_type + ' mask')
         else:
-            ax.imshow(self.data, cmap=cmap, **kwargs)
-            ax.set_title('No mask computed, input data shown')
+            raise AttributeError('No mask computed.')
         plt.show()
 
 
@@ -117,8 +109,7 @@ class OAM(object):
         shoremap.flat[flat_inds] = 1
 
         # write shoreline map out to data.mask
-        self.mask = np.zeros(self.data.shape)
-        self.mask[trim_idx:, :] = shoremap
+        self._mask[trim_idx:, :] = shoremap
         # assign shore_image to the mask object with proper size
         self.shore_image = np.zeros(self.data.shape)
         self.shore_image[trim_idx:, :] = shore_image
@@ -248,6 +239,8 @@ class ChannelMask(BaseMask, OAM):
     Examples
     --------
     Initialize the channel mask
+        >>> velocity = rcm8cube['velocity'][-1, :, :]
+        >>> topo = rcm8cube['eta'][-1, :, :]
         >>> cmsk = dm.mask.ChannelMask(velocity, topo)
 
     And visualize the mask:
@@ -317,13 +310,13 @@ class ChannelMask(BaseMask, OAM):
         self.numviews = getattr(self, 'numviews', 3)
         self.is_mask = getattr(self, 'is_mask', False)
 
-        if self.is_mask is False:
+        if not self.is_mask:
             self.compute_channelmask()
         elif self.is_mask is True:
-            self.mask = self.data
+            self._mask = self.data
         else:
-            raise ValueError('is_mask must be a `bool`,'
-                             'but was: ' + self.is_mask)
+            raise TypeError('is_mask must be a `bool`,'
+                            'but was: ' + type(self.is_mask))
 
     def compute_channelmask(self):
         """Compute the ChannelMask.
@@ -354,18 +347,7 @@ class ChannelMask(BaseMask, OAM):
 
         # calculate the channelmask as the cells exceeding the threshold
         # within the topset of the delta (ignoring flow in ocean)
-        self.mask = np.minimum(self.landmask, self.flowmap)
-
-    @property
-    def property_for_just_channels(self):
-        """Who knows!
-        """
-        return self._property_for_just_channels
-
-    def a_channel_function(self):
-        """This is a wrapper to the below function.
-        """
-        return a_channel_function(self.data)
+        self._mask = np.minimum(self.landmask, self.flowmap)
 
 
 class WetMask(BaseMask, OAM):
@@ -381,6 +363,7 @@ class WetMask(BaseMask, OAM):
     Examples
     --------
     Initialize the wet mask
+        >>> arr = rcm8cube['eta'][-1, :, :]
         >>> wmsk = dm.mask.WetMask(arr)
 
     And visualize the mask:
@@ -436,13 +419,13 @@ class WetMask(BaseMask, OAM):
         self.numviews = getattr(self, 'numviews', 3)
         self.is_mask = getattr(self, 'is_mask', False)
 
-        if self.is_mask is False:
+        if not self.is_mask:
             self.compute_wetmask()
         elif self.is_mask is True:
-            self.mask = self.data
+            self._mask = self.data
         else:
-            raise ValueError('is_mask must be a `bool`,'
-                             'but was: ' + self.is_mask)
+            raise TypeError('is_mask must be a `bool`,'
+                            'but was: ' + type(self.is_mask))
 
     def compute_wetmask(self):
         """Compute the WetMask.
@@ -463,7 +446,7 @@ class WetMask(BaseMask, OAM):
             self.compute_shoremask()
             self.landmask = (self.shore_image < self.angle_threshold) * 1
         # set wet mask as data.mask
-        self.mask = self.oceanmap * self.landmask
+        self._mask = self.oceanmap * self.landmask
 
 
 class LandMask(BaseMask, OAM):
@@ -477,6 +460,7 @@ class LandMask(BaseMask, OAM):
     Examples
     --------
     Initialize the mask.
+        >>> arr = rcm8cube['eta'][-1, :, :]
         >>> lmsk = dm.mask.LandMask(arr)
 
     And visualize the mask:
@@ -534,13 +518,13 @@ class LandMask(BaseMask, OAM):
         self.numviews = getattr(self, 'numviews', 3)
         self.is_mask = getattr(self, 'is_mask', False)
 
-        if self.is_mask is False:
+        if not self.is_mask:
             self.compute_landmask()
         elif self.is_mask is True:
-            self.mask = self.data
+            self._mask = self.data
         else:
-            raise ValueError('is_mask must be a `bool`,'
-                             'but was: ' + self.is_mask)
+            raise TypeError('is_mask must be a `bool`,'
+                            'but was: ' + type(self.is_mask))
 
     def compute_landmask(self):
         """Compute the LandMask.
@@ -560,21 +544,10 @@ class LandMask(BaseMask, OAM):
         else:
             self.compute_shoremask()
         # set the land mask to data.mask
-        self.mask = (self.shore_image < self.angle_threshold) * 1
-
-    @property
-    def property_for_just_land(self):
-        """Who knows!
-        """
-        return self._property_for_just_land * 3
-
-    def a_land_function(self):
-        """This is a wrapper to the below function.
-        """
-        return a_land_function(self.data)
+        self._mask = (self.shore_image < self.angle_threshold) * 1
 
 
-class ShoreMask(BaseMask, OAM):
+class ShorelineMask(BaseMask, OAM):
     """Identify the shoreline as a binary mask.
 
     A shoreline mask object, provides a binary identification of shoreline
@@ -583,7 +556,8 @@ class ShoreMask(BaseMask, OAM):
     Examples
     --------
     Initialize the mask.
-        >>> shrmsk = dm.mask.ShoreMask(arr)
+        >>> arr = rcm8cube['eta'][-1, :, :]
+        >>> shrmsk = dm.mask.ShorelineMask(arr)
 
     Visualize the mask:
         >>> shrmsk.show()
@@ -593,7 +567,7 @@ class ShoreMask(BaseMask, OAM):
     """
 
     def __init__(self, arr, **kwargs):
-        """Initialize the ShoreMask.
+        """Initialize the ShorelineMask.
 
         Initializing the shoreline mask requires a 2-D array of data. The
         shoreline mask is computed using the opening angle method (OAM)
@@ -635,13 +609,13 @@ class ShoreMask(BaseMask, OAM):
         self.numviews = getattr(self, 'numviews', 3)
         self.is_mask = getattr(self, 'is_mask', False)
 
-        if self.is_mask is False:
+        if not self.is_mask:
             self.compute_shoremask()
         elif self.is_mask is True:
-            self.mask = self.data
+            self._mask = self.data
         else:
-            raise ValueError('is_mask must be a `bool`,'
-                             'but was: ' + self.is_mask)
+            raise TypeError('is_mask must be a `bool`,'
+                            'but was: ' + type(self.is_mask))
 
 
 class EdgeMask(BaseMask, OAM):
@@ -652,6 +626,7 @@ class EdgeMask(BaseMask, OAM):
     Examples
     --------
     Initialize the edge mask
+        >>> arr = rcm8cube['eta'][-1, :, :]
         >>> emsk = dm.mask.EdgeMask(arr)
 
     Visualize the mask:
@@ -709,13 +684,13 @@ class EdgeMask(BaseMask, OAM):
         self.numviews = getattr(self, 'numviews', 3)
         self.is_mask = getattr(self, 'is_mask', False)
 
-        if self.is_mask is False:
+        if not self.is_mask:
             self.compute_edgemask()
         elif self.is_mask is True:
-            self.mask = self.data
+            self._mask = self.data
         else:
-            raise ValueError('is_mask must be a `bool`,'
-                             'but was: ' + self.is_mask)
+            raise TypeError('is_mask must be a `bool`,'
+                            'but was: ' + type(self.is_mask))
 
     def compute_edgemask(self):
         """Compute the EdgeMask.
@@ -746,9 +721,9 @@ class EdgeMask(BaseMask, OAM):
             self.landmask = (self.shore_image < self.angle_threshold) * 1
             self.wetmask = self.oceanmap * self.landmask
         # compute the edge mask
-        self.mask = np.maximum(0,
-                               feature.canny(self.wetmask)*1 -
-                               feature.canny(self.landmask)*1)
+        self._mask = np.maximum(0,
+                                feature.canny(self.wetmask)*1 -
+                                feature.canny(self.landmask)*1)
 
 
 class CenterlineMask(BaseMask):
@@ -759,6 +734,8 @@ class CenterlineMask(BaseMask):
     Examples
     --------
     Initialize the centerline mask
+        >>> channelmask = dm.mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
+                                              rcm8cube['eta'][-1, :, :])
         >>> clmsk = dm.mask.CenterlineMask(channelmask)
 
     Visualize the mask
@@ -811,13 +788,13 @@ class CenterlineMask(BaseMask):
         self.method = getattr(self, 'method', 'skeletonize')
         self.is_mask = getattr(self, 'is_mask', False)
 
-        if self.is_mask is False:
+        if not self.is_mask:
             self.compute_centerlinemask(method=self.method)
         elif self.is_mask is True:
-            self.mask = self.data
+            self._mask = self.data
         else:
-            raise ValueError('is_mask must be a `bool`,'
-                             'but was: ' + self.is_mask)
+            raise TypeError('is_mask must be a `bool`,'
+                            'but was: ' + type(self.is_mask))
 
     def compute_centerlinemask(self, method='skeletonize'):
         """Compute the centerline mask.
@@ -859,7 +836,7 @@ class CenterlineMask(BaseMask):
         """
         # skimage.morphology.skeletonize() method
         if method == 'skeletonize':
-            self.mask = morphology.skeletonize(self.data)
+            self._mask = morphology.skeletonize(self.data)
 
         if method == 'rivamap':
             # rivamap based method - first check for import error
@@ -888,4 +865,4 @@ class CenterlineMask(BaseMask):
             self.nms = eCL(orient, self.psi)
             nms_norm = self.nms/self.nms.max()
             # compute mask
-            self.mask = (nms_norm > self.nms_threshold) * 1
+            self._mask = (nms_norm > self.nms_threshold) * 1

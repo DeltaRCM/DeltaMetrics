@@ -13,13 +13,13 @@ rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
 rcm8cube = cube.DataCube(rcm8_path)
 
 
-class TestShoreMask:
-    """Tests associated with the mask.ShoreMask class."""
+class TestShorelineMask:
+    """Tests associated with the mask.ShorelineMask class."""
 
     def test_default_vals(self):
         """Test that default values are assigned."""
         # define the mask
-        shoremask = mask.ShoreMask(rcm8cube['eta'][-1, :, :])
+        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
         # make assertions
         assert shoremask.topo_threshold == -0.5
         assert shoremask.angle_threshold == 75
@@ -28,15 +28,15 @@ class TestShoreMask:
         assert shoremask.mask_type == 'shore'
 
     def test_maskError(self):
-        """Test that ValueError is raised if is_mask is invalid."""
-        with pytest.raises(ValueError):
-            shoremask = mask.ShoreMask(rcm8cube['eta'][-1, :, :],
-                                       is_mask='invalid')
+        """Test that TypeError is raised if is_mask is invalid."""
+        with pytest.raises(TypeError):
+            shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :],
+                                           is_mask='invalid')
 
     def test_maskTrue(self):
         """Test that is_mask is True works."""
         # define the mask
-        shoremask = mask.ShoreMask(rcm8cube['eta'][-1, :, :],
+        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :],
                                    is_mask=True)
         # do assertion
         assert np.all(shoremask.mask == rcm8cube['eta'][-1, :, :])
@@ -44,7 +44,7 @@ class TestShoreMask:
     def test_assign_vals(self):
         """Test that specified values are assigned."""
         # define the mask
-        shoremask = mask.ShoreMask(rcm8cube['eta'][-1, :, :],
+        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :],
                                    topo_threshold=-1.0,
                                    angle_threshold=100,
                                    numviews=5)
@@ -57,13 +57,20 @@ class TestShoreMask:
     def test_shoreline(self):
         """Check for important variables and the final mask."""
         # define the mask
-        shoremask = mask.ShoreMask(rcm8cube['eta'][-1, :, :])
+        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
         # make assertions
         assert np.array_equal(shoremask.mask,
                               shoremask.mask.astype(bool)) is True
         assert hasattr(shoremask, 'oceanmap') is True
         assert hasattr(shoremask, 'mask') is True
         assert hasattr(shoremask, 'shore_image') is True
+
+    def test_submergedLand(self):
+        """Check what happens when there is no land above water."""
+        # define the mask
+        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
+        # assert - expect all values to be 0s
+        assert np.all(shoremask.mask) == 0
 
 
 class TestLandMask:
@@ -81,8 +88,8 @@ class TestLandMask:
         assert landmask.mask_type == 'land'
 
     def test_maskError(self):
-        """Test that ValueError is raised if is_mask is invalid."""
-        with pytest.raises(ValueError):
+        """Test that TypeError is raised if is_mask is invalid."""
+        with pytest.raises(TypeError):
             landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
                                      is_mask='invalid')
 
@@ -120,7 +127,7 @@ class TestLandMask:
 
     def test_givenshore(self):
         """Test that a ShoreMask can be passed into it."""
-        shoremask = mask.ShoreMask(rcm8cube['eta'][-1, :, :])
+        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
         landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
                                  shoremask=shoremask)
         # make assertions
@@ -147,8 +154,8 @@ class TestWetMask:
         assert wetmask.mask_type == 'wet'
 
     def test_maskError(self):
-        """Test that ValueError is raised if is_mask is invalid."""
-        with pytest.raises(ValueError):
+        """Test that TypeError is raised if is_mask is invalid."""
+        with pytest.raises(TypeError):
             wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
                                    is_mask='invalid')
 
@@ -214,8 +221,8 @@ class TestChannelMask:
         assert channelmask.mask_type == 'channel'
 
     def test_maskError(self):
-        """Test that ValueError is raised if is_mask is invalid."""
-        with pytest.raises(ValueError):
+        """Test that TypeError is raised if is_mask is invalid."""
+        with pytest.raises(TypeError):
             channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
                                            rcm8cube['eta'][-1, :, :],
                                            is_mask='invalid')
@@ -303,8 +310,8 @@ class TestEdgeMask:
         assert edgemask.mask_type == 'edge'
 
     def test_maskError(self):
-        """Test that ValueError is raised if is_mask is invalid."""
-        with pytest.raises(ValueError):
+        """Test that TypeError is raised if is_mask is invalid."""
+        with pytest.raises(TypeError):
             edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
                                      is_mask='invalid')
 
@@ -380,11 +387,11 @@ class TestCenterlineMask:
         assert centerlinemask.is_mask is False
 
     def test_maskError(self):
-        """Test that ValueError is raised if is_mask is invalid."""
+        """Test that TypeError is raised if is_mask is invalid."""
         # define a numpy array to serve as channelmask
         channelmask = np.zeros((5, 5))
         channelmask[1:2, 1:2] = 1.
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             centerlinemask = mask.CenterlineMask(channelmask,
                                                  is_mask='invalid')
 
