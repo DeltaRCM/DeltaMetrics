@@ -134,6 +134,19 @@ class TestLandMask:
         assert np.array_equal(landmask.mask,
                               landmask.mask.astype(bool)) is True
 
+    def test_givenfakeshore(self):
+        """Test that a bad shoreline mask doesn't break the function."""
+        shoremask = 'not a mask'
+        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
+                                 shoremask=shoremask)
+        # make assertions
+        assert hasattr(landmask, 'shoremask') is True
+        assert hasattr(landmask, 'angle_threshold') is True
+        assert hasattr(landmask, 'mask') is True
+        assert hasattr(landmask, 'shore_image') is True
+        assert np.array_equal(landmask.mask,
+                              landmask.mask.astype(bool)) is True
+
 
 class TestWetMask:
     """Tests associated with the mask.WetMask class."""
@@ -188,6 +201,18 @@ class TestWetMask:
     def test_givenland(self):
         """Test that a LandMask can be passed into it."""
         landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
+        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
+                               landmask=landmask)
+        # make assertions
+        assert hasattr(wetmask, 'landmask') is True
+        assert hasattr(wetmask, 'oceanmap') is True
+        assert hasattr(wetmask, 'mask') is True
+        assert np.array_equal(wetmask.mask,
+                              wetmask.mask.astype(bool)) is True
+
+    def test_givenfakeland(self):
+        """Test that a bad land mask doesn't break function."""
+        landmask = 'not a mask'
         wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
                                landmask=landmask)
         # make assertions
@@ -272,9 +297,38 @@ class TestChannelMask:
         assert np.array_equal(channelmask.mask,
                               channelmask.mask.astype(bool)) is True
 
+    def test_givenfakeland(self):
+        """Test that an improperly defined land mask still works."""
+        landmask = 'not a mask'
+        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
+                                       rcm8cube['eta'][-1, :, :],
+                                       landmask=landmask)
+        # make assertions
+        assert hasattr(channelmask, 'landmask') is True
+        assert hasattr(channelmask, 'oceanmap') is True
+        assert hasattr(channelmask, 'mask') is True
+        assert hasattr(channelmask, 'velocity') is True
+        assert hasattr(channelmask, 'flowmap') is True
+        assert np.array_equal(channelmask.mask,
+                              channelmask.mask.astype(bool)) is True
+
     def test_givenwet(self):
         """Test that a WetMask can be passed into it."""
         wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :])
+        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
+                                       rcm8cube['eta'][-1, :, :],
+                                       wetmask=wetmask)
+        # make assertions
+        assert hasattr(channelmask, 'landmask') is True
+        assert hasattr(channelmask, 'mask') is True
+        assert hasattr(channelmask, 'velocity') is True
+        assert hasattr(channelmask, 'flowmap') is True
+        assert np.array_equal(channelmask.mask,
+                              channelmask.mask.astype(bool)) is True
+
+    def test_givenfakewet(self):
+        """Test that an improperly defined wet mask still works."""
+        wetmask = 'not a mask'
         channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
                                        rcm8cube['eta'][-1, :, :],
                                        wetmask=wetmask)
@@ -361,6 +415,34 @@ class TestEdgeMask:
         assert np.array_equal(edgemask.mask,
                               edgemask.mask.astype(bool)) is True
 
+    def test_givenwetandland(self):
+        """Test that a WetMask and LandMask can be passed into it."""
+        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
+        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :])
+        edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
+                                 landmask=landmask,
+                                 wetmask=wetmask)
+        # make assertions
+        assert hasattr(edgemask, 'landmask') is True
+        assert hasattr(edgemask, 'mask') is True
+        assert hasattr(edgemask, 'wetmask') is True
+        assert np.array_equal(edgemask.mask,
+                              edgemask.mask.astype(bool)) is True
+
+    def test_givenbadwetandland(self):
+        """Test that a bad pair of wet and land masks can be passed in."""
+        landmask = 'bad land mask'
+        wetmask = 'bad wet mask'
+        edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
+                                 landmask=landmask,
+                                 wetmask=wetmask)
+        # make assertions
+        assert hasattr(edgemask, 'landmask') is True
+        assert hasattr(edgemask, 'mask') is True
+        assert hasattr(edgemask, 'wetmask') is True
+        assert np.array_equal(edgemask.mask,
+                              edgemask.mask.astype(bool)) is True
+
 
 class TestCenterlineMask:
     """Tests associated with the mask.CenterlineMask class."""
@@ -383,6 +465,14 @@ class TestCenterlineMask:
         with pytest.raises(TypeError):
             centerlinemask = mask.CenterlineMask(channelmask,
                                                  is_mask='invalid')
+
+    def test_channelmaskError(self):
+        """Test that ValueError is raised if channelmask is invalid."""
+        # define a numpy array to serve as channelmask
+        channelmask = 'invalid'
+        with pytest.raises(ValueError):
+            centerlinemask = mask.CenterlineMask(channelmask,
+                                                 is_mask=False)
 
     def test_maskTrue(self):
         """Test that is_mask is True works."""
@@ -444,3 +534,31 @@ class TestCenterlineMask:
         assert hasattr(centerlinemask, 'psi') is True
         assert hasattr(centerlinemask, 'nms') is True
         assert hasattr(centerlinemask, 'mask') is True
+
+
+def test_plotter():
+    """Test the show() function."""
+    import matplotlib.pyplot as plt
+    shore_mask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
+    shore_mask.show()
+    plt.savefig('tests/mask_fig.png')
+    plt.close()
+    # assert that figure was made
+    assert os.path.isfile('tests/mask_fig.png') is True
+    # delete the file
+    os.remove('tests/mask_fig.png')
+
+
+def test_plotter_error():
+    """Test error for show() function."""
+    msk = mask.BaseMask('bad', np.zeros((3, 3)))
+    with pytest.raises(AttributeError):
+        msk.show()
+
+
+def test_init_OAM():
+    """Initialize the OAM class."""
+    oam = mask.OAM('test', np.zeros((3, 3)))
+    # assertions
+    assert oam.mask_type == 'test'
+    assert np.all(oam.data == np.zeros((3, 3)))

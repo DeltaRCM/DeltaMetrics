@@ -10,11 +10,10 @@ from skimage import measure
 
 
 class BaseMask(object):
+    """Low-level base class to be inherited by all mask objects."""
 
     def __init__(self, mask_type, data):
-        """Initialize the base mask attributes and methods.
-
-        """
+        """Initialize the base mask attributes and methods."""
         self.mask_type = mask_type
         self.data = data
         self._mask = np.zeros(self.data.shape)
@@ -47,19 +46,19 @@ class BaseMask(object):
         """
         cmap = kwargs.pop('cmap', 'gray')
         fig, ax = plt.subplots()
-        if hasattr(self, 'mask'):
+        if hasattr(self, 'mask') and np.sum(self.mask) > 0:
             ax.imshow(self.mask, cmap=cmap, **kwargs)
             ax.set_title('A ' + self.mask_type + ' mask')
         else:
-            raise AttributeError('No mask computed.')
-        plt.show()
+            raise AttributeError('No mask computed and/or mask is all 0s.')
+        plt.draw()
 
 
 class OAM(object):
     """Class for methods related to the Opening Angle Method [1]_."""
 
     def __init__(self, mask_type, data):
-        """Initialize the same way as the :obj:`BaseMask` class."""
+        """Require the same inputs as the :obj:`BaseMask` class."""
         self.mask_type = mask_type
         self.data = data
 
@@ -318,11 +317,8 @@ class ChannelMask(BaseMask, OAM):
             If given, the landmask attribute it contains will be used to
             determine the channel mask.
 
-        topo_threshold : float, optional
-            Threshold depth to use for the OAM. Default is -0.5.
-
-        numviews : int, optional
-            Defines the number of times to 'look' for the OAM. Default is 3.
+        kwargs : optional
+            Keyword arguments for :obj:`compute_shoremask`.
 
         """
         super().__init__(mask_type='channel', data=topo)
@@ -342,7 +338,7 @@ class ChannelMask(BaseMask, OAM):
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(is_mask))
+                            'but was: ' + str(type(is_mask)))
 
     def compute_channelmask(self, **kwargs):
         """Compute the ChannelMask.
@@ -353,7 +349,7 @@ class ChannelMask(BaseMask, OAM):
         Other Parameters
         ----------------
         kwargs : optional
-            Keyword arguments for :obj:`OAM.compute_shoremask`.
+            Keyword arguments for :obj:`compute_shoremask`.
 
         """
         # check if a 'landmask' is available
@@ -436,11 +432,8 @@ class WetMask(BaseMask, OAM):
             If given, the :obj:`LandMask` object will be checked for the
             `shore_image` and `angle_threshold` attributes.
 
-        topo_threshold : float, optional
-            Threshold depth to use for the OAM. Default is -0.5.
-
-        numviews : int, optional
-            Defines the number of times to 'look' for the OAM. Default is 3.
+        kwargs : optional
+            Keyword arguments for :obj:`compute_shoremask`.
 
         """
         super().__init__(mask_type='wet', data=arr)
@@ -458,7 +451,7 @@ class WetMask(BaseMask, OAM):
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(is_mask))
+                            'but was: ' + str(type(is_mask)))
 
     def compute_wetmask(self, **kwargs):
         """Compute the WetMask.
@@ -536,11 +529,8 @@ class LandMask(BaseMask, OAM):
             If given, the :obj:`ShoreMask` object will be checked for the
             `shore_image` and `angle_threshold` attributes.
 
-        topo_threshold : float, optional
-            Threshold depth to use for the OAM. Default is -0.5.
-
-        numviews : int, optional
-            Defines the number of times to 'look' for the OAM. Default is 3.
+        kwargs : optional
+            Keyword arguments for :obj:`compute_shoremask`.
 
         """
         super().__init__(mask_type='land', data=arr)
@@ -558,7 +548,7 @@ class LandMask(BaseMask, OAM):
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(is_mask))
+                            'but was: ' + str(type(is_mask)))
 
     def compute_landmask(self, **kwargs):
         """Compute the LandMask.
@@ -629,7 +619,7 @@ class ShorelineMask(BaseMask, OAM):
         Other Parameters
         ----------------
         kwargs : optional
-            Keyword arguments for :obj:`OAM.compute_shoremask`.
+            Keyword arguments for :obj:`compute_shoremask`.
 
         """
         super().__init__(mask_type='shore', data=arr)
@@ -640,7 +630,7 @@ class ShorelineMask(BaseMask, OAM):
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(is_mask))
+                            'but was: ' + str(type(is_mask)))
 
 
 class EdgeMask(BaseMask, OAM):
@@ -694,14 +684,15 @@ class EdgeMask(BaseMask, OAM):
         wetmask : :obj:`WetMask`, optional
             A :obj:`WetMask` object with the surface water identified
 
-        topo_threshold : float, optional
-            Threshold depth to use for the OAM. Default is -0.5.
-
-        numviews : int, optional
-            Defines the number of times to 'look' for the OAM. Default is 3.
+        kwargs : optional
+            Keyword arguments for :obj:`compute_shoremask`.
 
         """
         super().__init__(mask_type='edge', data=arr)
+
+        # assign **kwargs to self incase there are masks
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
         # write parameter to self so it is not lost
         self.angle_threshold = angle_threshold
@@ -712,7 +703,7 @@ class EdgeMask(BaseMask, OAM):
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(is_mask))
+                            'but was: ' + str(type(is_mask)))
 
     def compute_edgemask(self, **kwargs):
         """Compute the EdgeMask.
@@ -807,7 +798,7 @@ class CenterlineMask(BaseMask):
         else:
             raise ValueError('Input channelmask parameter is invalid. Must be'
                              'a np.ndarray or ChannelMask object but it was'
-                             'a: ' + type(channelmask))
+                             'a: ' + str(type(channelmask)))
 
         # save method type value to self
         self.method = method
@@ -818,7 +809,7 @@ class CenterlineMask(BaseMask):
             self._mask = self.data
         else:
             raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + type(is_mask))
+                            'but was: ' + str(type(is_mask)))
 
     def compute_centerlinemask(self, **kwargs):
         """Compute the centerline mask.
