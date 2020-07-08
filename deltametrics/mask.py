@@ -15,7 +15,16 @@ class BaseMask(object):
     def __init__(self, mask_type, data):
         """Initialize the base mask attributes and methods."""
         self.mask_type = mask_type
-        self.data = data
+        # try to convert to np.ndarray if data not provided in that form
+        if type(data) is not np.ndarray:
+            try:
+                self.data = data.__array__()
+            except Exception:
+                raise TypeError('Input data type must be numpy.ndarray,'
+                                'but was ' + str(type(data)))
+        else:
+            self.data = data
+
         self._mask = np.zeros(self.data.shape)
 
     @property
@@ -111,6 +120,8 @@ class OAM(object):
         self.oceanmap = (data_trim < self.topo_threshold) * 1.
         # if all ocean, there is no shore to be found - exit function
         if (self.oceanmap == 1).all():
+            self.oceanmap = np.zeros_like(self.data)
+            self.shore_image = np.zeros_like(self.data)
             return
         # apply seaangles function
         _, seaangles = self.Seaangles_mod(self.numviews,
@@ -322,7 +333,16 @@ class ChannelMask(BaseMask, OAM):
 
         """
         super().__init__(mask_type='channel', data=topo)
-        self.velocity = velocity
+        if type(velocity) is np.ndarray:
+            self.velocity = velocity
+        else:
+            try:
+                self.velocity = velocity.__array__()
+            except Exception:
+                raise TypeError('Input velocity parameter is invalid. Must be'
+                                'a np.ndarray or a'
+                                'deltametrics.cube.CubeVariable object but it'
+                                'was a: ' + str(type(velocity)))
 
         # assign **kwargs to self incase there are masks
         for key, value in kwargs.items():
@@ -794,11 +814,11 @@ class CenterlineMask(BaseMask):
             super().__init__(mask_type='centerline', data=channelmask)
         elif isinstance(channelmask, ChannelMask):
             super().__init__(mask_type='centerline',
-                             data=channelmask.mask.__array__())
+                             data=channelmask.mask)
         else:
-            raise ValueError('Input channelmask parameter is invalid. Must be'
-                             'a np.ndarray or ChannelMask object but it was'
-                             'a: ' + str(type(channelmask)))
+            raise TypeError('Input channelmask parameter is invalid. Must be'
+                            'a np.ndarray or ChannelMask object but it was'
+                            'a: ' + str(type(channelmask)))
 
         # save method type value to self
         self.method = method
