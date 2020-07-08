@@ -1,0 +1,33 @@
+deltametrics.mask.EdgeMask
+==========================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: EdgeMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~EdgeMask.Seaangles_mod
+      ~EdgeMask.__init__
+      ~EdgeMask.compute_edgemask
+      ~EdgeMask.compute_shoremask
+      ~EdgeMask.show
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~EdgeMask.data
+      ~EdgeMask.mask
+   
+   

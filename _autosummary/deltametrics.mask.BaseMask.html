@@ -77,7 +77,8 @@
 <dl class="class">
 <dt id="deltametrics.mask.BaseMask">
 <em class="property">class </em><code class="descclassname">deltametrics.mask.</code><code class="descname">BaseMask</code><span class="sig-paren">(</span><em>mask_type</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="method">
+<dd><p>Low-level base class to be inherited by all mask objects.</p>
+<dl class="method">
 <dt id="deltametrics.mask.BaseMask.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>mask_type</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the base mask attributes and methods.</p>
@@ -93,10 +94,7 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.__init__" title="deltametrics.mask.BaseMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(mask_type, data)</p></td>
 <td><p>Initialize the base mask attributes and methods.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.a_method" title="deltametrics.mask.BaseMask.a_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">a_method</span></code></a>()</p></td>
-<td><p>Does something?</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.show" title="deltametrics.mask.BaseMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(**kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.show" title="deltametrics.mask.BaseMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(**kwargs)</p></td>
 <td><p>Show the mask.</p></td>
 </tr>
 </tbody>
@@ -111,17 +109,11 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.data" title="deltametrics.mask.BaseMask.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
 <td><p>Values of the mask object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.time" title="deltametrics.mask.BaseMask.time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time</span></code></a></p></td>
-<td><p>Time when the mask is from.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.mask" title="deltametrics.mask.BaseMask.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
+<td><p>Binary mask values.</p></td>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="deltametrics.mask.BaseMask.a_method">
-<code class="descname">a_method</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask.a_method" title="Permalink to this definition">¶</a></dt>
-<dd><p>Does something?</p>
-</dd></dl>
-
 <dl class="attribute">
 <dt id="deltametrics.mask.BaseMask.data">
 <code class="descname">data</code><a class="headerlink" href="#deltametrics.mask.BaseMask.data" title="Permalink to this definition">¶</a></dt>
@@ -135,22 +127,23 @@ convert everything to uints for speed and size.</p>
 </dl>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="deltametrics.mask.BaseMask.mask">
+<code class="descname">mask</code><a class="headerlink" href="#deltametrics.mask.BaseMask.mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binary mask values.</p>
+<p>Read-only mask attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="method">
 <dt id="deltametrics.mask.BaseMask.show">
 <code class="descname">show</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the mask.</p>
 <p>Passes <cite>**kwargs</cite> to <code class="docutils literal notranslate"><span class="pre">matplotlib.imshow</span></code>.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="deltametrics.mask.BaseMask.time">
-<code class="descname">time</code><a class="headerlink" href="#deltametrics.mask.BaseMask.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Time when the mask is from.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>

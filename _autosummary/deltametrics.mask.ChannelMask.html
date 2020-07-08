@@ -16,7 +16,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="deltametrics.mask.LandMask" href="deltametrics.mask.LandMask.html" />
+    <link rel="next" title="deltametrics.mask.WetMask" href="deltametrics.mask.WetMask.html" />
     <link rel="prev" title="deltametrics.mask.BaseMask" href="deltametrics.mask.BaseMask.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,7 +29,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="deltametrics.mask.LandMask.html" title="deltametrics.mask.LandMask"
+          <a href="deltametrics.mask.WetMask.html" title="deltametrics.mask.WetMask"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="deltametrics.mask.BaseMask.html" title="deltametrics.mask.BaseMask"
@@ -45,8 +45,8 @@
   <p class="topless"><a href="deltametrics.mask.BaseMask.html"
                         title="previous chapter">deltametrics.mask.BaseMask</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="deltametrics.mask.LandMask.html"
-                        title="next chapter">deltametrics.mask.LandMask</a></p>
+  <p class="topless"><a href="deltametrics.mask.WetMask.html"
+                        title="next chapter">deltametrics.mask.WetMask</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -76,16 +76,18 @@
 <h1>deltametrics.mask.ChannelMask<a class="headerlink" href="#deltametrics-mask-channelmask" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="deltametrics.mask.ChannelMask">
-<em class="property">class </em><code class="descclassname">deltametrics.mask.</code><code class="descname">ChannelMask</code><span class="sig-paren">(</span><em>arr</em>, <em>is_mask=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Channel mask.</p>
+<em class="property">class </em><code class="descclassname">deltametrics.mask.</code><code class="descname">ChannelMask</code><span class="sig-paren">(</span><em>velocity</em>, <em>topo</em>, <em>velocity_threshold=0.3</em>, <em>angle_threshold=75</em>, <em>is_mask=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Identify a binary channel mask.</p>
 <p>A channel mask object, helps enforce valid masking of channels.</p>
 <p class="rubric">Examples</p>
 <dl>
-<dt>Initialize the channel mask</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmsk</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ChannelMask</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+<dt>Initialize the channel mask</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">velocity</span> <span class="o">=</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">topo</span> <span class="o">=</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cmsk</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ChannelMask</span><span class="p">(</span><span class="n">velocity</span><span class="p">,</span> <span class="n">topo</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd>
-<dt>And visualize the mask:</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmsk</span><span class="o">.</span><span class="n">show_mask</span><span class="p">()</span>
+<dt>And visualize the mask:</dt><dd><div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cmsk</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </dd>
@@ -96,19 +98,33 @@
 </div>
 <dl class="method">
 <dt id="deltametrics.mask.ChannelMask.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>arr</em>, <em>is_mask=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>velocity</em>, <em>topo</em>, <em>velocity_threshold=0.3</em>, <em>angle_threshold=75</em>, <em>is_mask=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the ChannelMask.</p>
-<p>Intializing the channel mask requires an array of data, should be
-two-dimensional.</p>
+<p>Intializing the channel mask requires a flow velocity field and an
+array of the delta topography.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>arr</strong> (<em>ndarray</em>) – The data array to make the mask from.</p></li>
-<li><p><strong>routine</strong> (<em>str</em>) – Which routine to use to extract the mask.</p></li>
-<li><p><strong>is_mask</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the data in <code class="xref py py-obj docutils literal notranslate"><span class="pre">arr</span></code> is already a binary mask. For
-example, this should be set to True, if you have already binarized
+<li><p><strong>velocity</strong> (<em>ndarray</em>) – The velocity array to be used for mask creation.</p></li>
+<li><p><strong>topo</strong> (<em>ndarray</em>) – The model topography to be used for mask creation.</p></li>
+<li><p><strong>velocity_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Threshold velocity above which flow is considered ‘channelized’.
+The default value is 0.3 m/s based on DeltaRCM default parameters
+for sediment transport.</p></li>
+<li><p><strong>angle_threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – Threshold opening angle used in the OAM. Default is 75 degrees.</p></li>
+<li><p><strong>is_mask</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the data in <code class="xref py py-obj docutils literal notranslate"><span class="pre">arr</span></code> is already a binary mask. Default is
+False. This should be set to True, if you have already binarized
 the data yourself, using custom routines, and want to just store
 the data in the ChannelMask object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>landmask</strong> (<a class="reference internal" href="deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a>, optional) – A <a class="reference internal" href="deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a> object with a defined binary land mask.
+If given, it will be used to help define the channel mask.</p></li>
+<li><p><strong>wetmask</strong> (<a class="reference internal" href="deltametrics.mask.WetMask.html#deltametrics.mask.WetMask" title="deltametrics.mask.WetMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WetMask</span></code></a>, optional) – A <a class="reference internal" href="deltametrics.mask.WetMask.html#deltametrics.mask.WetMask" title="deltametrics.mask.WetMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WetMask</span></code></a> object with a defined binary wet mask.
+If given, the landmask attribute it contains will be used to
+determine the channel mask.</p></li>
+<li><p><strong>kwargs</strong> (<em>optional</em>) – Keyword arguments for <a class="reference internal" href="#deltametrics.mask.ChannelMask.compute_shoremask" title="deltametrics.mask.ChannelMask.compute_shoremask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_shoremask</span></code></a>.</p></li>
 </ul>
 </dd>
 </dl>
@@ -121,16 +137,19 @@ the data in the ChannelMask object.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.__init__" title="deltametrics.mask.ChannelMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(arr[, is_mask])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.Seaangles_mod" title="deltametrics.mask.ChannelMask.Seaangles_mod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Seaangles_mod</span></code></a>(numviews, thresholdimg)</p></td>
+<td><p>Extract the opening angle map from an image.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.__init__" title="deltametrics.mask.ChannelMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(velocity, topo[, …])</p></td>
 <td><p>Initialize the ChannelMask.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.a_channel_function" title="deltametrics.mask.ChannelMask.a_channel_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">a_channel_function</span></code></a>()</p></td>
-<td><p>This is a wrapper to the below function.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.compute_channelmask" title="deltametrics.mask.ChannelMask.compute_channelmask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_channelmask</span></code></a>(**kwargs)</p></td>
+<td><p>Compute the ChannelMask.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.a_method" title="deltametrics.mask.ChannelMask.a_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">a_method</span></code></a>()</p></td>
-<td><p>Does something?</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.compute_shoremask" title="deltametrics.mask.ChannelMask.compute_shoremask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_shoremask</span></code></a>([angle_threshold])</p></td>
+<td><p>Compute the shoreline mask.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.show" title="deltametrics.mask.ChannelMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.show" title="deltametrics.mask.ChannelMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(**kwargs)</p></td>
 <td><p>Show the mask.</p></td>
 </tr>
 </tbody>
@@ -145,24 +164,80 @@ the data in the ChannelMask object.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.data" title="deltametrics.mask.ChannelMask.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
 <td><p>Values of the mask object.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.property_for_just_channels" title="deltametrics.mask.ChannelMask.property_for_just_channels"><code class="xref py py-obj docutils literal notranslate"><span class="pre">property_for_just_channels</span></code></a></p></td>
-<td><p>Who knows!</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.time" title="deltametrics.mask.ChannelMask.time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time</span></code></a></p></td>
-<td><p>Time when the mask is from.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.mask" title="deltametrics.mask.ChannelMask.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
+<td><p>Binary mask values.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="method">
-<dt id="deltametrics.mask.ChannelMask.a_channel_function">
-<code class="descname">a_channel_function</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.a_channel_function" title="Permalink to this definition">¶</a></dt>
-<dd><p>This is a wrapper to the below function.</p>
+<dt id="deltametrics.mask.ChannelMask.Seaangles_mod">
+<code class="descname">Seaangles_mod</code><span class="sig-paren">(</span><em>numviews</em>, <em>thresholdimg</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.Seaangles_mod" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the opening angle map from an image.</p>
+<p>Adapted from the Matlab implementation in <a class="footnote-reference brackets" href="#id5" id="id1">2</a>. Takes an image
+and extracts its opening angle map.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>numviews</strong> (<em>int</em>) – Defines the number of times to ‘look’ for the opening angle map.</p></li>
+<li><p><strong>thresholdimg</strong> (<em>ndarray</em>) – Binary image that has been thresholded to split deep water/land.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>shoreangles</strong> (<em>ndarray</em>) – Flattened values corresponding to the shoreangle detected for each
+‘look’ of the opening angle method</p></li>
+<li><p><strong>seaangles</strong> (<em>ndarray</em>) – Flattened values corresponding to the ‘sea’ angle detected for each
+‘look’ of the opening angle method. The ‘sea’ region is the convex
+hull which envelops the shoreline as well as the delta interior.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="deltametrics.mask.ChannelMask.a_method">
-<code class="descname">a_method</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.a_method" title="Permalink to this definition">¶</a></dt>
-<dd><p>Does something?</p>
+<dt id="deltametrics.mask.ChannelMask.compute_channelmask">
+<code class="descname">compute_channelmask</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.compute_channelmask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the ChannelMask.</p>
+<p>Either uses an existing landmask, or recomputes it to use with the flow
+velocity threshold to calculate a binary channelmask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Other Parameters</dt>
+<dd class="field-odd"><p><strong>kwargs</strong> (<em>optional</em>) – Keyword arguments for <a class="reference internal" href="#deltametrics.mask.ChannelMask.compute_shoremask" title="deltametrics.mask.ChannelMask.compute_shoremask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_shoremask</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.ChannelMask.compute_shoremask">
+<code class="descname">compute_shoremask</code><span class="sig-paren">(</span><em>angle_threshold=75</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.compute_shoremask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the shoreline mask.</p>
+<p>Applies the opening angle method <a class="footnote-reference brackets" href="#id4" id="id2">1</a> to compute the shoreline mask.
+Particular method has been translated from <a class="footnote-reference brackets" href="#id5" id="id3">2</a>.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p>Shaw, John B., et al. “An image‐based method for
+shoreline mapping on complex coasts.” Geophysical Research Letters
+35.12 (2008).</p>
+</dd>
+<dt class="label" id="id5"><span class="brackets">2</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id3">2</a>)</span></dt>
+<dd><p>Liang, Man, Corey Van Dyk, and Paola Passalacqua.
+“Quantifying the patterns and dynamics of river deltas under
+conditions of steady forcing and relative sea level rise.” Journal
+of Geophysical Research: Earth Surface 121.2 (2016): 465-496.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>angle_threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – Threshold opening angle used in the OAM. Default is 75 degrees.</p>
+</dd>
+<dt class="field-even">Other Parameters</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>topo_threshold</strong> (<em>float, optional</em>) – Threshold depth to use for the OAM. Default is -0.5.</p></li>
+<li><p><strong>numviews</strong> (<em>int, optional</em>) – Defines the number of times to ‘look’ for the OAM. Default is 3.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -179,9 +254,15 @@ convert everything to uints for speed and size.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="deltametrics.mask.ChannelMask.property_for_just_channels">
-<code class="descname">property_for_just_channels</code><a class="headerlink" href="#deltametrics.mask.ChannelMask.property_for_just_channels" title="Permalink to this definition">¶</a></dt>
-<dd><p>Who knows!</p>
+<dt id="deltametrics.mask.ChannelMask.mask">
+<code class="descname">mask</code><a class="headerlink" href="#deltametrics.mask.ChannelMask.mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binary mask values.</p>
+<p>Read-only mask attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -189,17 +270,6 @@ convert everything to uints for speed and size.</p>
 <code class="descname">show</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the mask.</p>
 <p>Passes <cite>**kwargs</cite> to <code class="docutils literal notranslate"><span class="pre">matplotlib.imshow</span></code>.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="deltametrics.mask.ChannelMask.time">
-<code class="descname">time</code><a class="headerlink" href="#deltametrics.mask.ChannelMask.time" title="Permalink to this definition">¶</a></dt>
-<dd><p>Time when the mask is from.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
 </dd></dl>
 
 </dd></dl>
@@ -222,7 +292,7 @@ convert everything to uints for speed and size.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="deltametrics.mask.LandMask.html" title="deltametrics.mask.LandMask"
+          <a href="deltametrics.mask.WetMask.html" title="deltametrics.mask.WetMask"
              >next</a> |</li>
         <li class="right" >
           <a href="deltametrics.mask.BaseMask.html" title="deltametrics.mask.BaseMask"

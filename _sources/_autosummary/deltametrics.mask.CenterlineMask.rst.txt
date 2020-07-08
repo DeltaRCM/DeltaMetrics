@@ -1,0 +1,31 @@
+deltametrics.mask.CenterlineMask
+================================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: CenterlineMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CenterlineMask.__init__
+      ~CenterlineMask.compute_centerlinemask
+      ~CenterlineMask.show
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CenterlineMask.data
+      ~CenterlineMask.mask
+   
+   

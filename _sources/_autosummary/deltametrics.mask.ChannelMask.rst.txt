@@ -13,9 +13,10 @@ deltametrics.mask.ChannelMask
 
    .. autosummary::
    
+      ~ChannelMask.Seaangles_mod
       ~ChannelMask.__init__
-      ~ChannelMask.a_channel_function
-      ~ChannelMask.a_method
+      ~ChannelMask.compute_channelmask
+      ~ChannelMask.compute_shoremask
       ~ChannelMask.show
    
    
@@ -27,7 +28,6 @@ deltametrics.mask.ChannelMask
    .. autosummary::
    
       ~ChannelMask.data
-      ~ChannelMask.property_for_just_channels
-      ~ChannelMask.time
+      ~ChannelMask.mask
    
    

@@ -13,9 +13,10 @@ deltametrics.mask.LandMask
 
    .. autosummary::
    
+      ~LandMask.Seaangles_mod
       ~LandMask.__init__
-      ~LandMask.a_land_function
-      ~LandMask.a_method
+      ~LandMask.compute_landmask
+      ~LandMask.compute_shoremask
       ~LandMask.show
    
    
@@ -27,7 +28,6 @@ deltametrics.mask.LandMask
    .. autosummary::
    
       ~LandMask.data
-      ~LandMask.property_for_just_land
-      ~LandMask.time
+      ~LandMask.mask
    
    

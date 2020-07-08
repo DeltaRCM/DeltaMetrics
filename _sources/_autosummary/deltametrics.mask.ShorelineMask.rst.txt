@@ -1,0 +1,32 @@
+deltametrics.mask.ShorelineMask
+===============================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: ShorelineMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ShorelineMask.Seaangles_mod
+      ~ShorelineMask.__init__
+      ~ShorelineMask.compute_shoremask
+      ~ShorelineMask.show
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ShorelineMask.data
+      ~ShorelineMask.mask
+   
+   

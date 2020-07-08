@@ -14,7 +14,6 @@ deltametrics.mask.BaseMask
    .. autosummary::
    
       ~BaseMask.__init__
-      ~BaseMask.a_method
       ~BaseMask.show
    
    
@@ -26,6 +25,6 @@ deltametrics.mask.BaseMask
    .. autosummary::
    
       ~BaseMask.data
-      ~BaseMask.time
+      ~BaseMask.mask
    
    

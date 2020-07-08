@@ -93,13 +93,25 @@ the delta.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mask.BaseMask.html#deltametrics.mask.BaseMask" title="deltametrics.mask.BaseMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseMask</span></code></a>(mask_type, data)</p></td>
-<td><p></p></td>
+<td><p>Low-level base class to be inherited by all mask objects.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mask.ChannelMask.html#deltametrics.mask.ChannelMask" title="deltametrics.mask.ChannelMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChannelMask</span></code></a>(arr[, is_mask])</p></td>
-<td><p>Channel mask.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mask.ChannelMask.html#deltametrics.mask.ChannelMask" title="deltametrics.mask.ChannelMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChannelMask</span></code></a>(velocity, topo[, …])</p></td>
+<td><p>Identify a binary channel mask.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a>(arr)</p></td>
-<td><p>land-water mask.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mask.WetMask.html#deltametrics.mask.WetMask" title="deltametrics.mask.WetMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WetMask</span></code></a>(arr[, angle_threshold, is_mask])</p></td>
+<td><p>Compute the wet mask.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a>(arr[, angle_threshold, is_mask])</p></td>
+<td><p>Identify a binary mask of the delta topset.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mask.ShorelineMask.html#deltametrics.mask.ShorelineMask" title="deltametrics.mask.ShorelineMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShorelineMask</span></code></a>(arr[, angle_threshold, is_mask])</p></td>
+<td><p>Identify the shoreline as a binary mask.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mask.EdgeMask.html#deltametrics.mask.EdgeMask" title="deltametrics.mask.EdgeMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">EdgeMask</span></code></a>(arr[, angle_threshold, is_mask])</p></td>
+<td><p>Identify the land-water edges.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mask.CenterlineMask.html#deltametrics.mask.CenterlineMask" title="deltametrics.mask.CenterlineMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CenterlineMask</span></code></a>(channelmask[, is_mask, method])</p></td>
+<td><p>Identify channel centerline mask.</p></td>
 </tr>
 </tbody>
 </table>

@@ -1,0 +1,33 @@
+deltametrics.mask.WetMask
+=========================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: WetMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WetMask.Seaangles_mod
+      ~WetMask.__init__
+      ~WetMask.compute_shoremask
+      ~WetMask.compute_wetmask
+      ~WetMask.show
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WetMask.data
+      ~WetMask.mask
+   
+   
