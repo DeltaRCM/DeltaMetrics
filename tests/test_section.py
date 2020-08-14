@@ -76,24 +76,16 @@ def test_registered_StrikeSection_attributes():
     assert rcm8cube.sections['test_StrikeSection'].y == 5
 
 
-
-
-
-
 rcm8cube_nostrat = cube.DataCube(rcm8_path)
 rcm8cube_nostrat.register_section('test_nostrat', section.StrikeSection(y=5))
 
-def test_nostrat_as_spacetime_is_default():
-    df = rcm8cube_nostrat.sections['test_nostrat']['velocity']
-    st = rcm8cube_nostrat.sections['test_nostrat']['velocity'].as_spacetime()
-    assert np.all(df == st)
+
+def test_nostrat_not_knows_stratigraphy():
+    df = rcm8cube_nostrat.sections['test_nostrat']['velocity']._knows_stratigraphy is False
+    with pytest.raises(AttributeError, match=r'No preservation information.'):
+        rcm8cube_nostrat.sections['test_nostrat']['velocity'].knows_stratigraphy
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_nostrat_nopreservationinfo():
-    st = rcm8cube_nostrat.sections['test_nostrat']['velocity'].as_spacetime(preserved=True)
-
-
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_nostrat_nostratigraphyinfo():
-    st = rcm8cube_nostrat.sections['test_nostrat']['velocity'].as_stratigraphy()
+    with pytest.raises(AttributeError, match=r'No preservation information.'):
+        st = rcm8cube_nostrat.sections['test_nostrat']['velocity'].as_stratigraphy()

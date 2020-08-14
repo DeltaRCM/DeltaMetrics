@@ -24,19 +24,19 @@ def test_init_cube_from_path_rcm8():
     assert type(rcm8cube.varset) is plot.VariableSet
 
 
-@pytest.mark.xfail(raises=TypeError, strict=True)
 def test_error_init_empty_cube():
-    nocube = cube.DataCube()
+    with pytest.raises(TypeError):
+        nocube = cube.DataCube()
 
 
-@pytest.mark.xfail(raises=FileNotFoundError, strict=True)
 def test_error_init_bad_path():
-    nocube = cube.DataCube('./nonexistent/path.nc')
+    with pytest.raises(FileNotFoundError):
+        nocube = cube.DataCube('./nonexistent/path.nc')
 
 
-@pytest.mark.xfail(raises=ValueError, strict=True)
 def test_error_init_bad_extension():
-    nocube = cube.DataCube('./nonexistent/path.doc')
+    with pytest.raises(ValueError):
+        nocube = cube.DataCube('./nonexistent/path.doc')
 
 
 def test_stratigraphy_from_eta():
@@ -82,10 +82,10 @@ def test_slice_op():
     assert type(slc.base) is np.ndarray
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_slice_op_invalid_name():
     rcm8cube = cube.DataCube(rcm8_path)
-    slc = rcm8cube['nonexistentattribute']
+    with pytest.raises(AttributeError):
+        slc = rcm8cube['nonexistentattribute']
 
 
 def test_register_section():
@@ -106,28 +106,17 @@ def test_sections_slice_op():
     assert issubclass(type(slc), section.BaseSection)
 
 
-# test plotting routines
-# @pytest.mark.mpl_image_compare()
-# def test_show_plan():
-#     rcm8cube = cube.DataCube(rcm8_path)
-#     rcm8cube
-
-#     gui = GUI()
-#     return gui.fig
-
-
 def test_nostratigraphy_default():
     rcm8cube = cube.DataCube(rcm8_path)
     assert rcm8cube._knows_stratigraphy is False
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_nostratigraphy_default_attribute():
-    """Fix this test once section is fully implemented"""
+def test_nostratigraphy_default_attribute_derived_variable():
     rcm8cube = cube.DataCube(rcm8_path)
     rcm8cube.register_section('testsection', section.StrikeSection(y=10))
     assert rcm8cube._knows_stratigraphy is False
-    rcm8cube.sections['testsection']['velocity'].as_stratigraphy()
+    with pytest.raises(AttributeError, match=r'No preservation information.'):
+        rcm8cube.sections['testsection']['velocity'].as_stratigraphy()
 
 
 # create a fixed cube for variable existing, type checks
@@ -174,26 +163,7 @@ def test_fixeddatacube_init_sections():
 fixeddatacube.stratigraphy_from('eta')
 
 
-def test_fixeddatacube_init_preserved_index():
-    assert type(fixeddatacube.preserved_index) is np.ndarray
-
-
-def test_fixeddatacube_init_preserved_voxel_count():
-    assert type(fixeddatacube.preserved_voxel_count) is np.ndarray
-
-
 # test setting all the properties / attributes
-
-@pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixeddatacube_set_preserved_index():
-    fixeddatacube.preserved_index = 10
-
-
-@pytest.mark.xfail(raises=AttributeError, strict=True)
-def test_fixeddatacube_set_preserved_voxel_count():
-    fixeddatacube.preserved_voxel_count = 10
-
-
 def test_fixeddatacube_set_varset():
     new_varset = plot.VariableSet()
     fixeddatacube.varset = new_varset
@@ -202,56 +172,64 @@ def test_fixeddatacube_set_varset():
     assert fixeddatacube.varset is new_varset
 
 
-@pytest.mark.xfail(raises=TypeError, strict=True)
 def test_fixeddatacube_set_varset_bad_type():
-    fixeddatacube.varset = np.zeros(10)
+    with pytest.raises(TypeError):
+        fixeddatacube.varset = np.zeros(10)
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixeddatacube_set_data_path():
-    fixeddatacube.data_path = '/trying/to/change/path.nc'
+    with pytest.raises(AttributeError):
+        fixeddatacube.data_path = '/trying/to/change/path.nc'
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixeddatacube_set_dataio():
-    fixeddatacube.dataio = 10  # io.NetCDF_IO(rcm8_path)
+    with pytest.raises(AttributeError):
+        fixeddatacube.dataio = 10  # io.NetCDF_IO(rcm8_path)
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixeddatacube_set_variables_list():
-    fixeddatacube.variables = ['is', 'a', 'list']
+    with pytest.raises(AttributeError):
+        fixeddatacube.variables = ['is', 'a', 'list']
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixeddatacube_set_variables_dict():
-    fixeddatacube.variables = {'is': True, 'a': True, 'dict': True}
+    with pytest.raises(AttributeError):
+        fixeddatacube.variables = {'is': True, 'a': True, 'dict': True}
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixeddatacube_set_plan_set_list():
-    fixeddatacube.plan_set = ['is', 'a', 'list']
+    with pytest.raises(AttributeError):
+        fixeddatacube.plan_set = ['is', 'a', 'list']
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixeddatacube_set_plan_set_dict():
-    fixeddatacube.plan_set = {'is': True, 'a': True, 'dict': True}
+    with pytest.raises(AttributeError):
+        fixeddatacube.plan_set = {'is': True, 'a': True, 'dict': True}
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixeddatacube_set_plans():
-    fixeddatacube.plans = 10
+    with pytest.raises(AttributeError):
+        fixeddatacube.plans = 10
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixeddatacube_set_section_set_list():
-    fixeddatacube.section_set = ['is', 'a', 'list']
+    with pytest.raises(AttributeError):
+        fixeddatacube.section_set = ['is', 'a', 'list']
 
-
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixeddatacube_set_section_set_dict():
-    fixeddatacube.section_set = {'is': True, 'a': True, 'dict': True}
+    with pytest.raises(AttributeError):
+        fixeddatacube.section_set = {'is': True, 'a': True, 'dict': True}
 
 
-@pytest.mark.xfail(raises=AttributeError, strict=True)
 def test_fixedset_set_sections():
-    fixeddatacube.sections = 10
+    with pytest.raises(AttributeError):
+        fixeddatacube.sections = 10
+
+
+fixedstratigraphycube = cube.StratigraphyCube.from_DataCube(fixeddatacube)
+
+def test_no_tT_StratigraphyCube():
+    with pytest.raises(AttributeError):
+        _ = fixedstratigraphycube.t
+    with pytest.raises(AttributeError):
+        _ = fixedstratigraphycube.T
