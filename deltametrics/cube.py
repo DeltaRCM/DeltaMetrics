@@ -12,6 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
 from . import io
 from . import plan
 from . import section
+from . import strat
 from . import utils
 from . import plot
 
@@ -47,7 +48,6 @@ class CubeVariable(np.ndarray):
     def __new__(cls, *args, **kwargs):
         """Initialize the ndarray.
         """
-
         variable = kwargs.pop('variable', None)
         coords = kwargs.pop('coords', None)
         obj = np.array(*args, **kwargs)
@@ -70,7 +70,6 @@ class CubeVariable(np.ndarray):
         This method could be configured to return a standard ndarray if a view
         is cast, but currently, it will return another CubeVariable instance.
         """
-
         if obj is None:
             return
         self.variable = getattr(obj, 'variable', None)
@@ -79,8 +78,7 @@ class CubeVariable(np.ndarray):
     def __repr__(self):
         """Lighterweight repr
         """
-
-        if self.size > 50:
+        if self.size > 5000:
             return str(type(self)) + ' variable: `' + self.variable \
                 + '`; dtype: ' + str(self.dtype) + ' size: ' + str(self.size)
         else:
@@ -124,8 +122,8 @@ class BaseCube(abc.ABC):
             Pass a `~deltametrics.plot.VariableSet` instance if you wish
             to style this cube similarly to another cube.
         """
-
         if type(data) is str:
+            # handle a path to netCDF file
             self._data_path = data
             self._connect_to_file(data_path=data)
             self._read_meta_from_file()
@@ -133,6 +131,11 @@ class BaseCube(abc.ABC):
             # handle a dict, arrays set up already, make an io class to wrap it
             self._data_path = None
             raise NotImplementedError
+        elif isinstance(data, DataCube):
+            # handle initializing one cube type from another
+            self._data_path = data.data_path
+            self._connect_to_file(data_path=self._data_path)
+            self._read_meta_from_file()
         else:
             raise TypeError('Invalid type for "data": %s' % type(data))
 
@@ -144,34 +147,14 @@ class BaseCube(abc.ABC):
         else:
             self.varset = plot.VariableSet()
 
+    @abc.abstractmethod
     def __getitem__(self, var):
         """Return the variable.
 
-        Overload slicing operations for io to return a
-        :obj:`~deltametrics.cube.CubeVariable` instance when slicing.
-
-        Parameters
-        ----------
-        var : :obj:`str`
-            Which variable to slice.
-
-        Returns
-        -------
-        CubeVariable : `~deltametrics.cube.CubeVariable`
-            The instantiated CubeVariable.
+        Overload slicing operations for io to return correct var. Must be
+        implemented by subclasses.
         """
-
-        if var in self._variables:
-            return CubeVariable(self.dataio[var], variable=var)
-        elif var == 'time':
-            # a special attribute we add, which matches eta.shape
-            _eta = self.dataio[var]
-            _t = np.expand_dims(np.arange(_eta.shape[0]), axis=1)
-            return CubeVariable(np.tile(_t, (1, *_eta.shape[1:])),
-                                varable='time')
-        else:
-            raise AttributeError('No variable of {cube} named {var}'.format(
-                                 cube=str(self), var=var))
+        ...
 
     def _connect_to_file(self, data_path):
         """Connect to file.
@@ -195,6 +178,10 @@ class BaseCube(abc.ABC):
         navigating the variable trees in the stored files.
         """
         self._variables = self._dataio.keys
+        self._X = self._dataio['x']  # mesh grid of x values of cube
+        self._Y = self._dataio['y']  # mesh grid of x values of cube
+        self._x = np.copy(self._X[0, :].squeeze())  # array of x values of cube
+        self._y = np.copy(self._Y[:, 0].squeeze())  # array of y values of cube
 
     def read(self, variables):
         """Read variable into memory
@@ -319,12 +306,63 @@ class BaseCube(abc.ABC):
         SectionInstance.connect(self)  # attach cube
         self._section_set[name] = SectionInstance
 
+    @property
+    def x(self):
+        """x-direction coordinate."""
+        return self._x
+
+    @property
+    def X(self):
+        """x-direction mesh."""
+        return self._X
+
+    @property
+    def y(self):
+        """y-direction coordinate."""
+        return self._y
+
+    @property
+    def Y(self):
+        """y-direction mesh."""
+        return self._Y
+
+    @property
+    @abc.abstractmethod
+    def z(self):
+        """Vertical coordinate."""
+        return self._z
+
+    @property
+    @abc.abstractmethod
+    def Z(self):
+        """Vertical mesh."""
+        return self._Z
+
+    @property
+    def H(self):
+        """Number of elements, vertical (height) coordinate."""
+        return self._H
+
+    @property
+    def L(self):
+        """Number of elements, length coordinate."""
+        return self._L
+
+    @property
+    def W(self):
+        """Number of elements, width coordinate."""
+        return self._W
+
+    @property
+    def shape(self):
+        return (self.H, self.L, self.W)
+
     def show_cube(self, var, t=-1, x=-1, y=-1, ax=None):
         """Show the cube in a 3d axis.
         """
         raise NotImplementedError
 
-    def show_plan(self, var, t=-1, ax=None, ticks=False):
+    def show_plan(self, var, t=-1, ax=None, title=None, ticks=False):
         """Show planform image.
 
         .. warning::
@@ -341,7 +379,12 @@ class BaseCube(abc.ABC):
                   norm=self.varset[var].norm,
                   vmin=self.varset[var].vmin,
                   vmax=self.varset[var].vmax)
-        ax.set_xlabel('')
+        
+        if not ticks:
+            ax.set_xticks([], minor=[])
+            ax.set_yticks([], minor=[])
+        if title:
+            ax.set_title(str(title))
 
     def show_section(self, *args, **kwargs):
         """Show a section.
@@ -362,6 +405,8 @@ class BaseCube(abc.ABC):
         elif len(args) == 2:
             SectionInstance = args[0]
             SectionAttribute = args[1]
+        else:
+            raise ValueError('Too many arguments.')
 
         # call `show()` from string or by instance
         if type(SectionInstance) is str:
@@ -410,16 +455,45 @@ class DataCube(BaseCube):
             with the :meth:`~deltametrics.cube.DataCube.stratigraphy_from`
             method.
         """
-
         super().__init__(data, read, varset)
 
-        self._knows_spacetime = True
+        self._t = self._dataio['time']
+        self._T, _, _ = np.meshgrid(self.t, self.x, self.y)
+        self._H, self._L, self._W = self['eta'].shape
+
         self._knows_stratigraphy = False
 
         if stratigraphy_from:
             self.stratigraphy_from(variable=stratigraphy_from)
 
-    def stratigraphy_from(self, variable='eta'):
+    def __getitem__(self, var):
+        """Return the variable.
+
+        Overload slicing operations for io to return a
+        :obj:`~deltametrics.cube.CubeVariable` instance when slicing.
+
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which variable to slice.
+
+        Returns
+        -------
+        CubeVariable : `~deltametrics.cube.CubeVariable`
+            The instantiated CubeVariable.
+        """
+        if var == 'time':
+            # a special attribute we add, which matches eta.shape
+            _t = np.expand_dims(self.dataio['time'], axis=(1, 2))
+            return CubeVariable(np.tile(_t, (1, *self.shape[1:])),
+                                variable='time')
+        elif var in self._variables:
+            return CubeVariable(self.dataio[var], variable=var)
+        else:
+            raise AttributeError('No variable of {cube} named {var}'.format(
+                                 cube=str(self), var=var))
+
+    def stratigraphy_from(self, variable='eta', style='mesh', **kwargs):
         """Compute stratigraphy attributes.
 
         Parameters
@@ -429,97 +503,94 @@ class DataCube(BaseCube):
             preservation. If no value is given for this parameter, we try to
             find a variable `eta` and use that for elevation data if it
             exists.
-        """
 
-        self._compute_stratigraphy(variable)
+        style : :obj:`str`, optional
+            Which style of stratigraphy to compute, options are :obj:`'mesh'
+            <deltametrics.strat.MeshStratigraphyAttributes>` or :obj:`'boxy'
+            <deltametrics.strat.BoxyStratigraphyAttributes>`. Additional
+            keyword arguments are passed to stratigraphy attribute
+            initializers.
+        """
+        if style == 'mesh':
+            self.strat_attr = strat.MeshStratigraphyAttributes(elev=self[variable], **kwargs)
+        elif style == 'boxy':
+            strat.BoxyStratigraphyAttributes(elev=self[variable], **kwargs)
+        else:
+            raise ValueError('Bad "style" argument supplied: %s' % str(style))
         self._knows_stratigraphy = True
 
-    def _compute_stratigraphy(self, variable):
-        """Compute stratigraphy attributes.
-
-        Compute what is preserved. We can precompute several attributes of the
-        stratigraphy, including which voxels are preserved, what their row
-        indicies in the sparse stratigraphy matrix are, and what the elevation
-        of each elevation entry in the final stratigraphy are. *This allows
-        placing of any t-x-y stored variable into the section.*
-
-        Currently, we store many of these computations as private attributes
-        of the Cube itself. This is fine for a small cube, but may become
-        cumbersome or intractable for large datasets.
-        problematic as the matrix becomes very large.
-
-        .. note::
-            This could be ported out to wrap around a generalized function for
-            computing stratigraphic representations of cubes. E.g., wrapping
-            some function in :obj:`~deltametrics.strat`.
-        """
-
-        # copy out _eta for faster access, not retained in memory (?)
-        _eta = np.array(self[variable], copy=True)
-        _psvd = np.zeros_like(_eta)  # boolean for if retained
-        _strata = np.zeros_like(_eta)  # elevation of surface at each t
-
-        nt = _strata.shape[0]
-        _strata[-1, :, :] = _eta[-1, :, :]
-        _psvd[-1, :, :] = True
-        for j in np.arange(nt - 2, -1, -1):
-            _strata[j, ...] = np.minimum(_eta[j, ...],
-                                         _strata[j + 1, ...])
-            _psvd[j, :, :] = np.less(_eta[j, ...],
-                                     _strata[j + 1, ...])
-
-        self._psvd_vxl_cnt = _psvd.sum(axis=0, dtype=np.int)
-        self._psvd_vxl_idx = _psvd.cumsum(axis=0, dtype=np.int)
-        self._psvd_vxl_cnt_max = int(self._psvd_vxl_cnt.max())
-        self._psvd_idx = _psvd.astype(np.bool)  # guarantee bool
-
-        # Determine the elevation of any voxel that is preserved.
-        # These are matrices that are size n_preserved-x-y.
-        #    psvd_vxl_eta : records eta for each entry in the preserved matrix.
-        #    psvd_flld    : fills above with final eta entry (for pcolormesh).
-        self._psvd_vxl_eta = np.full((self._psvd_vxl_cnt_max,
-                                      *_eta.shape[1:]), np.nan)
-        self._psvd_flld = np.full((self._psvd_vxl_cnt_max,
-                                   *_eta.shape[1:]), np.nan)
-        for i in np.arange(_eta.shape[1]):
-            for j in np.arange(_eta.shape[2]):
-                self._psvd_vxl_eta[0:self._psvd_vxl_cnt[i, j], i, j] = _eta[
-                    self._psvd_idx[:, i, j], i, j].copy()
-                self._psvd_flld[0:self._psvd_vxl_cnt[i, j], i, j] = _eta[
-                    self._psvd_idx[:, i, j], i, j].copy()
-                self._psvd_flld[self._psvd_vxl_cnt[
-                    i, j]:, i, j] = self._psvd_flld[
-                    self._psvd_vxl_cnt[i, j] - 1, i, j]
+    @property
+    def z(self):
+        """Vertical coordinate."""
+        return self.t
 
     @property
-    def preserved_index(self):
-        """:obj:`ndarray` : Boolean array indicating preservation.
-
-        True where data is preserved in final stratigraphy.
-        """
-        return self._psvd_idx
+    def Z(self):
+        """Vertical mesh."""
+        return self.T
 
     @property
-    def preserved_voxel_count(self):
-        """:obj:`ndarray` : Nmber of preserved voxels per x-y.
+    def t(self):
+        """time coordinate."""
+        return self._t
 
-        X-Y array indicating number of preserved voxels per x-y pair.
-        """
-        return self._psvd_vxl_cnt
+    @property
+    def T(self):
+        """Vertical mesh."""
+        return self._T
 
 
-class StratigraphyCube(DataCube):
+class StratigraphyCube(BaseCube):
     """StratigraphyCube object.
 
     A cube of precomputed stratigraphy. This is a z-x-y matrix defining
     variables at specific voxel locations.
 
-    This is a special case of the data cube.
+    This is a special case of a cube.
 
     """
+    @staticmethod
+    def from_DataCube(DataCubeInstance, stratigraphy_from='eta', dz=0.1):
+        """Create from a DataCube.
 
-    def __init__(self, data, read=[], varset=None):
+        Examples
+        --------
+        Create a stratigraphy cube from the example ``rcm8cube``:
+
+        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.05)
+
+        Parameters
+        ----------
+        DataCubeInstance : :obj:`DataCube`
+            The `DataCube` instance to derive from for the new
+            StratigraphyCube.
+
+        stratigraphy_from : :obj:`str`, optional
+            A string that matches a variable name in the dataset to
+            compute preservation and stratigraphy using that variable as
+            elevation data. Typically, this is ``'eta'`` in pyDeltaRCM model
+            outputs.
+
+        dz : :obj:`float`, optional
+            Vertical interval (i.e., resolution) for stratigraphy in new
+            StratigraphyCube.
+
+        Returns
+        -------
+        StratigraphyCubeInstance : :obj:`StratigraphyCube`
+            The new `StratigraphyCube` instance.
+        """
+        return StratigraphyCube(DataCubeInstance,
+                                stratigraphy_from=stratigraphy_from,
+                                dz=dz)
+
+    def __init__(self, data, read=[], varset=None,
+                 stratigraphy_from=None, dz=None):
         """Initialize the StratigraphicCube.
+
+        Any instantiation pathway must configure :obj:`z`, :obj:`H`, :obj:`L`,
+        :obj:`W`, and :obj:`strata`.
 
         Parameters
         ----------
@@ -539,15 +610,80 @@ class StratigraphyCube(DataCube):
             to style this cube similarly to another cube. If no argument is
             supplied, a new default VariableSet instance is created.
         """
-
-        raise NotImplementedError
         super().__init__(data, read, varset)
 
-        self._knows_spacetime = False
-        self._knows_stratigraphy = True
+        if isinstance(data, str):
+            raise NotImplementedError('Precomputed NetCDF?')
+        elif isinstance(data, np.ndarray):
+            raise NotImplementedError('Precomputed numpy array?')
+        elif isinstance(data, DataCube):
+            # i.e., creating from a DataCube
+            self.data = data  # link to underlying data
+            _elev = np.array(self.data[stratigraphy_from], copy=True)
 
-    @staticmethod
-    def from_DataCube(DataCubeInstance, stratigraphy_from=None):
-        raise NotImplementedError
-        # this should create a cube, with "frozen" stratigraphy (boxy I guess??)
-        StratigraphicCube(DataCubeInstance, stratigraphy_from=stratigraphy_from)
+            # set up coordinates of the array
+            self._z = strat._determine_strat_coordinates(_elev, dz=dz)
+            self._H = len(self.z)
+            self._L, self._W = _elev.shape[1:]
+
+            _out = strat.compute_boxy_stratigraphy_coordinates(_elev, z=self.z)
+            self.strata, self.strata_coords, self.data_coords = _out
+
+            self.mesh = np.meshgrid(self._z, np.arange(0, self.L))
+        else:
+            raise TypeError('No other input types implemented yet.')
+
+    def __getitem__(self, var):
+        """Return the variable.
+
+        Overload slicing operations for io to return a
+        :obj:`~deltametrics.cube.CubeVariable` instance when slicing, where
+        the data have been placed into stratigraphic position.
+
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which variable to slice.
+
+        Returns
+        -------
+        CubeVariable : `~deltametrics.cube.CubeVariable`
+            The instantiated CubeVariable.
+        """
+        if var == 'time':
+            # a special attribute we add, which matches eta.shape
+            _t = np.expand_dims(self.dataio['time'], axis=(1, 2))
+            _arr = np.full(self.shape, np.nan)
+            _var = np.tile(_t, (1, *self.shape[1:]))
+        elif var in self._variables:
+            _arr = np.full(self.shape, np.nan)
+            _var = np.array(self.dataio[var], copy=True)
+        else:
+            raise AttributeError('No variable of {cube} named {var}'.format(
+                                 cube=str(self), var=var))
+
+        # the following lines apply the data to stratigraphy mapping
+        _cut = _var[self.data_coords[0, :], self.data_coords[1, :], self.data_coords[2, :]]
+        _arr[self.strata_coords[0, :], self.strata_coords[1, :], self.strata_coords[2, :]] = _cut.T
+        return CubeVariable(_arr, variable=var)
+
+    @property
+    def strata(self):
+        """Strata surfaces.
+
+        Elevation of stratal surfaces, matched to times in :obj:`time`.
+        """
+        return self._strata
+
+    @strata.setter
+    def strata(self, var):
+        self._strata = var
+
+    @property
+    def z(self):
+        return self._z
+
+    @property
+    def Z(self):
+        """Vertical mesh."""
+        return self.H

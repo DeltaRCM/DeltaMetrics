@@ -2,12 +2,14 @@ import os
 import sys
 
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as colors
 import mpl_toolkits.axes_grid1 as axtk
 
 from . import io
+from . import strat
 
 # plotting utilities
 
@@ -442,6 +444,8 @@ class VariableSet(object):
 def append_colorbar(ci, ax, **kwargs):
     """Append a colorbar, consistently placed.
 
+    Adjusts some parameters of the parent axes as well.
+
     Parameters
     ----------
     ci : `matplotlib.pyplot.pcolormesh`, `matplotlib.pyplot.ImageAxes`
@@ -460,6 +464,9 @@ def append_colorbar(ci, ax, **kwargs):
     divider = axtk.axes_divider.make_axes_locatable(ax)
     cax = divider.append_axes("right", size="2%", pad=0.05)
     cb = plt.colorbar(ci, cax=cax)
+    cb.ax.tick_params(labelsize=7)
+    ax.use_sticky_edges = False
+    ax.margins(y=0.2)
     return cb
 
 
@@ -487,3 +494,71 @@ def aerial_colormap():
     """
 
     raise NotImplementedError
+
+
+def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
+    """1d elevation to stratigraphy.
+
+    This function creates and displays a one-dimensional elevation timeseries
+    as a trajectory of elevations, resultant stratigraphy, and time preserved
+    in "boxy" stratigraphy. The function is helpful for description of
+    algorithms to compute stratigraphy, and for debugging and checking outputs
+    from computations.
+
+    Parameters
+    ----------
+    e : :obj:`ndarray`
+        Elevation data as a 1D array.
+
+    dz : :obj:`float`, optional
+        Vertical grid resolution.
+
+    z : :obj:`ndarray`, optional
+        Vertical grid. Must specify ``dz=None`` to use this option.
+
+    ax : :obj:`matplotlib.pyplot.axes`, optional
+        Axes to plot into. A figure and axes is created, if not given.
+
+    Returns
+    -------
+    """
+    e = np.expand_dims(e, axis=(1,2))  # expand elevation to work with `strat` funcs
+    z = strat._determine_strat_coordinates(e, dz=dz, z=z)  # vert coordinates
+
+    s, p = strat._compute_elevation_to_preservation(e)  # strat and preservation
+    
+    t = np.arange(e.shape[0])  # x-axis time array
+    t3 = np.expand_dims(t, axis=(1,2)) # 3d time, for slicing
+    sc, dc = strat._compute_preservation_to_cube(s, z)
+    lst = np.argmin(s[:, ...] < s[-1, :, :], axis=0) # last elevation 
+    
+    if not ax:
+        fig, ax = plt.subplots()
+
+    # timeseries plot
+    _p = ax.fill_between(t, np.min(e), np.max(e), where=p.squeeze(), label='psvd', color='0.8')
+    _ss = ax.hlines(e[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
+    _e = ax.step(t, e.squeeze(), where='post', label='elevation')
+    _s = ax.step(t, s.squeeze(), linestyle='--', where='post', label='stratigraphy')
+    _l = ax.axvline(lst, c='k')
+    ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
+    ax.grid(which='both', axis='x')
+
+    # boxy strata plot
+    c = np.full((z.shape[0], 1, 1), np.nan)
+    c[sc[0,:], sc[1,:], sc[2,:]] = t3[dc[0,:], dc[1,:], dc[2,:]]
+    divider = axtk.make_axes_locatable(ax)
+    ax_s = divider.append_axes("right", 0.5, pad=0.1, sharey=ax)
+    ax_s.yaxis.tick_right()
+    ax_s.xaxis.set_visible(False)
+    __x, __y = np.meshgrid(np.array([0,1]), z)
+    _colmap = plt.cm.get_cmap('viridis', e.shape[0])
+    _c = ax_s.pcolormesh(__x, __y, c.squeeze(axis=2),
+                         cmap=_colmap, vmin=0, vmax=e.shape[0])
+    _ss2 = ax_s.hlines(e[p], 0, 1, linestyles='dashed', colors='gray')
+    _cstr = [str(int(cc)) if np.isfinite(cc) else 'nan' for cc in c.flatten()]
+    for i, __cstr in enumerate(_cstr):
+        ax_s.text(0.3, z[i], str(__cstr), fontsize=8)
+
+    ax.set_ylim((np.min(z)*0.9, np.max(z)*1.1))
+    ax.legend()
