@@ -4,6 +4,7 @@ import sys
 import os
 
 import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
 
 from deltametrics import plot
@@ -14,14 +15,14 @@ def test_initialize_default_VariableInfo():
     assert vi.cmap.N == 64
 
 
-@pytest.mark.xfail(raises=TypeError, strict=True)
 def test_initialize_default_VariableInfo_noname():   
-    vi = plot.VariableInfo()
+    with pytest.raises(TypeError):
+        vi = plot.VariableInfo()
 
 
-@pytest.mark.xfail(raises=TypeError, strict=True)
 def test_initialize_default_VariableInfo_name_isstr():   
-    vi = plot.VariableInfo(None)
+    with pytest.raises(TypeError):
+        vi = plot.VariableInfo(None)
 
 
 def test_initialize_VariableInfo_cmap_str():
@@ -75,11 +76,11 @@ def test_initialize_VariableSet_override_unknown_VariableInfo():
     assert vs['fakevariable'].vmin == -9999
 
 
-@pytest.mark.xfail(raises=TypeError, strict=True)
 def test_initialize_VariableSet_override_known_badtype():
     vi = plot.VariableInfo('depth')
     od = ('depth', vi)
-    vs = plot.VariableSet(override_dict=od)
+    with pytest.raises(TypeError):
+        vs = plot.VariableSet(override_dict=od)
 
 
 def test_VariableSet_add_known_VariableInfo():
@@ -113,13 +114,43 @@ def test_VariableSet_change_then_default():
     assert vs.depth.vmin == 0
 
 
-@pytest.mark.xfail(raises=TypeError, strict=True)
 def test_VariableSet_add_known_badtype():
     vs = plot.VariableSet()
-    vs.depth = 'Yellow!'
+    with pytest.raises(TypeError):
+        vs.depth = 'Yellow!'
 
 
-@pytest.mark.xfail(raises=TypeError, strict=True)
 def test_VariableSet_add_unknown_badtype():
     vs = plot.VariableSet()
-    vs.fakevariable = 'Yellow!'
+    with pytest.raises(TypeError):
+        vs.fakevariable = 'Yellow!'
+
+
+def test_append_colorbar():
+    _arr = np.random.randint(0, 100, size=(50, 50))
+    fig, ax = plt.subplots()
+    im = ax.imshow(_arr)
+    cb = plot.append_colorbar(im, ax)
+    assert isinstance(cb, matplotlib.colorbar.Colorbar)
+    assert ax.use_sticky_edges is False
+
+
+def test_append_colorbar_no_adjust():
+    _arr = np.random.randint(0, 100, size=(50, 50))
+    fig, ax = plt.subplots()
+    im = ax.imshow(_arr)
+    cb = plot.append_colorbar(im, ax, adjust=False)
+    assert isinstance(cb, matplotlib.colorbar.Colorbar)
+    assert ax.use_sticky_edges is True
+
+
+def test_sodttst_makes_plot():
+    _e = np.random.randint(0, 10, size=(50,))
+    fig, ax = plt.subplots()
+    plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax)
+    plt.close()
+
+def test_sodttst_makes_plot_no_ax():
+    _e = np.random.randint(0, 10, size=(50,))
+    plot.show_one_dimensional_trajectory_to_strata(_e)
+    plt.close()

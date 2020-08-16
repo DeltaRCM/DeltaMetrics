@@ -289,10 +289,8 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
             strat_attr['strata'] = self.strata[:, _x0, _x1]
             strat_attr['psvd_idx'] = _psvd_idx = self.psvd_idx[:, _x0, _x1]
             strat_attr['psvd_flld'] = self.psvd_flld[:, _x0, _x1]
-            # self.strat_attrs['i'] = 
             strat_attr['x0'] = _i = self.psvd_vxl_idx[:, _x0, _x1]
             strat_attr['x1'] = _j = np.tile(np.arange(_i.shape[1]), (_i.shape[0], 1))
-            
             strat_attr['s'] = _j[0, :]                  # along-section coord
             strat_attr['s_sp'] = _j[_psvd_idx]          # along-section coord, sparse
             strat_attr['z_sp'] = _i[_psvd_idx]          # vertical coord, sparse
@@ -446,7 +444,6 @@ def _compute_preservation_to_cube(strata, z):
 
     # the main loop through the elevations
     seek_elev = strata[-1, :, :] # - np.finfo(np.float64).eps  # the first seek is the last surface
-    # breakpoint()
     for k in np.arange(nz - 1, -1, -1):  # for every z, from the top
         e = z[k]  # which elevation for this iteration
         whr = e < seek_elev  # where elev is below strat surface
@@ -471,14 +468,14 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
     """Return a valid Z array for stratigraphy based on inputs.
     
     This helper function enables support for user specified `dz`, `nz`, or `z`
-    in many functions. The logic for determining how to handle these inputs is
-    placed in this function, to ensure consistent behavior across all
-    classes/methods.
+    in many functions. The logic for determining how to handle these mutually
+    exclusive inputs is placed in this function, to ensure consistent behavior
+    across all classes/methods internally.
 
     .. note::
 
         At least one of the optional parameters must be supplied. Precedence
-        is `z`, `dz`, `nz`.
+        when multiple arguments are supplied is `z`, `dz`, `nz`.
 
     Parameters
     ----------
@@ -497,16 +494,22 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
         Number of intervals in `z`. Z array is created as 
         ``np.linspace(np.min(elev), np.max(elev), num=nz, endpoint=True)``.
     """
-    # determine the sizes of the output strata
-    if (dz is None) and (z is None):
-        raise ValueError('You must specify "z" or "dz".')
-    if dz:
+    if (dz is None) and (z is None) and (nz is None):
+        raise ValueError('You must specify "z", "dz", or "nz.')
+
+    _valerr = ValueError('"dz" or "nz" cannot be zero or negative.')
+    if not (z is None):
+        if np.isscalar(z): raise ValueError('"z" must be a numpy array.')
+        return z
+    elif not (dz is None):
+        if dz <= 0: raise _valerr
         max_dos = np.max(elev) + dz  # max depth of section, meters
         min_dos = np.min(elev)       # min dos, meters
         return np.arange(min_dos, max_dos, step=dz)
-    if nz:
+    elif not (nz is None):
+        if nz <= 0: raise _valerr
         max_dos = np.max(elev)
         min_dos = np.min(elev)
-        np.linspace(min_dos, max_dos, num=nz, endpoint=True)
+        return np.linspace(min_dos, max_dos, num=nz, endpoint=True)
     else:
-        return z
+        raise RuntimeError('No coordinates determined. Check inputs.')

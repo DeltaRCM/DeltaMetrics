@@ -441,7 +441,7 @@ class VariableSet(object):
             raise TypeError
 
 
-def append_colorbar(ci, ax, **kwargs):
+def append_colorbar(ci, ax, adjust=True):
     """Append a colorbar, consistently placed.
 
     Adjusts some parameters of the parent axes as well.
@@ -455,18 +455,24 @@ def append_colorbar(ci, ax, **kwargs):
     ax : `matplotlib.Axes`
         The instance of axes to place the colorbar next to.
 
+    adjust : :obj:`bool`
+        Whether to adjust some minor attributes of the parent axis, for
+        presentation.
+
     Returns
     -------
     cb : `matplotlib.colorbar` instance.
         The colorbar instance created.
     """
-
     divider = axtk.axes_divider.make_axes_locatable(ax)
     cax = divider.append_axes("right", size="2%", pad=0.05)
     cb = plt.colorbar(ci, cax=cax)
     cb.ax.tick_params(labelsize=7)
-    ax.use_sticky_edges = False
-    ax.margins(y=0.2)
+
+    if adjust:
+        ax.use_sticky_edges = False
+        ax.margins(y=0.2)
+
     return cb
 
 
