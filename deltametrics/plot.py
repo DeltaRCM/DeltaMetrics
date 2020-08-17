@@ -529,24 +529,26 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
     -------
     """
     e = np.expand_dims(e, axis=(1,2))  # expand elevation to work with `strat` funcs
-    z = strat._determine_strat_coordinates(e, dz=dz, z=z)  # vert coordinates
-
-    s, p = strat._compute_elevation_to_preservation(e)  # strat and preservation
-    
     t = np.arange(e.shape[0])  # x-axis time array
     t3 = np.expand_dims(t, axis=(1,2)) # 3d time, for slicing
+
+    z = strat._determine_strat_coordinates(e, dz=dz, z=z)  # vert coordinates
+    s, p = strat._compute_elevation_to_preservation(e)  # strat and preservation
     sc, dc = strat._compute_preservation_to_cube(s, z)
-    lst = np.argmin(s[:, ...] < s[-1, :, :], axis=0) # last elevation 
+    lst = np.argmin(s[:, :, :] < s[-1, :, :], axis=0) # last elevation
     
     if not ax:
         fig, ax = plt.subplots()
 
     # timeseries plot
-    _p = ax.fill_between(t, np.min(e), np.max(e), where=p.squeeze(), label='psvd', color='0.8')
+    pt = np.zeros_like(t)  # for psvd timesteps background
+    pt[np.union1d(p.nonzero()[0], np.array(strat._compute_preservation_to_time_intervals(p).nonzero()[0]))] = 1
+    _p = ax.fill_between(t, np.min(e), np.max(e), where=pt, label='psvd timesteps', color='0.8')
     _ss = ax.hlines(e[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
+    _l = ax.axvline(lst, c='k')
     _e = ax.step(t, e.squeeze(), where='post', label='elevation')
     _s = ax.step(t, s.squeeze(), linestyle='--', where='post', label='stratigraphy')
-    _l = ax.axvline(lst, c='k')
+    _pd = ax.plot(t[p.squeeze()], s[p].squeeze(), color='0.5', marker='o', ls='none', label='psvd time')
     ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
     ax.grid(which='both', axis='x')
 
@@ -566,5 +568,10 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
     for i, __cstr in enumerate(_cstr):
         ax_s.text(0.3, z[i], str(__cstr), fontsize=8)
 
-    ax.set_ylim((np.min(z)*0.9, np.max(z)*1.1))
+    # adjust and add legend
+    if np.any(e < 0):
+        yView = np.absolute(e).max() * 1.2
+        ax.set_ylim(np.min(e) * 1.2, np.max(e) * 1.2)
+    else:
+        ax.set_ylim(np.min(e) * 0.8, np.max(e) * 1.2)
     ax.legend()

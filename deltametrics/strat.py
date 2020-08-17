@@ -357,24 +357,59 @@ def _compute_elevation_to_preservation(elev):
         A `t-x-y` `ndarry` of stratal surface elevations.
 
     psvd : :obj:`ndarray`
-        A `t-x-y` boolean `ndarry` of whether a `(t,x,y)`
-        time-volume section is preserved in any of the final stratal surfaces.
-        Note that this boolean records whether an *entire* t-x-y voxel is
-        recorded.
+        A `t-x-y` boolean `ndarry` of whether a `(t,x,y)` point of
+        instantaneous time is preserved in any of the final stratal surfaces.
+        To determine whether time from a given *timestep* is preserved, use
+        ``psvd.nonzero()[0] - 1``.
     """
     psvd = np.zeros_like(elev, dtype=np.bool)  # bool, if retained
     strata = np.zeros_like(elev)  # elev of surface at each t
 
     nt = strata.shape[0]
-    strata[-1, :, :] = elev[-1, :, :]
-    # psvd[-1, :, :] = True
+    strata[-1, ...] = elev[-1, ...]
     for j in np.arange(nt - 2, -1, -1):
-        strata[j, ...] = np.minimum(elev[j, :, :],
-                                    strata[j + 1, :, :])
-        psvd[j, :, :] = np.less(elev[j, :, :],
-                                strata[j + 1, :, :])
-    psvd[0, :, :] = True
+        strata[j, ...] = np.minimum(elev[j, ...],
+                                    strata[j + 1, ...])
+        psvd[j + 1, ...] = np.less(strata[j, ...],
+                                    strata[j + 1, ...])
+    if nt > 1:  # allows a single-time elevation-series to return
+        psvd[0, ...] = np.less(strata[0, ...],
+                               strata[1, ...])
     return strata, psvd
+
+
+def _compute_preservation_to_time_intervals(psvd):
+    """Compute the preserved timesteps.
+
+    The output from :obj:`_compute_elevation_to_preservation` records whether
+    an instance of time, defined exactly at the data interval, is recorded in
+    the stratigraphy (here, "recorded" does not include stasis). This differs
+    from determining which *time-intervals* are preserved in the stratigraphy,
+    because the deposits reflect the conditions *between* the save intervals.
+
+    While this computation is simply an offset-by-one indexing (``psvd[1:,
+    ...]``), the function is implemented explicityly and utilized internally
+    for consistency.
+
+    .. note::
+
+        `True` in the preserved time-interval array does not necessarily
+        indicate that an entire timestep was preserved, but rather that some
+        portion of this time-interval (up to the entire interval) is recorded.
+
+    Parameters
+    ----------
+    psvd : :obj:`ndarray`
+        Boolean `ndarray` indicating the preservation of instances of time.
+        Time is expected to be the 0th axis.
+
+    Returns
+    -------
+    psvd_intervals : :obj:`ndarray`
+        Boolean `ndarray` indicating the preservation of time-intervals,
+        including partial intervals.
+    """
+    return psvd[1:, ...]
 
 
 def _compute_preservation_to_cube(strata, z):
@@ -429,25 +464,17 @@ def _compute_preservation_to_cube(strata, z):
         extracted from the data array.  Columns in `data_coords` correspond
         with columns in `strat_coords`.
     """
-    # shortcuts for array sizes
-    _, dx, dy = strata.shape
-    nx, ny = dx, dy
-    nz = len(z)
-
     # preallocate boxy arrays and helpers
-    plate = np.zeros((nx, ny), dtype=np.int8)
+    plate = np.atleast_1d(np.zeros(strata.shape[1:], dtype=np.int8))
     strat_coords, data_coords = [], []  # preallocate sparse idx lists
-
-    # predetermined arrays for slicing and comparatives
-    dim1_idx = np.repeat(np.arange(strata.shape[1]), strata.shape[2])
-    dim2_idx = np.tile(np.arange(strata.shape[2]), strata.shape[1])
+    _zero = np.array([0])
 
     # the main loop through the elevations
-    seek_elev = strata[-1, :, :] # - np.finfo(np.float64).eps  # the first seek is the last surface
-    for k in np.arange(nz - 1, -1, -1):  # for every z, from the top
+    seek_elev = strata[-1, ...]  # the first seek is the last surface
+    for k in np.arange(len(z) - 1, -1, -1):  # for every z, from the top
         e = z[k]  # which elevation for this iteration
         whr = e < seek_elev  # where elev is below strat surface
-        t = np.maximum(0, (np.argmin(strata[:, :, :] <= e, axis=0) - 1))
+        t = np.maximum(_zero, (np.argmin(strata[:, ...] <= e, axis=0) - 1))
         plate[whr] = int(1) # track locations in the plate
 
         xy = plate.nonzero()
