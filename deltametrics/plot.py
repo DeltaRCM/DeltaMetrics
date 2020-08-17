@@ -528,40 +528,47 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
     Returns
     -------
     """
-    e = np.expand_dims(e, axis=(1,2))  # expand elevation to work with `strat` funcs
+    # reprocess shape to be 1d array, if needed.
+    if e.ndim > 1:
+        if e.shape[1:] == (1, 1):
+            e = e.squeeze()
+        else:
+            raise ValueError('Elevation data "e" must be one-dimensional.')
     t = np.arange(e.shape[0])  # x-axis time array
     t3 = np.expand_dims(t, axis=(1,2)) # 3d time, for slicing
 
     z = strat._determine_strat_coordinates(e, dz=dz, z=z)  # vert coordinates
     s, p = strat._compute_elevation_to_preservation(e)  # strat and preservation
     sc, dc = strat._compute_preservation_to_cube(s, z)
-    lst = np.argmin(s[:, :, :] < s[-1, :, :], axis=0) # last elevation
+    lst = np.argmin(s < s[-1]) # last elevation
     
+    c = np.full_like(z, np.nan)
+    c[sc[:, 0]] = t[dc[:, 0]]
+    cp = np.tile(c, (2, 1)).T
+
+    # make the plots
     if not ax:
         fig, ax = plt.subplots()
-
     # timeseries plot
     pt = np.zeros_like(t)  # for psvd timesteps background
     pt[np.union1d(p.nonzero()[0], np.array(strat._compute_preservation_to_time_intervals(p).nonzero()[0]))] = 1
     _p = ax.fill_between(t, np.min(e), np.max(e), where=pt, label='psvd timesteps', color='0.8')
     _ss = ax.hlines(e[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
     _l = ax.axvline(lst, c='k')
-    _e = ax.step(t, e.squeeze(), where='post', label='elevation')
-    _s = ax.step(t, s.squeeze(), linestyle='--', where='post', label='stratigraphy')
-    _pd = ax.plot(t[p.squeeze()], s[p].squeeze(), color='0.5', marker='o', ls='none', label='psvd time')
+    _e = ax.step(t, e, where='post', label='elevation')
+    _s = ax.step(t, s, linestyle='--', where='post', label='stratigraphy')
+    _pd = ax.plot(t[p], s[p], color='0.5', marker='o', ls='none', label='psvd time')
     ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
     ax.grid(which='both', axis='x')
 
     # boxy strata plot
-    c = np.full((z.shape[0], 1, 1), np.nan)
-    c[sc[0,:], sc[1,:], sc[2,:]] = t3[dc[0,:], dc[1,:], dc[2,:]]
     divider = axtk.make_axes_locatable(ax)
     ax_s = divider.append_axes("right", 0.5, pad=0.1, sharey=ax)
     ax_s.yaxis.tick_right()
     ax_s.xaxis.set_visible(False)
     __x, __y = np.meshgrid(np.array([0,1]), z)
     _colmap = plt.cm.get_cmap('viridis', e.shape[0])
-    _c = ax_s.pcolormesh(__x, __y, c.squeeze(axis=2),
+    _c = ax_s.pcolormesh(__x, __y, cp,
                          cmap=_colmap, vmin=0, vmax=e.shape[0])
     _ss2 = ax_s.hlines(e[p], 0, 1, linestyles='dashed', colors='gray')
     _cstr = [str(int(cc)) if np.isfinite(cc) else 'nan' for cc in c.flatten()]
@@ -571,7 +578,7 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
     # adjust and add legend
     if np.any(e < 0):
         yView = np.absolute(e).max() * 1.2
-        ax.set_ylim(np.min(e) * 1.2, np.max(e) * 1.2)
+        ax.set_ylim(np.min(e) * 1.2, np.maximum(0, np.max(e) * 1.2))
     else:
         ax.set_ylim(np.min(e) * 0.8, np.max(e) * 1.2)
     ax.legend()

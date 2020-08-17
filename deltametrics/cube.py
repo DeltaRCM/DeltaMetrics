@@ -663,8 +663,8 @@ class StratigraphyCube(BaseCube):
                                  cube=str(self), var=var))
 
         # the following lines apply the data to stratigraphy mapping
-        _cut = _var[self.data_coords[0, :], self.data_coords[1, :], self.data_coords[2, :]]
-        _arr[self.strata_coords[0, :], self.strata_coords[1, :], self.strata_coords[2, :]] = _cut.T
+        _cut = _var[self.data_coords[:, 0], self.data_coords[:, 1], self.data_coords[:, 2]]
+        _arr[self.strata_coords[:, 0], self.strata_coords[:, 1], self.strata_coords[:, 2]] = _cut
         return CubeVariable(_arr, variable=var)
 
     @property

@@ -481,13 +481,13 @@ def _compute_preservation_to_cube(strata, z):
         ks = np.full((np.count_nonzero(plate)), k)  # might be faster way
         idxs = t[xy]  # must happen before incrementing counter
 
-        strat_ks = np.array((ks, *xy))
-        data_idxs = np.array((idxs, *xy))
+        strat_ks = np.column_stack((ks, *xy))
+        data_idxs = np.column_stack((idxs, *xy))
         strat_coords.append(strat_ks)  # list of numpy arrays
         data_coords.append(data_idxs)
 
-    strat_coords = np.hstack(strat_coords)
-    data_coords = np.hstack(data_coords)
+    strat_coords = np.vstack(strat_coords)
+    data_coords = np.vstack(data_coords)
     return strat_coords, data_coords
 
 

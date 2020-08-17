@@ -120,6 +120,16 @@ class TestComputeElevationToPreservation:
         assert np.all(s[0, ...] == np.min(e, axis=0))
 
 
+class TestComputePreservationToCube:
+
+    def test_1d_shorts(self):
+        z = np.arange(0, 5, step=0.25)
+        sc1, dc1 = strat._compute_preservation_to_cube(np.array([1]), z)
+        sc15, dc15 = strat._compute_preservation_to_cube(np.array([5]), z)
+        sc2, dc2 = strat._compute_preservation_to_cube(np.array([1, 2]), z)
+        sc3, dc3 = strat._compute_preservation_to_cube(np.array([1, 2, 3]), z)
+        # assert np.all(sc1 == np.array([3, 2, 1, 0]))
+
 class TestOneDimStratigraphyExamples:
     """Tests for various cases of 1d stratigraphy."""
 
@@ -131,7 +141,7 @@ class TestOneDimStratigraphyExamples:
         """
         t = np.arange(s.shape[0])  # x-axis time array
         c = np.full((z.shape[0]), np.nan)
-        c[sc[0, :]] = t[dc[0, :]]
+        c[sc[:, 0]] = t[dc[:, 0]]
         return c
 
     def test_onedim_traj_drop_at_end(self):
