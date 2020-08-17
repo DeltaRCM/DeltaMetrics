@@ -249,7 +249,13 @@ class BaseSection(abc.ABC):
         is returned. This cube will will need to be manually connected to have
         any functionality (via the :meth:`connect` method.
         """
-        self.cube = None  # begin unconnected
+        # begin unconnected
+        self._s = None
+        self._z = None
+        self._x = None
+        self._y = None
+        self._variables = None
+        self.cube = None
 
         if len(args) > 1:
             raise ValueError('Expected single argument to %s instantiation.'
@@ -264,9 +270,9 @@ class BaseSection(abc.ABC):
         """Connect this Section instance to a Cube instance.
         """
         if not issubclass(type(CubeInstance), cube.BaseCube):
-            raise TypeError('Expected type was {_exptype}, '
+            raise TypeError('Expected type is subclass of {_exptype}, '
                             'but received was {_gottype}.'.format(
-                                _exptype=type(cube.Cube),
+                                _exptype=type(cube.BaseCube),
                                 _gottype=type(CubeInstance)))
         self.cube = CubeInstance
         self._variables = self.cube.variables

@@ -134,7 +134,7 @@ class BaseCube(abc.ABC):
         elif isinstance(data, DataCube):
             # handle initializing one cube type from another
             self._data_path = data.data_path
-            self._connect_to_file(data_path=self._data_path)
+            self._dataio = data._dataio
             self._read_meta_from_file()
         else:
             raise TypeError('Invalid type for "data": %s' % type(data))
@@ -457,7 +457,7 @@ class DataCube(BaseCube):
         """
         super().__init__(data, read, varset)
 
-        self._t = self._dataio['time']
+        self._t = np.array(self._dataio['time'], copy=True)
         self._T, _, _ = np.meshgrid(self.t, self.x, self.y)
         self._H, self._L, self._W = self['eta'].shape
 
@@ -618,8 +618,7 @@ class StratigraphyCube(BaseCube):
             raise NotImplementedError('Precomputed numpy array?')
         elif isinstance(data, DataCube):
             # i.e., creating from a DataCube
-            self.data = data  # link to underlying data
-            _elev = np.array(self.data[stratigraphy_from], copy=True)
+            _elev = np.array(self.dataio[stratigraphy_from], copy=True)
 
             # set up coordinates of the array
             self._z = strat._determine_strat_coordinates(_elev, dz=dz)
