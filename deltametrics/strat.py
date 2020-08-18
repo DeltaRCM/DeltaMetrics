@@ -240,6 +240,7 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
 
         _eta = np.copy(elev)
         _strata, _psvd = _compute_elevation_to_preservation(_eta)
+        _psvd[0, ...] = True
         self.strata = _strata
 
         self.psvd_vxl_cnt = _psvd.sum(axis=0, dtype=np.int)

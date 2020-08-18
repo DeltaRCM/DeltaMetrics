@@ -26,9 +26,10 @@ class BaseSectionVariable(np.ndarray):
         Subclasses should implement the ``__init__`` method.
 
     """
-    _spacetime_names = ['full', 'spacetime']
-    _preserved_names = ['psvd', 'preserved']
-    _stratigraphy_names = ['strat', 'strata', 'stratigraphy']
+    _spacetime_names = ['full', 'spacetime', 'as spacetime', 'as_spacetime']
+    _preserved_names = ['psvd', 'preserved', 'as preserved', 'as_preserved']
+    _stratigraphy_names = ['strat', 'strata',
+                           'stratigraphy', 'as stratigraphy', 'as_stratigraphy']
 
     def __new__(cls, _data, _s, _z, _psvd_mask=None, **unused_kwargs):
         # Input array is an already formed ndarray instance
@@ -104,10 +105,13 @@ class DataSectionVariable(BaseSectionVariable):
     @property
     def knows_stratigraphy(self):
         """Whether the data variable knows preservation information."""
+        return self._knows_stratigraphy
+
+    def validate_stratigraphy(self):
         if not self._knows_stratigraphy:
             raise AttributeError('No preservation information.')
         return self._knows_stratigraphy
-    
+
     def as_preserved(self):
         """Variable with only preserved values.
 
@@ -116,7 +120,7 @@ class DataSectionVariable(BaseSectionVariable):
         ma : :obj:`np.ma.MaskedArray`
             A numpy MaskedArray with non-preserved values masked.
         """
-        if self.knows_stratigraphy:
+        if self.validate_stratigraphy():
             return np.ma.MaskedArray(self, ~self._psvd_mask)
 
     def as_stratigraphy(self):
@@ -129,11 +133,12 @@ class DataSectionVariable(BaseSectionVariable):
             :obj:`get_display_arrays(style='stratigraphy')` instead to get
             corresponding x-y coordinates for plotting the array.
         """
-        if self.knows_stratigraphy:
-            _psvd_data = self[self.strat_attr['psvd_idx']]  # actual data, where preserved
+        if self.validate_stratigraphy():
+            # actual data, where preserved
+            _psvd_data = self[self.strat_attr['psvd_idx']]
             _sp = sparse.coo_matrix((_psvd_data,
-                                         (self.strat_attr['z_sp'],
-                                          self.strat_attr['s_sp'])))
+                                     (self.strat_attr['z_sp'],
+                                      self.strat_attr['s_sp'])))
             return _sp
 
     def get_display_arrays(self, style='spacetime'):
@@ -152,26 +157,35 @@ class DataSectionVariable(BaseSectionVariable):
             _sp = self.as_stratigraphy()
             _arr_Y = self.strat_attr['psvd_flld'][:_sp.shape[0], ...]
             _arr_X = np.tile(self._s, (_sp.shape[0], 1))
-            return _sp.toarray().view(DataSectionVariable)[:-2,:-2], _arr_X[:-1,:-1], _arr_Y[:-1,:-1]
+            return _sp.toarray().view(DataSectionVariable), _arr_X, _arr_Y
         else:
             raise ValueError('Bad "style" argument: %s' % str(style))
 
     def get_display_lines(self, style='spacetime'):
         """
         """
+        def _reshape_long(X):
+            # util for reshaping x- and y-values appropriately
+            return np.vstack((X[:, :-1].flatten(), X[:, 1:].flatten())).T.reshape(-1, 2, 1)
+
         style = self._default_style if (style is None) else style
         if style in self._spacetime_names:
-            raise NotImplementedError
+            y = _reshape_long(self._Z)
+            data = self[:, :-1]
         elif style in self._preserved_names:
-            raise NotImplementedError
+            if self.validate_stratigraphy():
+                y = _reshape_long(self._Z)
+                data = self.as_preserved()[:, :-1]
         elif style in self._stratigraphy_names:
-            # TODO: convert repeat entries in the lines to show as nans
-            _strata = np.copy(self.strat_attr['strata'])
-            # _data = np.full_like(self, np.nan)
-            # _data[self.strat_attr['psvd_idx']] = self[self.strat_attr['psvd_idx']]
-            return self, self._S, _strata
+            if self.validate_stratigraphy():
+                y = _reshape_long(np.copy(self.strat_attr['strata']))
+                data = self[:, :-1]
         else:
             raise ValueError('Bad "style" argument: %s' % str(style))
+
+        x = _reshape_long(self._S)
+        segments = np.concatenate([x, y], axis=2)
+        return data, segments
 
     def get_display_limits(self, style='spacetime'):
         """
@@ -180,15 +194,11 @@ class DataSectionVariable(BaseSectionVariable):
         if (style in self._spacetime_names) or (style in self._preserved_names):
             return np.min(self._S), np.max(self._S), np.min(self._Z), np.max(self._Z)
         elif style in self._stratigraphy_names:
-            # TODO: convert repeat entries in the lines to show as nans
-            _strata = np.copy(self.strat_attr['strata'])
-            # _data = np.full_like(self, np.nan)
-            # _data[self.strat_attr['psvd_idx']] = self[self.strat_attr['psvd_idx']]
-            return np.min(self._S), np.max(self._S), np.min(_strata), np.max(_strata) * 1.5
+            if self.validate_stratigraphy():
+                _strata = np.copy(self.strat_attr['strata'])
+                return np.min(self._S), np.max(self._S), np.min(_strata), np.max(_strata) * 1.5
         else:
             raise ValueError('Bad "style" argument: %s' % str(style))
-
-
 
 
 class StratigraphySectionVariable(BaseSectionVariable):
@@ -349,7 +359,8 @@ class BaseSection(abc.ABC):
             if self.cube._knows_stratigraphy:
                 return DataSectionVariable(_data=self.cube[var][:, self._y, self._x],
                                            _s=self.s, _z=self.z,
-                                           _psvd_mask=self.cube.strat_attr.psvd_idx[:, self._y, self._x],
+                                           _psvd_mask=self.cube.strat_attr.psvd_idx[
+                                               :, self._y, self._x],
                                            _strat_attr=self.cube.strat_attr('section', self._y, self._x))
             else:
                 return DataSectionVariable(_data=self.cube[var][:, self._y, self._x],
@@ -358,14 +369,25 @@ class BaseSection(abc.ABC):
             return StratigraphySectionVariable(_data=self.cube[var][:, self._y, self._x],
                                                _s=self.s, _z=self.z)
         elif self.cube is None:
-            raise AttributeError('No cube connected. Are you sure you ran `.connect()`?')
+            raise AttributeError(
+                'No cube connected. Are you sure you ran `.connect()`?')
         else:
             raise TypeError('Unknown Cube type encountered: %s'
                             % type(self.cube))
 
-    def show(self, SectionAttribute, style='shaded', display_array_style=None, 
-             label=False, ax=None, **kwargs):
+    def show(self, SectionAttribute, style='shaded', display_array_style=None,
+             label=False, ax=None):
         """Show the section.
+
+        Method enumerates convenient routines for visualizing sections of data
+        and stratigraphy. Includes support for multiple data `style` and
+        mutuple `display_array_style` choices as well.
+
+        .. note::
+
+            The colors for `style='lines'` are determined from the left-end
+            edge node, and colors for the `style='shaded'` mesh are determined
+            from the lower-left-end edge node of the quad.
 
         Parameters
         ----------
@@ -391,11 +413,6 @@ class BaseSection(abc.ABC):
             :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
             attempted to coerce to `str`, and the literal is diplayed.
 
-        **kwargs
-            Passed to matplotlib plotting functions.
-
-            .. warning:: Not implemented.
-
         Examples
         --------
         *Example 1:* Display the `velocity` spacetime section of a DataCube.
@@ -419,7 +436,7 @@ class BaseSection(abc.ABC):
             >>> rcm8cube = dm.sample_data.cube.rcm8()
             >>> rcm8cube.stratigraphy_from('eta')
             >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=5))
-            
+
             >>> fig, ax = plt.subplots(4, 1, sharex=True, figsize=(6, 9))
             >>> rcm8cube.sections['demo'].show('depth', display_array_style='spacetime',
             ...                                 ax=ax[0], label='spacetime')
@@ -436,23 +453,26 @@ class BaseSection(abc.ABC):
         if not ax:
             ax = plt.gca()
         _varinfo = self.cube.varset[SectionAttribute] if \
-            hasattr(self, 'cube') else utils.VariableSet()[SectionAttribute]
+            issubclass(type(self.cube), cube.BaseCube) else plot.VariableSet()[SectionAttribute]
         SectionVariableInstance = self[SectionAttribute]
 
         # main routines for plot styles
         if style in ['shade', 'shaded']:
-            _data, _X, _Y = SectionVariableInstance.get_display_arrays(style=display_array_style)
+            _data, _X, _Y = SectionVariableInstance.get_display_arrays(
+                style=display_array_style)
             pcm = ax.pcolormesh(_X, _Y, _data, cmap=_varinfo.cmap, norm=_varinfo.norm,
                                 vmin=_varinfo.vmin, vmax=_varinfo.vmax, rasterized=True)
             cb = plot.append_colorbar(pcm, ax)
         elif style in ['line', 'lines']:
-            _data, _X, _Y = SectionVariableInstance.get_display_lines(style=display_array_style)
-            x = np.vstack((_X[:,:-1].flatten(), _X[:,1:].flatten())).T.reshape(-1, 2, 1)
-            y = np.vstack((_Y[:,:-1].flatten(), _Y[:,1:].flatten())).T.reshape(-1, 2, 1)
-            segments = np.concatenate([x, y], axis=2)
-            lc = LineCollection(segments, cmap=_varinfo.cmap)
+            _data, _segments = SectionVariableInstance.get_display_lines(
+                style=display_array_style)
+            if display_array_style in SectionVariableInstance._stratigraphy_names:
+                # flip = draw late to early
+                _data = np.fliplr(np.flipud(_data))
+                _segments = np.flipud(_segments)
+            lc = LineCollection(_segments, cmap=_varinfo.cmap)
             lc.set_array(_data.flatten())
-            lc.set_linewidth(1.5)
+            lc.set_linewidth(1.25)
             line = ax.add_collection(lc)
             cb = plot.append_colorbar(line, ax)
         else:
@@ -460,11 +480,13 @@ class BaseSection(abc.ABC):
 
         # style adjustments
         if label:
-            _label = _varinfo.label if (label is True) else str(label)  # use custom if passed
+            _label = _varinfo.label if (label is True) else str(
+                label)  # use custom if passed
             ax.text(0.99, 0.8, _label, fontsize=8,
                     horizontalalignment='right', verticalalignment='center',
                     transform=ax.transAxes)
-        xmin, xmax, ymin, ymax = SectionVariableInstance.get_display_limits(style=display_array_style)
+        xmin, xmax, ymin, ymax = SectionVariableInstance.get_display_limits(
+            style=display_array_style)
         ax.set_xlim(xmin, xmax)
         ax.set_ylim(ymin, ymax)
 

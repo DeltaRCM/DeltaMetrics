@@ -24,7 +24,9 @@ class TestComputeElevationToPreservation:
         assert np.all(s15 == np.array([5]))
         assert np.all(p1 == np.array([False]))
         assert np.all(s2 == np.array([1, 2]))
+        assert np.all(p2 == np.array([True, True]))
         assert np.all(s3 == np.array([1, 2, 3]))
+        assert np.all(p3 == np.array([True, True, True]))
 
     def test_1d_all_zeros(self):
         s, p = strat._compute_elevation_to_preservation(np.array([0, 0, 0, 0]))
