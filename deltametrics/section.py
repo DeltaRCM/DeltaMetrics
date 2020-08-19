@@ -107,7 +107,14 @@ class DataSectionVariable(BaseSectionVariable):
         """Whether the data variable knows preservation information."""
         return self._knows_stratigraphy
 
-    def validate_stratigraphy(self):
+    def _check_knows_stratigraphy(self):
+        """Check whether "knows_stratigraphy".
+
+        Raises
+        ------
+        AttributeError
+            Raises if does not know stratigraphy.
+        """
         if not self._knows_stratigraphy:
             raise AttributeError('No preservation information.')
         return self._knows_stratigraphy
@@ -120,7 +127,7 @@ class DataSectionVariable(BaseSectionVariable):
         ma : :obj:`np.ma.MaskedArray`
             A numpy MaskedArray with non-preserved values masked.
         """
-        if self.validate_stratigraphy():
+        if self._check_knows_stratigraphy():
             return np.ma.MaskedArray(self, ~self._psvd_mask)
 
     def as_stratigraphy(self):
@@ -133,7 +140,7 @@ class DataSectionVariable(BaseSectionVariable):
             :obj:`get_display_arrays(style='stratigraphy')` instead to get
             corresponding x-y coordinates for plotting the array.
         """
-        if self.validate_stratigraphy():
+        if self._check_knows_stratigraphy():
             # actual data, where preserved
             _psvd_data = self[self.strat_attr['psvd_idx']]
             _sp = sparse.coo_matrix((_psvd_data,
@@ -141,7 +148,7 @@ class DataSectionVariable(BaseSectionVariable):
                                       self.strat_attr['s_sp'])))
             return _sp
 
-    def get_display_arrays(self, style='spacetime'):
+    def get_display_arrays(self, style=None):
         """Get arrays for display as meshes, or images.
 
         Parameters
@@ -161,7 +168,7 @@ class DataSectionVariable(BaseSectionVariable):
         else:
             raise ValueError('Bad "style" argument: %s' % str(style))
 
-    def get_display_lines(self, style='spacetime'):
+    def get_display_lines(self, style=None):
         """
         """
         def _reshape_long(X):
@@ -173,11 +180,11 @@ class DataSectionVariable(BaseSectionVariable):
             y = _reshape_long(self._Z)
             data = self[:, :-1]
         elif style in self._preserved_names:
-            if self.validate_stratigraphy():
+            if self._check_knows_stratigraphy():
                 y = _reshape_long(self._Z)
                 data = self.as_preserved()[:, :-1]
         elif style in self._stratigraphy_names:
-            if self.validate_stratigraphy():
+            if self._check_knows_stratigraphy():
                 y = _reshape_long(np.copy(self.strat_attr['strata']))
                 data = self[:, :-1]
         else:
@@ -187,14 +194,14 @@ class DataSectionVariable(BaseSectionVariable):
         segments = np.concatenate([x, y], axis=2)
         return data, segments
 
-    def get_display_limits(self, style='spacetime'):
+    def get_display_limits(self, style=None):
         """
         """
         style = self._default_style if (style is None) else style
         if (style in self._spacetime_names) or (style in self._preserved_names):
             return np.min(self._S), np.max(self._S), np.min(self._Z), np.max(self._Z)
         elif style in self._stratigraphy_names:
-            if self.validate_stratigraphy():
+            if self._check_knows_stratigraphy():
                 _strata = np.copy(self.strat_attr['strata'])
                 return np.min(self._S), np.max(self._S), np.min(_strata), np.max(_strata) * 1.5
         else:
@@ -209,28 +216,59 @@ class StratigraphySectionVariable(BaseSectionVariable):
     def __init__(self, _data, _s, _z):
         pass
 
-    @property
-    def display_arrays(self):
-        return self, self._S, self._Z
+    def _check_knows_spacetime(self):
+        """Check whether "knows_spacetime".
 
-    @property
-    def display_lines(self):
-        raise NotImplementedError
-        # return self, self._S, self._Z
+        Raises
+        ------
+        AttributeError
+            Raises always when this method is called, because a
+            StratigraphySectionVariable will never know spacetime information
+            directly.
+        """
+        raise AttributeError(
+            'No "spacetime" or "preserved" information available.')
 
-    @property
-    def display_limits(self):
-        # return self, self._S, self._Z
-        return None, None, np.min(self._Z), np.max(self._Z) * 1.5
+    def get_display_arrays(self, style=None):
+        """
+        """
+        style = self._default_style if (style is None) else style
+        if style in self._spacetime_names:
+            self._check_knows_spacetime()
+        elif style in self._preserved_names:
+            self._check_knows_spacetime()
+        elif style in self._stratigraphy_names:
+            return self, self._S, self._Z
+        else:
+            raise ValueError('Bad "style" argument: %s' % str(style))
 
-    def get_display_arrays(self, **unused_kwargs):
-        return self.display_arrays
+    def get_display_lines(self, style=None):
+        """
+        """
+        style = self._default_style if (style is None) else style
+        if style in self._spacetime_names:
+            self._check_knows_spacetime()
+        elif style in self._preserved_names:
+            self._check_knows_spacetime()
+        elif style in self._stratigraphy_names:
+            raise NotImplementedError
+        else:
+            raise ValueError('Bad "style" argument: %s' % str(style))
 
-    def get_display_lines(self, **unused_kwargs):
-        return self.display_lines
+        # return self.display_lines
 
-    def get_display_limits(self, **unused_kwargs):
-        return self.display_limits
+    def get_display_limits(self, style=None):
+        """
+        """
+        style = self._default_style if (style is None) else style
+        if style in self._spacetime_names:
+            self._check_knows_spacetime()
+        elif style in self._preserved_names:
+            self._check_knows_spacetime()
+        elif style in self._stratigraphy_names:
+            return np.min(self._S), np.max(self._S), np.min(self._Z), np.max(self._Z) * 1.5
+        else:
+            raise ValueError('Bad "style" argument: %s' % str(style))
 
 
 class BaseSection(abc.ABC):
@@ -461,7 +499,8 @@ class BaseSection(abc.ABC):
             _data, _X, _Y = SectionVariableInstance.get_display_arrays(
                 style=display_array_style)
             pcm = ax.pcolormesh(_X, _Y, _data, cmap=_varinfo.cmap, norm=_varinfo.norm,
-                                vmin=_varinfo.vmin, vmax=_varinfo.vmax, rasterized=True)
+                                vmin=_varinfo.vmin, vmax=_varinfo.vmax,
+                                rasterized=True, shading='auto')
             cb = plot.append_colorbar(pcm, ax)
         elif style in ['line', 'lines']:
             _data, _segments = SectionVariableInstance.get_display_lines(

@@ -142,128 +142,130 @@ class TestCubesWithManySections:
 
 class TestSectionFromDataCubeNoStratigraphy:
 
-    rcm8cube = cube.DataCube(rcm8_path)
-    rcm8cube.register_section('test', section.StrikeSection(y=5))
+    rcm8cube_nostrat = cube.DataCube(rcm8_path)
+    rcm8cube_nostrat.register_section('test', section.StrikeSection(y=5))
 
-    def test_getitem_explicit(self):
-        s = self.rcm8cube.sections['test'].__getitem__('velocity')
+    def test_nostrat_getitem_explicit(self):
+        s = self.rcm8cube_nostrat.sections['test'].__getitem__('velocity')
         assert isinstance(s, section.DataSectionVariable)
 
-    def test_getitem_implicit(self):
-        s = self.rcm8cube.sections['test']['velocity']
+    def test_nostrat_getitem_implicit(self):
+        s = self.rcm8cube_nostrat.sections['test']['velocity']
         assert isinstance(s, section.DataSectionVariable)
 
-    def test_getitem_broken_cube(self):
+    def test_nostrat_getitem_bad_variable(self):
+        with pytest.raises(AttributeError):
+            self.rcm8cube_nostrat.sections['test']['badvariablename']
+
+    def test_nostrat_getitem_broken_cube(self):
         sass = section.StrikeSection(y=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass['velocity']
         # make a good section, then switch to invalidcube inside section
-        temp_rcm8cube = cube.DataCube(rcm8_path)
-        temp_rcm8cube.register_section('test', section.StrikeSection(y=5))
-        temp_rcm8cube.sections['test'].cube = 'badvalue!'
+        temp_rcm8cube_nostrat = cube.DataCube(rcm8_path)
+        temp_rcm8cube_nostrat.register_section(
+            'test', section.StrikeSection(y=5))
+        temp_rcm8cube_nostrat.sections['test'].cube = 'badvalue!'
         with pytest.raises(TypeError):
-            a = temp_rcm8cube.sections['test'].__getitem__('velocity')
+            a = temp_rcm8cube_nostrat.sections['test'].__getitem__('velocity')
         with pytest.raises(TypeError):
-            temp_rcm8cube.sections['test']['velocity']
+            temp_rcm8cube_nostrat.sections['test']['velocity']
 
-    def test_not_knows_stratigraphy(self):
-        assert self.rcm8cube.sections['test'][
+    def test_nostrat_not_knows_stratigraphy(self):
+        assert self.rcm8cube_nostrat.sections['test'][
             'velocity']._knows_stratigraphy is False
-        assert self.rcm8cube.sections['test'][
+        assert self.rcm8cube_nostrat.sections['test'][
             'velocity'].knows_stratigraphy is False
 
-    def test_nostratigraphyinfo(self):
+    def test_nostrat_nostratigraphyinfo(self):
         with pytest.raises(AttributeError, match=r'No preservation information.'):
-            st = self.rcm8cube.sections['test']['velocity'].as_stratigraphy()
+            st = self.rcm8cube_nostrat.sections[
+                'test']['velocity'].as_stratigraphy()
         with pytest.raises(AttributeError, match=r'No preservation information.'):
-            st = self.rcm8cube.sections['test']['velocity'].as_preserved()
+            st = self.rcm8cube_nostrat.sections[
+                'test']['velocity'].as_preserved()
 
-    def test_SectionVariable_basic_math_comparisons(self):
-        s1 = self.rcm8cube.sections['test']['velocity']
-        s2 = self.rcm8cube.sections['test']['depth']
-        s3 = np.absolute(self.rcm8cube.sections['test']['eta'])
+    def test_nostrat_SectionVariable_basic_math_comparisons(self):
+        s1 = self.rcm8cube_nostrat.sections['test']['velocity']
+        s2 = self.rcm8cube_nostrat.sections['test']['depth']
+        s3 = np.absolute(self.rcm8cube_nostrat.sections['test']['eta'])
         assert np.all(s1 + s1 == s1 * 2)
         assert not np.any((s2 - np.random.rand(*s2.shape)) == s2)
         assert np.all(s3 + s3 > s3)
         assert type(s3) is section.DataSectionVariable
 
-    def test_trace(self):
-        assert isinstance(self.rcm8cube.sections['test'].trace, np.ndarray)
+    def test_nostrat_trace(self):
+        assert isinstance(self.rcm8cube_nostrat.sections[
+                          'test'].trace, np.ndarray)
 
-    def test_s(self):
-        _s = self.rcm8cube.sections['test'].s
+    def test_nostrat_s(self):
+        _s = self.rcm8cube_nostrat.sections['test'].s
         assert isinstance(_s, np.ndarray)
         assert np.all(_s[1:] > _s[:-1])  # monotonic increase
 
-    def test_z(self):
-        _z = self.rcm8cube.sections['test'].z
+    def test_nostrat_z(self):
+        _z = self.rcm8cube_nostrat.sections['test'].z
         assert isinstance(_z, np.ndarray)
         assert np.all(_z[1:] > _z[:-1])  # monotonic increase
 
-    def test_variables(self):
-        _v = self.rcm8cube.sections['test'].variables
+    def test_nostrat_variables(self):
+        _v = self.rcm8cube_nostrat.sections['test'].variables
         assert len(_v) > 0
         assert isinstance(_v, list)
 
-    def test_show_shaded_spacetime(self):
-        self.rcm8cube.sections['test'].show('time', style='shaded',
-                                            display_array_style='spacetime')
-        self.rcm8cube.sections['test'].show('time', style='shaded',
-                                            display_array_style='full')
-        self.rcm8cube.sections['test'].show('time', style='shaded',
-                                            display_array_style='as_spacetime')
-        self.rcm8cube.sections['test'].show('time', style='shaded',
-                                            display_array_style='as spacetime')
+    def test_nostrat_show_shaded_spacetime(self):
+        self.rcm8cube_nostrat.sections['test'].show('time', style='shaded',
+                                                    display_array_style='spacetime')
 
-    def test_show_shaded_spacetime_specific_ax(self):
+    def test_nostrat_show_shaded_spacetime_specific_ax(self):
         fig, ax = plt.subplots()
-        self.rcm8cube.sections['test'].show('time', style='shaded',
-                                            display_array_style='spacetime', ax=ax)
+        self.rcm8cube_nostrat.sections['test'].show('time', style='shaded',
+                                                    display_array_style='spacetime', ax=ax)
 
-    def test_show_shaded_spacetime_no_cube(self):
+    def test_nostrat_show_shaded_spacetime_no_cube(self):
         sass = section.StrikeSection(y=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass.show('time', style='shaded',
                       display_array_style='spacetime')
 
-    def test_show_shaded_aspreserved(self):
+    def test_nostrat_show_shaded_aspreserved(self):
         with pytest.raises(AttributeError, match=r'No preservation information.'):
-            self.rcm8cube.sections['test'].show('time', style='shaded',
-                                                display_array_style='preserved')
+            self.rcm8cube_nostrat.sections['test'].show('time', style='shaded',
+                                                        display_array_style='preserved')
 
-    def test_show_shaded_asstratigraphy(self):
+    def test_nostrat_show_shaded_asstratigraphy(self):
         with pytest.raises(AttributeError, match=r'No preservation information.'):
-            self.rcm8cube.sections['test'].show('time', style='shaded',
-                                                display_array_style='stratigraphy')
+            self.rcm8cube_nostrat.sections['test'].show('time', style='shaded',
+                                                        display_array_style='stratigraphy')
 
-    def test_show_lines_spacetime(self):
-        self.rcm8cube.sections['test'].show('time', style='lines',
-                                            display_array_style='spacetime')
+    def test_nostrat_show_lines_spacetime(self):
+        self.rcm8cube_nostrat.sections['test'].show('time', style='lines',
+                                                    display_array_style='spacetime')
 
-    def test_show_lines_aspreserved(self):
+    def test_nostrat_show_lines_aspreserved(self):
         with pytest.raises(AttributeError, match=r'No preservation information.'):
-            self.rcm8cube.sections['test'].show('time', style='lines',
-                                                display_array_style='preserved')
+            self.rcm8cube_nostrat.sections['test'].show('time', style='lines',
+                                                        display_array_style='preserved')
 
-    def test_show_lines_asstratigraphy(self):
+    def test_nostrat_show_lines_asstratigraphy(self):
         with pytest.raises(AttributeError, match=r'No preservation information.'):
-            self.rcm8cube.sections['test'].show('time', style='lines',
-                                                display_array_style='stratigraphy')
+            self.rcm8cube_nostrat.sections['test'].show('time', style='lines',
+                                                        display_array_style='stratigraphy')
 
-    def test_show_bad_style(self):
+    def test_nostrat_show_bad_style(self):
         with pytest.raises(ValueError):
-            self.rcm8cube.sections['test'].show('time', style='somethinginvalid',
-                                                display_array_style='spacetime', label=True)
+            self.rcm8cube_nostrat.sections['test'].show('time', style='somethinginvalid',
+                                                        display_array_style='spacetime', label=True)
 
-    def test_show_bad_variable(self):
+    def test_nostrat_show_bad_variable(self):
         with pytest.raises(AttributeError):
-            self.rcm8cube.sections['test'].show('badvariablename')
+            self.rcm8cube_nostrat.sections['test'].show('badvariablename')
 
-    def test_show_label_true(self):
-        self.rcm8cube.sections['test'].show('time', label=True)
+    def test_nostrat_show_label_true(self):
+        self.rcm8cube_nostrat.sections['test'].show('time', label=True)
 
-    def test_show_label_given(self):
-        self.rcm8cube.sections['test'].show('time', label='TESTLABEL!')
+    def test_nostrat_show_label_given(self):
+        self.rcm8cube_nostrat.sections['test'].show('time', label='TESTLABEL!')
 
 
 class TestSectionFromDataCubeWithStratigraphy:
@@ -272,15 +274,19 @@ class TestSectionFromDataCubeWithStratigraphy:
     rcm8cube.stratigraphy_from('eta')
     rcm8cube.register_section('test', section.StrikeSection(y=5))
 
-    def test_getitem_explicit(self):
+    def test_withstrat_getitem_explicit(self):
         s = self.rcm8cube.sections['test'].__getitem__('velocity')
         assert isinstance(s, section.DataSectionVariable)
 
-    def test_getitem_implicit(self):
+    def test_withstrat_getitem_implicit(self):
         s = self.rcm8cube.sections['test']['velocity']
         assert isinstance(s, section.DataSectionVariable)
 
-    def test_getitem_broken_cube(self):
+    def test_withstrat_getitem_bad_variable(self):
+        with pytest.raises(AttributeError):
+            self.rcm8cube.sections['test']['badvariablename']
+
+    def test_withstrat_getitem_broken_cube(self):
         sass = section.StrikeSection(y=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass['velocity']
@@ -293,43 +299,107 @@ class TestSectionFromDataCubeWithStratigraphy:
         with pytest.raises(TypeError):
             temp_rcm8cube.sections['test']['velocity']
 
-    def test_knows_stratigraphy(self):
+    def test_withstrat_knows_stratigraphy(self):
         assert self.rcm8cube.sections['test'][
             'velocity']._knows_stratigraphy is True
         assert self.rcm8cube.sections['test'][
             'velocity'].knows_stratigraphy is True
 
-    def test_trace(self):
+    def test_withstrat_trace(self):
         assert isinstance(self.rcm8cube.sections['test'].trace, np.ndarray)
 
-    def test_s(self):
+    def test_withstrat_s(self):
         _s = self.rcm8cube.sections['test'].s
         assert isinstance(_s, np.ndarray)
         assert np.all(_s[1:] > _s[:-1])  # monotonic increase
 
-    def test_z(self):
+    def test_withstrat_z(self):
         _z = self.rcm8cube.sections['test'].z
         assert isinstance(_z, np.ndarray)
         assert np.all(_z[1:] > _z[:-1])  # monotonic increase
 
-    def test_variables(self):
+    def test_withstrat_variables(self):
         _v = self.rcm8cube.sections['test'].variables
         assert len(_v) > 0
         assert isinstance(_v, list)
 
-    def test_registered_StrikeSection_attributes(self):
+    def test_withstrat_registered_StrikeSection_attributes(self):
         assert np.all(self.rcm8cube.sections['test'].trace[:, 1] == 5)
         assert self.rcm8cube.sections['test'].s.size == 240
         assert len(self.rcm8cube.sections['test'].variables) > 0
         assert self.rcm8cube.sections['test'].y == 5
 
-    def test_SectionVariable_basic_math(self):
+    def test_withstrat_SectionVariable_basic_math(self):
         s1 = self.rcm8cube.sections['test']['velocity']
         assert np.all(s1 + s1 == s1 * 2)
 
-    ### TEST ALL OF THE STRATATTRS STUFF!!! ####
+    def test_withstrat_strat_attr_mesh_components(self):
+        sa = self.rcm8cube.sections['test']['velocity'].strat_attr
+        assert 'strata' in sa.keys()
+        assert 'psvd_idx' in sa.keys()
+        assert 'psvd_flld' in sa.keys()
+        assert 'x0' in sa.keys()
+        assert 'x1' in sa.keys()
+        assert 's' in sa.keys()
+        assert 's_sp' in sa.keys()
+        assert 'z_sp' in sa.keys()
 
-    ### TEST ALL OF THE .SHOW() STUFF!!! ####
+    def test_withstrat_strat_attr_shapes(self):
+        sa = self.rcm8cube.sections['test']['velocity'].strat_attr
+        assert sa['x0'].shape == (51, 240)
+        assert sa['x1'].shape == (51, 240)
+        assert sa['s'].shape == (240,)
+        assert sa['s_sp'].shape == sa['z_sp'].shape
+
+    def test_withstrat_show_shaded_spacetime(self):
+        self.rcm8cube.sections['test'].show('time', style='shaded',
+                                            display_array_style='spacetime')
+
+    def test_withstrat_show_shaded_spacetime_specific_ax(self):
+        fig, ax = plt.subplots()
+        self.rcm8cube.sections['test'].show('time', style='shaded',
+                                            display_array_style='spacetime', ax=ax)
+
+    def test_withstrat_show_shaded_spacetime_no_cube(self):
+        sass = section.StrikeSection(y=5)
+        with pytest.raises(AttributeError, match=r'No cube connected.*.'):
+            sass.show('time', style='shaded',
+                      display_array_style='spacetime')
+
+    def test_withstrat_show_shaded_aspreserved(self):
+        self.rcm8cube.sections['test'].show('time', style='shaded',
+                                            display_array_style='preserved')
+
+    def test_withstrat_show_shaded_asstratigraphy(self):
+        self.rcm8cube.sections['test'].show('time', style='shaded',
+                                            display_array_style='stratigraphy')
+
+    def test_withstrat_show_lines_spacetime(self):
+        self.rcm8cube.sections['test'].show('time', style='lines',
+                                            display_array_style='spacetime')
+
+    def test_withstrat_show_lines_aspreserved(self):
+        self.rcm8cube.sections['test'].show('time', style='lines',
+                                            display_array_style='preserved')
+
+    def test_withstrat_show_lines_asstratigraphy(self):
+        self.rcm8cube.sections['test'].show('time', style='lines',
+                                            display_array_style='stratigraphy')
+
+    def test_withstrat_show_bad_style(self):
+        with pytest.raises(ValueError):
+            self.rcm8cube.sections['test'].show('time', style='somethinginvalid',
+                                                display_array_style='spacetime', label=True)
+
+    def test_withstrat_show_bad_variable(self):
+        with pytest.raises(AttributeError):
+            self.rcm8cube.sections['test'].show('badvariablename')
+
+    def test_withstrat_show_label_true(self):
+        self.rcm8cube.sections['test'].show('time', label=True)
+
+    def test_withstrat_show_label_given(self):
+        self.rcm8cube.sections['test'].show('time', label='TESTLABEL!')
 
 
 class TestSectionFromStratigraphyCube:
@@ -338,6 +408,31 @@ class TestSectionFromStratigraphyCube:
     sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube)
     rcm8cube.register_section('test', section.StrikeSection(y=5))
     sc8cube.register_section('test', section.StrikeSection(y=5))
+
+    def test_strat_getitem_explicit(self):
+        s = self.sc8cube.sections['test'].__getitem__('velocity')
+        assert isinstance(s, section.StratigraphySectionVariable)
+
+    def test_strat_getitem_implicit(self):
+        s = self.sc8cube.sections['test']['velocity']
+        assert isinstance(s, section.StratigraphySectionVariable)
+
+    def test_strat_getitem_bad_variable(self):
+        with pytest.raises(AttributeError):
+            self.sc8cube.sections['test']['badvariablename']
+
+    def test_strat_getitem_broken_cube(self):
+        sass = section.StrikeSection(y=5)
+        with pytest.raises(AttributeError, match=r'No cube connected.*.'):
+            sass['velocity']
+        # make a good section, then switch to invalidcube inside section
+        temp_rcm8cube = cube.DataCube(rcm8_path)
+        temp_rcm8cube.register_section('test', section.StrikeSection(y=5))
+        temp_rcm8cube.sections['test'].cube = 'badvalue!'
+        with pytest.raises(TypeError):
+            a = temp_rcm8cube.sections['test'].__getitem__('velocity')
+        with pytest.raises(TypeError):
+            temp_rcm8cube.sections['test']['velocity']
 
     def test_nonequal_sections(self):
         assert not self.rcm8cube.sections[
@@ -359,7 +454,112 @@ class TestSectionFromStratigraphyCube:
         assert isinstance(self.rcm8cube.sections['test'].variables, list)
         assert isinstance(self.sc8cube.sections['test'].variables, list)
 
-        ### TEST ALL OF THE .SHOW() STUFF!!! ####
+    def test_strat_show_noargs(self):
+        self.sc8cube.sections['test'].show('time')
+
+    def test_strat_show_shaded_spacetime(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            self.sc8cube.sections['test'].show('time', style='shaded',
+                                               display_array_style='spacetime')
+
+    def test_strat_show_shaded_spacetime_no_cube(self):
+        sass = section.StrikeSection(y=5)
+        with pytest.raises(AttributeError, match=r'No cube connected.*.'):
+            sass.show('time', style='shaded',
+                      display_array_style='spacetime')
+
+    def test_strat_show_shaded_aspreserved(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            self.sc8cube.sections['test'].show('time', style='shaded',
+                                               display_array_style='preserved')
+
+    def test_strat_show_shaded_asstratigraphy(self):
+        self.sc8cube.sections['test'].show('time', style='shaded',
+                                           display_array_style='stratigraphy')
+
+    def test_strat_show_shaded_asstratigraphy_specific_ax(self):
+        fig, ax = plt.subplots()
+        self.sc8cube.sections['test'].show('time', style='shaded',
+                                           display_array_style='stratigraphy', ax=ax)
+
+
+    def test_strat_show_lines_spacetime(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            self.sc8cube.sections['test'].show('time', style='lines',
+                                               display_array_style='spacetime')
+
+    def test_strat_show_lines_aspreserved(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            self.sc8cube.sections['test'].show('time', style='lines',
+                                               display_array_style='preserved')
+
+    @pytest.mark.xfail(reason='not yet decided best way to implement')
+    def test_strat_show_lines_asstratigraphy(self):
+        self.sc8cube.sections['test'].show('time', style='lines',
+                                           display_array_style='stratigraphy')
+
+    def test_strat_show_bad_style(self):
+        with pytest.raises(ValueError):
+            self.sc8cube.sections['test'].show('time', style='somethinginvalid',
+                                               display_array_style='spacetime', label=True)
+
+    def test_strat_show_bad_variable(self):
+        with pytest.raises(AttributeError):
+            self.sc8cube.sections['test'].show('badvariablename')
+
+    def test_strat_show_label_true(self):
+        self.sc8cube.sections['test'].show('time', label=True)
+
+    def test_strat_show_label_given(self):
+        self.sc8cube.sections['test'].show('time', label='TESTLABEL!')
+
+
+class TestDataSectionVariableNoStratigraphy:
+
+    rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube.register_section('test', section.StrikeSection(y=5))
+    dsv = rcm8cube.sections['test']['velocity']
+
+    def test_dsv_instantiate_directly(self):
+        _arr = np.random.rand((100, 200))
+        _dsv = section.DataSectionVariable(_arr)
+        assert isinstance(_dsv, section.DataSectionVariable)
+        assert np.all(_dsv == _arr)
+
+    def test_dsv_(self):
+        assert isinstance(self.dsv, section.DataSectionVariable)
+
+    # def test_dsv_(self):
+
+    # def test_dsv_(self):
+
+    # def test_dsv_(self):
+
+    # def test_dsv_(self):
+
+    # def test_dsv_(self):
+
+
+class TestDataSectionVariableNoStratigraphy:
+
+    rcm8cube = cube.DataCube(rcm8_path)
+
+    # def test_dsv_(self):
+
+    # def test_dsv_(self):
+
+    # def test_dsv_(self):
+
+
+class TestStratigraphySectionVariable:
+
+    rcm8cube = cube.DataCube(rcm8_path)
+
+    # def test_dsv_(self):
+
+    # def test_dsv_(self):
+
+    # def test_dsv_(self):
 
     ### TEST ALL OF THE SECTIONVARIABLES DIRECTLY ####
 

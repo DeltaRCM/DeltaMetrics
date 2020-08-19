@@ -569,7 +569,7 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
     __x, __y = np.meshgrid(np.array([0,1]), z)
     _colmap = plt.cm.get_cmap('viridis', e.shape[0])
     _c = ax_s.pcolormesh(__x, __y, cp,
-                         cmap=_colmap, vmin=0, vmax=e.shape[0])
+                         cmap=_colmap, vmin=0, vmax=e.shape[0], shading='auto')
     _ss2 = ax_s.hlines(e[p], 0, 1, linestyles='dashed', colors='gray')
     _cstr = [str(int(cc)) if np.isfinite(cc) else 'nan' for cc in c.flatten()]
     for i, __cstr in enumerate(_cstr):

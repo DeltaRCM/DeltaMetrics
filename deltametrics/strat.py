@@ -81,8 +81,8 @@ def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
 
     nx, ny = strata.shape[1:]
     stratigraphy = np.full((len(z), nx, ny), np.nan)  # preallocate nans
-    _cut = prop[data_coords[0, :], data_coords[1, :], data_coords[2, :]]
-    stratigraphy[strata_coords[0, :], strata_coords[1, :], strata_coords[2, :]] = _cut.T
+    _cut = prop[data_coords[:, 0], data_coords[:, 1], data_coords[:, 2]]
+    stratigraphy[strata_coords[:, 0], strata_coords[:, 1], strata_coords[:, 2]] = _cut
 
     _, elevations, _ = np.meshgrid(np.arange(nx), z, np.arange(ny))
 
