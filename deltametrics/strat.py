@@ -73,18 +73,24 @@ def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
     elevations :
 
     """
+    # verify dimensions
+    if elev.shape != prop.shape:
+        raise ValueError('Mismatched input shapes "elev" and "prop".')
+    if elev.ndim != 3:
+        raise ValueError('Input arrays must be three-dimensional.')
+
     # compute preservation from low-level funcs
-    # raise NotImplementedError('Need to check process with new cube process, verify against other.')
     strata, _ = _compute_elevation_to_preservation(elev)
     z = _determine_strat_coordinates(elev, dz=dz, z=z)
     strata_coords, data_coords = _compute_preservation_to_cube(strata, z=z)
 
+    # copy data out and into the stratigraphy based on coordinates
     nx, ny = strata.shape[1:]
     stratigraphy = np.full((len(z), nx, ny), np.nan)  # preallocate nans
     _cut = prop[data_coords[:, 0], data_coords[:, 1], data_coords[:, 2]]
     stratigraphy[strata_coords[:, 0], strata_coords[:, 1], strata_coords[:, 2]] = _cut
 
-    _, elevations, _ = np.meshgrid(np.arange(nx), z, np.arange(ny))
+    elevations = np.tile(z, (ny, nx, 1)).T
 
     if return_cube:
         raise NotImplementedError
@@ -93,7 +99,7 @@ def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
 
 
 def compute_boxy_stratigraphy_coordinates(elev, dz=None, z=None,
-                                          return_cube=False):
+                                          return_cube=False, return_strata=False):
     """Process t-x-y data volume to boxy stratigraphy coordinates.
 
     This function computes the corresponding preservation of `t-x-y`
@@ -124,9 +130,10 @@ def compute_boxy_stratigraphy_coordinates(elev, dz=None, z=None,
 
     if return_cube:
         raise NotImplementedError
+    elif return_strata:
+        return strata_coords, data_coords, strata
     else:
-        return strata, strata_coords, data_coords
-
+        return strata_coords, data_coords
 
 class BaseStratigraphyAttributes(object):
     def __init__(self, style):
@@ -134,7 +141,7 @@ class BaseStratigraphyAttributes(object):
 
     @abc.abstractmethod
     def __call__(self):
-        """Slicing operation.
+        """Slicing operation to get sections and planforms.
 
         Must be implemented by subclasses.
         """

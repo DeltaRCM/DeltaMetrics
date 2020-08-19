@@ -514,7 +514,7 @@ class DataCube(BaseCube):
         if style == 'mesh':
             self.strat_attr = strat.MeshStratigraphyAttributes(elev=self[variable], **kwargs)
         elif style == 'boxy':
-            strat.BoxyStratigraphyAttributes(elev=self[variable], **kwargs)
+            self.strat_attr = strat.BoxyStratigraphyAttributes(elev=self[variable], **kwargs)
         else:
             raise ValueError('Bad "style" argument supplied: %s' % str(style))
         self._knows_stratigraphy = True
@@ -625,8 +625,8 @@ class StratigraphyCube(BaseCube):
             self._H = len(self.z)
             self._L, self._W = _elev.shape[1:]
 
-            _out = strat.compute_boxy_stratigraphy_coordinates(_elev, z=self.z)
-            self.strata, self.strata_coords, self.data_coords = _out
+            _out = strat.compute_boxy_stratigraphy_coordinates(_elev, z=self.z, return_strata=True)
+            self.strata_coords, self.data_coords, self.strata = _out
 
             self.mesh = np.meshgrid(self._z, np.arange(0, self.L))
         else:

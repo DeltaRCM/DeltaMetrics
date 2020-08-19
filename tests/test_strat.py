@@ -13,6 +13,84 @@ rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
 rcm8cube = cube.DataCube(rcm8_path)
 
 
+class TestComputeBoxyStratigraphyVolume:
+
+    elev = rcm8cube['eta']
+    time = rcm8cube['time']
+
+    def test_returns_volume_and_elevations(self):
+        s, e = strat.compute_boxy_stratigraphy_volume(self.elev, self.time, dz=0.05)
+        assert s.ndim == 3
+        assert s.shape == e.shape
+        assert e[1,0,0] - e[0,0,0] == pytest.approx(0.05)
+
+    def test_returns_volume_and_elevations_given_z(self):
+        z = np.linspace(-20, 500, 200)
+        s, e = strat.compute_boxy_stratigraphy_volume(self.elev, self.time, z=z)
+        assert s.ndim == 3
+        assert s.shape == e.shape
+        assert np.all(e[:,0,0] == z)
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True, reason='Not yet developed.')
+    def test_return_cube(self):
+        s, e = strat.compute_boxy_stratigraphy_volume(self.elev, self.time,
+                                                      dz=0.05, return_cube=True)
+
+    def test_lessthan3d_error(self):
+        with pytest.raises(ValueError, match=r'Input arrays must be three-dimensional.'):
+            strat.compute_boxy_stratigraphy_volume(self.elev[:, 10, 120].squeeze(),
+                                                   self.time[:, 10, 120].squeeze(),
+                                                   dz=0.05)
+        with pytest.raises(ValueError, match=r'Input arrays must be three-dimensional.'):
+            strat.compute_boxy_stratigraphy_volume(self.elev[:, 10, :].squeeze(),
+                                                   self.time[:, 10, :].squeeze(),
+                                                   dz=0.05)
+
+    def test_bad_shape_error(self):
+        with pytest.raises(ValueError, match=r'Input arrays must be three-dimensional.'):
+            strat.compute_boxy_stratigraphy_volume(self.elev[:, 10, 120].squeeze(),
+                                                   self.time[:, 10, 120].squeeze(),
+                                                   dz=0.05)
+
+    def test_no_z_options(self):
+        with pytest.raises(ValueError, match=r'You must specify "z", "dz", or "nz.'):
+            strat.compute_boxy_stratigraphy_volume(self.elev, self.time)
+
+
+class TestComputeBoxyStratigraphyCoordinates:
+
+    elev = rcm8cube['eta']
+    time = rcm8cube['time']
+
+    def test_returns_sc_dc(self):
+        sc, dc = strat.compute_boxy_stratigraphy_coordinates(self.elev, dz=0.05)
+        assert sc.shape == dc.shape
+        assert sc.shape[1] == 3
+
+    def test_returns_sc_dc_return_strata(self):
+        sc, dc, s = strat.compute_boxy_stratigraphy_coordinates(self.elev, dz=0.05,
+                                                                return_strata=True)
+        assert s.ndim == 3
+        assert s.shape == self.elev.shape
+        assert sc.shape == dc.shape
+        assert sc.shape[1] == 3
+
+    def test_returns_sc_dc_given_z(self):
+        z = np.linspace(0, 0.25, 7)
+        sc, dc = strat.compute_boxy_stratigraphy_coordinates(self.elev, z=z)
+        assert np.min(sc[:, 0]) == 0
+        assert np.max(sc[:, 0]) == 6
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True, reason='Not yet developed.')
+    def test_return_cube(self):
+        s, sc, dc = strat.compute_boxy_stratigraphy_coordinates(self.elev,
+                                                      dz=0.05, return_cube=True)
+
+    def test_no_z_options(self):
+        with pytest.raises(ValueError, match=r'You must specify "z", "dz", or "nz.'):
+            strat.compute_boxy_stratigraphy_coordinates(self.elev[:, 10, 120].squeeze())
+
+
 class TestComputeElevationToPreservation:
 
     def test_1d_shorts(self):
