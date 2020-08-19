@@ -34,7 +34,13 @@ class BaseSectionVariable(np.ndarray):
     def __new__(cls, _data, _s, _z, _psvd_mask=None, **unused_kwargs):
         # Input array is an already formed ndarray instance
         obj = np.asarray(_data).view(cls)
+        if (_psvd_mask is not None):
+            _psvd_mask = np.asarray(_psvd_mask)
+            if _psvd_mask.shape != obj.shape:
+                raise ValueError('Shape of "_psvd_mask" incompatible with "_data" array.')
         obj._psvd_mask = _psvd_mask
+        if (len(_z) != obj.shape[0]) or (len(_s) != obj.shape[1]):
+            raise ValueError('Shape of "_s" or "_z" incompatible with "_data" array.')
         obj._s = _s
         obj._z = _z
         obj._S, obj._Z = np.meshgrid(obj._s, obj._z)
@@ -172,38 +178,40 @@ class DataSectionVariable(BaseSectionVariable):
         """
         """
         def _reshape_long(X):
-            # util for reshaping x- and y-values appropriately
+            # util for reshaping s- and z-values appropriately
             return np.vstack((X[:, :-1].flatten(), X[:, 1:].flatten())).T.reshape(-1, 2, 1)
 
         style = self._default_style if (style is None) else style
         if style in self._spacetime_names:
-            y = _reshape_long(self._Z)
+            z = _reshape_long(self._Z)
             data = self[:, :-1]
         elif style in self._preserved_names:
-            if self._check_knows_stratigraphy():
-                y = _reshape_long(self._Z)
-                data = self.as_preserved()[:, :-1]
+            z = _reshape_long(self._Z)
+            data = self.as_preserved()[:, :-1]
         elif style in self._stratigraphy_names:
-            if self._check_knows_stratigraphy():
-                y = _reshape_long(np.copy(self.strat_attr['strata']))
-                data = self[:, :-1]
+            self._check_knows_stratigraphy()  # need to check explicitly
+            z = _reshape_long(np.copy(self.strat_attr['strata']))
+            data = self[:, :-1]
         else:
             raise ValueError('Bad "style" argument: %s' % str(style))
 
-        x = _reshape_long(self._S)
-        segments = np.concatenate([x, y], axis=2)
+        s = _reshape_long(self._S)
+        segments = np.concatenate([s, z], axis=2)
         return data, segments
 
     def get_display_limits(self, style=None):
         """
         """
         style = self._default_style if (style is None) else style
-        if (style in self._spacetime_names) or (style in self._preserved_names):
+        if style in self._spacetime_names:
+            return np.min(self._S), np.max(self._S), np.min(self._Z), np.max(self._Z)
+        elif style in self._preserved_names:
+            self._check_knows_stratigraphy()  # need to check explicitly
             return np.min(self._S), np.max(self._S), np.min(self._Z), np.max(self._Z)
         elif style in self._stratigraphy_names:
-            if self._check_knows_stratigraphy():
-                _strata = np.copy(self.strat_attr['strata'])
-                return np.min(self._S), np.max(self._S), np.min(_strata), np.max(_strata) * 1.5
+            self._check_knows_stratigraphy()  # need to check explicitly
+            _strata = np.copy(self.strat_attr['strata'])
+            return np.min(self._S), np.max(self._S), np.min(_strata), np.max(_strata) * 1.5
         else:
             raise ValueError('Bad "style" argument: %s' % str(style))
 
@@ -214,7 +222,12 @@ class StratigraphySectionVariable(BaseSectionVariable):
     _default_style = 'stratigraphy'
 
     def __init__(self, _data, _s, _z):
-        pass
+        self._knows_spacetime = False
+
+    @property
+    def knows_spacetime(self):
+        """Whether the data variable knows preservation information."""
+        return self._knows_spacetime
 
     def _check_knows_spacetime(self):
         """Check whether "knows_spacetime".

@@ -482,7 +482,6 @@ class TestSectionFromStratigraphyCube:
         self.sc8cube.sections['test'].show('time', style='shaded',
                                            display_array_style='stratigraphy', ax=ax)
 
-
     def test_strat_show_lines_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
             self.sc8cube.sections['test'].show('time', style='lines',
@@ -521,46 +520,255 @@ class TestDataSectionVariableNoStratigraphy:
     dsv = rcm8cube.sections['test']['velocity']
 
     def test_dsv_instantiate_directly(self):
-        _arr = np.random.rand((100, 200))
-        _dsv = section.DataSectionVariable(_arr)
+        _arr = np.random.rand(100, 200)
+        _s = np.arange(200)
+        _z = np.linspace(0, 10, num=100)
+        _dsv = section.DataSectionVariable(_arr, _s, _z)
         assert isinstance(_dsv, section.DataSectionVariable)
         assert np.all(_dsv == _arr)
+        assert np.all(_dsv._s == _s)
+        assert np.all(_dsv._z == _z)
+        assert _dsv.shape == (100, 200)
+        assert _dsv._Z.shape == (100, 200)
+        assert _dsv._S.shape == (100, 200)
+        assert _dsv._psvd_mask is None
 
-    def test_dsv_(self):
-        assert isinstance(self.dsv, section.DataSectionVariable)
+    def test_dsv_instantiate_directly_bad_coords_shapes(self):
+        _arr = np.random.rand(100, 200)
+        _s = np.arange(200)
+        _z = np.linspace(0, 10, num=50)
+        with pytest.raises(ValueError):
+            _dsv = section.DataSectionVariable(_arr, _s, _z)
+        
+    def test_dsv_knows_stratigraphy(self):
+        assert self.dsv._knows_stratigraphy is False
+        assert self.dsv.knows_stratigraphy is False
+        assert self.dsv.knows_stratigraphy == self.dsv._knows_stratigraphy
 
-    # def test_dsv_(self):
+    def test_dsv__check_knows_stratigraphy(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            self.dsv._check_knows_stratigraphy()
 
-    # def test_dsv_(self):
+    def test_dsv_as_preserved(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            self.dsv.as_preserved()
 
-    # def test_dsv_(self):
+    def test_dsv_as_stratigraphy(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            self.dsv.as_stratigraphy()
 
-    # def test_dsv_(self):
+    def test_dsv_get_display_arrays_spacetime(self):
+        _data, _X, _Y = self.dsv.get_display_arrays(style='spacetime')
+        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert np.all(_data == self.dsv)
 
-    # def test_dsv_(self):
+    def test_dsv_get_display_arrays_preserved(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            self.dsv.get_display_arrays(style='preserved')
+
+    def test_dsv_get_display_arrays_stratigraphy(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            self.dsv.get_display_arrays(style='stratigraphy')
+
+    def test_dsv_get_display_lines_spacetime(self):
+        _data, _segments = self.dsv.get_display_lines(style='spacetime')
+        assert _segments.shape[1:] == (2, 2)
+
+    def test_dsv_get_display_lines_preserved(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            self.dsv.get_display_lines(style='preserved')
+
+    def test_dsv_get_display_lines_stratigraphy(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            self.dsv.get_display_lines(style='stratigraphy')
+
+    def test_dsv_get_display_limits_spacetime(self):
+        _lims = self.dsv.get_display_limits(style='spacetime')
+        assert len(_lims) == 4
+
+    def test_dsv_get_display_limits_preserved(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            self.dsv.get_display_limits(style='preserved')
+
+    def test_dsv_get_display_limits_stratigraphy(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            self.dsv.get_display_limits(style='stratigraphy')
 
 
-class TestDataSectionVariableNoStratigraphy:
+class TestDataSectionVariableWithStratigraphy:
 
     rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube.stratigraphy_from('eta')
+    rcm8cube.register_section('test', section.StrikeSection(y=5))
+    dsv = rcm8cube.sections['test']['velocity']
 
-    # def test_dsv_(self):
+    def test_dsv_instantiate_directly(self):
+        _arr = np.random.rand(100, 200)
+        _s = np.arange(200)
+        _z = np.linspace(0, 10, num=100)
+        _mask = np.random.randint(0, 2, (100, 200), dtype=np.bool)
+        _dsv = section.DataSectionVariable(_arr, _s, _z)
+        assert isinstance(_dsv, section.DataSectionVariable)
+        assert np.all(_dsv == _arr)
+        assert np.all(_dsv._s == _s)
+        assert np.all(_dsv._z == _z)
+        assert _dsv.shape == (100, 200)
+        assert _dsv._Z.shape == (100, 200)
+        assert _dsv._S.shape == (100, 200)
+        assert _dsv._psvd_mask is None
 
-    # def test_dsv_(self):
+    def test_dsv_instantiate_directly_bad_shape_mask(self):
+        _arr = np.random.rand(100, 200)
+        _s = np.arange(200)
+        _z = np.linspace(0, 10, num=100)
+        _mask = np.random.randint(0, 2, (20, 200), dtype=np.bool)
+        with pytest.raises(ValueError, match=r'Shape of "_psvd_mask"*.'):
+            _dsv = section.DataSectionVariable(_arr, _s, _z, _mask)
 
-    # def test_dsv_(self):
+    def test_dsv_instantiate_directly_bad_shape_coord(self):
+        _arr = np.random.rand(100, 200)
+        _s = np.arange(500)
+        _z = np.linspace(0, 10, num=100)
+        _mask = np.random.randint(0, 2, (100, 200), dtype=np.bool)
+        with pytest.raises(ValueError, match=r'Shape of "_s"*.'):
+            _dsv = section.DataSectionVariable(_arr, _s, _z, _mask)
+
+    def test_dsv_knows_stratigraphy(self):
+        assert self.dsv._knows_stratigraphy is True
+        assert self.dsv.knows_stratigraphy is True
+        assert self.dsv.knows_stratigraphy == self.dsv._knows_stratigraphy
+
+    def test_dsv__check_knows_stratigraphy(self):
+        assert self.dsv._check_knows_stratigraphy()
+
+    def test_dsv_as_preserved(self):
+        _arr = self.dsv.as_preserved()
+        assert _arr.shape == self.dsv.shape
+        assert isinstance(_arr, np.ma.MaskedArray)
+
+    def test_dsv_as_stratigraphy(self):
+        _arr = self.dsv.as_stratigraphy()
+        assert _arr.shape == (
+            np.max(self.dsv.strat_attr['z_sp']) + 1, self.dsv.shape[1])
+        # assert isinstance(_arr, np.ndarray)
+
+    def test_dsv_get_display_arrays_spacetime(self):
+        _data, _X, _Y = self.dsv.get_display_arrays(style='spacetime')
+        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert np.all(_data == self.dsv)
+
+    def test_dsv_get_display_arrays_preserved(self):
+        _data, _X, _Y = self.dsv.get_display_arrays(style='preserved')
+        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert np.any(~_data._mask)  # check that some are False
+
+    def test_dsv_get_display_arrays_stratigraphy(self):
+        _data, _X, _Y = self.dsv.get_display_arrays(style='stratigraphy')
+        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+
+    def test_dsv_get_display_lines_spacetime(self):
+        _data, _segments = self.dsv.get_display_lines(style='spacetime')
+        assert _segments.shape[1:] == (2, 2)
+
+    def test_dsv_get_display_lines_preserved(self):
+        self.dsv.get_display_lines(style='preserved')
+
+    def test_dsv_get_display_lines_stratigraphy(self):
+        self.dsv.get_display_lines(style='stratigraphy')
+
+    def test_dsv_get_display_limits_spacetime(self):
+        _lims = self.dsv.get_display_limits(style='spacetime')
+        assert len(_lims) == 4
+
+    def test_dsv_get_display_limits_preserved(self):
+        _lims = self.dsv.get_display_limits(style='preserved')
+        assert len(_lims) == 4
+
+    def test_dsv_get_display_limits_stratigraphy(self):
+        _lims = self.dsv.get_display_limits(style='stratigraphy')
+        assert len(_lims) == 4
 
 
 class TestStratigraphySectionVariable:
 
     rcm8cube = cube.DataCube(rcm8_path)
+    sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube)
+    sc8cube.register_section('test', section.StrikeSection(y=5))
+    dsv = sc8cube.sections['test']['velocity']
 
-    # def test_dsv_(self):
+    def test_dsv_instantiate_directly_from_array(self):
+        _arr = np.random.rand(100, 200)
+        _s = np.arange(200)
+        _z = np.linspace(0, 10, num=100)
+        _dsv = section.StratigraphySectionVariable(_arr, _s, _z)
+        assert isinstance(_dsv, section.StratigraphySectionVariable)
+        assert np.all(_dsv == _arr)
+        assert np.all(_dsv._s == _s)
+        assert np.all(_dsv._z == _z)
+        assert _dsv.shape == (100, 200)
+        assert _dsv._Z.shape == (100, 200)
+        assert _dsv._S.shape == (100, 200)
+        assert _dsv._psvd_mask is None
 
-    # def test_dsv_(self):
+    def test_dsv_instantiate_directly_bad_addtl_argument(self):
+        _arr = np.random.rand(100, 200)
+        _s = np.arange(200)
+        _z = np.linspace(0, 10, num=100)
+        _mask = np.copy(_arr)
+        with pytest.raises(TypeError):
+            _dsv = section.StratigraphySectionVariable(_arr, _s, _z, _mask)
 
-    # def test_dsv_(self):
+    def test_dsv_instantiate_directly_bad_shape_coord(self):
+        _arr = np.random.rand(100, 200)
+        _s = np.arange(200)
+        _z = np.linspace(0, 10, num=50)
+        with pytest.raises(ValueError, match=r'Shape of "_s"*.'):
+            _dsv = section.StratigraphySectionVariable(_arr, _s, _z)
 
-    ### TEST ALL OF THE SECTIONVARIABLES DIRECTLY ####
+    def test_dsv_knows_spacetime(self):
+        assert self.dsv._knows_spacetime is False
+        assert self.dsv.knows_spacetime is False
+        assert self.dsv.knows_spacetime == self.dsv._knows_spacetime
+
+    def test_dsv__check_knows_spacetime(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            self.dsv._check_knows_spacetime()
+
+    def test_dsv_get_display_arrays_spacetime(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            _data, _X, _Y = self.dsv.get_display_arrays(style='spacetime')
+
+    def test_dsv_get_display_arrays_preserved(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            _data, _X, _Y = self.dsv.get_display_arrays(style='preserved')
+
+    def test_dsv_get_display_arrays_stratigraphy(self):
+        _data, _X, _Y = self.dsv.get_display_arrays(style='stratigraphy')
+        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+
+    def test_dsv_get_display_lines_spacetime(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            _data, _segments = self.dsv.get_display_lines(style='spacetime')
+
+    def test_dsv_get_display_lines_preserved(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            self.dsv.get_display_lines(style='preserved')
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not determined how to implement yet.')
+    def test_dsv_get_display_lines_stratigraphy(self):
+        self.dsv.get_display_lines(style='stratigraphy')
+
+    def test_dsv_get_display_limits_spacetime(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            _lims = self.dsv.get_display_limits(style='spacetime')
+
+    def test_dsv_get_display_limits_preserved(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            _lims = self.dsv.get_display_limits(style='preserved')
+
+    def test_dsv_get_display_limits_stratigraphy(self):
+        _lims = self.dsv.get_display_limits(style='stratigraphy')
+        assert len(_lims) == 4
 
     ### TEST ALL OF THE STRATATTR STUFF IN TEST_STRAT ####
