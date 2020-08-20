@@ -519,6 +519,12 @@ class TestDataSectionVariableNoStratigraphy:
     rcm8cube.register_section('test', section.StrikeSection(y=5))
     dsv = rcm8cube.sections['test']['velocity']
 
+    def test_dsv_view_from(self):
+        _arr = self.dsv + 5  # takes a view from
+        assert not _arr is self.dsv
+        _arr2 = (_arr - 5)
+        assert np.all(_arr2 == pytest.approx(self.dsv, abs=1e-6))
+
     def test_dsv_instantiate_directly(self):
         _arr = np.random.rand(100, 200)
         _s = np.arange(200)
@@ -694,81 +700,88 @@ class TestStratigraphySectionVariable:
     rcm8cube = cube.DataCube(rcm8_path)
     sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube)
     sc8cube.register_section('test', section.StrikeSection(y=5))
-    dsv = sc8cube.sections['test']['velocity']
+    ssv = sc8cube.sections['test']['velocity']
 
-    def test_dsv_instantiate_directly_from_array(self):
+    def test_ssv_view_from(self):
+        _arr = self.ssv + 5  # takes a view from
+        assert not _arr is self.ssv
+        assert np.all(np.isnan(_arr) == np.isnan(self.ssv))
+        _arr2 = (_arr - 5)
+        assert np.all(_arr2[~np.isnan(_arr2)].flatten() == pytest.approx(self.ssv[~np.isnan(self.ssv)].flatten()))
+
+    def test_ssv_instantiate_directly_from_array(self):
         _arr = np.random.rand(100, 200)
         _s = np.arange(200)
         _z = np.linspace(0, 10, num=100)
-        _dsv = section.StratigraphySectionVariable(_arr, _s, _z)
-        assert isinstance(_dsv, section.StratigraphySectionVariable)
-        assert np.all(_dsv == _arr)
-        assert np.all(_dsv._s == _s)
-        assert np.all(_dsv._z == _z)
-        assert _dsv.shape == (100, 200)
-        assert _dsv._Z.shape == (100, 200)
-        assert _dsv._S.shape == (100, 200)
-        assert _dsv._psvd_mask is None
+        _ssv = section.StratigraphySectionVariable(_arr, _s, _z)
+        assert isinstance(_ssv, section.StratigraphySectionVariable)
+        assert np.all(_ssv == _arr)
+        assert np.all(_ssv._s == _s)
+        assert np.all(_ssv._z == _z)
+        assert _ssv.shape == (100, 200)
+        assert _ssv._Z.shape == (100, 200)
+        assert _ssv._S.shape == (100, 200)
+        assert _ssv._psvd_mask is None
 
-    def test_dsv_instantiate_directly_bad_addtl_argument(self):
+    def test_ssv_instantiate_directly_bad_addtl_argument(self):
         _arr = np.random.rand(100, 200)
         _s = np.arange(200)
         _z = np.linspace(0, 10, num=100)
         _mask = np.copy(_arr)
         with pytest.raises(TypeError):
-            _dsv = section.StratigraphySectionVariable(_arr, _s, _z, _mask)
+            _ssv = section.StratigraphySectionVariable(_arr, _s, _z, _mask)
 
-    def test_dsv_instantiate_directly_bad_shape_coord(self):
+    def test_ssv_instantiate_directly_bad_shape_coord(self):
         _arr = np.random.rand(100, 200)
         _s = np.arange(200)
         _z = np.linspace(0, 10, num=50)
         with pytest.raises(ValueError, match=r'Shape of "_s"*.'):
-            _dsv = section.StratigraphySectionVariable(_arr, _s, _z)
+            _ssv = section.StratigraphySectionVariable(_arr, _s, _z)
 
-    def test_dsv_knows_spacetime(self):
-        assert self.dsv._knows_spacetime is False
-        assert self.dsv.knows_spacetime is False
-        assert self.dsv.knows_spacetime == self.dsv._knows_spacetime
+    def test_ssv_knows_spacetime(self):
+        assert self.ssv._knows_spacetime is False
+        assert self.ssv.knows_spacetime is False
+        assert self.ssv.knows_spacetime == self.ssv._knows_spacetime
 
-    def test_dsv__check_knows_spacetime(self):
+    def test_ssv__check_knows_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            self.dsv._check_knows_spacetime()
+            self.ssv._check_knows_spacetime()
 
-    def test_dsv_get_display_arrays_spacetime(self):
+    def test_ssv_get_display_arrays_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _data, _X, _Y = self.dsv.get_display_arrays(style='spacetime')
+            _data, _X, _Y = self.ssv.get_display_arrays(style='spacetime')
 
-    def test_dsv_get_display_arrays_preserved(self):
+    def test_ssv_get_display_arrays_preserved(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _data, _X, _Y = self.dsv.get_display_arrays(style='preserved')
+            _data, _X, _Y = self.ssv.get_display_arrays(style='preserved')
 
-    def test_dsv_get_display_arrays_stratigraphy(self):
-        _data, _X, _Y = self.dsv.get_display_arrays(style='stratigraphy')
+    def test_ssv_get_display_arrays_stratigraphy(self):
+        _data, _X, _Y = self.ssv.get_display_arrays(style='stratigraphy')
         assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
 
-    def test_dsv_get_display_lines_spacetime(self):
+    def test_ssv_get_display_lines_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _data, _segments = self.dsv.get_display_lines(style='spacetime')
+            _data, _segments = self.ssv.get_display_lines(style='spacetime')
 
-    def test_dsv_get_display_lines_preserved(self):
+    def test_ssv_get_display_lines_preserved(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            self.dsv.get_display_lines(style='preserved')
+            self.ssv.get_display_lines(style='preserved')
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not determined how to implement yet.')
-    def test_dsv_get_display_lines_stratigraphy(self):
-        self.dsv.get_display_lines(style='stratigraphy')
+    def test_ssv_get_display_lines_stratigraphy(self):
+        self.ssv.get_display_lines(style='stratigraphy')
 
-    def test_dsv_get_display_limits_spacetime(self):
+    def test_ssv_get_display_limits_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _lims = self.dsv.get_display_limits(style='spacetime')
+            _lims = self.ssv.get_display_limits(style='spacetime')
 
-    def test_dsv_get_display_limits_preserved(self):
+    def test_ssv_get_display_limits_preserved(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _lims = self.dsv.get_display_limits(style='preserved')
+            _lims = self.ssv.get_display_limits(style='preserved')
 
-    def test_dsv_get_display_limits_stratigraphy(self):
-        _lims = self.dsv.get_display_limits(style='stratigraphy')
+    def test_ssv_get_display_limits_stratigraphy(self):
+        _lims = self.ssv.get_display_limits(style='stratigraphy')
         assert len(_lims) == 4
 
     ### TEST ALL OF THE STRATATTR STUFF IN TEST_STRAT ####

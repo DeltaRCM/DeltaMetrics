@@ -84,6 +84,10 @@ class CubeVariable(np.ndarray):
         else:
             return str(self)
 
+    def as_frozen(self):
+        """Export variable as `ndarray`."""
+        return self.view(np.ndarray)
+
 
 class BaseCube(abc.ABC):
     """Base cube object.
@@ -179,7 +183,7 @@ class BaseCube(abc.ABC):
         """
         self._variables = self._dataio.keys
         self._X = self._dataio['x']  # mesh grid of x values of cube
-        self._Y = self._dataio['y']  # mesh grid of x values of cube
+        self._Y = self._dataio['y']  # mesh grid of y values of cube
         self._x = np.copy(self._X[0, :].squeeze())  # array of x values of cube
         self._y = np.copy(self._Y[:, 0].squeeze())  # array of y values of cube
 
@@ -330,13 +334,13 @@ class BaseCube(abc.ABC):
     @abc.abstractmethod
     def z(self):
         """Vertical coordinate."""
-        return self._z
+        ...
 
     @property
     @abc.abstractmethod
     def Z(self):
         """Vertical mesh."""
-        return self._Z
+        ...
 
     @property
     def H(self):
@@ -356,6 +360,21 @@ class BaseCube(abc.ABC):
     @property
     def shape(self):
         return (self.H, self.L, self.W)
+
+    def export_frozen_variable(self, var, return_cube=False):
+        """Export a cube with frozen values.
+
+        Creates a `H x L x W` `ndarray` with values from variable `var` placed
+        into the array. This method is particularly useful for inputs to
+        operation that will repeatedly utilize the underlying data in
+        computations. Access to underlying data is comparatively slow to data
+        loaded in memory, because the `Cube` utilities are configured to read
+        data off-disk as needed.
+        """
+        if return_cube:
+            raise NotImplementedError
+        else:
+            return self.__getitem__(var).view(np.ndarray)
 
     def show_cube(self, var, t=-1, x=-1, y=-1, ax=None):
         """Show the cube in a 3d axis.
@@ -458,7 +477,7 @@ class DataCube(BaseCube):
         super().__init__(data, read, varset)
 
         self._t = np.array(self._dataio['time'], copy=True)
-        self._T, _, _ = np.meshgrid(self.t, self.x, self.y)
+        _, self._T, _ = np.meshgrid(self.y, self.t, self.x)
         self._H, self._L, self._W = self['eta'].shape
 
         self._knows_stratigraphy = False

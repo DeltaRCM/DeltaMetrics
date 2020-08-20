@@ -387,6 +387,13 @@ class BaseSection(abc.ABC):
         """
         return self._variables
 
+    @property
+    def strat_attr(self):
+        if self.cube._knows_stratigraphy:
+            return self.cube.strat_attr
+        else:
+            raise AttributeError('No preservation information.')
+
     def __getitem__(self, var):
         """Get a slice of the section.
 
