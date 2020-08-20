@@ -56,12 +56,12 @@ class TestStrikeSection:
 class TestPathSection:
     """Test the basic of the PathSection."""
 
-    test_path = np.column_stack((np.arange(10, 110, 2),
-                                 np.arange(50, 150, 2)))
+    test_path = np.column_stack((np.arange(10, 110, 20),
+                                 np.arange(50, 150, 20)))
 
-    def test_PathSection_without_cube(self):
+    def test_without_cube(self):
         ps = section.PathSection(path=self.test_path)
-        assert ps._path.shape[1] == 2
+        assert ps.path.shape[1] == 2
         assert ps.cube is None
         assert ps.s is None
         assert np.all(ps.trace == np.array([[None, None]]))
@@ -71,19 +71,19 @@ class TestPathSection:
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             ps['velocity']
 
-    def test_PathSection_bad_cube(self):
+    def test_bad_cube(self):
         badcube = ['some', 'list']
         with pytest.raises(TypeError, match=r'Expected type is *.'):
             sass = section.PathSection(badcube, path=self.test_path)
 
-    def test_PathSection_standalone_instantiation(self):
+    def test_standalone_instantiation(self):
         rcm8cube = cube.DataCube(rcm8_path)
         saps = section.PathSection(rcm8cube, path=self.test_path)
         assert saps.cube == rcm8cube
         assert saps.trace.shape == self.test_path.shape
         assert len(saps.variables) > 0
 
-    def test_PathSection_register_section(self):
+    def test_register_section(self):
         rcm8cube = cube.DataCube(rcm8_path)
         rcm8cube.stratigraphy_from('eta')
         rcm8cube.register_section(
@@ -91,6 +91,26 @@ class TestPathSection:
         assert len(rcm8cube.sections['test'].variables) > 0
         assert isinstance(rcm8cube.sections['test'], section.PathSection)
 
+    def test_return_path(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        saps = section.PathSection(rcm8cube, path=self.test_path)
+        _t = saps.trace
+        _p = saps.path
+        assert np.all(_t == _p)
+        assert np.all(_t == self.test_path)
+
+    def test_path_reduced_unique(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        xy = np.column_stack((np.linspace(50, 150, num=4000, dtype=np.int),
+                              np.linspace(10, 90, num=4000, dtype=np.int)))
+        saps1 = section.PathSection(rcm8cube, path=xy)
+        assert saps1.path.shape != xy.shape
+        assert np.all(saps1.path == np.unique(xy, axis=0))
+        saps2 = section.PathSection(rcm8cube, path=np.array([[50, 25],
+                                                             [50, 26],
+                                                             [50, 26],
+                                                             [50, 27]]))
+        assert saps2.path.shape == (3, 2)
 
 class TestCubesWithManySections:
 
@@ -253,7 +273,7 @@ class TestSectionFromDataCubeNoStratigraphy:
                                                         display_array_style='stratigraphy')
 
     def test_nostrat_show_bad_style(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r'Bad style argument: "somethinginvalid"'):
             self.rcm8cube_nostrat.sections['test'].show('time', style='somethinginvalid',
                                                         display_array_style='spacetime', label=True)
 
@@ -387,7 +407,7 @@ class TestSectionFromDataCubeWithStratigraphy:
                                             display_array_style='stratigraphy')
 
     def test_withstrat_show_bad_style(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r'Bad style argument: "somethinginvalid"'):
             self.rcm8cube.sections['test'].show('time', style='somethinginvalid',
                                                 display_array_style='spacetime', label=True)
 
@@ -498,7 +518,7 @@ class TestSectionFromStratigraphyCube:
                                            display_array_style='stratigraphy')
 
     def test_strat_show_bad_style(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r'Bad style argument: "somethinginvalid"'):
             self.sc8cube.sections['test'].show('time', style='somethinginvalid',
                                                display_array_style='spacetime', label=True)
 

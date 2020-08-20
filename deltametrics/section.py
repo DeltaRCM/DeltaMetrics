@@ -172,7 +172,7 @@ class DataSectionVariable(BaseSectionVariable):
             _arr_X = np.tile(self._s, (_sp.shape[0], 1))
             return _sp.toarray().view(DataSectionVariable), _arr_X, _arr_Y
         else:
-            raise ValueError('Bad "style" argument: %s' % str(style))
+            raise ValueError('Bad style argument: %s' % str(style))
 
     def get_display_lines(self, style=None):
         """
@@ -193,7 +193,7 @@ class DataSectionVariable(BaseSectionVariable):
             z = _reshape_long(np.copy(self.strat_attr['strata']))
             data = self[:, :-1]
         else:
-            raise ValueError('Bad "style" argument: %s' % str(style))
+            raise ValueError('Bad style argument: %s' % str(style))
 
         s = _reshape_long(self._S)
         segments = np.concatenate([s, z], axis=2)
@@ -213,7 +213,7 @@ class DataSectionVariable(BaseSectionVariable):
             _strata = np.copy(self.strat_attr['strata'])
             return np.min(self._S), np.max(self._S), np.min(_strata), np.max(_strata) * 1.5
         else:
-            raise ValueError('Bad "style" argument: %s' % str(style))
+            raise ValueError('Bad style argument: %s' % str(style))
 
 
 class StratigraphySectionVariable(BaseSectionVariable):
@@ -253,7 +253,7 @@ class StratigraphySectionVariable(BaseSectionVariable):
         elif style in self._stratigraphy_names:
             return self, self._S, self._Z
         else:
-            raise ValueError('Bad "style" argument: %s' % str(style))
+            raise ValueError('Bad style argument: %s' % str(style))
 
     def get_display_lines(self, style=None):
         """
@@ -266,7 +266,7 @@ class StratigraphySectionVariable(BaseSectionVariable):
         elif style in self._stratigraphy_names:
             raise NotImplementedError
         else:
-            raise ValueError('Bad "style" argument: %s' % str(style))
+            raise ValueError('Bad style argument: %s' % str(style))
 
         # return self.display_lines
 
@@ -281,7 +281,7 @@ class StratigraphySectionVariable(BaseSectionVariable):
         elif style in self._stratigraphy_names:
             return np.min(self._S), np.max(self._S), np.min(self._Z), np.max(self._Z) * 1.5
         else:
-            raise ValueError('Bad "style" argument: %s' % str(style))
+            raise ValueError('Bad style argument: %s' % str(style))
 
 
 class BaseSection(abc.ABC):
@@ -294,7 +294,7 @@ class BaseSection(abc.ABC):
 
     """
 
-    def __init__(self, *args):
+    def __init__(self, section_type, *args):
         """
         Identify coordinates defining the section.
 
@@ -317,6 +317,8 @@ class BaseSection(abc.ABC):
         self._y = None
         self._variables = None
         self.cube = None
+
+        self.section_type = section_type
 
         if len(args) > 1:
             raise ValueError('Expected single argument to %s instantiation.'
@@ -578,15 +580,17 @@ class PathSection(BaseSection):
         `path` must be supplied as a keyword argument.
 
         """
-        self._path = path
-
-        super().__init__(*args)
+        self._input_path = path
+        super().__init__('path', *args)
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.
         """
-        self._x = self._path[:, 1]
-        self._y = self._path[:, 0]
+        # determine only unique coordinates along the path
+        self._path = np.unique(self._input_path, axis=0)
+
+        self._x = self._path[:, 0]
+        self._y = self._path[:, 1]
 
     @property
     def path(self):
@@ -594,7 +598,7 @@ class PathSection(BaseSection):
 
         Returns same as `trace` property.
         """
-        return self._trace
+        return self.trace
 
 
 class StrikeSection(BaseSection):
@@ -604,7 +608,7 @@ class StrikeSection(BaseSection):
     def __init__(self, *args, y=0):
 
         self.y = y  # strike coord scalar
-        super().__init__(*args)
+        super().__init__('strike', *args)
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.

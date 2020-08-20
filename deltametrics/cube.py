@@ -643,11 +643,10 @@ class StratigraphyCube(BaseCube):
             self._z = strat._determine_strat_coordinates(_elev, dz=dz)
             self._H = len(self.z)
             self._L, self._W = _elev.shape[1:]
+            self._Z = np.tile(self.z, (self.W, self.L, 1)).T
 
             _out = strat.compute_boxy_stratigraphy_coordinates(_elev, z=self.z, return_strata=True)
             self.strata_coords, self.data_coords, self.strata = _out
-
-            self.mesh = np.meshgrid(self._z, np.arange(0, self.L))
         else:
             raise TypeError('No other input types implemented yet.')
 
@@ -704,4 +703,4 @@ class StratigraphyCube(BaseCube):
     @property
     def Z(self):
         """Vertical mesh."""
-        return self.H
+        return self._Z
