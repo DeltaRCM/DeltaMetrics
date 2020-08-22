@@ -520,10 +520,9 @@ class BaseSection(abc.ABC):
         if style in ['shade', 'shaded']:
             _data, _X, _Y = SectionVariableInstance.get_display_arrays(
                 style=display_array_style)
-            pcm = ax.pcolormesh(_X, _Y, _data, cmap=_varinfo.cmap, norm=_varinfo.norm,
+            ci = ax.pcolormesh(_X, _Y, _data, cmap=_varinfo.cmap, norm=_varinfo.norm,
                                 vmin=_varinfo.vmin, vmax=_varinfo.vmax,
                                 rasterized=True, shading='auto')
-            cb = plot.append_colorbar(pcm, ax)
         elif style in ['line', 'lines']:
             _data, _segments = SectionVariableInstance.get_display_lines(
                 style=display_array_style)
@@ -534,12 +533,13 @@ class BaseSection(abc.ABC):
             lc = LineCollection(_segments, cmap=_varinfo.cmap)
             lc.set_array(_data.flatten())
             lc.set_linewidth(1.25)
-            line = ax.add_collection(lc)
-            cb = plot.append_colorbar(line, ax)
+            ci = ax.add_collection(lc)
         else:
             raise ValueError('Bad style argument: "%s"' % style)
 
         # style adjustments
+        cb = plot.append_colorbar(ci, ax)
+        ax.margins(y=0.2)
         if label:
             _label = _varinfo.label if (label is True) else str(
                 label)  # use custom if passed

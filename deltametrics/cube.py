@@ -393,17 +393,21 @@ class BaseCube(abc.ABC):
         if not ax:
             ax = plt.gca()
 
-        ax.imshow(_plan,
-                  cmap=self.varset[var].cmap,
-                  norm=self.varset[var].norm,
-                  vmin=self.varset[var].vmin,
-                  vmax=self.varset[var].vmax)
-        
+        im = ax.imshow(_plan,
+                       cmap=self.varset[var].cmap,
+                       norm=self.varset[var].norm,
+                       vmin=self.varset[var].vmin,
+                       vmax=self.varset[var].vmax)
+        cb = plot.append_colorbar(im, ax)
+
         if not ticks:
             ax.set_xticks([], minor=[])
             ax.set_yticks([], minor=[])
         if title:
             ax.set_title(str(title))
+
+        ax.set_xlim(self.x[0], self.x[-1])
+        ax.set_ylim(self.y[0], self.y[-1])
 
     def show_section(self, *args, **kwargs):
         """Show a section.

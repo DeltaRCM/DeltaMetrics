@@ -441,7 +441,7 @@ class VariableSet(object):
             raise TypeError
 
 
-def append_colorbar(ci, ax, adjust=True):
+def append_colorbar(ci, ax):
     """Append a colorbar, consistently placed.
 
     Adjusts some parameters of the parent axes as well.
@@ -468,10 +468,7 @@ def append_colorbar(ci, ax, adjust=True):
     cax = divider.append_axes("right", size="2%", pad=0.05)
     cb = plt.colorbar(ci, cax=cax)
     cb.ax.tick_params(labelsize=7)
-
-    if adjust:
-        ax.use_sticky_edges = False
-        ax.margins(y=0.2)
+    ax.use_sticky_edges = False
 
     return cb
 
