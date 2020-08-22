@@ -136,15 +136,6 @@ def test_append_colorbar():
     assert ax.use_sticky_edges is False
 
 
-def test_append_colorbar_no_adjust():
-    _arr = np.random.randint(0, 100, size=(50, 50))
-    fig, ax = plt.subplots()
-    im = ax.imshow(_arr)
-    cb = plot.append_colorbar(im, ax, adjust=False)
-    assert isinstance(cb, matplotlib.colorbar.Colorbar)
-    assert ax.use_sticky_edges is True
-
-
 class TestSODTTST:
 
     def test_sodttst_makes_plot(self):
