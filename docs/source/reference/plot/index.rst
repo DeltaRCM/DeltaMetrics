@@ -12,6 +12,8 @@ This reference page documents the lower-level utilities used to make this happen
 
 The functions are defined in ``deltametrics.plot``. 
 
+.. _default_styling:
+
 Default styling
 ===============
 
