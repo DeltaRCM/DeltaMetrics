@@ -528,7 +528,13 @@ def get_display_arrays(VarInst, data=None):
         sourced from a `StratigraphyCube` do not support the `spacetime` or
         `preserved` options, and a variable from `DataCube` will only support
         `stratigraphy` if the Cube has computed "quick" stratigraphy.
-        """
+
+    Returns
+    -------
+    data, X, Y : :obj:`ndarray`
+        Three matching-size `ndarray` representing the 1) data, 2) display
+        x-coordinates and 3) display y-coordinates.
+    """
     # # #  SectionVariables  # # #
     if issubclass(type(VarInst), section.BaseSectionVariable):
         # #  DataSection  # #
@@ -567,6 +573,37 @@ def get_display_arrays(VarInst, data=None):
 
 
 def get_display_lines(VarInst, data=None):
+    """Get lines for display of Variables.
+
+    Function takes as argument a `VariableInstance` from a `Section` or
+    `Planform` and an optional :obj:`data` argument, which specifies the data
+    type to return, and gives back data and line segments for display.
+
+    Parameters
+    ----------
+    VarInst : :obj:`~deltametrics.section.BaseSectionVariable` subclass
+        The `Variable` instance to visualize. May be any subclass of
+        :obj:`~deltametrics.section.BaseSectionVariable` or
+        :obj:`~deltametrics.plan.BasePlanformVariable`.
+
+    data : :obj:`str`, optional
+        The type of data to visualize. Supported options are `'spacetime'`,
+        `'preserved'`, and `'stratigraphy'`. Default is to display full
+        spacetime plot for variable generated from a `DataCube`.  and
+        stratigraphy for a `StratigraphyCube` variable. Variables from
+        `DataCube` will only support `stratigraphy` if the Cube has computed
+        "quick" stratigraphy.
+
+    .. note::
+        Not currently implemented for variables from the `StratigraphyCube`.
+
+    Returns
+    -------
+    vals, segments : :obj:`ndarray`
+        An off-by-one sized array of data values (`vals`) to color the line
+        segments (`segments`). The segments are organized along the 0th
+        dimension of the array.
+    """
     # # #  SectionVariables  # # #
     if issubclass(type(VarInst), section.BaseSectionVariable):
         # #  DataSection  # #
@@ -617,6 +654,31 @@ def get_display_lines(VarInst, data=None):
 
 
 def get_display_limits(VarInst, data=None):
+    """Get limits to resize the display of Variables.
+
+    Function takes as argument a `VariableInstance` from a `Section` or
+    `Planform` and an optional :obj:`data` argument, which specifies how to
+    determine the limits to return.
+
+    Parameters
+    ----------
+    VarInst : :obj:`~deltametrics.section.BaseSectionVariable` subclass
+        The `Variable` instance to visualize. May be any subclass of
+        :obj:`~deltametrics.section.BaseSectionVariable` or
+        :obj:`~deltametrics.plan.BasePlanformVariable`.
+
+    data : :obj:`str`, optional
+        The type of data to compute limits for. Typically this will be the
+        same value used with either :obj:`get_display_arrays` or
+        :obj:`get_display_lines`. Supported options are `'spacetime'`,
+        `'preserved'`, and `'stratigraphy'`.
+
+    Returns
+    -------
+    xmin, xmax, ymin, ymax : :obj:`float`
+        Values to use as limits on a plot. Use with, for example,
+        ``ax.set_xlim((xmin, xmax))``.
+    """
     # # #  SectionVariables  # # #
     if issubclass(type(VarInst), section.BaseSectionVariable):
         # #  DataSection  # #

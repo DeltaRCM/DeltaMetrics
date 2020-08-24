@@ -39,6 +39,9 @@ Plotting utility functions
 ==========================
 
 .. autofunction:: append_colorbar
+.. autofunction:: get_display_arrays
+.. autofunction:: get_display_lines
+.. autofunction:: get_display_limits
 .. autofunction:: _fill_steps
 
 
