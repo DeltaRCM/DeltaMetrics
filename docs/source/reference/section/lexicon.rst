@@ -60,3 +60,5 @@ We can display the arrays using `matplotlib` to examine the spatiotemporal chang
 
 .. plot:: section/section_lexicon.py
 
+Note that in this visual all non-preserved spacetime points have been masked and are shown as white.
+See the `numpy MaskedArray documentation <https://numpy.org/doc/stable/reference/maskedarray.generic.html>`_ for more information on interacting with masked arrays.

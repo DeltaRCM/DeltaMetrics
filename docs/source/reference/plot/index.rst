@@ -39,6 +39,16 @@ Plotting utility functions
 ==========================
 
 .. autofunction:: append_colorbar
+.. autofunction:: _fill_steps
+
+
+DeltaMetrics plot routines
+==========================
+
+.. autosummary:: 
+    :toctree: ../../_autosummary
+
+    show_one_dimensional_trajectory_to_strata
 
 
 DeltaMetrics colormaps

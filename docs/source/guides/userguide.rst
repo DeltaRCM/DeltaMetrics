@@ -433,11 +433,6 @@ speed up computations if an array is being accessed over and over.
     dm.plot.append_colorbar(pcm, ax)
     plt.show() #doctest: +SKIP
 
-
-
-image:: output_52_0.png
-
-
 Note than you can also bypass the creation of a ``StratigraphyCube``,
 and just directly obtain a frozen volume with:
 
