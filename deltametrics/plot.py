@@ -6,6 +6,8 @@ import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as colors
+import matplotlib.patches as ptch
+import matplotlib.collections as coll
 import mpl_toolkits.axes_grid1 as axtk
 
 from . import io
@@ -87,7 +89,8 @@ class VariableInfo(object):
 
         """
         if not type(name) is str:
-            raise TypeError('name argument must be type `str`, but was %s' % type(name))
+            raise TypeError(
+                'name argument must be type `str`, but was %s' % type(name))
         self._name = name
 
         self.cmap = kwargs.pop('cmap', cm.get_cmap('viridis', 64))
@@ -227,7 +230,8 @@ class VariableSet(object):
         self.known_list = io.known_variables() + io.known_coords() + _added_list
 
         for var in self.known_list:
-            setattr(self, var, None)  # set to defaults defined below (or None if no default)
+            # set to defaults defined below (or None if no default)
+            setattr(self, var, None)
 
         if override_dict:  # loop override to set if given
             if not type(override_dict) is dict:
@@ -265,7 +269,8 @@ class VariableSet(object):
             if type(var) is VariableInfo or var is None:
                 object.__setattr__(self, key, var)
             else:
-                raise TypeError('Can only set attributes of type VariableInfo.')
+                raise TypeError(
+                    'Can only set attributes of type VariableInfo.')
 
     @property
     def x(self):
@@ -499,6 +504,50 @@ def aerial_colormap():
     raise NotImplementedError
 
 
+def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
+    """Fill rectangles where the boolean indicates ``True``.
+
+    Creates an :obj:`x` by :obj:`y` :obj:`matplotlib.patches.Rectangle` at
+    each index where the index `i` in boolean :obj:`where` indicates, with the
+    lower left of the patch at (`i`, :obj:`y0`).
+
+    This utility function is utilized internally. Most often, it is used to
+    highlight where time has been preserved (or eliminated) in a timeseries of
+    data. For example, see
+    :obj:`~deltametrics.plot.show_one_dimensional_trajectory_to_strata`.
+
+    Parameters
+    ----------
+    where : :obj:`ndarray`
+        Boolean `numpy` `ndarray` indicating which locations to create a patch
+        at.
+
+    x : :obj:`float`
+        The x-direction width of the `Rectangles`.
+
+    y : :obj:`float`
+        The y-direction height of the `Rectangles`.
+
+    y0 : :obj:`float`
+        The y-direction origin (i.e., lower-left y-value) of the `Rectangles`.
+
+    **kwargs
+        Additional `matplotlib` keyword arguments passed to the
+        `Rectangle` instantiation. This is where you can set most
+        `matplotlib` `**kwargs` (e.g., `color`, `edgecolor`).
+
+    Returns
+    -------
+    pc : :obj:`matplotlib.patches.PatchCollection`
+        Collection of `Rectangle` `Patch` objects.
+    """
+    pl = []
+    for i, pp in enumerate(np.argwhere(where[1:]).flatten()):
+        _r = ptch.Rectangle((pp, y0), x, y, **kwargs)
+        pl.append(_r)
+    return coll.PatchCollection(pl, match_original=True)
+
+
 def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
     """1d elevation to stratigraphy.
 
@@ -507,6 +556,17 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
     in "boxy" stratigraphy. The function is helpful for description of
     algorithms to compute stratigraphy, and for debugging and checking outputs
     from computations.
+
+    For example, we can quickly visualize the processing of a 1D timeseries of
+    bed elevations into boxy stratigraphy with this routine.
+
+    .. plot:: guides/userguide_1d_example.py
+        :include-source:
+
+    The orange line depicts the resultant stratigraphy, with all
+    bed-elevations above this line cut from the stratigraphy by the
+    stratigraphic filter.  The column on the right records which
+    time-interval is recorded in the stratigraphy at each elevation.
 
     Parameters
     ----------
@@ -532,13 +592,13 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
         else:
             raise ValueError('Elevation data "e" must be one-dimensional.')
     t = np.arange(e.shape[0])  # x-axis time array
-    t3 = np.expand_dims(t, axis=(1,2)) # 3d time, for slicing
+    t3 = np.expand_dims(t, axis=(1, 2))  # 3d time, for slicing
 
     z = strat._determine_strat_coordinates(e, dz=dz, z=z)  # vert coordinates
-    s, p = strat._compute_elevation_to_preservation(e)  # strat and preservation
+    s, p = strat._compute_elevation_to_preservation(e)  # strat, preservation
     sc, dc = strat._compute_preservation_to_cube(s, z)
-    lst = np.argmin(s < s[-1]) # last elevation
-    
+    lst = np.argmin(s < s[-1])  # last elevation
+
     c = np.full_like(z, np.nan)
     c[sc[:, 0]] = t[dc[:, 0]]
     cp = np.tile(c, (2, 1)).T
@@ -548,13 +608,18 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
         fig, ax = plt.subplots()
     # timeseries plot
     pt = np.zeros_like(t)  # for psvd timesteps background
-    pt[np.union1d(p.nonzero()[0], np.array(strat._compute_preservation_to_time_intervals(p).nonzero()[0]))] = 1
-    _p = ax.fill_between(t, np.min(e), np.max(e), where=pt, label='psvd timesteps', color='0.8')
+    pt[np.union1d(p.nonzero()[0], np.array(
+        strat._compute_preservation_to_time_intervals(p).nonzero()[0]))] = 1
+    ax.add_collection(_fill_steps(p, x=1, y=np.max(e) - np.min(e),
+                                  y0=np.min(e), facecolor='0.8'))
+    _ppc = ax.add_patch(ptch.Rectangle((0, 0), 0, 0, facecolor='0.8',
+                                       label='psvd timesteps'))  # add for lgnd
     _ss = ax.hlines(e[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
     _l = ax.axvline(lst, c='k')
     _e = ax.step(t, e, where='post', label='elevation')
     _s = ax.step(t, s, linestyle='--', where='post', label='stratigraphy')
-    _pd = ax.plot(t[p], s[p], color='0.5', marker='o', ls='none', label='psvd time')
+    _pd = ax.plot(t[p], s[p], color='0.5', marker='o',
+                  ls='none', label='psvd time')
     ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
     ax.grid(which='both', axis='x')
 
@@ -563,7 +628,7 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
     ax_s = divider.append_axes("right", 0.5, pad=0.1, sharey=ax)
     ax_s.yaxis.tick_right()
     ax_s.xaxis.set_visible(False)
-    __x, __y = np.meshgrid(np.array([0,1]), z)
+    __x, __y = np.meshgrid(np.array([0, 1]), z)
     _colmap = plt.cm.get_cmap('viridis', e.shape[0])
     _c = ax_s.pcolormesh(__x, __y, cp,
                          cmap=_colmap, vmin=0, vmax=e.shape[0], shading='auto')

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 import multiprocessing
 
+
 def compute_trajectory():
     """Show 1d profile at point.
     """
@@ -88,7 +89,8 @@ def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
     nx, ny = strata.shape[1:]
     stratigraphy = np.full((len(z), nx, ny), np.nan)  # preallocate nans
     _cut = prop[data_coords[:, 0], data_coords[:, 1], data_coords[:, 2]]
-    stratigraphy[strata_coords[:, 0], strata_coords[:, 1], strata_coords[:, 2]] = _cut
+    stratigraphy[strata_coords[:, 0], strata_coords[
+        :, 1], strata_coords[:, 2]] = _cut
 
     elevations = np.tile(z, (ny, nx, 1)).T
 
@@ -135,7 +137,9 @@ def compute_boxy_stratigraphy_coordinates(elev, dz=None, z=None,
     else:
         return strata_coords, data_coords
 
+
 class BaseStratigraphyAttributes(object):
+
     def __init__(self, style):
         self._style = style
 
@@ -195,9 +199,11 @@ class BaseStratigraphyAttributes(object):
 class BoxyStratigraphyAttributes(object):
     """Attribute set for boxy stratigraphy information, emebdded into a DataCube.
     """
+
     def __init__(self):
         super().__init__('boxy')
-        raise NotImplementedError('Implementation should match MeshStratigraphyAttributes')
+        raise NotImplementedError(
+            'Implementation should match MeshStratigraphyAttributes')
 
 
 class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
@@ -229,6 +235,7 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
         is kind of just a dummy to make the api consistent with ``_i``,
         because the column cannot change with preservation.
     """
+
     def __init__(self, elev, **kwargs):
         """
         We can precompute several attributes of the stratigraphy, including which
@@ -260,9 +267,9 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
         #    psvd_vxl_eta : records eta for each entry in the preserved matrix.
         #    psvd_flld    : fills above with final eta entry (for pcolormesh).
         self.psvd_vxl_eta = np.full((self.psvd_vxl_cnt_max,
-                                      *_eta.shape[1:]), np.nan)
+                                     *_eta.shape[1:]), np.nan)
         self.psvd_flld = np.full((self.psvd_vxl_cnt_max,
-                                   *_eta.shape[1:]), np.nan)
+                                  *_eta.shape[1:]), np.nan)
         for i in np.arange(_eta.shape[1]):
             for j in np.arange(_eta.shape[2]):
                 self.psvd_vxl_eta[0:self.psvd_vxl_cnt[i, j], i, j] = _eta[
@@ -298,11 +305,14 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
             strat_attr['psvd_idx'] = _psvd_idx = self.psvd_idx[:, _x0, _x1]
             strat_attr['psvd_flld'] = self.psvd_flld[:, _x0, _x1]
             strat_attr['x0'] = _i = self.psvd_vxl_idx[:, _x0, _x1]
-            strat_attr['x1'] = _j = np.tile(np.arange(_i.shape[1]), (_i.shape[0], 1))
+            strat_attr['x1'] = _j = np.tile(
+                np.arange(_i.shape[1]), (_i.shape[0], 1))
             strat_attr['s'] = _j[0, :]                  # along-section coord
-            strat_attr['s_sp'] = _j[_psvd_idx]          # along-section coord, sparse
-            strat_attr['z_sp'] = _i[_psvd_idx]          # vertical coord, sparse
-            
+            # along-section coord, sparse
+            strat_attr['s_sp'] = _j[_psvd_idx]
+            # vertical coord, sparse
+            strat_attr['z_sp'] = _i[_psvd_idx]
+
         elif _dir == 'plan':
             raise NotImplementedError
             # cannot be done without interpolation for mesh strata.
@@ -379,7 +389,7 @@ def _compute_elevation_to_preservation(elev):
         strata[j, ...] = np.minimum(elev[j, ...],
                                     strata[j + 1, ...])
         psvd[j + 1, ...] = np.less(strata[j, ...],
-                                    strata[j + 1, ...])
+                                   strata[j + 1, ...])
     if nt > 1:  # allows a single-time elevation-series to return
         psvd[0, ...] = np.less(strata[0, ...],
                                strata[1, ...])
@@ -483,7 +493,7 @@ def _compute_preservation_to_cube(strata, z):
         e = z[k]  # which elevation for this iteration
         whr = e < seek_elev  # where elev is below strat surface
         t = np.maximum(_zero, (np.argmin(strata[:, ...] <= e, axis=0) - 1))
-        plate[whr] = int(1) # track locations in the plate
+        plate[whr] = int(1)  # track locations in the plate
 
         xy = plate.nonzero()
         ks = np.full((np.count_nonzero(plate)), k)  # might be faster way
@@ -501,7 +511,7 @@ def _compute_preservation_to_cube(strata, z):
 
 def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
     """Return a valid Z array for stratigraphy based on inputs.
-    
+
     This helper function enables support for user specified `dz`, `nz`, or `z`
     in many functions. The logic for determining how to handle these mutually
     exclusive inputs is placed in this function, to ensure consistent behavior
@@ -520,7 +530,7 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
 
     z : :obj:`ndarray`, optional
         Array of Z values to use, returned unchanged if supplied.
-    
+
     dz : :obj:`float`, optional
         Interval in created Z array. Z array is created as
         ``np.arange(np.min(elev), np.max(elev)+dz, step=dz)``.
@@ -534,15 +544,18 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
 
     _valerr = ValueError('"dz" or "nz" cannot be zero or negative.')
     if not (z is None):
-        if np.isscalar(z): raise ValueError('"z" must be a numpy array.')
+        if np.isscalar(z):
+            raise ValueError('"z" must be a numpy array.')
         return z
     elif not (dz is None):
-        if dz <= 0: raise _valerr
+        if dz <= 0:
+            raise _valerr
         max_dos = np.max(elev) + dz  # max depth of section, meters
         min_dos = np.min(elev)       # min dos, meters
         return np.arange(min_dos, max_dos, step=dz)
     elif not (nz is None):
-        if nz <= 0: raise _valerr
+        if nz <= 0:
+            raise _valerr
         max_dos = np.max(elev)
         min_dos = np.min(elev)
         return np.linspace(min_dos, max_dos, num=nz, endpoint=True)

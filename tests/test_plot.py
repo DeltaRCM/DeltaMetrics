@@ -136,7 +136,66 @@ def test_append_colorbar():
     assert ax.use_sticky_edges is False
 
 
+class TestFillSteps:
+    """Test the `_fill_steps` function."""
+
+    arr = np.array([False, False, True, True, False, True,
+                    True, True, True, False, True])
+
+    def num_patches(self, pc):
+        """hacky util to get length of PatchCollection."""
+        return len(pc.properties()['facecolor'])
+
+    def test_return_type(self):
+        pc = plot._fill_steps(self.arr)
+        assert isinstance(pc, matplotlib.collections.PatchCollection)
+
+    def test_return_length_zero(self):
+        _arr = np.array([False])
+        pc = plot._fill_steps(_arr)
+        assert self.num_patches(pc) == 0
+
+    def test_return_length_zero_trues(self):
+        _arr = np.array([True])
+        pc = plot._fill_steps(_arr)
+        assert self.num_patches(pc) == 0
+
+    def test_return_length_one(self):
+        _arr = np.array([False, True])
+        pc = plot._fill_steps(_arr)
+        assert self.num_patches(pc) == 1
+
+    def test_return_length_three_get_two(self):
+        _arr = np.array([False, True, True])
+        pc = plot._fill_steps(_arr)
+        assert self.num_patches(pc) == 2
+
+    def test_return_length_three_get_two_trues(self):
+        _arr = np.array([True, True, True])
+        pc = plot._fill_steps(_arr)
+        assert self.num_patches(pc) == 2
+
+    def test_return_length_three_get_five(self):
+        _arr = np.array([False, True, True, False, False, False,
+                         True, True, False, True])
+        pc = plot._fill_steps(_arr)
+        assert self.num_patches(pc) == 5
+
+    def test_kwargs_default(self):
+        pc = plot._fill_steps(self.arr)
+        assert self.num_patches(pc) == 7
+        _exp = pytest.approx(np.array([0.12156863, 0.46666667, 0.70588235, 1.]))
+        assert np.all(pc.get_facecolors()[0] == _exp)
+
+    def test_kwargs_facecolor(self):
+        pc = plot._fill_steps(self.arr, facecolor='green')
+        assert self.num_patches(pc) == 7
+        _exp = pytest.approx(np.array([0., 0.50196078, 0., 1.]))
+        assert np.all(pc.get_facecolors()[0] == _exp)
+
+
 class TestSODTTST:
+    """Test the `show_one_dimensional_trajectory_to_strata` function."""
 
     def test_sodttst_makes_plot(self):
         _e = np.random.randint(0, 10, size=(50,))

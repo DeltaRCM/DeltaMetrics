@@ -359,6 +359,7 @@ class BaseCube(abc.ABC):
 
     @property
     def shape(self):
+        """Number of elements in data (HxLxW)."""
         return (self.H, self.L, self.W)
 
     def export_frozen_variable(self, var, return_cube=False):
