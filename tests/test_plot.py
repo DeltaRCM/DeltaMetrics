@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 from deltametrics import plot
 from deltametrics import cube
 from deltametrics import section
+from deltametrics import utils
 
 rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
                          'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
@@ -20,12 +21,12 @@ def test_initialize_default_VariableInfo():
     assert vi.cmap.N == 64
 
 
-def test_initialize_default_VariableInfo_noname():   
+def test_initialize_default_VariableInfo_noname():
     with pytest.raises(TypeError):
         vi = plot.VariableInfo()
 
 
-def test_initialize_default_VariableInfo_name_isstr():   
+def test_initialize_default_VariableInfo_name_isstr():
     with pytest.raises(TypeError):
         vi = plot.VariableInfo(None)
 
@@ -286,12 +287,12 @@ class TestGetDisplayArrays:
         assert np.all(_data == self.dsv_nostrat)
 
     def test_dsv_nostrat_get_display_arrays_preserved(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             plot.get_display_arrays(self.dsv_nostrat,
                                     data='preserved')
 
     def test_dsv_nostrat_get_display_arrays_stratigraphy(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             plot.get_display_arrays(self.dsv_nostrat,
                                     data='stratigraphy')
 
@@ -349,12 +350,12 @@ class TestGetDisplayLines:
         assert _segments.shape[1:] == (2, 2)
 
     def test_dsv_nostrat_get_display_lines_preserved(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             plot.get_display_lines(self.dsv_nostrat,
                                    data='preserved')
 
     def test_dsv_nostrat_get_display_lines_stratigraphy(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             plot.get_display_lines(self.dsv_nostrat,
                                    data='stratigraphy')
 
@@ -410,11 +411,11 @@ class TestGetDisplayLimits:
         assert len(_lims) == 4
 
     def test_dsv_nostrat_get_display_limits_preserved(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             plot.get_display_limits(self.dsv_nostrat, data='preserved')
 
     def test_dsv_nostrat_get_display_limits_stratigraphy(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             plot.get_display_limits(self.dsv_nostrat, data='stratigraphy')
 
     def test_dsv_get_display_limits_spacetime(self):

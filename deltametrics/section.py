@@ -8,6 +8,7 @@ from matplotlib.collections import LineCollection
 
 from . import cube
 from . import plot
+from . import utils
 
 
 class BaseSectionVariable(np.ndarray):
@@ -107,7 +108,7 @@ class DataSectionVariable(BaseSectionVariable):
             Raises if does not know stratigraphy.
         """
         if not self._knows_stratigraphy:
-            raise AttributeError('No preservation information.')
+            raise utils.NoStratigraphyError(obj=self)
         return self._knows_stratigraphy
 
     def as_preserved(self):
@@ -277,7 +278,7 @@ class BaseSection(abc.ABC):
         if self.cube._knows_stratigraphy:
             return self.cube.strat_attr
         else:
-            raise AttributeError('No preservation information.')
+            raise utils.NoStratigraphyError(obj=self, var='strat_attr')
 
     def __getitem__(self, var):
         """Get a slice of the section.

@@ -9,6 +9,7 @@ from deltametrics import cube
 
 from deltametrics import plot
 from deltametrics import section
+from deltametrics import utils
 
 # initialize a cube directly from path, rather than using sample_data.py
 rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
@@ -106,7 +107,7 @@ class TestDataCubeNoStratigraphy:
         rcm8cube = cube.DataCube(rcm8_path)
         rcm8cube.register_section('testsection', section.StrikeSection(y=10))
         assert rcm8cube._knows_stratigraphy is False
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             rcm8cube.sections['testsection']['velocity'].as_stratigraphy()
 
     def test_fixeddatacube_init_varset(self):
@@ -176,9 +177,9 @@ class TestDataCubeNoStratigraphy:
         sc = section.StrikeSection(self.fixeddatacube, y=10)
         _ = sc['velocity'][:, 1]
         assert not hasattr(sc, 'strat_attr')
-        with pytest.raises(AttributeError, match='No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             _ = sc.strat_attr
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             _ = sc['velocity'].as_preserved()
 
 

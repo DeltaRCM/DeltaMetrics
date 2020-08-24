@@ -29,22 +29,27 @@ def format_table(number):
 
 
 class NoStratigraphyError(AttributeError):
-    def __init__(self, var):
-        """
+    """Error message for access when no stratigraphy.
+    """
+
+    def __init__(self, obj, var=None):
+        """Initialize the error message and raise.
 
         Parameters
         ----------
-        var : :obj:`str`
-            Which variable user tried to access.
-
         obj : :obj:`str`
             Which object user tried to access.
-        """
-        print(var)
-        message = "'" + type(obj).__name__ +"'" + " object has no attribute " \
-                  "'" + var
 
-        # Call the base class constructor with the parameters it needs
+        var : :obj:`str`, optional
+            Which variable user tried to access. If provided, more information
+            is given in the error message.
+        """
+        if not (var is None):
+            message = "'" + type(obj).__name__ + "'" + " object has no attribute " \
+                      "'" + var + "'."
+        else:
+            message = "'" + type(obj).__name__ + "'" + " object has no preservation " \
+                      "or stratigraphy information."
         super().__init__(message)
 
 

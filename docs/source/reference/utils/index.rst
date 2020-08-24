@@ -9,10 +9,18 @@ The package has some more miscellaneous functions and utilities that are made pu
 The functions are defined in ``deltametrics.utils``. 
 
 
-.. utils functions
-.. ===================
+Utility functions
+=================
 
 .. currentmodule:: deltametrics.utils
 
+.. autofunction:: _get_version
+
+
+Utility Exceptions and Warnings
+===============================
+
 .. autosummary:: 
 	:toctree: ../../_autosummary
+
+    NoStratigraphyError

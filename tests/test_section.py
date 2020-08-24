@@ -10,6 +10,7 @@ from deltametrics import cube
 
 from deltametrics import plot
 from deltametrics import section
+from deltametrics import utils
 
 
 rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
@@ -198,10 +199,10 @@ class TestSectionFromDataCubeNoStratigraphy:
             'velocity'].knows_stratigraphy is False
 
     def test_nostrat_nostratigraphyinfo(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             st = self.rcm8cube_nostrat.sections[
                 'test']['velocity'].as_stratigraphy()
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             st = self.rcm8cube_nostrat.sections[
                 'test']['velocity'].as_preserved()
 
@@ -249,12 +250,12 @@ class TestSectionFromDataCubeNoStratigraphy:
                       data='spacetime')
 
     def test_nostrat_show_shaded_aspreserved(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             self.rcm8cube_nostrat.sections['test'].show('time', style='shaded',
                                                         data='preserved')
 
     def test_nostrat_show_shaded_asstratigraphy(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             self.rcm8cube_nostrat.sections['test'].show('time', style='shaded',
                                                         data='stratigraphy')
 
@@ -263,12 +264,12 @@ class TestSectionFromDataCubeNoStratigraphy:
                                                     data='spacetime')
 
     def test_nostrat_show_lines_aspreserved(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             self.rcm8cube_nostrat.sections['test'].show('time', style='lines',
                                                         data='preserved')
 
     def test_nostrat_show_lines_asstratigraphy(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             self.rcm8cube_nostrat.sections['test'].show('time', style='lines',
                                                         data='stratigraphy')
 
@@ -578,15 +579,15 @@ class TestDataSectionVariableNoStratigraphy:
         assert self.dsv.knows_stratigraphy == self.dsv._knows_stratigraphy
 
     def test_dsv__check_knows_stratigraphy(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             self.dsv._check_knows_stratigraphy()
 
     def test_dsv_as_preserved(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             self.dsv.as_preserved()
 
     def test_dsv_as_stratigraphy(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
+        with pytest.raises(utils.NoStratigraphyError):
             self.dsv.as_stratigraphy()
 
 
