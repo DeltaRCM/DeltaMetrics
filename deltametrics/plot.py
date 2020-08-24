@@ -12,6 +12,7 @@ import mpl_toolkits.axes_grid1 as axtk
 
 from . import io
 from . import strat
+from . import section
 
 # plotting utilities
 
@@ -446,6 +447,32 @@ class VariableSet(object):
             raise TypeError
 
 
+def cartographic_colormap():
+    """Colormap for an elevation map style.
+
+    .. warning::
+        Not implemented.
+
+    .. note::
+        This should implement `something that looks like this
+        <https://matplotlib.org/3.2.1/tutorials/colors/colormapnorms.html#twoslopenorm-different-mapping-on-either-side-of-a-center>`_,
+        and should be configured to always setting the break to whatever
+        sea-level is (or zero?).
+    """
+
+    raise NotImplementedError
+
+
+def aerial_colormap():
+    """Colormap for a pesudorealistic looking aerial shot.
+
+    .. warning::
+        Not implemented.
+    """
+
+    raise NotImplementedError
+
+
 def append_colorbar(ci, ax):
     """Append a colorbar, consistently placed.
 
@@ -478,30 +505,159 @@ def append_colorbar(ci, ax):
     return cb
 
 
-def cartographic_colormap():
-    """Colormap for an elevation map style.
+def get_display_arrays(VarInst, data=None):
+    """Get arrays for display of Variables.
 
-    .. warning::
-        Not implemented.
+    Function takes as argument a `VariableInstance` from a `Section` or
+    `Planform` and an optional :obj:`data` argument, which specifies the data
+    type to return, and gives back arrays of 1) data, 2) display x-coordinates
+    and 3) display y-coordinates.
 
-    .. note::
-        This should implement `something that looks like this
-        <https://matplotlib.org/3.2.1/tutorials/colors/colormapnorms.html#twoslopenorm-different-mapping-on-either-side-of-a-center>`_,
-        and should be configured to always setting the break to whatever
-        sea-level is (or zero?).
-    """
+    Parameters
+    ----------
+    VarInst : :obj:`~deltametrics.section.BaseSectionVariable` subclass
+        The `Variable` instance to visualize. May be any subclass of
+        :obj:`~deltametrics.section.BaseSectionVariable` or
+        :obj:`~deltametrics.plan.BasePlanformVariable`.
 
-    raise NotImplementedError
+    data : :obj:`str`, optional
+        The type of data to visualize. Supported options are `'spacetime'`,
+        `'preserved'`, and `'stratigraphy'`. Default is to display full
+        spacetime plot for variable generated from a `DataCube`, and
+        stratigraphy for a `StratigraphyCube` variable. Note that variables
+        sourced from a `StratigraphyCube` do not support the `spacetime` or
+        `preserved` options, and a variable from `DataCube` will only support
+        `stratigraphy` if the Cube has computed "quick" stratigraphy.
+        """
+    # # #  SectionVariables  # # #
+    if issubclass(type(VarInst), section.BaseSectionVariable):
+        # #  DataSection  # #
+        if isinstance(VarInst, section.DataSectionVariable):
+            data = data or VarInst._default_data
+            if data in VarInst._spacetime_names:
+                return VarInst, VarInst._S, VarInst._Z
+            elif data in VarInst._preserved_names:
+                return VarInst.as_preserved(), VarInst._S, VarInst._Z
+            elif data in VarInst._stratigraphy_names:
+                _sp = VarInst.as_stratigraphy()
+                _arr_Y = VarInst.strat_attr['psvd_flld'][:_sp.shape[0], ...]
+                _arr_X = np.tile(VarInst._s, (_sp.shape[0], 1))
+                return _sp.toarray().view(section.DataSectionVariable), _arr_X, _arr_Y
+            else:
+                raise ValueError('Bad data argument: %s' % str(data))
+        # #  StratigraphySection  # #
+        elif isinstance(VarInst, section.StratigraphySectionVariable):
+            data = data or VarInst._default_data
+            if data in VarInst._spacetime_names:
+                VarInst._check_knows_spacetime()  # always False
+            elif data in VarInst._preserved_names:
+                VarInst._check_knows_spacetime()  # always False
+            elif data in VarInst._stratigraphy_names:
+                return VarInst, VarInst._S, VarInst._Z
+            else:
+                raise ValueError('Bad data argument: %s' % str(data))
+        else:
+            raise TypeError
+
+    # # #  PlanformVariables  # # #
+    elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
+        raise NotImplementedError
+    else:
+        raise TypeError('Invaid "VarInst" type: %s' % type(VarInst))
 
 
-def aerial_colormap():
-    """Colormap for a pesudorealistic looking aerial shot.
+def get_display_lines(VarInst, data=None):
+    # # #  SectionVariables  # # #
+    if issubclass(type(VarInst), section.BaseSectionVariable):
+        # #  DataSection  # #
+        if isinstance(VarInst, section.DataSectionVariable):
+            def _reshape_long(X):
+                # util for reshaping s- and z-values appropriately
+                return np.vstack((X[:, :-1].flatten(),
+                                  X[:, 1:].flatten())).T.reshape(-1, 2, 1)
+            data = data or VarInst._default_data
+            if data in VarInst._spacetime_names:
+                z = _reshape_long(VarInst._Z)
+                vals = VarInst[:, :-1]
+            elif data in VarInst._preserved_names:
+                z = _reshape_long(VarInst._Z)
+                vals = VarInst.as_preserved()[:, :-1]
+            elif data in VarInst._stratigraphy_names:
+                VarInst._check_knows_stratigraphy()  # need to check explicitly
+                z = _reshape_long(np.copy(VarInst.strat_attr['strata']))
+                vals = VarInst[:, :-1]
+            else:
+                raise ValueError('Bad data argument: %s' % str(data))
+            s = _reshape_long(VarInst._S)
+            segments = np.concatenate([s, z], axis=2)
+            if data in VarInst._stratigraphy_names:
+                # flip = draw late to early
+                vals = np.fliplr(np.flipud(vals))
+                segments = np.flipud(segments)
+            return vals, segments
+        # #  StratigraphySection  # #
+        elif isinstance(VarInst, section.StratigraphySectionVariable):
+            data = data or VarInst._default_data
+            if data in VarInst._spacetime_names:
+                VarInst._check_knows_spacetime()  # always False
+            elif data in VarInst._preserved_names:
+                VarInst._check_knows_spacetime()  # always False
+            elif data in VarInst._stratigraphy_names:
+                raise NotImplementedError  # not sure best implementation
+            else:
+                raise ValueError('Bad data argument: %s' % str(data))
+        else:
+            raise TypeError
 
-    .. warning::
-        Not implemented.
-    """
+    # # #  PlanformVariables  # # #
+    elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
+        raise NotImplementedError
+    else:
+        raise TypeError('Invaid "VarInst" type: %s' % type(VarInst))
 
-    raise NotImplementedError
+
+def get_display_limits(VarInst, data=None):
+    # # #  SectionVariables  # # #
+    if issubclass(type(VarInst), section.BaseSectionVariable):
+        # #  DataSection  # #
+        if isinstance(VarInst, section.DataSectionVariable):
+            data = data or VarInst._default_data
+            if data in VarInst._spacetime_names:
+                return np.min(VarInst._S), np.max(VarInst._S), \
+                    np.min(VarInst._Z), np.max(VarInst._Z)
+            elif data in VarInst._preserved_names:
+                VarInst._check_knows_stratigraphy()  # need to check explicitly
+                return np.min(VarInst._S), np.max(VarInst._S), \
+                    np.min(VarInst._Z), np.max(VarInst._Z)
+            elif data in VarInst._stratigraphy_names:
+                VarInst._check_knows_stratigraphy()  # need to check explicitly
+                _strata = np.copy(VarInst.strat_attr['strata'])
+                return np.min(VarInst._S), np.max(VarInst._S), \
+                    np.min(_strata), np.max(_strata) * 1.5
+            else:
+                raise ValueError('Bad data argument: %s' % str(data))
+
+        # #  StratigraphySection  # #
+        elif isinstance(VarInst, section.StratigraphySectionVariable):
+            data = data or VarInst._default_data
+            if data in VarInst._spacetime_names:
+                VarInst._check_knows_spacetime()  # always False
+            elif data in VarInst._preserved_names:
+                VarInst._check_knows_spacetime()  # always False
+            elif data in VarInst._stratigraphy_names:
+                return np.min(VarInst._S), np.max(VarInst._S), \
+                    np.min(VarInst._Z), np.max(VarInst._Z) * 1.5
+            else:
+                raise ValueError('Bad data argument: %s' % str(data))
+
+        else:
+            raise TypeError
+
+    # # #  PlanformVariables  # # #
+    elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
+        raise NotImplementedError
+    else:
+        raise TypeError('Invaid "VarInst" type: %s' % type(VarInst))
 
 
 def _fill_steps(where, x=1, y=1, y0=0, **kwargs):

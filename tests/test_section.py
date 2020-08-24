@@ -235,56 +235,58 @@ class TestSectionFromDataCubeNoStratigraphy:
 
     def test_nostrat_show_shaded_spacetime(self):
         self.rcm8cube_nostrat.sections['test'].show('time', style='shaded',
-                                                    display_array_style='spacetime')
+                                                    data='spacetime')
 
     def test_nostrat_show_shaded_spacetime_specific_ax(self):
         fig, ax = plt.subplots()
         self.rcm8cube_nostrat.sections['test'].show('time', style='shaded',
-                                                    display_array_style='spacetime', ax=ax)
+                                                    data='spacetime', ax=ax)
 
     def test_nostrat_show_shaded_spacetime_no_cube(self):
         sass = section.StrikeSection(y=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass.show('time', style='shaded',
-                      display_array_style='spacetime')
+                      data='spacetime')
 
     def test_nostrat_show_shaded_aspreserved(self):
         with pytest.raises(AttributeError, match=r'No preservation information.'):
             self.rcm8cube_nostrat.sections['test'].show('time', style='shaded',
-                                                        display_array_style='preserved')
+                                                        data='preserved')
 
     def test_nostrat_show_shaded_asstratigraphy(self):
         with pytest.raises(AttributeError, match=r'No preservation information.'):
             self.rcm8cube_nostrat.sections['test'].show('time', style='shaded',
-                                                        display_array_style='stratigraphy')
+                                                        data='stratigraphy')
 
     def test_nostrat_show_lines_spacetime(self):
         self.rcm8cube_nostrat.sections['test'].show('time', style='lines',
-                                                    display_array_style='spacetime')
+                                                    data='spacetime')
 
     def test_nostrat_show_lines_aspreserved(self):
         with pytest.raises(AttributeError, match=r'No preservation information.'):
             self.rcm8cube_nostrat.sections['test'].show('time', style='lines',
-                                                        display_array_style='preserved')
+                                                        data='preserved')
 
     def test_nostrat_show_lines_asstratigraphy(self):
         with pytest.raises(AttributeError, match=r'No preservation information.'):
             self.rcm8cube_nostrat.sections['test'].show('time', style='lines',
-                                                        display_array_style='stratigraphy')
+                                                        data='stratigraphy')
 
     def test_nostrat_show_bad_style(self):
         with pytest.raises(ValueError, match=r'Bad style argument: "somethinginvalid"'):
             self.rcm8cube_nostrat.sections['test'].show('time', style='somethinginvalid',
-                                                        display_array_style='spacetime', label=True)
+                                                        data='spacetime', label=True)
 
     def test_nostrat_show_bad_variable(self):
         with pytest.raises(AttributeError):
             self.rcm8cube_nostrat.sections['test'].show('badvariablename')
 
     def test_nostrat_show_label_true(self):
+        # no assertions, just functionality test
         self.rcm8cube_nostrat.sections['test'].show('time', label=True)
 
     def test_nostrat_show_label_given(self):
+        # no assertions, just functionality test
         self.rcm8cube_nostrat.sections['test'].show('time', label='TESTLABEL!')
 
 
@@ -373,52 +375,54 @@ class TestSectionFromDataCubeWithStratigraphy:
 
     def test_withstrat_show_shaded_spacetime(self):
         self.rcm8cube.sections['test'].show('time', style='shaded',
-                                            display_array_style='spacetime')
+                                            data='spacetime')
 
     def test_withstrat_show_shaded_spacetime_specific_ax(self):
         fig, ax = plt.subplots()
         self.rcm8cube.sections['test'].show('time', style='shaded',
-                                            display_array_style='spacetime', ax=ax)
+                                            data='spacetime', ax=ax)
 
     def test_withstrat_show_shaded_spacetime_no_cube(self):
         sass = section.StrikeSection(y=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass.show('time', style='shaded',
-                      display_array_style='spacetime')
+                      data='spacetime')
 
     def test_withstrat_show_shaded_aspreserved(self):
         self.rcm8cube.sections['test'].show('time', style='shaded',
-                                            display_array_style='preserved')
+                                            data='preserved')
 
     def test_withstrat_show_shaded_asstratigraphy(self):
         self.rcm8cube.sections['test'].show('time', style='shaded',
-                                            display_array_style='stratigraphy')
+                                            data='stratigraphy')
 
     def test_withstrat_show_lines_spacetime(self):
         self.rcm8cube.sections['test'].show('time', style='lines',
-                                            display_array_style='spacetime')
+                                            data='spacetime')
 
     def test_withstrat_show_lines_aspreserved(self):
         self.rcm8cube.sections['test'].show('time', style='lines',
-                                            display_array_style='preserved')
+                                            data='preserved')
 
     def test_withstrat_show_lines_asstratigraphy(self):
         self.rcm8cube.sections['test'].show('time', style='lines',
-                                            display_array_style='stratigraphy')
+                                            data='stratigraphy')
 
     def test_withstrat_show_bad_style(self):
         with pytest.raises(ValueError, match=r'Bad style argument: "somethinginvalid"'):
             self.rcm8cube.sections['test'].show('time', style='somethinginvalid',
-                                                display_array_style='spacetime', label=True)
+                                                data='spacetime', label=True)
 
     def test_withstrat_show_bad_variable(self):
         with pytest.raises(AttributeError):
             self.rcm8cube.sections['test'].show('badvariablename')
 
     def test_withstrat_show_label_true(self):
+        # no assertions, just functionality test
         self.rcm8cube.sections['test'].show('time', label=True)
 
     def test_withstrat_show_label_given(self):
+        # no assertions, just functionality test
         self.rcm8cube.sections['test'].show('time', label='TESTLABEL!')
 
 
@@ -480,56 +484,58 @@ class TestSectionFromStratigraphyCube:
     def test_strat_show_shaded_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
             self.sc8cube.sections['test'].show('time', style='shaded',
-                                               display_array_style='spacetime')
+                                               data='spacetime')
 
     def test_strat_show_shaded_spacetime_no_cube(self):
         sass = section.StrikeSection(y=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass.show('time', style='shaded',
-                      display_array_style='spacetime')
+                      data='spacetime')
 
     def test_strat_show_shaded_aspreserved(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
             self.sc8cube.sections['test'].show('time', style='shaded',
-                                               display_array_style='preserved')
+                                               data='preserved')
 
     def test_strat_show_shaded_asstratigraphy(self):
         self.sc8cube.sections['test'].show('time', style='shaded',
-                                           display_array_style='stratigraphy')
+                                           data='stratigraphy')
 
     def test_strat_show_shaded_asstratigraphy_specific_ax(self):
         fig, ax = plt.subplots()
         self.sc8cube.sections['test'].show('time', style='shaded',
-                                           display_array_style='stratigraphy', ax=ax)
+                                           data='stratigraphy', ax=ax)
 
     def test_strat_show_lines_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
             self.sc8cube.sections['test'].show('time', style='lines',
-                                               display_array_style='spacetime')
+                                               data='spacetime')
 
     def test_strat_show_lines_aspreserved(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
             self.sc8cube.sections['test'].show('time', style='lines',
-                                               display_array_style='preserved')
+                                               data='preserved')
 
     @pytest.mark.xfail(reason='not yet decided best way to implement')
     def test_strat_show_lines_asstratigraphy(self):
         self.sc8cube.sections['test'].show('time', style='lines',
-                                           display_array_style='stratigraphy')
+                                           data='stratigraphy')
 
     def test_strat_show_bad_style(self):
         with pytest.raises(ValueError, match=r'Bad style argument: "somethinginvalid"'):
             self.sc8cube.sections['test'].show('time', style='somethinginvalid',
-                                               display_array_style='spacetime', label=True)
+                                               data='spacetime', label=True)
 
     def test_strat_show_bad_variable(self):
         with pytest.raises(AttributeError):
             self.sc8cube.sections['test'].show('badvariablename')
 
     def test_strat_show_label_true(self):
+        # no assertions, just functionality test
         self.sc8cube.sections['test'].show('time', label=True)
 
     def test_strat_show_label_given(self):
+        # no assertions, just functionality test
         self.sc8cube.sections['test'].show('time', label='TESTLABEL!')
 
 
@@ -582,43 +588,6 @@ class TestDataSectionVariableNoStratigraphy:
     def test_dsv_as_stratigraphy(self):
         with pytest.raises(AttributeError, match=r'No preservation information.'):
             self.dsv.as_stratigraphy()
-
-    def test_dsv_get_display_arrays_spacetime(self):
-        _data, _X, _Y = self.dsv.get_display_arrays(style='spacetime')
-        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
-        assert np.all(_data == self.dsv)
-
-    def test_dsv_get_display_arrays_preserved(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
-            self.dsv.get_display_arrays(style='preserved')
-
-    def test_dsv_get_display_arrays_stratigraphy(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
-            self.dsv.get_display_arrays(style='stratigraphy')
-
-    def test_dsv_get_display_lines_spacetime(self):
-        _data, _segments = self.dsv.get_display_lines(style='spacetime')
-        assert _segments.shape[1:] == (2, 2)
-
-    def test_dsv_get_display_lines_preserved(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
-            self.dsv.get_display_lines(style='preserved')
-
-    def test_dsv_get_display_lines_stratigraphy(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
-            self.dsv.get_display_lines(style='stratigraphy')
-
-    def test_dsv_get_display_limits_spacetime(self):
-        _lims = self.dsv.get_display_limits(style='spacetime')
-        assert len(_lims) == 4
-
-    def test_dsv_get_display_limits_preserved(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
-            self.dsv.get_display_limits(style='preserved')
-
-    def test_dsv_get_display_limits_stratigraphy(self):
-        with pytest.raises(AttributeError, match=r'No preservation information.'):
-            self.dsv.get_display_limits(style='stratigraphy')
 
 
 class TestDataSectionVariableWithStratigraphy:
@@ -674,45 +643,8 @@ class TestDataSectionVariableWithStratigraphy:
 
     def test_dsv_as_stratigraphy(self):
         _arr = self.dsv.as_stratigraphy()
-        assert _arr.shape == (
-            np.max(self.dsv.strat_attr['z_sp']) + 1, self.dsv.shape[1])
-        # assert isinstance(_arr, np.ndarray)
-
-    def test_dsv_get_display_arrays_spacetime(self):
-        _data, _X, _Y = self.dsv.get_display_arrays(style='spacetime')
-        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
-        assert np.all(_data == self.dsv)
-
-    def test_dsv_get_display_arrays_preserved(self):
-        _data, _X, _Y = self.dsv.get_display_arrays(style='preserved')
-        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
-        assert np.any(~_data._mask)  # check that some are False
-
-    def test_dsv_get_display_arrays_stratigraphy(self):
-        _data, _X, _Y = self.dsv.get_display_arrays(style='stratigraphy')
-        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
-
-    def test_dsv_get_display_lines_spacetime(self):
-        _data, _segments = self.dsv.get_display_lines(style='spacetime')
-        assert _segments.shape[1:] == (2, 2)
-
-    def test_dsv_get_display_lines_preserved(self):
-        self.dsv.get_display_lines(style='preserved')
-
-    def test_dsv_get_display_lines_stratigraphy(self):
-        self.dsv.get_display_lines(style='stratigraphy')
-
-    def test_dsv_get_display_limits_spacetime(self):
-        _lims = self.dsv.get_display_limits(style='spacetime')
-        assert len(_lims) == 4
-
-    def test_dsv_get_display_limits_preserved(self):
-        _lims = self.dsv.get_display_limits(style='preserved')
-        assert len(_lims) == 4
-
-    def test_dsv_get_display_limits_stratigraphy(self):
-        _lims = self.dsv.get_display_limits(style='stratigraphy')
-        assert len(_lims) == 4
+        assert _arr.shape == (np.max(self.dsv.strat_attr['z_sp']) + 1,
+                              self.dsv.shape[1])
 
 
 class TestStratigraphySectionVariable:
@@ -766,42 +698,3 @@ class TestStratigraphySectionVariable:
     def test_ssv__check_knows_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
             self.ssv._check_knows_spacetime()
-
-    def test_ssv_get_display_arrays_spacetime(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _data, _X, _Y = self.ssv.get_display_arrays(style='spacetime')
-
-    def test_ssv_get_display_arrays_preserved(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _data, _X, _Y = self.ssv.get_display_arrays(style='preserved')
-
-    def test_ssv_get_display_arrays_stratigraphy(self):
-        _data, _X, _Y = self.ssv.get_display_arrays(style='stratigraphy')
-        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
-
-    def test_ssv_get_display_lines_spacetime(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _data, _segments = self.ssv.get_display_lines(style='spacetime')
-
-    def test_ssv_get_display_lines_preserved(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            self.ssv.get_display_lines(style='preserved')
-
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-                       reason='Have not determined how to implement yet.')
-    def test_ssv_get_display_lines_stratigraphy(self):
-        self.ssv.get_display_lines(style='stratigraphy')
-
-    def test_ssv_get_display_limits_spacetime(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _lims = self.ssv.get_display_limits(style='spacetime')
-
-    def test_ssv_get_display_limits_preserved(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _lims = self.ssv.get_display_limits(style='preserved')
-
-    def test_ssv_get_display_limits_stratigraphy(self):
-        _lims = self.ssv.get_display_limits(style='stratigraphy')
-        assert len(_lims) == 4
-
-    ### TEST ALL OF THE STRATATTR STUFF IN TEST_STRAT ####

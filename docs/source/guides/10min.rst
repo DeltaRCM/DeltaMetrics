@@ -138,7 +138,7 @@ Using the "quick" stratigraphy, we can visualize all of the available data varia
     >>> fig, ax = plt.subplots(7, 1, sharex=True, figsize=(8,5))
     >>> ax = ax.flatten()
     >>> for i, var in enumerate(['time'] + rcm8cube.dataio.known_variables):
-    ...    rcm8cube.show_section('demo', var, display_array_style='stratigraphy', ax=ax[i])
+    ...    rcm8cube.show_section('demo', var, data='stratigraphy', ax=ax[i])
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/10min_all_sections_strat.py

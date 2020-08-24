@@ -7,4 +7,4 @@ fig, ax = plt.subplots(7, 1, sharex=True, sharey=True, figsize=(12, 9))
 ax = ax.flatten()
 for i, var in enumerate(['time'] + sc8cube.dataio.known_variables):
     sc8cube.show_section('demo', var, ax=ax[i], label=True,
-                         style='shaded', display_array_style='stratigraphy')
+                         style='shaded', data='stratigraphy')

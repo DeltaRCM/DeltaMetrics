@@ -259,8 +259,8 @@ Now, the ``DataCube`` has knowledge of stratigraphy, which we can further use to
 
     >>> fig, ax = plt.subplots(3, 1, sharex=True, figsize=(12, 8))
     >>> rcm8cube.show_section('demo', 'velocity', ax=ax[0])
-    >>> rcm8cube.show_section('demo', 'velocity', display_array_style='preserved', ax=ax[1])
-    >>> rcm8cube.show_section('demo', 'velocity', display_array_style='stratigraphy', ax=ax[2])
+    >>> rcm8cube.show_section('demo', 'velocity', data='preserved', ax=ax[1])
+    >>> rcm8cube.show_section('demo', 'velocity', data='stratigraphy', ax=ax[2])
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_quick_stratigraphy_sections.py
@@ -274,7 +274,7 @@ Quick stratigraphy makes it easy to visualize the behavior of the model across e
     >>> ax = ax.flatten()
     >>> for i, var in enumerate(['time'] + rcm8cube.dataio.known_variables):
     ...     rcm8cube.show_section('demo', var, ax=ax[i], label=True,
-    ...       style='shaded', display_array_style='stratigraphy')
+    ...       style='shaded', data='stratigraphy')
     >>> plt.show() #doctest: +SKIP
 
 
@@ -377,9 +377,9 @@ Let's examine the stratigraphy in three different visual styles.
 .. doctest::
 
     >>> fig, ax = plt.subplots(3, 1, sharex=True, sharey=True, figsize=(12, 8))
-    >>> rcm8cube.sections['demo'].show('time', style='lines', display_array_style='stratigraphy', ax=ax[0], label=True)
+    >>> rcm8cube.sections['demo'].show('time', style='lines', data='stratigraphy', ax=ax[0], label=True)
     >>> sc8cube.sections['demo'].show('time', ax=ax[1])
-    >>> rcm8cube.sections['demo'].show('time', display_array_style='stratigraphy', ax=ax[2])
+    >>> rcm8cube.sections['demo'].show('time', data='stratigraphy', ax=ax[2])
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_three_stratigraphy.py
@@ -392,7 +392,7 @@ Similar to the demonstration above, each variable (property) of the underlying c
     >>> ax = ax.flatten()
     >>> for i, var in enumerate(['time'] + sc8cube.dataio.known_variables):
     ...     sc8cube.show_section('demo', var, ax=ax[i], label=True,
-    ...                          style='shaded', display_array_style='stratigraphy')
+    ...                          style='shaded', data='stratigraphy')
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_all_vars_stratigraphy.py

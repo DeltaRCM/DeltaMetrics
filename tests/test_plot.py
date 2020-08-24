@@ -9,6 +9,10 @@ import matplotlib.pyplot as plt
 
 from deltametrics import plot
 from deltametrics import cube
+from deltametrics import section
+
+rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
+                         'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
 
 
 def test_initialize_default_VariableInfo():
@@ -258,3 +262,181 @@ class TestSODTTST:
         with pytest.raises(ValueError, match=r'Elevation data "e" must *.'):
             plot.show_one_dimensional_trajectory_to_strata(_e)
         plt.close()
+
+
+class TestGetDisplayArrays:
+
+    rcm8cube_nostrat = cube.DataCube(rcm8_path)
+    rcm8cube_nostrat.register_section('test', section.StrikeSection(y=5))
+    dsv_nostrat = rcm8cube_nostrat.sections['test']['velocity']
+
+    rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube.stratigraphy_from('eta')
+    rcm8cube.register_section('test', section.StrikeSection(y=5))
+    dsv = rcm8cube.sections['test']['velocity']
+
+    sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube)
+    sc8cube.register_section('test', section.StrikeSection(y=5))
+    ssv = sc8cube.sections['test']['velocity']
+
+    def test_dsv_nostrat_get_display_arrays_spacetime(self):
+        _data, _X, _Y = plot.get_display_arrays(self.dsv_nostrat,
+                                                data='spacetime')
+        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert np.all(_data == self.dsv_nostrat)
+
+    def test_dsv_nostrat_get_display_arrays_preserved(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            plot.get_display_arrays(self.dsv_nostrat,
+                                    data='preserved')
+
+    def test_dsv_nostrat_get_display_arrays_stratigraphy(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            plot.get_display_arrays(self.dsv_nostrat,
+                                    data='stratigraphy')
+
+    def test_dsv_get_display_arrays_spacetime(self):
+        _data, _X, _Y = plot.get_display_arrays(self.dsv,
+                                                data='spacetime')
+        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert np.all(_data == self.dsv)
+
+    def test_dsv_get_display_arrays_preserved(self):
+        _data, _X, _Y = plot.get_display_arrays(self.dsv,
+                                                data='preserved')
+        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert np.any(~_data._mask)  # check that some are False
+
+    def test_dsv_get_display_arrays_stratigraphy(self):
+        _data, _X, _Y = plot.get_display_arrays(self.dsv,
+                                                data='stratigraphy')
+        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+
+    def test_ssv_get_display_arrays_spacetime(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            _data, _X, _Y = plot.get_display_arrays(self.ssv,
+                                                    data='spacetime')
+
+    def test_ssv_get_display_arrays_preserved(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            _data, _X, _Y = plot.get_display_arrays(self.ssv,
+                                                    data='preserved')
+
+    def test_ssv_get_display_arrays_stratigraphy(self):
+        _data, _X, _Y = plot.get_display_arrays(self.ssv,
+                                                data='stratigraphy')
+        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+
+
+class TestGetDisplayLines:
+
+    rcm8cube_nostrat = cube.DataCube(rcm8_path)
+    rcm8cube_nostrat.register_section('test', section.StrikeSection(y=5))
+    dsv_nostrat = rcm8cube_nostrat.sections['test']['velocity']
+
+    rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube.stratigraphy_from('eta')
+    rcm8cube.register_section('test', section.StrikeSection(y=5))
+    dsv = rcm8cube.sections['test']['velocity']
+
+    sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube)
+    sc8cube.register_section('test', section.StrikeSection(y=5))
+    ssv = sc8cube.sections['test']['velocity']
+
+    def test_dsv_nostrat_get_display_lines_spacetime(self):
+        _data, _segments = plot.get_display_lines(self.dsv_nostrat,
+                                                  data='spacetime')
+        assert _segments.shape[1:] == (2, 2)
+
+    def test_dsv_nostrat_get_display_lines_preserved(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            plot.get_display_lines(self.dsv_nostrat,
+                                   data='preserved')
+
+    def test_dsv_nostrat_get_display_lines_stratigraphy(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            plot.get_display_lines(self.dsv_nostrat,
+                                   data='stratigraphy')
+
+    def test_dsv_get_display_lines_spacetime(self):
+        _data, _segments = plot.get_display_lines(self.dsv,
+                                                  data='spacetime')
+        assert _segments.shape[1:] == (2, 2)
+
+    def test_dsv_get_display_lines_preserved(self):
+        _data, _segments = plot.get_display_lines(self.dsv,
+                                                  data='preserved')
+        assert _segments.shape[1:] == (2, 2)
+
+    def test_dsv_get_display_lines_stratigraphy(self):
+        _data, _segments = plot.get_display_lines(self.dsv,
+                                                  data='stratigraphy')
+        assert _segments.shape[1:] == (2, 2)
+
+    def test_ssv_get_display_lines_spacetime(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            _data, _segments = plot.get_display_lines(self.ssv,
+                                                      data='spacetime')
+
+    def test_ssv_get_display_lines_preserved(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            plot.get_display_lines(self.ssv,
+                                   data='preserved')
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not determined how to implement yet.')
+    def test_ssv_get_display_lines_stratigraphy(self):
+        plot.get_display_lines(self.ssv,
+                               data='stratigraphy')
+
+
+class TestGetDisplayLimits:
+
+    rcm8cube_nostrat = cube.DataCube(rcm8_path)
+    rcm8cube_nostrat.register_section('test', section.StrikeSection(y=5))
+    dsv_nostrat = rcm8cube_nostrat.sections['test']['velocity']
+
+    rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube.stratigraphy_from('eta')
+    rcm8cube.register_section('test', section.StrikeSection(y=5))
+    dsv = rcm8cube.sections['test']['velocity']
+
+    sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube)
+    sc8cube.register_section('test', section.StrikeSection(y=5))
+    ssv = sc8cube.sections['test']['velocity']
+
+    def test_dsv_nostrat_get_display_limits_spacetime(self):
+        _lims = plot.get_display_limits(self.dsv_nostrat, data='spacetime')
+        assert len(_lims) == 4
+
+    def test_dsv_nostrat_get_display_limits_preserved(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            plot.get_display_limits(self.dsv_nostrat, data='preserved')
+
+    def test_dsv_nostrat_get_display_limits_stratigraphy(self):
+        with pytest.raises(AttributeError, match=r'No preservation information.'):
+            plot.get_display_limits(self.dsv_nostrat, data='stratigraphy')
+
+    def test_dsv_get_display_limits_spacetime(self):
+        _lims = plot.get_display_limits(self.dsv, data='spacetime')
+        assert len(_lims) == 4
+
+    def test_dsv_get_display_limits_preserved(self):
+        _lims = plot.get_display_limits(self.dsv, data='preserved')
+        assert len(_lims) == 4
+
+    def test_dsv_get_display_limits_stratigraphy(self):
+        _lims = plot.get_display_limits(self.dsv, data='stratigraphy')
+        assert len(_lims) == 4
+
+    def test_ssv_get_display_limits_spacetime(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            _lims = plot.get_display_limits(self.ssv, data='spacetime')
+
+    def test_ssv_get_display_limits_preserved(self):
+        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+            _lims = plot.get_display_limits(self.ssv, data='preserved')
+
+    def test_ssv_get_display_limits_stratigraphy(self):
+        _lims = plot.get_display_limits(self.ssv, data='stratigraphy')
+        assert len(_lims) == 4
