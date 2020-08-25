@@ -450,7 +450,7 @@ def _compute_preservation_to_cube(strata, z):
     record. Then we store this time indicator into the sparse array.
 
     So, in the end, coordinates in resultant boxy stratigraphy are linked to
-    `t-x-y` coordinates in the data source to build a mapping that can be
+    `t-x-y` coordinates in the data source, by building a mapping that can be
     utilized repeatedly from a single stratigraphy computation.
 
     This function is declared as private and not part of the public API,
@@ -471,14 +471,14 @@ def _compute_preservation_to_cube(strata, z):
     Returns
     -------
     strat_coords : :obj:`ndarray`
-        A `3 x N` array of `z-x-y` coordinates where information is preserved
-        in the boxy stratigraphy. Columns in `strat_coords` correspond with
-        columns in `data_coords`.
+        An `N x 3` array of `z-x-y` coordinates where information is preserved
+        in the boxy stratigraphy. Rows in `strat_coords` correspond with
+        rows in `data_coords`.
 
     data_coords : :obj:`ndarray`
-        A `3 x N` array of `t-x-y` coordinates where information is to be
-        extracted from the data array.  Columns in `data_coords` correspond
-        with columns in `strat_coords`.
+        An `N x 3` array of `t-x-y` coordinates where information is to be
+        extracted from the data array. Rows in `data_coords` correspond
+        with rows in `strat_coords`.
     """
     # preallocate boxy arrays and helpers
     plate = np.atleast_1d(np.zeros(strata.shape[1:], dtype=np.int8))
@@ -502,7 +502,7 @@ def _compute_preservation_to_cube(strata, z):
         strat_coords.append(strat_ks)  # list of numpy arrays
         data_coords.append(data_idxs)
 
-    strat_coords = np.vstack(strat_coords)
+    strat_coords = np.vstack(strat_coords)  # to single (N x 3) array
     data_coords = np.vstack(data_coords)
     return strat_coords, data_coords
 
