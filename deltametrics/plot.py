@@ -546,9 +546,10 @@ def get_display_arrays(VarInst, data=None):
                 return VarInst.as_preserved(), VarInst._S, VarInst._Z
             elif data in VarInst._stratigraphy_names:
                 _sp = VarInst.as_stratigraphy()
+                _den = _sp.toarray().view(section.DataSectionVariable)
                 _arr_Y = VarInst.strat_attr['psvd_flld'][:_sp.shape[0], ...]
                 _arr_X = np.tile(VarInst._s, (_sp.shape[0], 1))
-                return _sp.toarray().view(section.DataSectionVariable), _arr_X, _arr_Y
+                return _den[1:, 1:], _arr_X, _arr_Y
             else:
                 raise ValueError('Bad data argument: %s' % str(data))
         # #  StratigraphySection  # #

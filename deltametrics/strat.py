@@ -288,8 +288,8 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
         ----------
         _dir : :obj:`str`
             Which direction to slice. If 'section', then _x0 is the
-            _coordinates to slice in the domain length, and _x1 is the coordinates
-            _to slice in the domain width direction.
+            _coordinates to slice in the domain length, and _x1 is the
+            coordinates _to slice in the domain width direction.
 
         _x0, _x1
 
@@ -305,13 +305,11 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
             strat_attr['psvd_idx'] = _psvd_idx = self.psvd_idx[:, _x0, _x1]
             strat_attr['psvd_flld'] = self.psvd_flld[:, _x0, _x1]
             strat_attr['x0'] = _i = self.psvd_vxl_idx[:, _x0, _x1]
-            strat_attr['x1'] = _j = np.tile(
-                np.arange(_i.shape[1]), (_i.shape[0], 1))
-            strat_attr['s'] = _j[0, :]                  # along-section coord
-            # along-section coord, sparse
-            strat_attr['s_sp'] = _j[_psvd_idx]
-            # vertical coord, sparse
-            strat_attr['z_sp'] = _i[_psvd_idx]
+            strat_attr['x1'] = _j = np.tile(np.arange(_i.shape[1]),
+                                            (_i.shape[0], 1))
+            strat_attr['s'] = _j[0, :]          # along-sect coord
+            strat_attr['s_sp'] = _j[_psvd_idx]  # along-sect coord, sparse
+            strat_attr['z_sp'] = _i[_psvd_idx]  # vert coord, sparse
 
         elif _dir == 'plan':
             raise NotImplementedError
