@@ -30,20 +30,38 @@ def format_table(number):
 
 class NoStratigraphyError(AttributeError):
     """Error message for access when no stratigraphy.
+
+    Parameters
+    ----------
+    obj : :obj:`str`
+        Which object user tried to access.
+
+    var : :obj:`str`, optional
+        Which variable user tried to access. If provided, more information
+        is given in the error message.
+
+    Examples
+    --------
+
+    Without the optional `var` argument:
+
+    .. doctest::
+
+        >>> raise utils.NoStratigraphyError(rcm8cube) #doctest: +SKIP
+        deltametrics.utils.NoStratigraphyError: 'DataCube' object
+        has no preservation or stratigraphy information.
+
+    With the `var` argument given as ``'strat_attr'``:
+
+    .. doctest::
+
+        >>> raise utils.NoStratigraphyError(rcm8cube, 'strat_attr') #doctest: +SKIP
+        deltametrics.utils.NoStratigraphyError: 'DataCube' object
+        has no attribute 'strat_attr'.
     """
 
     def __init__(self, obj, var=None):
-        """Initialize the error message and raise.
-
-        Parameters
-        ----------
-        obj : :obj:`str`
-            Which object user tried to access.
-
-        var : :obj:`str`, optional
-            Which variable user tried to access. If provided, more information
-            is given in the error message.
-        """
+        """Documented in class docstring."""
         if not (var is None):
             message = "'" + type(obj).__name__ + "'" + " object has no attribute " \
                       "'" + var + "'."
@@ -52,6 +70,22 @@ class NoStratigraphyError(AttributeError):
                       "or stratigraphy information."
         super().__init__(message)
 
+"""
+    yields an exception with:
+
+    .. code::
+
+        deltametrics.utils.NoStratigraphyError: 'DataCube' object
+        has no preservation or stratigraphy information.
+
+
+    .. code::
+
+        deltametrics.utils.NoStratigraphyError: 'DataCube' object
+        has no attribute 'strat_attr'.
+
+
+"""
 
 def needs_stratigraphy(func):
     """Decorator for properties requiring stratigraphy.

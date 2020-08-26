@@ -311,7 +311,10 @@ class TestGetDisplayArrays:
     def test_dsv_get_display_arrays_stratigraphy(self):
         _data, _X, _Y = plot.get_display_arrays(self.dsv,
                                                 data='stratigraphy')
-        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert (_data.shape[0] == _X.shape[0] - 1)
+        assert (_data.shape[1] == _Y.shape[1] - 1)
+        assert (_data.shape[0] == _X.shape[0] - 1)
+        assert (_data.shape[1] == _Y.shape[1] - 1)
 
     def test_ssv_get_display_arrays_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):

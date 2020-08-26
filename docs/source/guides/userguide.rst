@@ -82,7 +82,7 @@ Let’s examine the timeseries of bed elevations by taking slices out of the ``'
 
 .. doctest::
 
-    >>> nt = 6
+    >>> nt = 5
     >>> ts = np.linspace(0, rcm8cube['eta'].shape[0]-1, num=nt, dtype=np.int)  # linearly interpolate ts
 
     >>> fig, ax = plt.subplots(1, nt, figsize=(12, 2))

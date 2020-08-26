@@ -404,7 +404,7 @@ def _compute_preservation_to_time_intervals(psvd):
     because the deposits reflect the conditions *between* the save intervals.
 
     While this computation is simply an offset-by-one indexing (``psvd[1:,
-    ...]``), the function is implemented explicityly and utilized internally
+    ...]``), the function is implemented explicitly and utilized internally
     for consistency.
 
     .. note::

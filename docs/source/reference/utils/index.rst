@@ -20,7 +20,4 @@ Utility functions
 Utility Exceptions and Warnings
 ===============================
 
-.. autosummary:: 
-	:toctree: ../../_autosummary
-
-    NoStratigraphyError
+.. autoexception:: NoStratigraphyError
