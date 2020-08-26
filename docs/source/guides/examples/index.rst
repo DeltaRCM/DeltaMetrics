@@ -11,3 +11,5 @@ Examples of how to do various tasks and visualizations in DeltaMetrics.
    io/connect_to_nonstandard_data
    plot/show_plan
    plot/show_section
+   computations/preserved_velocities
+   computations/comparing_speeds_of_stratigraphy_access

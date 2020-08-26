@@ -22,10 +22,11 @@ Section types
 .. autosummary:: 
     :toctree: ../../_autosummary
     
-    BaseSection
+    PathSection
     StrikeSection
     DipSection
     RadialSection
+    BaseSection
 
 
 Section returns
@@ -34,7 +35,6 @@ Section returns
 .. autosummary:: 
     :toctree: ../../_autosummary
 
-    BaseSectionVariable
     DataSectionVariable
     StratigraphySectionVariable
-
+    BaseSectionVariable

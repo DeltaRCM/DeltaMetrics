@@ -29,24 +29,63 @@ def format_table(number):
 
 
 class NoStratigraphyError(AttributeError):
-    def __init__(self, var):
-        """
+    """Error message for access when no stratigraphy.
 
-        Parameters
-        ----------
-        var : :obj:`str`
-            Which variable user tried to access.
+    Parameters
+    ----------
+    obj : :obj:`str`
+        Which object user tried to access.
 
-        obj : :obj:`str`
-            Which object user tried to access.
-        """
-        print(var)
-        message = "'" + type(obj).__name__ +"'" + " object has no attribute " \
-                  "'" + var
+    var : :obj:`str`, optional
+        Which variable user tried to access. If provided, more information
+        is given in the error message.
 
-        # Call the base class constructor with the parameters it needs
+    Examples
+    --------
+
+    Without the optional `var` argument:
+
+    .. doctest::
+
+        >>> raise utils.NoStratigraphyError(rcm8cube) #doctest: +SKIP
+        deltametrics.utils.NoStratigraphyError: 'DataCube' object
+        has no preservation or stratigraphy information.
+
+    With the `var` argument given as ``'strat_attr'``:
+
+    .. doctest::
+
+        >>> raise utils.NoStratigraphyError(rcm8cube, 'strat_attr') #doctest: +SKIP
+        deltametrics.utils.NoStratigraphyError: 'DataCube' object
+        has no attribute 'strat_attr'.
+    """
+
+    def __init__(self, obj, var=None):
+        """Documented in class docstring."""
+        if not (var is None):
+            message = "'" + type(obj).__name__ + "'" + " object has no attribute " \
+                      "'" + var + "'."
+        else:
+            message = "'" + type(obj).__name__ + "'" + " object has no preservation " \
+                      "or stratigraphy information."
         super().__init__(message)
 
+"""
+    yields an exception with:
+
+    .. code::
+
+        deltametrics.utils.NoStratigraphyError: 'DataCube' object
+        has no preservation or stratigraphy information.
+
+
+    .. code::
+
+        deltametrics.utils.NoStratigraphyError: 'DataCube' object
+        has no attribute 'strat_attr'.
+
+
+"""
 
 def needs_stratigraphy(func):
     """Decorator for properties requiring stratigraphy.
