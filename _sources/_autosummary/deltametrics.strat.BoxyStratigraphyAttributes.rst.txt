@@ -1,0 +1,22 @@
+deltametrics.strat.BoxyStratigraphyAttributes
+=============================================
+
+.. currentmodule:: deltametrics.strat
+
+.. autoclass:: BoxyStratigraphyAttributes
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~BoxyStratigraphyAttributes.__init__
+   
+   
+
+   
+   
+   

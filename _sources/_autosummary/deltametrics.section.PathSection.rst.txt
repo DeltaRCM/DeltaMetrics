@@ -1,0 +1,35 @@
+deltametrics.section.PathSection
+================================
+
+.. currentmodule:: deltametrics.section
+
+.. autoclass:: PathSection
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PathSection.__init__
+      ~PathSection.connect
+      ~PathSection.show
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PathSection.path
+      ~PathSection.s
+      ~PathSection.strat_attr
+      ~PathSection.trace
+      ~PathSection.variables
+      ~PathSection.z
+   
+   

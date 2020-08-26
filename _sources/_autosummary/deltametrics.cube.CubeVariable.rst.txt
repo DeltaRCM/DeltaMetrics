@@ -19,6 +19,7 @@ deltametrics.cube.CubeVariable
       ~CubeVariable.argmin
       ~CubeVariable.argpartition
       ~CubeVariable.argsort
+      ~CubeVariable.as_frozen
       ~CubeVariable.astype
       ~CubeVariable.byteswap
       ~CubeVariable.choose

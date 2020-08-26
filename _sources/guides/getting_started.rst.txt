@@ -4,10 +4,11 @@
 Getting Started
 ===============
 
-
-This section gives a learn-by-example lesson on how to use DeltaMetrics. 
+To get started with DeltaMetrics, check out the following resources.
 
 .. toctree::
    :maxdepth: 3
 
    10min
+
+

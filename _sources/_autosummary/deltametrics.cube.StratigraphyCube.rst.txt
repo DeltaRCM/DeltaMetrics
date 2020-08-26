@@ -14,6 +14,7 @@ deltametrics.cube.StratigraphyCube
    .. autosummary::
    
       ~StratigraphyCube.__init__
+      ~StratigraphyCube.export_frozen_variable
       ~StratigraphyCube.from_DataCube
       ~StratigraphyCube.read
       ~StratigraphyCube.register_plan
@@ -21,7 +22,6 @@ deltametrics.cube.StratigraphyCube
       ~StratigraphyCube.show_cube
       ~StratigraphyCube.show_plan
       ~StratigraphyCube.show_section
-      ~StratigraphyCube.stratigraphy_from
    
    
 
@@ -31,15 +31,24 @@ deltametrics.cube.StratigraphyCube
 
    .. autosummary::
    
+      ~StratigraphyCube.H
+      ~StratigraphyCube.L
+      ~StratigraphyCube.W
+      ~StratigraphyCube.X
+      ~StratigraphyCube.Y
+      ~StratigraphyCube.Z
       ~StratigraphyCube.data_path
       ~StratigraphyCube.dataio
       ~StratigraphyCube.plan_set
       ~StratigraphyCube.plans
-      ~StratigraphyCube.preserved_index
-      ~StratigraphyCube.preserved_voxel_count
       ~StratigraphyCube.section_set
       ~StratigraphyCube.sections
+      ~StratigraphyCube.shape
+      ~StratigraphyCube.strata
       ~StratigraphyCube.variables
       ~StratigraphyCube.varset
+      ~StratigraphyCube.x
+      ~StratigraphyCube.y
+      ~StratigraphyCube.z
    
    

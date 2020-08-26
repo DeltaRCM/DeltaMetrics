@@ -119,22 +119,25 @@ to style this cube similarly to another cube.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.__init__" title="deltametrics.cube.BaseCube.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data[, read, varset])</p></td>
 <td><p>Initialize the BaseCube.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.read" title="deltametrics.cube.BaseCube.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>(variables)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.export_frozen_variable" title="deltametrics.cube.BaseCube.export_frozen_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_frozen_variable</span></code></a>(var[, return_cube])</p></td>
+<td><p>Export a cube with frozen values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.read" title="deltametrics.cube.BaseCube.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>(variables)</p></td>
 <td><p>Read variable into memory</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.register_plan" title="deltametrics.cube.BaseCube.register_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_plan</span></code></a>(name, PlanInstance)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.register_plan" title="deltametrics.cube.BaseCube.register_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_plan</span></code></a>(name, PlanInstance)</p></td>
 <td><p>Register a planform to the cube.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.register_section" title="deltametrics.cube.BaseCube.register_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code></a>(name, SectionInstance)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.register_section" title="deltametrics.cube.BaseCube.register_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code></a>(name, SectionInstance)</p></td>
 <td><p>Register a section to the <a class="reference internal" href="#deltametrics.cube.BaseCube.section_set" title="deltametrics.cube.BaseCube.section_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_set()</span></code></a>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.show_cube" title="deltametrics.cube.BaseCube.show_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_cube</span></code></a>(var[, t, x, y, ax])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.show_cube" title="deltametrics.cube.BaseCube.show_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_cube</span></code></a>(var[, t, x, y, ax])</p></td>
 <td><p>Show the cube in a 3d axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.show_plan" title="deltametrics.cube.BaseCube.show_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_plan</span></code></a>(var[, t, ax, ticks])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.show_plan" title="deltametrics.cube.BaseCube.show_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_plan</span></code></a>(var[, t, ax, title, ticks])</p></td>
 <td><p>Show planform image.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.show_section" title="deltametrics.cube.BaseCube.show_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_section</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.show_section" title="deltametrics.cube.BaseCube.show_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_section</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Show a section.</p></td>
 </tr>
 </tbody>
@@ -146,6 +149,24 @@ to style this cube similarly to another cube.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.H" title="deltametrics.cube.BaseCube.H"><code class="xref py py-obj docutils literal notranslate"><span class="pre">H</span></code></a></p></td>
+<td><p>Number of elements, vertical (height) coordinate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.L" title="deltametrics.cube.BaseCube.L"><code class="xref py py-obj docutils literal notranslate"><span class="pre">L</span></code></a></p></td>
+<td><p>Number of elements, length coordinate.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.W" title="deltametrics.cube.BaseCube.W"><code class="xref py py-obj docutils literal notranslate"><span class="pre">W</span></code></a></p></td>
+<td><p>Number of elements, width coordinate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.X" title="deltametrics.cube.BaseCube.X"><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></a></p></td>
+<td><p>x-direction mesh.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.Y" title="deltametrics.cube.BaseCube.Y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></a></p></td>
+<td><p>y-direction mesh.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.Z" title="deltametrics.cube.BaseCube.Z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Z</span></code></a></p></td>
+<td><p>Vertical mesh.</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.data_path" title="deltametrics.cube.BaseCube.data_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_path</span></code></a></p></td>
 <td><p>Path connected to for file IO.</p></td>
 </tr>
@@ -164,31 +185,68 @@ to style this cube similarly to another cube.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.sections" title="deltametrics.cube.BaseCube.sections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sections</span></code></a></p></td>
 <td><p>Set of section instances.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.variables" title="deltametrics.cube.BaseCube.variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.shape" title="deltametrics.cube.BaseCube.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>Number of elements in data (HxLxW).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.variables" title="deltametrics.cube.BaseCube.variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></a></p></td>
 <td><p>List of variable names as strings.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.varset" title="deltametrics.cube.BaseCube.varset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varset</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.varset" title="deltametrics.cube.BaseCube.varset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varset</span></code></a></p></td>
 <td><p>Variable styling for plotting.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.x" title="deltametrics.cube.BaseCube.x"><code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code></a></p></td>
+<td><p>x-direction coordinate.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.y" title="deltametrics.cube.BaseCube.y"><code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code></a></p></td>
+<td><p>y-direction coordinate.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.z" title="deltametrics.cube.BaseCube.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
+<td><p>Vertical coordinate.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="attribute">
+<dt id="deltametrics.cube.BaseCube.H">
+<code class="descname">H</code><a class="headerlink" href="#deltametrics.cube.BaseCube.H" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of elements, vertical (height) coordinate.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.cube.BaseCube.L">
+<code class="descname">L</code><a class="headerlink" href="#deltametrics.cube.BaseCube.L" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of elements, length coordinate.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.cube.BaseCube.W">
+<code class="descname">W</code><a class="headerlink" href="#deltametrics.cube.BaseCube.W" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of elements, width coordinate.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.cube.BaseCube.X">
+<code class="descname">X</code><a class="headerlink" href="#deltametrics.cube.BaseCube.X" title="Permalink to this definition">¶</a></dt>
+<dd><p>x-direction mesh.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.cube.BaseCube.Y">
+<code class="descname">Y</code><a class="headerlink" href="#deltametrics.cube.BaseCube.Y" title="Permalink to this definition">¶</a></dt>
+<dd><p>y-direction mesh.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.cube.BaseCube.Z">
+<code class="descname">Z</code><a class="headerlink" href="#deltametrics.cube.BaseCube.Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vertical mesh.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="deltametrics.cube.BaseCube.__getitem__">
 <code class="descname">__getitem__</code><span class="sig-paren">(</span><em>var</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the variable.</p>
-<p>Overload slicing operations for io to return a
-<a class="reference internal" href="deltametrics.cube.CubeVariable.html#deltametrics.cube.CubeVariable" title="deltametrics.cube.CubeVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CubeVariable</span></code></a> instance when slicing.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to slice.</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>CubeVariable</strong> – The instantiated CubeVariable.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><cite>~deltametrics.cube.CubeVariable</cite></p>
-</dd>
-</dl>
+<p>Overload slicing operations for io to return correct var. Must be
+implemented by subclasses.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -212,6 +270,18 @@ to style this cube similarly to another cube.</p></li>
 <dd class="field-odd"><p><a class="reference internal" href="deltametrics.io.BaseIO.html#deltametrics.io.BaseIO" title="deltametrics.io.BaseIO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseIO</span></code></a> subclass</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.cube.BaseCube.export_frozen_variable">
+<code class="descname">export_frozen_variable</code><span class="sig-paren">(</span><em>var</em>, <em>return_cube=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.export_frozen_variable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export a cube with frozen values.</p>
+<p>Creates a <cite>H x L x W</cite> <cite>ndarray</cite> with values from variable <cite>var</cite> placed
+into the array. This method is particularly useful for inputs to
+operation that will repeatedly utilize the underlying data in
+computations. Access to underlying data is comparatively slow to data
+loaded in memory, because the <cite>Cube</cite> utilities are configured to read
+data off-disk as needed.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -299,6 +369,12 @@ user having to specify <code class="docutils literal notranslate"><span class="p
 </dl>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="deltametrics.cube.BaseCube.shape">
+<code class="descname">shape</code><a class="headerlink" href="#deltametrics.cube.BaseCube.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of elements in data (HxLxW).</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="deltametrics.cube.BaseCube.show_cube">
 <code class="descname">show_cube</code><span class="sig-paren">(</span><em>var</em>, <em>t=-1</em>, <em>x=-1</em>, <em>y=-1</em>, <em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.show_cube" title="Permalink to this definition">¶</a></dt>
@@ -307,7 +383,7 @@ user having to specify <code class="docutils literal notranslate"><span class="p
 
 <dl class="method">
 <dt id="deltametrics.cube.BaseCube.show_plan">
-<code class="descname">show_plan</code><span class="sig-paren">(</span><em>var</em>, <em>t=-1</em>, <em>ax=None</em>, <em>ticks=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.show_plan" title="Permalink to this definition">¶</a></dt>
+<code class="descname">show_plan</code><span class="sig-paren">(</span><em>var</em>, <em>t=-1</em>, <em>ax=None</em>, <em>title=None</em>, <em>ticks=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.show_plan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show planform image.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -348,6 +424,24 @@ method.</p>
 <dd class="field-odd"><p><a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">VariableSet</span></code></a></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.cube.BaseCube.x">
+<code class="descname">x</code><a class="headerlink" href="#deltametrics.cube.BaseCube.x" title="Permalink to this definition">¶</a></dt>
+<dd><p>x-direction coordinate.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.cube.BaseCube.y">
+<code class="descname">y</code><a class="headerlink" href="#deltametrics.cube.BaseCube.y" title="Permalink to this definition">¶</a></dt>
+<dd><p>y-direction coordinate.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.cube.BaseCube.z">
+<code class="descname">z</code><a class="headerlink" href="#deltametrics.cube.BaseCube.z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Vertical coordinate.</p>
 </dd></dl>
 
 </dd></dl>

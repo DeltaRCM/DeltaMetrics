@@ -26,7 +26,9 @@ deltametrics.section.DipSection
    .. autosummary::
    
       ~DipSection.s
+      ~DipSection.strat_attr
       ~DipSection.trace
       ~DipSection.variables
+      ~DipSection.z
    
    

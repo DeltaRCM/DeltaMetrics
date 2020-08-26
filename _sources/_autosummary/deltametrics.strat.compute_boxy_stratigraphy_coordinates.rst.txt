@@ -1,0 +1,6 @@
+deltametrics.strat.compute\_boxy\_stratigraphy\_coordinates
+===========================================================
+
+.. currentmodule:: deltametrics.strat
+
+.. autofunction:: compute_boxy_stratigraphy_coordinates

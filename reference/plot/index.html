@@ -46,6 +46,7 @@
 <li><a class="reference internal" href="#default-styling">Default styling</a></li>
 <li><a class="reference internal" href="#plotting-utility-objects">Plotting utility objects</a></li>
 <li><a class="reference internal" href="#plotting-utility-functions">Plotting utility functions</a></li>
+<li><a class="reference internal" href="#deltametrics-plot-routines">DeltaMetrics plot routines</a></li>
 <li><a class="reference internal" href="#deltametrics-colormaps">DeltaMetrics colormaps</a></li>
 </ul>
 </li>
@@ -92,7 +93,7 @@ This reference page documents the lower-level utilities used to make this happen
 </div>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.plot</span></code>.</p>
 <div class="section" id="default-styling">
-<h2>Default styling<a class="headerlink" href="#default-styling" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2>Default styling<a class="headerlink" href="#default-styling" title="Permalink to this headline">¶</a></h2>
 <p>By default, each variable receives a set of styling definitions.
 The default parameters of each styling variable are defined below:</p>
 <p>(<a class="reference external" href="../../pyplots/plot/document_variableset.png">png</a>, <a class="reference external" href="../../pyplots/plot/document_variableset.hires.png">hires.png</a>)</p>
@@ -121,14 +122,17 @@ The default parameters of each styling variable are defined below:</p>
 <h2>Plotting utility functions<a class="headerlink" href="#plotting-utility-functions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="deltametrics.plot.append_colorbar">
-<code class="descclassname">deltametrics.plot.</code><code class="descname">append_colorbar</code><span class="sig-paren">(</span><em>ci</em>, <em>ax</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">deltametrics.plot.</code><code class="descname">append_colorbar</code><span class="sig-paren">(</span><em>ci</em>, <em>ax</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append a colorbar, consistently placed.</p>
+<p>Adjusts some parameters of the parent axes as well.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ci</strong> (<cite>matplotlib.pyplot.pcolormesh</cite>, <cite>matplotlib.pyplot.ImageAxes</cite>) – The colored object generated via matplotlib that the colormap should
 be stolen from.</p></li>
 <li><p><strong>ax</strong> (<cite>matplotlib.Axes</cite>) – The instance of axes to place the colorbar next to.</p></li>
+<li><p><strong>adjust</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to adjust some minor attributes of the parent axis, for
+presentation.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -140,6 +144,148 @@ be stolen from.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="deltametrics.plot.get_display_arrays">
+<code class="descclassname">deltametrics.plot.</code><code class="descname">get_display_arrays</code><span class="sig-paren">(</span><em>VarInst</em>, <em>data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_arrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get arrays for display of Variables.</p>
+<p>Function takes as argument a <cite>VariableInstance</cite> from a <cite>Section</cite> or
+<cite>Planform</cite> and an optional <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> argument, which specifies the data
+type to return, and gives back arrays of 1) data, 2) display x-coordinates
+and 3) display y-coordinates.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>VarInst</strong> (<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
+<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> or
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePlanformVariable</span></code>.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – The type of data to visualize. Supported options are <cite>‘spacetime’</cite>,
+<cite>‘preserved’</cite>, and <cite>‘stratigraphy’</cite>. Default is to display full
+spacetime plot for variable generated from a <cite>DataCube</cite>, and
+stratigraphy for a <cite>StratigraphyCube</cite> variable. Note that variables
+sourced from a <cite>StratigraphyCube</cite> do not support the <cite>spacetime</cite> or
+<cite>preserved</cite> options, and a variable from <cite>DataCube</cite> will only support
+<cite>stratigraphy</cite> if the Cube has computed “quick” stratigraphy.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>data, X, Y</strong> – Three matching-size <cite>ndarray</cite> representing the 1) data, 2) display
+x-coordinates and 3) display y-coordinates.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deltametrics.plot.get_display_lines">
+<code class="descclassname">deltametrics.plot.</code><code class="descname">get_display_lines</code><span class="sig-paren">(</span><em>VarInst</em>, <em>data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_lines" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get lines for display of Variables.</p>
+<p>Function takes as argument a <cite>VariableInstance</cite> from a <cite>Section</cite> or
+<cite>Planform</cite> and an optional <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> argument, which specifies the data
+type to return, and gives back data and line segments for display.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>VarInst</strong> (<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
+<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> or
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePlanformVariable</span></code>.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – The type of data to visualize. Supported options are <cite>‘spacetime’</cite>,
+<cite>‘preserved’</cite>, and <cite>‘stratigraphy’</cite>. Default is to display full
+spacetime plot for variable generated from a <cite>DataCube</cite>.  and
+stratigraphy for a <cite>StratigraphyCube</cite> variable. Variables from
+<cite>DataCube</cite> will only support <cite>stratigraphy</cite> if the Cube has computed
+“quick” stratigraphy.</p></li>
+<li><p><strong>note::</strong> (<em>.</em>) – Not currently implemented for variables from the <cite>StratigraphyCube</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>vals, segments</strong> – An off-by-one sized array of data values (<cite>vals</cite>) to color the line
+segments (<cite>segments</cite>). The segments are organized along the 0th
+dimension of the array.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deltametrics.plot.get_display_limits">
+<code class="descclassname">deltametrics.plot.</code><code class="descname">get_display_limits</code><span class="sig-paren">(</span><em>VarInst</em>, <em>data=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_limits" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get limits to resize the display of Variables.</p>
+<p>Function takes as argument a <cite>VariableInstance</cite> from a <cite>Section</cite> or
+<cite>Planform</cite> and an optional <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> argument, which specifies how to
+determine the limits to return.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>VarInst</strong> (<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
+<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> or
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePlanformVariable</span></code>.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – The type of data to compute limits for. Typically this will be the
+same value used with either <a class="reference internal" href="#deltametrics.plot.get_display_arrays" title="deltametrics.plot.get_display_arrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_display_arrays</span></code></a> or
+<a class="reference internal" href="#deltametrics.plot.get_display_lines" title="deltametrics.plot.get_display_lines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_display_lines</span></code></a>. Supported options are <cite>‘spacetime’</cite>,
+<cite>‘preserved’</cite>, and <cite>‘stratigraphy’</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>xmin, xmax, ymin, ymax</strong> – Values to use as limits on a plot. Use with, for example,
+<code class="docutils literal notranslate"><span class="pre">ax.set_xlim((xmin,</span> <span class="pre">xmax))</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deltametrics.plot._fill_steps">
+<code class="descclassname">deltametrics.plot.</code><code class="descname">_fill_steps</code><span class="sig-paren">(</span><em>where</em>, <em>x=1</em>, <em>y=1</em>, <em>y0=0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot._fill_steps" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fill rectangles where the boolean indicates <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<p>Creates an <code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code> by <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code> <code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.patches.Rectangle</span></code> at
+each index where the index <cite>i</cite> in boolean <code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code> indicates, with the
+lower left of the patch at (<cite>i</cite>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">y0</span></code>).</p>
+<p>This utility function is utilized internally. Most often, it is used to
+highlight where time has been preserved (or eliminated) in a timeseries of
+data. For example, see
+<a class="reference internal" href="../../_autosummary/deltametrics.plot.show_one_dimensional_trajectory_to_strata.html#deltametrics.plot.show_one_dimensional_trajectory_to_strata" title="deltametrics.plot.show_one_dimensional_trajectory_to_strata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_one_dimensional_trajectory_to_strata</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>where</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Boolean <cite>numpy</cite> <cite>ndarray</cite> indicating which locations to create a patch
+at.</p></li>
+<li><p><strong>x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The x-direction width of the <cite>Rectangles</cite>.</p></li>
+<li><p><strong>y</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The y-direction height of the <cite>Rectangles</cite>.</p></li>
+<li><p><strong>y0</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The y-direction origin (i.e., lower-left y-value) of the <cite>Rectangles</cite>.</p></li>
+<li><p><strong>**kwargs</strong> – Additional <cite>matplotlib</cite> keyword arguments passed to the
+<cite>Rectangle</cite> instantiation. This is where you can set most
+<cite>matplotlib</cite> <cite>**kwargs</cite> (e.g., <cite>color</cite>, <cite>edgecolor</cite>).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>pc</strong> – Collection of <cite>Rectangle</cite> <cite>Patch</cite> objects.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.patches.PatchCollection</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="deltametrics-plot-routines">
+<h2>DeltaMetrics plot routines<a class="headerlink" href="#deltametrics-plot-routines" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plot.show_one_dimensional_trajectory_to_strata.html#deltametrics.plot.show_one_dimensional_trajectory_to_strata" title="deltametrics.plot.show_one_dimensional_trajectory_to_strata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_one_dimensional_trajectory_to_strata</span></code></a>(e)</p></td>
+<td><p>1d elevation to stratigraphy.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="deltametrics-colormaps">
 <h2>DeltaMetrics colormaps<a class="headerlink" href="#deltametrics-colormaps" title="Permalink to this headline">¶</a></h2>

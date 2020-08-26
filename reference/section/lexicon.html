@@ -58,42 +58,59 @@
             
   <p class="rubric">Section lexicon</p>
 <p>The <cite>Section</cite> module defines some terms that are used throughout the code and rest of the documentation.</p>
-<p>Most importantly, a Section is defined by a set of coordinates in the x-y plane of a cube.</p>
-<p>Therefore, we transform variable definitions when extracting the section, and the coordinate system of the section is defined by the along-section direction <img class="math" src="../../_images/math/63751cb2e98ba393b0f22e45ca127c3cebb61487.png" alt="s"/> and a vertical section coordinate, which is <img class="math" src="../../_images/math/683f2dd9129a91d21aaf1c04afa6f78b39d4cb0a.png" alt="z"/> when viewing stratigraphy, and <img class="math" src="../../_images/math/5ec053cf70dc1c98cc297322250569eda193e7a4.png" alt="t"/> when viewing a spacetime section.</p>
-<p>The data that make up the section can view the section as a <cite>spacetime</cite> section by simply calling the</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
-
-<span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
-<span class="n">rcm8cube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
-<span class="n">rcm8cube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_spacetime</span><span class="p">(),</span>
-             <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$t$ coordinate&#39;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_spacetime</span><span class="p">(</span><span class="n">preserved</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
-             <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$t$ coordinate&#39;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_stratigraphy</span><span class="p">(),</span>
-             <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;undefined</span><span class="se">\n</span><span class="s1">coordinate&#39;</span><span class="p">)</span>
-
-<span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;mesh&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$z$ coordinate&#39;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$s$ coordinate&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<p>Most importantly, a Section is defined by a set of coordinates in the x-y plane of a <cite>Cube</cite>.</p>
+<p>Therefore, we transform variable definitions when extracting the <cite>Section</cite>, and the coordinate system of the section is defined by the along-section direction <img class="math" src="../../_images/math/63751cb2e98ba393b0f22e45ca127c3cebb61487.png" alt="s"/> and a vertical section coordinate, which is <img class="math" src="../../_images/math/683f2dd9129a91d21aaf1c04afa6f78b39d4cb0a.png" alt="z"/> when viewing stratigraphy, and <img class="math" src="../../_images/math/5ec053cf70dc1c98cc297322250569eda193e7a4.png" alt="t"/> when viewing a spacetime section.</p>
+<p>The data that make up the section can view the section as a <cite>spacetime</cite> section by simply calling a <cite>DataSectionVariable</cite> directly.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span>
+<span class="go">DataSectionVariable([[0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">                     [0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">                     [0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">                     ...,</span>
+<span class="go">                     [0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">                     [0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">                     [0., 0., 0., ..., 0., 0., 0.]], dtype=float32)</span>
+</pre></div>
+</div>
+<p>If a <cite>DataSectionVariable</cite> has preservation information (i.e., if the <a class="reference internal" href="../../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube.stratigraphy_from" title="deltametrics.cube.DataCube.stratigraphy_from"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stratigraphy_from()</span></code></a> method has been called), then the <cite>DataSectionVariable</cite>, may be requested in the “preserved” form, where non-preserved t-x-y cells are masked with <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>. Note that the section has access to the preservation information of the data, even though it was instantiated prior to the computation of preservation!</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_preserved</span><span class="p">()</span>
+<span class="go">masked_DataSectionVariable(</span>
+<span class="go">  data=[[0.0, 0.0, 0.0, ..., 0.0, 0.0, 0.0],</span>
+<span class="go">        [--, --, --, ..., --, --, --],</span>
+<span class="go">        [--, --, --, ..., --, --, --],</span>
+<span class="go">        ...,</span>
+<span class="go">        [--, --, --, ..., --, --, --],</span>
+<span class="go">        [--, --, --, ..., --, --, --],</span>
+<span class="go">        [--, --, --, ..., --, --, --]],</span>
+<span class="go">  mask=[[False, False, False, ..., False, False, False],</span>
+<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
+<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
+<span class="go">        ...,</span>
+<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
+<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
+<span class="go">        [ True,  True,  True, ...,  True,  True,  True]],</span>
+<span class="go">  fill_value=1e+20,</span>
+<span class="go">  dtype=float32)</span>
+</pre></div>
+</div>
+<p>We can display the arrays using <cite>matplotlib</cite> to examine the spatiotemporal change of any variable; show the <cite>velocity</cite> in the below examples.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">],</span>
+<span class="gp">... </span>             <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$t$ coordinate&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_preserved</span><span class="p">(),</span>
+<span class="gp">... </span>             <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cmap</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$t$ coordinate&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../../pyplots/section/section_lexicon.png">png</a>, <a class="reference external" href="../../pyplots/section/section_lexicon.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
 <img alt="../../_images/section_lexicon.png" src="../../_images/section_lexicon.png" />
 </div>
+<p>Note that in this visual all non-preserved spacetime points have been masked and are shown as white.
+See the <a class="reference external" href="https://numpy.org/doc/stable/reference/maskedarray.generic.html">numpy MaskedArray documentation</a> for more information on interacting with masked arrays.</p>
 
 
           </div>

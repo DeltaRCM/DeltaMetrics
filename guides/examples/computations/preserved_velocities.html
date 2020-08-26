@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>Compute ordinariness of preserved strata &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Comparing speed of stratigraphy access" href="comparing_speeds_of_stratigraphy_access.html" />
+    <link rel="prev" title="View a section slice" href="../plot/show_section.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="comparing_speeds_of_stratigraphy_access.html" title="Comparing speed of stratigraphy access"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../plot/show_section.html" title="View a section slice"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../userguide.html" >User Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../index.html" accesskey="U">Examples</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../plot/show_section.html"
+                        title="previous chapter">View a section slice</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="comparing_speeds_of_stratigraphy_access.html"
+                        title="next chapter">Comparing speed of stratigraphy access</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/guides/examples/computations/preserved_velocities.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="compute-ordinariness-of-preserved-strata">
+<h1>Compute ordinariness of preserved strata<a class="headerlink" href="#compute-ordinariness-of-preserved-strata" title="Permalink to this headline">¶</a></h1>
+<p>Several studies have discussed the “ordinariness” of stratigraphy <a class="footnote-reference brackets" href="#id4" id="id1">1</a> <a class="footnote-reference brackets" href="#id5" id="id2">2</a>, which describes the observation that most fluvial outcrop exposures seem to record relatively normal river conditions, rather than extreme events.</p>
+<p>This assertion of “ordinariness” has been examined in the context of vertical excursions of bed elevation (whereby more extreme excursions represent extreme events; <a class="footnote-reference brackets" href="#id5" id="id3">2</a>).
+We can go further than this with the pyDeltaRCM model outputs, which co-locate bed elevation change with velocity, in essence recording the actual magnitude of a flow event rather than bed-elevation change.
+With this paired information we can interrogate the velocity of deposits in the stratigraphic record.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<span class="n">rcm8cube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">pick_velocities</span><span class="p">(</span><span class="n">sect</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Extract data.</span>
+
+<span class="sd">    Utility function to grab mean velocity of a section, returning the value</span>
+<span class="sd">    from the total section, and just the preserved section.</span>
+
+<span class="sd">    Note that both extractions are limited to where sediment has been</span>
+<span class="sd">    deposited/eroded in the model domain.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_whr</span> <span class="o">=</span> <span class="p">[</span><span class="n">sect</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">sect</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]]</span>
+    <span class="n">_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">sect</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">][</span><span class="nb">tuple</span><span class="p">(</span><span class="n">_whr</span><span class="p">)])</span>
+    <span class="n">_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">sect</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_preserved</span><span class="p">()[</span><span class="nb">tuple</span><span class="p">(</span><span class="n">_whr</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">_a</span><span class="p">,</span> <span class="n">_s</span>
+
+
+<span class="c1"># preallocate</span>
+<span class="n">_ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># sections to examine</span>
+<span class="n">_mall</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">_ys</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+<span class="n">_mstrat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">_ys</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+
+<span class="c1"># loop through all of the sections defined in _ys</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_ys</span><span class="p">):</span>
+    <span class="n">_s</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">_y</span><span class="p">)</span>
+    <span class="n">_mall</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">_mstrat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pick_velocities</span><span class="p">(</span><span class="n">_s</span><span class="p">)</span>
+
+
+<span class="c1"># make the plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">_mall</span><span class="p">,</span> <span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;all values&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">_mstrat</span><span class="p">,</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;preserved only&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;distance from channel inlet&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;mean velocity&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../../../pyplots/examples/preserved_velocities.png">png</a>, <a class="reference external" href="../../../pyplots/examples/preserved_velocities.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../../../_images/preserved_velocities.png" src="../../../_images/preserved_velocities.png" />
+</div>
+<p><strong>This is not intented to be a formal scientific rebuttal to the references listed above! It’s just a simple demonstration of how to use DeltaMetrics to interrogate the stratigraphic record.</strong></p>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Paola, C., Ganti, V., Mohrig, D., Runkel, A.C. and Straub, K.M. (2018) Time not our time: Physical controls on the preservation and measurement of geologic time. Annual Review of Earth and Planetary Sciences., 46, annurev-earth-082517-010129</p>
+</dd>
+<dt class="label" id="id5"><span class="brackets">2</span><span class="fn-backref">(<a href="#id2">1</a>,<a href="#id3">2</a>)</span></dt>
+<dd><p>Ganti, V., Hajek, E. A., Leary, K., Straub, K. M., &amp; Paola, C. (2020). Morphodynamic hierarchy and the fabric of the sedimentary record. Geophysical Research Letters, 47, e2020GL087921. doi: 10.1029/2020GL087921.</p>
+</dd>
+</dl>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="comparing_speeds_of_stratigraphy_access.html" title="Comparing speed of stratigraphy access"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../plot/show_section.html" title="View a section slice"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../userguide.html" >User Guide</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../index.html" >Examples</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>deltametrics.strat.MeshStratigraphyAttributes &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="deltametrics.strat.BoxyStratigraphyAttributes" href="deltametrics.strat.BoxyStratigraphyAttributes.html" />
+    <link rel="prev" title="deltametrics.strat.compute_compensation" href="deltametrics.strat.compute_compensation.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.strat.BoxyStratigraphyAttributes.html" title="deltametrics.strat.BoxyStratigraphyAttributes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.strat.compute_compensation.html" title="deltametrics.strat.compute_compensation"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/strat/index.html" accesskey="U">Stratigraphy functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.strat.compute_compensation.html"
+                        title="previous chapter">deltametrics.strat.compute_compensation</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.strat.BoxyStratigraphyAttributes.html"
+                        title="next chapter">deltametrics.strat.BoxyStratigraphyAttributes</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.strat.MeshStratigraphyAttributes.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="deltametrics-strat-meshstratigraphyattributes">
+<h1>deltametrics.strat.MeshStratigraphyAttributes<a class="headerlink" href="#deltametrics-strat-meshstratigraphyattributes" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="deltametrics.strat.MeshStratigraphyAttributes">
+<em class="property">class </em><code class="descclassname">deltametrics.strat.</code><code class="descname">MeshStratigraphyAttributes</code><span class="sig-paren">(</span><em>elev</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.MeshStratigraphyAttributes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Attribute set for mesh stratigraphy information, emebdded into a DataCube.</p>
+<p>This object stores attributes of stratigraphy as a “mesh”, only retaining
+the minimal necessary information to represent the stratigraphy. Contrast
+this with Boxy stratigraphy.</p>
+<p class="rubric">Notes</p>
+<p>Some descriptions regarding implementation.</p>
+<dl>
+<dt>_psvd_idx<span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code> of <cite>np.bool</cite></span></dt><dd><p>Preserved index into the section array.</p>
+</dd>
+<dt>_psvd_flld<span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></span></dt><dd><p>Elevation of preserved voxels, filled to vertical extent with the
+final elevation of the bed (i.e., to make it displayable by
+pcolormesh).</p>
+</dd>
+<dt>_i<span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></span></dt><dd><p>Row index for sparse matrix of preserved strata. I.e., which row
+in the stratigraphy matrix each voxel “winds up as”.</p>
+</dd>
+<dt>_j<span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></span></dt><dd><p>Column index for sparse matrix of preserved strata. I.e., which
+column in the stratigraphy matrix each voxel “winds up as”. This
+is kind of just a dummy to make the api consistent with <code class="docutils literal notranslate"><span class="pre">_i</span></code>,
+because the column cannot change with preservation.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="deltametrics.strat.MeshStratigraphyAttributes.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>elev</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.MeshStratigraphyAttributes.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>We can precompute several attributes of the stratigraphy, including which
+voxels are preserved, what their row indicies in the sparse stratigraphy
+matrix are, and what the elevation of each elevation entry in the final
+stratigraphy are. <em>This allows placing of any t-x-y stored variable into
+the section.</em></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>elev</strong> – elevation t-x-y array to compute from</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.strat.MeshStratigraphyAttributes.__init__" title="deltametrics.strat.MeshStratigraphyAttributes.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(elev, **kwargs)</p></td>
+<td><p>We can precompute several attributes of the stratigraphy, including which voxels are preserved, what their row indicies in the sparse stratigraphy matrix are, and what the elevation of each elevation entry in the final stratigraphy are.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">X</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">Y</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">display_arrays</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.strat.MeshStratigraphyAttributes.preserved_index" title="deltametrics.strat.MeshStratigraphyAttributes.preserved_index"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preserved_index</span></code></a></p></td>
+<td><p>Boolean array indicating preservation.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.strat.MeshStratigraphyAttributes.preserved_voxel_count" title="deltametrics.strat.MeshStratigraphyAttributes.preserved_voxel_count"><code class="xref py py-obj docutils literal notranslate"><span class="pre">preserved_voxel_count</span></code></a></p></td>
+<td><p>Nmber of preserved voxels per x-y.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">style</span></code></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="deltametrics.strat.MeshStratigraphyAttributes.__call__">
+<code class="descname">__call__</code><span class="sig-paren">(</span><em>_dir</em>, <em>_x0</em>, <em>_x1</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.MeshStratigraphyAttributes.__call__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a slice out of the stratigraphy attributes.</p>
+<p>Used for building section variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>_dir</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which direction to slice. If ‘section’, then _x0 is the
+_coordinates to slice in the domain length, and _x1 is the
+coordinates _to slice in the domain width direction.</p></li>
+<li><p><strong>_x1</strong> (<em>_x0</em><em>,</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>strat_attr</strong> – Dictionary containing useful information for sections and plans
+derived from the call.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.strat.MeshStratigraphyAttributes.preserved_index">
+<code class="descname">preserved_index</code><a class="headerlink" href="#deltametrics.strat.MeshStratigraphyAttributes.preserved_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Boolean array indicating preservation.</p>
+<p>True where data is preserved in final stratigraphy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.strat.MeshStratigraphyAttributes.preserved_voxel_count">
+<code class="descname">preserved_voxel_count</code><a class="headerlink" href="#deltametrics.strat.MeshStratigraphyAttributes.preserved_voxel_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Nmber of preserved voxels per x-y.</p>
+<p>X-Y array indicating number of preserved voxels per x-y pair.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.strat.BoxyStratigraphyAttributes.html" title="deltametrics.strat.BoxyStratigraphyAttributes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.strat.compute_compensation.html" title="deltametrics.strat.compute_compensation"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/strat/index.html" >Stratigraphy functions</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

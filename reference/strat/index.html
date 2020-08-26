@@ -16,8 +16,8 @@
     <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="deltametrics.strat.compute_trajectory" href="../../_autosummary/deltametrics.strat.compute_trajectory.html" />
-    <link rel="prev" title="deltametrics.section.StratigraphySectionVariable" href="../../_autosummary/deltametrics.section.StratigraphySectionVariable.html" /> 
+    <link rel="next" title="deltametrics.strat.compute_boxy_stratigraphy_volume" href="../../_autosummary/deltametrics.strat.compute_boxy_stratigraphy_volume.html" />
+    <link rel="prev" title="deltametrics.section.BaseSectionVariable" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -29,10 +29,10 @@
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../../_autosummary/deltametrics.strat.compute_trajectory.html" title="deltametrics.strat.compute_trajectory"
+          <a href="../../_autosummary/deltametrics.strat.compute_boxy_stratigraphy_volume.html" title="deltametrics.strat.compute_boxy_stratigraphy_volume"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../../_autosummary/deltametrics.section.StratigraphySectionVariable.html" title="deltametrics.section.StratigraphySectionVariable"
+          <a href="../../_autosummary/deltametrics.section.BaseSectionVariable.html" title="deltametrics.section.BaseSectionVariable"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">API reference</a> &#187;</li> 
@@ -40,12 +40,23 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Stratigraphy functions</a><ul>
+<li><a class="reference internal" href="#compute-stratigraphy-routines">Compute stratigraphy routines</a></li>
+<li><a class="reference internal" href="#stratigraphy-statistics-functions">Stratigraphy statistics functions</a></li>
+<li><a class="reference internal" href="#quick-stratigraphy-attributes-classes">Quick-stratigraphy attributes classes</a></li>
+<li><a class="reference internal" href="#low-level-stratigraphy-utility-functions">Low-level stratigraphy utility functions</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../../_autosummary/deltametrics.section.StratigraphySectionVariable.html"
-                        title="previous chapter">deltametrics.section.StratigraphySectionVariable</a></p>
+  <p class="topless"><a href="../../_autosummary/deltametrics.section.BaseSectionVariable.html"
+                        title="previous chapter">deltametrics.section.BaseSectionVariable</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../../_autosummary/deltametrics.strat.compute_trajectory.html"
-                        title="next chapter">deltametrics.strat.compute_trajectory</a></p>
+  <p class="topless"><a href="../../_autosummary/deltametrics.strat.compute_boxy_stratigraphy_volume.html"
+                        title="next chapter">deltametrics.strat.compute_boxy_stratigraphy_volume</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -76,6 +87,25 @@
 <p>The package makes available functions relating to computing things based on
 stratigraphy.</p>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.strat</span></code>.</p>
+<div class="section" id="compute-stratigraphy-routines">
+<h2>Compute stratigraphy routines<a class="headerlink" href="#compute-stratigraphy-routines" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.strat.compute_boxy_stratigraphy_volume.html#deltametrics.strat.compute_boxy_stratigraphy_volume" title="deltametrics.strat.compute_boxy_stratigraphy_volume"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_boxy_stratigraphy_volume</span></code></a>(elev, prop)</p></td>
+<td><p>Process t-x-y data volume to boxy stratigraphy volume.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.strat.compute_boxy_stratigraphy_coordinates.html#deltametrics.strat.compute_boxy_stratigraphy_coordinates" title="deltametrics.strat.compute_boxy_stratigraphy_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_boxy_stratigraphy_coordinates</span></code></a>(elev)</p></td>
+<td><p>Process t-x-y data volume to boxy stratigraphy coordinates.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="stratigraphy-statistics-functions">
+<h2>Stratigraphy statistics functions<a class="headerlink" href="#stratigraphy-statistics-functions" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
@@ -90,6 +120,175 @@ stratigraphy.</p>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="quick-stratigraphy-attributes-classes">
+<h2>Quick-stratigraphy attributes classes<a class="headerlink" href="#quick-stratigraphy-attributes-classes" title="Permalink to this headline">¶</a></h2>
+<p>The “quick” stratigraphy attributes provide a common API that is accessed by
+<cite>DataCube</cite>, <cite>DataSectionVariable</cite> and <cite>DataPlanformVariable</cite> methods. There
+are two methods of computing quick stratigraphy, with
+<a class="reference internal" href="../../_autosummary/deltametrics.strat.MeshStratigraphyAttributes.html#deltametrics.strat.MeshStratigraphyAttributes" title="deltametrics.strat.MeshStratigraphyAttributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MeshStratigraphyAttributes</span></code></a> as the default.</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.strat.MeshStratigraphyAttributes.html#deltametrics.strat.MeshStratigraphyAttributes" title="deltametrics.strat.MeshStratigraphyAttributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MeshStratigraphyAttributes</span></code></a>(elev, **kwargs)</p></td>
+<td><p>Attribute set for mesh stratigraphy information, emebdded into a DataCube.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.strat.BoxyStratigraphyAttributes.html#deltametrics.strat.BoxyStratigraphyAttributes" title="deltametrics.strat.BoxyStratigraphyAttributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BoxyStratigraphyAttributes</span></code></a>()</p></td>
+<td><p>Attribute set for boxy stratigraphy information, emebdded into a DataCube.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.strat.BaseStratigraphyAttributes.html#deltametrics.strat.BaseStratigraphyAttributes" title="deltametrics.strat.BaseStratigraphyAttributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseStratigraphyAttributes</span></code></a>(style)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="low-level-stratigraphy-utility-functions">
+<h2>Low-level stratigraphy utility functions<a class="headerlink" href="#low-level-stratigraphy-utility-functions" title="Permalink to this headline">¶</a></h2>
+<p>The functions outlined in this section are the main functions that do the actual work of computing stratigraphy and preservation, throughout DeltaMetrics. These functions may be useful if you are trying to use parts of DeltaMetrics, but need to customize something for your own use-case.</p>
+<dl class="function">
+<dt id="deltametrics.strat._compute_elevation_to_preservation">
+<code class="descclassname">deltametrics.strat.</code><code class="descname">_compute_elevation_to_preservation</code><span class="sig-paren">(</span><em>elev</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._compute_elevation_to_preservation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the preserved elevations of stratigraphy.</p>
+<p>Given elevation data alone, we can compute the preserved stratal surfaces.
+These surfaces depend on the timeseries of bed elevation at any spatial
+location. We determine preservation by marching backward in time,
+determining when was the most recent time that the bed elevation was equal
+to a given elevation.</p>
+<p>This function is declared as private and not part of the public API,
+however some users may find it helpful. The function is heavily utlized
+internally. Function inputs and outputs are standard numpy <cite>ndarray</cite>, so
+that these functions can accept data from an arbitrary source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of elevation data to determine stratigraphy.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>strata</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>t-x-y</cite> <cite>ndarry</cite> of stratal surface elevations.</p></li>
+<li><p><strong>psvd</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>t-x-y</cite> boolean <cite>ndarry</cite> of whether a <cite>(t,x,y)</cite> point of
+instantaneous time is preserved in any of the final stratal surfaces.
+To determine whether time from a given <em>timestep</em> is preserved, use
+<code class="docutils literal notranslate"><span class="pre">psvd.nonzero()[0]</span> <span class="pre">-</span> <span class="pre">1</span></code>.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deltametrics.strat._compute_preservation_to_time_intervals">
+<code class="descclassname">deltametrics.strat.</code><code class="descname">_compute_preservation_to_time_intervals</code><span class="sig-paren">(</span><em>psvd</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._compute_preservation_to_time_intervals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the preserved timesteps.</p>
+<p>The output from <a class="reference internal" href="#deltametrics.strat._compute_elevation_to_preservation" title="deltametrics.strat._compute_elevation_to_preservation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_elevation_to_preservation</span></code></a> records whether
+an instance of time, defined exactly at the data interval, is recorded in
+the stratigraphy (here, “recorded” does not include stasis). This differs
+from determining which <em>time-intervals</em> are preserved in the stratigraphy,
+because the deposits reflect the conditions <em>between</em> the save intervals.</p>
+<p>While this computation is simply an offset-by-one indexing (<code class="docutils literal notranslate"><span class="pre">psvd[1:,</span>
+<span class="pre">...]</span></code>), the function is implemented explicitly and utilized internally
+for consistency.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><cite>True</cite> in the preserved time-interval array does not necessarily
+indicate that an entire timestep was preserved, but rather that some
+portion of this time-interval (up to the entire interval) is recorded.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>psvd</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Boolean <cite>ndarray</cite> indicating the preservation of instances of time.
+Time is expected to be the 0th axis.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>psvd_intervals</strong> – Boolean <cite>ndarray</cite> indicating the preservation of time-intervals,
+including partial intervals.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deltametrics.strat._compute_preservation_to_cube">
+<code class="descclassname">deltametrics.strat.</code><code class="descname">_compute_preservation_to_cube</code><span class="sig-paren">(</span><em>strata</em>, <em>z</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._compute_preservation_to_cube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the cube-data coordinates to strata coordinates.</p>
+<p>Given elevation preservation data (e.g., data from
+<a class="reference internal" href="#deltametrics.strat._compute_elevation_to_preservation" title="deltametrics.strat._compute_elevation_to_preservation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_elevation_to_preservation</span></code></a>), compute
+the coordinate mapping from <cite>t-x-y</cite> data to <cite>z-x-y</cite> preserved
+stratigraphy.</p>
+<p>While stratigraphy is time-dependent, preservation at any spatial x-y
+location is independent of any other location. Thus, the computation is
+vectorized to sweep through all “stratigraphic columns” simultaneously.
+The operation works by beginning at the highest elevation of the
+stratigraphic volume, and sweeping down though all elevations with an
+<cite>x-y</cite> “plate”. The plate indicates whether sediments are preserved below
+the current iteration elevation, at each x-y location.</p>
+<p>Once the iteration elevation is less than the strata surface at any x-y
+location, there will <em>always</em> be sediments preserved below it, at every
+elevation. We simply need to determine which time interval these sediments
+record. Then we store this time indicator into the sparse array.</p>
+<p>So, in the end, coordinates in resultant boxy stratigraphy are linked to
+<cite>t-x-y</cite> coordinates in the data source, by building a mapping that can be
+utilized repeatedly from a single stratigraphy computation.</p>
+<p>This function is declared as private and not part of the public API,
+however some users may find it helpful. The function is heavily utlized
+internally. Function inputs and outputs are standard numpy <cite>ndarray</cite>, so
+that these functions can accept data from an arbitrary source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>strata</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>t-x-y</cite> <cite>ndarry</cite> of stratal surface elevations. Can be computed by
+<a class="reference internal" href="#deltametrics.strat._compute_elevation_to_preservation" title="deltametrics.strat._compute_elevation_to_preservation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_elevation_to_preservation</span></code></a>.</p></li>
+<li><p><strong>z</strong> – Vertical coordinates of stratigraphy. Note that <cite>z</cite> does not need to
+have regular intervals.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>strat_coords</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – An <cite>N x 3</cite> array of <cite>z-x-y</cite> coordinates where information is preserved
+in the boxy stratigraphy. Rows in <cite>strat_coords</cite> correspond with
+rows in <cite>data_coords</cite>.</p></li>
+<li><p><strong>data_coords</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – An <cite>N x 3</cite> array of <cite>t-x-y</cite> coordinates where information is to be
+extracted from the data array. Rows in <cite>data_coords</cite> correspond
+with rows in <cite>strat_coords</cite>.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="deltametrics.strat._determine_strat_coordinates">
+<code class="descclassname">deltametrics.strat.</code><code class="descname">_determine_strat_coordinates</code><span class="sig-paren">(</span><em>elev</em>, <em>z=None</em>, <em>dz=None</em>, <em>nz=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._determine_strat_coordinates" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a valid Z array for stratigraphy based on inputs.</p>
+<p>This helper function enables support for user specified <cite>dz</cite>, <cite>nz</cite>, or <cite>z</cite>
+in many functions. The logic for determining how to handle these mutually
+exclusive inputs is placed in this function, to ensure consistent behavior
+across all classes/methods internally.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At least one of the optional parameters must be supplied. Precedence
+when multiple arguments are supplied is <cite>z</cite>, <cite>dz</cite>, <cite>nz</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – An up-to-three-dimensional array with timeseries of elevation values,
+where elevation is expected to along the zeroth axis.</p></li>
+<li><p><strong>z</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>, optional) – Array of Z values to use, returned unchanged if supplied.</p></li>
+<li><p><strong>dz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Interval in created Z array. Z array is created as
+<code class="docutils literal notranslate"><span class="pre">np.arange(np.min(elev),</span> <span class="pre">np.max(elev)+dz,</span> <span class="pre">step=dz)</span></code>.</p></li>
+<li><p><strong>nz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Number of intervals in <cite>z</cite>. Z array is created as
+<code class="docutils literal notranslate"><span class="pre">np.linspace(np.min(elev),</span> <span class="pre">np.max(elev),</span> <span class="pre">num=nz,</span> <span class="pre">endpoint=True)</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -108,10 +307,10 @@ stratigraphy.</p>
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../../_autosummary/deltametrics.strat.compute_trajectory.html" title="deltametrics.strat.compute_trajectory"
+          <a href="../../_autosummary/deltametrics.strat.compute_boxy_stratigraphy_volume.html" title="deltametrics.strat.compute_boxy_stratigraphy_volume"
              >next</a> |</li>
         <li class="right" >
-          <a href="../../_autosummary/deltametrics.section.StratigraphySectionVariable.html" title="deltametrics.section.StratigraphySectionVariable"
+          <a href="../../_autosummary/deltametrics.section.BaseSectionVariable.html" title="deltametrics.section.BaseSectionVariable"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >API reference</a> &#187;</li> 

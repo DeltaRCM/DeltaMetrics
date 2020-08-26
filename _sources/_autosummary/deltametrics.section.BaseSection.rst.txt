@@ -26,7 +26,9 @@ deltametrics.section.BaseSection
    .. autosummary::
    
       ~BaseSection.s
+      ~BaseSection.strat_attr
       ~BaseSection.trace
       ~BaseSection.variables
+      ~BaseSection.z
    
    

@@ -15,24 +15,21 @@ deltametrics.section.DataSectionVariable
    
       ~DataSectionVariable.__init__
       ~DataSectionVariable.all
-      ~DataSectionVariable.anom
       ~DataSectionVariable.any
       ~DataSectionVariable.argmax
       ~DataSectionVariable.argmin
       ~DataSectionVariable.argpartition
       ~DataSectionVariable.argsort
-      ~DataSectionVariable.as_spacetime
+      ~DataSectionVariable.as_preserved
       ~DataSectionVariable.as_stratigraphy
       ~DataSectionVariable.astype
       ~DataSectionVariable.byteswap
       ~DataSectionVariable.choose
       ~DataSectionVariable.clip
       ~DataSectionVariable.compress
-      ~DataSectionVariable.compressed
       ~DataSectionVariable.conj
       ~DataSectionVariable.conjugate
       ~DataSectionVariable.copy
-      ~DataSectionVariable.count
       ~DataSectionVariable.cumprod
       ~DataSectionVariable.cumsum
       ~DataSectionVariable.diagonal
@@ -40,26 +37,17 @@ deltametrics.section.DataSectionVariable
       ~DataSectionVariable.dump
       ~DataSectionVariable.dumps
       ~DataSectionVariable.fill
-      ~DataSectionVariable.filled
       ~DataSectionVariable.flatten
-      ~DataSectionVariable.get_fill_value
-      ~DataSectionVariable.get_imag
-      ~DataSectionVariable.get_real
       ~DataSectionVariable.getfield
-      ~DataSectionVariable.harden_mask
-      ~DataSectionVariable.ids
-      ~DataSectionVariable.iscontiguous
       ~DataSectionVariable.item
       ~DataSectionVariable.itemset
       ~DataSectionVariable.max
       ~DataSectionVariable.mean
       ~DataSectionVariable.min
-      ~DataSectionVariable.mini
       ~DataSectionVariable.newbyteorder
       ~DataSectionVariable.nonzero
       ~DataSectionVariable.partition
       ~DataSectionVariable.prod
-      ~DataSectionVariable.product
       ~DataSectionVariable.ptp
       ~DataSectionVariable.put
       ~DataSectionVariable.ravel
@@ -68,11 +56,8 @@ deltametrics.section.DataSectionVariable
       ~DataSectionVariable.resize
       ~DataSectionVariable.round
       ~DataSectionVariable.searchsorted
-      ~DataSectionVariable.set_fill_value
       ~DataSectionVariable.setfield
       ~DataSectionVariable.setflags
-      ~DataSectionVariable.shrink_mask
-      ~DataSectionVariable.soften_mask
       ~DataSectionVariable.sort
       ~DataSectionVariable.squeeze
       ~DataSectionVariable.std
@@ -81,13 +66,10 @@ deltametrics.section.DataSectionVariable
       ~DataSectionVariable.take
       ~DataSectionVariable.tobytes
       ~DataSectionVariable.tofile
-      ~DataSectionVariable.toflex
       ~DataSectionVariable.tolist
-      ~DataSectionVariable.torecords
       ~DataSectionVariable.tostring
       ~DataSectionVariable.trace
       ~DataSectionVariable.transpose
-      ~DataSectionVariable.unshare_mask
       ~DataSectionVariable.var
       ~DataSectionVariable.view
    
@@ -101,26 +83,19 @@ deltametrics.section.DataSectionVariable
    
       ~DataSectionVariable.T
       ~DataSectionVariable.base
-      ~DataSectionVariable.baseclass
       ~DataSectionVariable.ctypes
       ~DataSectionVariable.data
       ~DataSectionVariable.dtype
-      ~DataSectionVariable.fill_value
       ~DataSectionVariable.flags
       ~DataSectionVariable.flat
-      ~DataSectionVariable.hardmask
       ~DataSectionVariable.imag
       ~DataSectionVariable.itemsize
-      ~DataSectionVariable.mask
+      ~DataSectionVariable.knows_stratigraphy
       ~DataSectionVariable.nbytes
       ~DataSectionVariable.ndim
       ~DataSectionVariable.real
-      ~DataSectionVariable.recordmask
       ~DataSectionVariable.shape
-      ~DataSectionVariable.sharedmask
       ~DataSectionVariable.size
       ~DataSectionVariable.strides
-      ~DataSectionVariable.t
-      ~DataSectionVariable.z
    
    

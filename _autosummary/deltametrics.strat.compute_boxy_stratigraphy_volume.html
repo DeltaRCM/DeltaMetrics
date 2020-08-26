@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>deltametrics.strat.compute_boxy_stratigraphy_volume &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="deltametrics.strat.compute_boxy_stratigraphy_coordinates" href="deltametrics.strat.compute_boxy_stratigraphy_coordinates.html" />
+    <link rel="prev" title="Stratigraphy functions" href="../reference/strat/index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.strat.compute_boxy_stratigraphy_coordinates.html" title="deltametrics.strat.compute_boxy_stratigraphy_coordinates"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../reference/strat/index.html" title="Stratigraphy functions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/strat/index.html" accesskey="U">Stratigraphy functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../reference/strat/index.html"
+                        title="previous chapter">Stratigraphy functions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.strat.compute_boxy_stratigraphy_coordinates.html"
+                        title="next chapter">deltametrics.strat.compute_boxy_stratigraphy_coordinates</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.strat.compute_boxy_stratigraphy_volume.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="deltametrics-strat-compute-boxy-stratigraphy-volume">
+<h1>deltametrics.strat.compute_boxy_stratigraphy_volume<a class="headerlink" href="#deltametrics-strat-compute-boxy-stratigraphy-volume" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="deltametrics.strat.compute_boxy_stratigraphy_volume">
+<code class="descclassname">deltametrics.strat.</code><code class="descname">compute_boxy_stratigraphy_volume</code><span class="sig-paren">(</span><em>elev</em>, <em>prop</em>, <em>dz=None</em>, <em>z=None</em>, <em>return_cube=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.compute_boxy_stratigraphy_volume" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process t-x-y data volume to boxy stratigraphy volume.</p>
+<p>This function returns a “frozen” cube of stratigraphy
+with values of the supplied property/variable (<code class="xref py py-obj docutils literal notranslate"><span class="pre">prop</span></code>) placed into a
+three-dimesional real-valued 3D array.</p>
+<p>By default, the data are returned as a numpy <cite>ndarray</cite>, however, specify
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">return_Cube</span></code> as <cite>True</cite> to return a
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">FrozenStratigraphyCube</span></code>. If <cite>False</cite>, function
+:additionally returns an <cite>ndarray</cite> of elevations corresponding to the
+:stratigraphy positions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of elevation data to determine stratigraphy.</p></li>
+<li><p><strong>prop</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of property data to process into the stratigraphy.</p></li>
+<li><p><strong>dz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Vertical resolution of stratigraphy, in meters.</p></li>
+<li><p><strong>return_cube</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code>, optional) – Whether to return the stratigraphy as a
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">FrozenStratigraphyCube</span></code> instance. Default is
+to return an <cite>ndarray</cite> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">elevations</span></code> <cite>ndarray</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>stratigraphy</em></p></li>
+<li><p><em>elevations</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.strat.compute_boxy_stratigraphy_coordinates.html" title="deltametrics.strat.compute_boxy_stratigraphy_coordinates"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../reference/strat/index.html" title="Stratigraphy functions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/strat/index.html" >Stratigraphy functions</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

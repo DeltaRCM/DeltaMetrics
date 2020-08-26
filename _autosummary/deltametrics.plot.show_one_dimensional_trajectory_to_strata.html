@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>deltametrics.plot.show_one_dimensional_trajectory_to_strata &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Utility functions" href="../reference/utils/index.html" />
+    <link rel="prev" title="deltametrics.plot.VariableSet" href="deltametrics.plot.VariableSet.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../reference/utils/index.html" title="Utility functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.plot.VariableSet.html" title="deltametrics.plot.VariableSet"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/plot/index.html" accesskey="U">Plotting utilities and functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.plot.VariableSet.html"
+                        title="previous chapter">deltametrics.plot.VariableSet</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../reference/utils/index.html"
+                        title="next chapter">Utility functions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.plot.show_one_dimensional_trajectory_to_strata.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="deltametrics-plot-show-one-dimensional-trajectory-to-strata">
+<h1>deltametrics.plot.show_one_dimensional_trajectory_to_strata<a class="headerlink" href="#deltametrics-plot-show-one-dimensional-trajectory-to-strata" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="deltametrics.plot.show_one_dimensional_trajectory_to_strata">
+<code class="descclassname">deltametrics.plot.</code><code class="descname">show_one_dimensional_trajectory_to_strata</code><span class="sig-paren">(</span><em>e</em>, <em>dz=0.05</em>, <em>z=None</em>, <em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.show_one_dimensional_trajectory_to_strata" title="Permalink to this definition">¶</a></dt>
+<dd><p>1d elevation to stratigraphy.</p>
+<p>This function creates and displays a one-dimensional elevation timeseries
+as a trajectory of elevations, resultant stratigraphy, and time preserved
+in “boxy” stratigraphy. The function is helpful for description of
+algorithms to compute stratigraphy, and for debugging and checking outputs
+from computations.</p>
+<p>For example, we can quickly visualize the processing of a 1D timeseries of
+bed elevations into boxy stratigraphy with this routine.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+
+<span class="n">ets</span> <span class="o">=</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][:,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">120</span><span class="p">]</span>  <span class="c1"># a &quot;real&quot; slice of the model</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">dm</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">show_one_dimensional_trajectory_to_strata</span><span class="p">(</span><span class="n">ets</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_1d_example.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_1d_example.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_1d_example.png" src="../_images/userguide_1d_example.png" />
+</div>
+<p>The orange line depicts the resultant stratigraphy, with all
+bed-elevations above this line cut from the stratigraphy by the
+stratigraphic filter.  The column on the right records which
+time-interval is recorded in the stratigraphy at each elevation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>e</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Elevation data as a 1D array.</p></li>
+<li><p><strong>dz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Vertical grid resolution.</p></li>
+<li><p><strong>z</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>, optional) – Vertical grid. Must specify <code class="docutils literal notranslate"><span class="pre">dz=None</span></code> to use this option.</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code>, optional) – Axes to plot into. A figure and axes is created, if not given.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../reference/utils/index.html" title="Utility functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.plot.VariableSet.html" title="deltametrics.plot.VariableSet"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/plot/index.html" >Plotting utilities and functions</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

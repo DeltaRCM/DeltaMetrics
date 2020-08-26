@@ -131,154 +131,157 @@ lighter-weight __repr__, and flexibility for development.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.argsort" title="deltametrics.cube.CubeVariable.argsort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">argsort</span></code></a>([axis, kind, order])</p></td>
 <td><p>Returns the indices that would sort this array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.astype" title="deltametrics.cube.CubeVariable.astype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astype</span></code></a>(dtype[, order, casting, subok, copy])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.as_frozen" title="deltametrics.cube.CubeVariable.as_frozen"><code class="xref py py-obj docutils literal notranslate"><span class="pre">as_frozen</span></code></a>()</p></td>
+<td><p>Export variable as <cite>ndarray</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.astype" title="deltametrics.cube.CubeVariable.astype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">astype</span></code></a>(dtype[, order, casting, subok, copy])</p></td>
 <td><p>Copy of the array, cast to a specified type.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.byteswap" title="deltametrics.cube.CubeVariable.byteswap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">byteswap</span></code></a>([inplace])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.byteswap" title="deltametrics.cube.CubeVariable.byteswap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">byteswap</span></code></a>([inplace])</p></td>
 <td><p>Swap the bytes of the array elements</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.choose" title="deltametrics.cube.CubeVariable.choose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">choose</span></code></a>(choices[, out, mode])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.choose" title="deltametrics.cube.CubeVariable.choose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">choose</span></code></a>(choices[, out, mode])</p></td>
 <td><p>Use an index array to construct a new array from a set of choices.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.clip" title="deltametrics.cube.CubeVariable.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>([min, max, out])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.clip" title="deltametrics.cube.CubeVariable.clip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">clip</span></code></a>([min, max, out])</p></td>
 <td><p>Return an array whose values are limited to <code class="docutils literal notranslate"><span class="pre">[min,</span> <span class="pre">max]</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.compress" title="deltametrics.cube.CubeVariable.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>(condition[, axis, out])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.compress" title="deltametrics.cube.CubeVariable.compress"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compress</span></code></a>(condition[, axis, out])</p></td>
 <td><p>Return selected slices of this array along given axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.conj" title="deltametrics.cube.CubeVariable.conj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conj</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.conj" title="deltametrics.cube.CubeVariable.conj"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conj</span></code></a>()</p></td>
 <td><p>Complex-conjugate all elements.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.conjugate" title="deltametrics.cube.CubeVariable.conjugate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conjugate</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.conjugate" title="deltametrics.cube.CubeVariable.conjugate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">conjugate</span></code></a>()</p></td>
 <td><p>Return the complex conjugate, element-wise.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.copy" title="deltametrics.cube.CubeVariable.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([order])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.copy" title="deltametrics.cube.CubeVariable.copy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">copy</span></code></a>([order])</p></td>
 <td><p>Return a copy of the array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.cumprod" title="deltametrics.cube.CubeVariable.cumprod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumprod</span></code></a>([axis, dtype, out])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.cumprod" title="deltametrics.cube.CubeVariable.cumprod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumprod</span></code></a>([axis, dtype, out])</p></td>
 <td><p>Return the cumulative product of the elements along the given axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.cumsum" title="deltametrics.cube.CubeVariable.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a>([axis, dtype, out])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.cumsum" title="deltametrics.cube.CubeVariable.cumsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">cumsum</span></code></a>([axis, dtype, out])</p></td>
 <td><p>Return the cumulative sum of the elements along the given axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.diagonal" title="deltametrics.cube.CubeVariable.diagonal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diagonal</span></code></a>([offset, axis1, axis2])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.diagonal" title="deltametrics.cube.CubeVariable.diagonal"><code class="xref py py-obj docutils literal notranslate"><span class="pre">diagonal</span></code></a>([offset, axis1, axis2])</p></td>
 <td><p>Return specified diagonals.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.dot" title="deltametrics.cube.CubeVariable.dot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dot</span></code></a>(b[, out])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.dot" title="deltametrics.cube.CubeVariable.dot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dot</span></code></a>(b[, out])</p></td>
 <td><p>Dot product of two arrays.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.dump" title="deltametrics.cube.CubeVariable.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a>(file)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.dump" title="deltametrics.cube.CubeVariable.dump"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dump</span></code></a>(file)</p></td>
 <td><p>Dump a pickle of the array to the specified file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.dumps" title="deltametrics.cube.CubeVariable.dumps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumps</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.dumps" title="deltametrics.cube.CubeVariable.dumps"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dumps</span></code></a>()</p></td>
 <td><p>Returns the pickle of the array as a string.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.fill" title="deltametrics.cube.CubeVariable.fill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill</span></code></a>(value)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.fill" title="deltametrics.cube.CubeVariable.fill"><code class="xref py py-obj docutils literal notranslate"><span class="pre">fill</span></code></a>(value)</p></td>
 <td><p>Fill the array with a scalar value.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.flatten" title="deltametrics.cube.CubeVariable.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a>([order])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.flatten" title="deltametrics.cube.CubeVariable.flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">flatten</span></code></a>([order])</p></td>
 <td><p>Return a copy of the array collapsed into one dimension.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.getfield" title="deltametrics.cube.CubeVariable.getfield"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getfield</span></code></a>(dtype[, offset])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.getfield" title="deltametrics.cube.CubeVariable.getfield"><code class="xref py py-obj docutils literal notranslate"><span class="pre">getfield</span></code></a>(dtype[, offset])</p></td>
 <td><p>Returns a field of the given array as a certain type.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.item" title="deltametrics.cube.CubeVariable.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.item" title="deltametrics.cube.CubeVariable.item"><code class="xref py py-obj docutils literal notranslate"><span class="pre">item</span></code></a>(*args)</p></td>
 <td><p>Copy an element of an array to a standard Python scalar and return it.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.itemset" title="deltametrics.cube.CubeVariable.itemset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itemset</span></code></a>(*args)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.itemset" title="deltametrics.cube.CubeVariable.itemset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">itemset</span></code></a>(*args)</p></td>
 <td><p>Insert scalar into an array (scalar is cast to array’s dtype, if possible)</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.max" title="deltametrics.cube.CubeVariable.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>([axis, out, keepdims, initial, where])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.max" title="deltametrics.cube.CubeVariable.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>([axis, out, keepdims, initial, where])</p></td>
 <td><p>Return the maximum along a given axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.mean" title="deltametrics.cube.CubeVariable.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([axis, dtype, out, keepdims])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.mean" title="deltametrics.cube.CubeVariable.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([axis, dtype, out, keepdims])</p></td>
 <td><p>Returns the average of the array elements along given axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.min" title="deltametrics.cube.CubeVariable.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>([axis, out, keepdims, initial, where])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.min" title="deltametrics.cube.CubeVariable.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>([axis, out, keepdims, initial, where])</p></td>
 <td><p>Return the minimum along a given axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.newbyteorder" title="deltametrics.cube.CubeVariable.newbyteorder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">newbyteorder</span></code></a>([new_order])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.newbyteorder" title="deltametrics.cube.CubeVariable.newbyteorder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">newbyteorder</span></code></a>([new_order])</p></td>
 <td><p>Return the array with the same data viewed with a different byte order.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.nonzero" title="deltametrics.cube.CubeVariable.nonzero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nonzero</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.nonzero" title="deltametrics.cube.CubeVariable.nonzero"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nonzero</span></code></a>()</p></td>
 <td><p>Return the indices of the elements that are non-zero.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.partition" title="deltametrics.cube.CubeVariable.partition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partition</span></code></a>(kth[, axis, kind, order])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.partition" title="deltametrics.cube.CubeVariable.partition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">partition</span></code></a>(kth[, axis, kind, order])</p></td>
 <td><p>Rearranges the elements in the array in such a way that the value of the element in kth position is in the position it would be in a sorted array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.prod" title="deltametrics.cube.CubeVariable.prod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prod</span></code></a>([axis, dtype, out, keepdims, initial, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.prod" title="deltametrics.cube.CubeVariable.prod"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prod</span></code></a>([axis, dtype, out, keepdims, initial, …])</p></td>
 <td><p>Return the product of the array elements over the given axis</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.ptp" title="deltametrics.cube.CubeVariable.ptp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptp</span></code></a>([axis, out, keepdims])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.ptp" title="deltametrics.cube.CubeVariable.ptp"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ptp</span></code></a>([axis, out, keepdims])</p></td>
 <td><p>Peak to peak (maximum - minimum) value along a given axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.put" title="deltametrics.cube.CubeVariable.put"><code class="xref py py-obj docutils literal notranslate"><span class="pre">put</span></code></a>(indices, values[, mode])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.put" title="deltametrics.cube.CubeVariable.put"><code class="xref py py-obj docutils literal notranslate"><span class="pre">put</span></code></a>(indices, values[, mode])</p></td>
 <td><p>Set <code class="docutils literal notranslate"><span class="pre">a.flat[n]</span> <span class="pre">=</span> <span class="pre">values[n]</span></code> for all <cite>n</cite> in indices.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.ravel" title="deltametrics.cube.CubeVariable.ravel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ravel</span></code></a>([order])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.ravel" title="deltametrics.cube.CubeVariable.ravel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ravel</span></code></a>([order])</p></td>
 <td><p>Return a flattened array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.repeat" title="deltametrics.cube.CubeVariable.repeat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repeat</span></code></a>(repeats[, axis])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.repeat" title="deltametrics.cube.CubeVariable.repeat"><code class="xref py py-obj docutils literal notranslate"><span class="pre">repeat</span></code></a>(repeats[, axis])</p></td>
 <td><p>Repeat elements of an array.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.reshape" title="deltametrics.cube.CubeVariable.reshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reshape</span></code></a>(shape[, order])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.reshape" title="deltametrics.cube.CubeVariable.reshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reshape</span></code></a>(shape[, order])</p></td>
 <td><p>Returns an array containing the same data with a new shape.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.resize" title="deltametrics.cube.CubeVariable.resize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resize</span></code></a>(new_shape[, refcheck])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.resize" title="deltametrics.cube.CubeVariable.resize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resize</span></code></a>(new_shape[, refcheck])</p></td>
 <td><p>Change shape and size of array in-place.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.round" title="deltametrics.cube.CubeVariable.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a>([decimals, out])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.round" title="deltametrics.cube.CubeVariable.round"><code class="xref py py-obj docutils literal notranslate"><span class="pre">round</span></code></a>([decimals, out])</p></td>
 <td><p>Return <cite>a</cite> with each element rounded to the given number of decimals.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.searchsorted" title="deltametrics.cube.CubeVariable.searchsorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">searchsorted</span></code></a>(v[, side, sorter])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.searchsorted" title="deltametrics.cube.CubeVariable.searchsorted"><code class="xref py py-obj docutils literal notranslate"><span class="pre">searchsorted</span></code></a>(v[, side, sorter])</p></td>
 <td><p>Find indices where elements of v should be inserted in a to maintain order.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.setfield" title="deltametrics.cube.CubeVariable.setfield"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setfield</span></code></a>(val, dtype[, offset])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.setfield" title="deltametrics.cube.CubeVariable.setfield"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setfield</span></code></a>(val, dtype[, offset])</p></td>
 <td><p>Put a value into a specified place in a field defined by a data-type.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.setflags" title="deltametrics.cube.CubeVariable.setflags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setflags</span></code></a>([write, align, uic])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.setflags" title="deltametrics.cube.CubeVariable.setflags"><code class="xref py py-obj docutils literal notranslate"><span class="pre">setflags</span></code></a>([write, align, uic])</p></td>
 <td><p>Set array flags WRITEABLE, ALIGNED, (WRITEBACKIFCOPY and UPDATEIFCOPY), respectively.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.sort" title="deltametrics.cube.CubeVariable.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([axis, kind, order])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.sort" title="deltametrics.cube.CubeVariable.sort"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sort</span></code></a>([axis, kind, order])</p></td>
 <td><p>Sort an array in-place.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.squeeze" title="deltametrics.cube.CubeVariable.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>([axis])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.squeeze" title="deltametrics.cube.CubeVariable.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>([axis])</p></td>
 <td><p>Remove single-dimensional entries from the shape of <cite>a</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.std" title="deltametrics.cube.CubeVariable.std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code></a>([axis, dtype, out, ddof, keepdims])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.std" title="deltametrics.cube.CubeVariable.std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code></a>([axis, dtype, out, ddof, keepdims])</p></td>
 <td><p>Returns the standard deviation of the array elements along given axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.sum" title="deltametrics.cube.CubeVariable.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a>([axis, dtype, out, keepdims, initial, where])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.sum" title="deltametrics.cube.CubeVariable.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a>([axis, dtype, out, keepdims, initial, where])</p></td>
 <td><p>Return the sum of the array elements over the given axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.swapaxes" title="deltametrics.cube.CubeVariable.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a>(axis1, axis2)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.swapaxes" title="deltametrics.cube.CubeVariable.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swapaxes</span></code></a>(axis1, axis2)</p></td>
 <td><p>Return a view of the array with <cite>axis1</cite> and <cite>axis2</cite> interchanged.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.take" title="deltametrics.cube.CubeVariable.take"><code class="xref py py-obj docutils literal notranslate"><span class="pre">take</span></code></a>(indices[, axis, out, mode])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.take" title="deltametrics.cube.CubeVariable.take"><code class="xref py py-obj docutils literal notranslate"><span class="pre">take</span></code></a>(indices[, axis, out, mode])</p></td>
 <td><p>Return an array formed from the elements of <cite>a</cite> at the given indices.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.tobytes" title="deltametrics.cube.CubeVariable.tobytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tobytes</span></code></a>([order])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.tobytes" title="deltametrics.cube.CubeVariable.tobytes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tobytes</span></code></a>([order])</p></td>
 <td><p>Construct Python bytes containing the raw data bytes in the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.tofile" title="deltametrics.cube.CubeVariable.tofile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tofile</span></code></a>(fid[, sep, format])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.tofile" title="deltametrics.cube.CubeVariable.tofile"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tofile</span></code></a>(fid[, sep, format])</p></td>
 <td><p>Write array to a file as text or binary (default).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.tolist" title="deltametrics.cube.CubeVariable.tolist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tolist</span></code></a>()</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.tolist" title="deltametrics.cube.CubeVariable.tolist"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tolist</span></code></a>()</p></td>
 <td><p>Return the array as an <code class="docutils literal notranslate"><span class="pre">a.ndim</span></code>-levels deep nested list of Python scalars.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.tostring" title="deltametrics.cube.CubeVariable.tostring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tostring</span></code></a>([order])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.tostring" title="deltametrics.cube.CubeVariable.tostring"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tostring</span></code></a>([order])</p></td>
 <td><p>A compatibility alias for <cite>tobytes</cite>, with exactly the same behavior.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.trace" title="deltametrics.cube.CubeVariable.trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></a>([offset, axis1, axis2, dtype, out])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.trace" title="deltametrics.cube.CubeVariable.trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></a>([offset, axis1, axis2, dtype, out])</p></td>
 <td><p>Return the sum along diagonals of the array.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.transpose" title="deltametrics.cube.CubeVariable.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>(*axes)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.transpose" title="deltametrics.cube.CubeVariable.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>(*axes)</p></td>
 <td><p>Returns a view of the array with axes transposed.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.var" title="deltametrics.cube.CubeVariable.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a>([axis, dtype, out, ddof, keepdims])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.var" title="deltametrics.cube.CubeVariable.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a>([axis, dtype, out, ddof, keepdims])</p></td>
 <td><p>Returns the variance of the array elements, along given axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.view" title="deltametrics.cube.CubeVariable.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>([dtype][, type])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.CubeVariable.view" title="deltametrics.cube.CubeVariable.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>([dtype][, type])</p></td>
 <td><p>New view of array with the same data.</p></td>
 </tr>
 </tbody>
@@ -472,6 +475,12 @@ is cast, but currently, it will return another CubeVariable instance.</p>
 </dd>
 </dl>
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.cube.CubeVariable.as_frozen">
+<code class="descname">as_frozen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable.as_frozen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export variable as <cite>ndarray</cite>.</p>
 </dd></dl>
 
 <dl class="method">

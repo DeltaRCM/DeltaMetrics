@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Sample data" href="../sample_data/index.html" />
-    <link rel="prev" title="deltametrics.plot.VariableSet" href="../../_autosummary/deltametrics.plot.VariableSet.html" /> 
+    <link rel="prev" title="deltametrics.plot.show_one_dimensional_trajectory_to_strata" href="../../_autosummary/deltametrics.plot.show_one_dimensional_trajectory_to_strata.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -32,7 +32,7 @@
           <a href="../sample_data/index.html" title="Sample data"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../../_autosummary/deltametrics.plot.VariableSet.html" title="deltametrics.plot.VariableSet"
+          <a href="../../_autosummary/deltametrics.plot.show_one_dimensional_trajectory_to_strata.html" title="deltametrics.plot.show_one_dimensional_trajectory_to_strata"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">API reference</a> &#187;</li> 
@@ -40,9 +40,18 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Utility functions</a><ul>
+<li><a class="reference internal" href="#id1">Utility functions</a></li>
+<li><a class="reference internal" href="#utility-exceptions-and-warnings">Utility Exceptions and Warnings</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../../_autosummary/deltametrics.plot.VariableSet.html"
-                        title="previous chapter">deltametrics.plot.VariableSet</a></p>
+  <p class="topless"><a href="../../_autosummary/deltametrics.plot.show_one_dimensional_trajectory_to_strata.html"
+                        title="previous chapter">deltametrics.plot.show_one_dimensional_trajectory_to_strata</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="../sample_data/index.html"
                         title="next chapter">Sample data</a></p>
@@ -75,14 +84,53 @@
 <h1>Utility functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h1>
 <p>The package has some more miscellaneous functions and utilities that are made publically available.</p>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.utils</span></code>.</p>
-<table class="longtable docutils align-center">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-</tbody>
-</table>
+<div class="section" id="id1">
+<h2>Utility functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="deltametrics.utils._get_version">
+<code class="descclassname">deltametrics.utils.</code><code class="descname">_get_version</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.utils._get_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract version number from single file, and make it availabe everywhere.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="utility-exceptions-and-warnings">
+<h2>Utility Exceptions and Warnings<a class="headerlink" href="#utility-exceptions-and-warnings" title="Permalink to this headline">¶</a></h2>
+<dl class="exception">
+<dt id="deltametrics.utils.NoStratigraphyError">
+<em class="property">exception </em><code class="descclassname">deltametrics.utils.</code><code class="descname">NoStratigraphyError</code><span class="sig-paren">(</span><em>obj</em>, <em>var=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.utils.NoStratigraphyError" title="Permalink to this definition">¶</a></dt>
+<dd><p>Error message for access when no stratigraphy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which object user tried to access.</p></li>
+<li><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Which variable user tried to access. If provided, more information
+is given in the error message.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Without the optional <cite>var</cite> argument:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">utils</span><span class="o">.</span><span class="n">NoStratigraphyError</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">)</span> 
+<span class="go">deltametrics.utils.NoStratigraphyError: &#39;DataCube&#39; object</span>
+<span class="go">has no preservation or stratigraphy information.</span>
+</pre></div>
+</div>
+<p>With the <cite>var</cite> argument given as <code class="docutils literal notranslate"><span class="pre">'strat_attr'</span></code>:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">utils</span><span class="o">.</span><span class="n">NoStratigraphyError</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="s1">&#39;strat_attr&#39;</span><span class="p">)</span> 
+<span class="go">deltametrics.utils.NoStratigraphyError: &#39;DataCube&#39; object</span>
+<span class="go">has no attribute &#39;strat_attr&#39;.</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="deltametrics.utils.NoStratigraphyError.with_traceback">
+<code class="descname">with_traceback</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.utils.NoStratigraphyError.with_traceback" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exception.with_traceback(tb) –
+set self.__traceback__ to tb and return self.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -104,7 +152,7 @@
           <a href="../sample_data/index.html" title="Sample data"
              >next</a> |</li>
         <li class="right" >
-          <a href="../../_autosummary/deltametrics.plot.VariableSet.html" title="deltametrics.plot.VariableSet"
+          <a href="../../_autosummary/deltametrics.plot.show_one_dimensional_trajectory_to_strata.html" title="deltametrics.plot.show_one_dimensional_trajectory_to_strata"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >API reference</a> &#187;</li> 

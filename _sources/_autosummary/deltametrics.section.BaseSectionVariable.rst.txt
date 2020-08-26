@@ -14,7 +14,6 @@ deltametrics.section.BaseSectionVariable
    .. autosummary::
    
       ~BaseSectionVariable.all
-      ~BaseSectionVariable.anom
       ~BaseSectionVariable.any
       ~BaseSectionVariable.argmax
       ~BaseSectionVariable.argmin
@@ -25,11 +24,9 @@ deltametrics.section.BaseSectionVariable
       ~BaseSectionVariable.choose
       ~BaseSectionVariable.clip
       ~BaseSectionVariable.compress
-      ~BaseSectionVariable.compressed
       ~BaseSectionVariable.conj
       ~BaseSectionVariable.conjugate
       ~BaseSectionVariable.copy
-      ~BaseSectionVariable.count
       ~BaseSectionVariable.cumprod
       ~BaseSectionVariable.cumsum
       ~BaseSectionVariable.diagonal
@@ -37,26 +34,17 @@ deltametrics.section.BaseSectionVariable
       ~BaseSectionVariable.dump
       ~BaseSectionVariable.dumps
       ~BaseSectionVariable.fill
-      ~BaseSectionVariable.filled
       ~BaseSectionVariable.flatten
-      ~BaseSectionVariable.get_fill_value
-      ~BaseSectionVariable.get_imag
-      ~BaseSectionVariable.get_real
       ~BaseSectionVariable.getfield
-      ~BaseSectionVariable.harden_mask
-      ~BaseSectionVariable.ids
-      ~BaseSectionVariable.iscontiguous
       ~BaseSectionVariable.item
       ~BaseSectionVariable.itemset
       ~BaseSectionVariable.max
       ~BaseSectionVariable.mean
       ~BaseSectionVariable.min
-      ~BaseSectionVariable.mini
       ~BaseSectionVariable.newbyteorder
       ~BaseSectionVariable.nonzero
       ~BaseSectionVariable.partition
       ~BaseSectionVariable.prod
-      ~BaseSectionVariable.product
       ~BaseSectionVariable.ptp
       ~BaseSectionVariable.put
       ~BaseSectionVariable.ravel
@@ -65,11 +53,8 @@ deltametrics.section.BaseSectionVariable
       ~BaseSectionVariable.resize
       ~BaseSectionVariable.round
       ~BaseSectionVariable.searchsorted
-      ~BaseSectionVariable.set_fill_value
       ~BaseSectionVariable.setfield
       ~BaseSectionVariable.setflags
-      ~BaseSectionVariable.shrink_mask
-      ~BaseSectionVariable.soften_mask
       ~BaseSectionVariable.sort
       ~BaseSectionVariable.squeeze
       ~BaseSectionVariable.std
@@ -78,13 +63,10 @@ deltametrics.section.BaseSectionVariable
       ~BaseSectionVariable.take
       ~BaseSectionVariable.tobytes
       ~BaseSectionVariable.tofile
-      ~BaseSectionVariable.toflex
       ~BaseSectionVariable.tolist
-      ~BaseSectionVariable.torecords
       ~BaseSectionVariable.tostring
       ~BaseSectionVariable.trace
       ~BaseSectionVariable.transpose
-      ~BaseSectionVariable.unshare_mask
       ~BaseSectionVariable.var
       ~BaseSectionVariable.view
    
@@ -98,26 +80,18 @@ deltametrics.section.BaseSectionVariable
    
       ~BaseSectionVariable.T
       ~BaseSectionVariable.base
-      ~BaseSectionVariable.baseclass
       ~BaseSectionVariable.ctypes
       ~BaseSectionVariable.data
       ~BaseSectionVariable.dtype
-      ~BaseSectionVariable.fill_value
       ~BaseSectionVariable.flags
       ~BaseSectionVariable.flat
-      ~BaseSectionVariable.hardmask
       ~BaseSectionVariable.imag
       ~BaseSectionVariable.itemsize
-      ~BaseSectionVariable.mask
       ~BaseSectionVariable.nbytes
       ~BaseSectionVariable.ndim
       ~BaseSectionVariable.real
-      ~BaseSectionVariable.recordmask
       ~BaseSectionVariable.shape
-      ~BaseSectionVariable.sharedmask
       ~BaseSectionVariable.size
       ~BaseSectionVariable.strides
-      ~BaseSectionVariable.t
-      ~BaseSectionVariable.z
    
    

@@ -14,6 +14,7 @@ deltametrics.cube.DataCube
    .. autosummary::
    
       ~DataCube.__init__
+      ~DataCube.export_frozen_variable
       ~DataCube.read
       ~DataCube.register_plan
       ~DataCube.register_section
@@ -30,15 +31,25 @@ deltametrics.cube.DataCube
 
    .. autosummary::
    
+      ~DataCube.H
+      ~DataCube.L
+      ~DataCube.T
+      ~DataCube.W
+      ~DataCube.X
+      ~DataCube.Y
+      ~DataCube.Z
       ~DataCube.data_path
       ~DataCube.dataio
       ~DataCube.plan_set
       ~DataCube.plans
-      ~DataCube.preserved_index
-      ~DataCube.preserved_voxel_count
       ~DataCube.section_set
       ~DataCube.sections
+      ~DataCube.shape
+      ~DataCube.t
       ~DataCube.variables
       ~DataCube.varset
+      ~DataCube.x
+      ~DataCube.y
+      ~DataCube.z
    
    

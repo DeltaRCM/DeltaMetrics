@@ -43,6 +43,20 @@
   <ul>
 <li><a class="reference internal" href="#">User Guide</a><ul>
 <li><a class="reference internal" href="#examples">Examples</a></li>
+<li><a class="reference internal" href="#setting-up-your-coding-environment">Setting up your coding environment</a></li>
+<li><a class="reference internal" href="#create-and-manipulate-a-datacube">Create and manipulate a “DataCube”</a></li>
+<li><a class="reference internal" href="#manipulating-planform-data">Manipulating Planform data</a></li>
+<li><a class="reference internal" href="#default-colors-in-deltametrics">Default Colors in DeltaMetrics</a></li>
+<li><a class="reference internal" href="#manipulating-section-data">Manipulating Section data</a><ul>
+<li><a class="reference internal" href="#quick-stratigraphy">“Quick” stratigraphy</a></li>
+<li><a class="reference internal" href="#all-section-types">All Section types</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#computing-and-manipulating-stratigraphy">Computing and Manipulating Stratigraphy</a><ul>
+<li><a class="reference internal" href="#frozen-stratigraphy-volumes">Frozen stratigraphy volumes</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#masks">Masks</a></li>
 </ul>
 </li>
 </ul>
@@ -80,13 +94,431 @@
             
   <div class="section" id="user-guide">
 <h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
-<p>Guide to users!</p>
+<p>This documentation provides a</p>
 <div class="section" id="examples">
 <h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>We maintain a library of “workflow” examples, which show how to do common, interesting, or cool analysis with DeltaRCM.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/io/connect_to_nonstandard_data.html">How to connect to non-standard data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/plot/show_plan.html">View a planform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/plot/show_section.html">View a section slice</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/computations/preserved_velocities.html">Compute ordinariness of preserved strata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="examples/computations/comparing_speeds_of_stratigraphy_access.html">Comparing speed of stratigraphy access</a></li>
 </ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="setting-up-your-coding-environment">
+<h2>Setting up your coding environment<a class="headerlink" href="#setting-up-your-coding-environment" title="Permalink to this headline">¶</a></h2>
+<p>All of the documentation in this package assumes that you have imported the DeltaMetrics package as <code class="docutils literal notranslate"><span class="pre">dm</span></code>:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
+</pre></div>
+</div>
+<p>Additionally, we frequently rely on the <cite>numpy</cite> package, and <cite>matplotlib</cite>. We will assume you have imported these packages by their common shorthand as well; if we import other packages, or other modules from <cite>matplotlib</cite>, these imports will be declared!</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="create-and-manipulate-a-datacube">
+<h2>Create and manipulate a “DataCube”<a class="headerlink" href="#create-and-manipulate-a-datacube" title="Permalink to this headline">¶</a></h2>
+<p>DeltaMetrics centers around the use of “Cubes” in DeltaMetrics language are the central office that connects all the different modules and workflows together.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span>
+<span class="go">&lt;deltametrics.cube.DataCube object at 0x...&gt;</span>
+</pre></div>
+</div>
+<p>Creating the <code class="docutils literal notranslate"><span class="pre">rcm8cube</span></code> connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets. The type of the <code class="docutils literal notranslate"><span class="pre">rcm8cube</span></code> is <code class="docutils literal notranslate"><span class="pre">DataCube</span></code>.</p>
+<p>Inspect which variables are available in the <code class="docutils literal notranslate"><span class="pre">rcm8cube</span></code>.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">variables</span>
+<span class="go">[&#39;x&#39;, &#39;y&#39;, &#39;time&#39;, &#39;eta&#39;, &#39;stage&#39;, &#39;depth&#39;, &#39;discharge&#39;, &#39;velocity&#39;, &#39;strata_age&#39;, &#39;strata_sand_frac&#39;, &#39;strata_depth&#39;]</span>
+</pre></div>
+</div>
+<p>We can access the underlying variables by name. The returned object are numpy-like arrays with coordinates <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code>.
+For example, access variables as:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span>
+<span class="go">&lt;class &#39;deltametrics.cube.CubeVariable&#39;&gt; variable: `eta`; dtype: float32 size: 1468800</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">])</span>
+<span class="go">&lt;class &#39;deltametrics.cube.CubeVariable&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(51, 120, 240)</span>
+</pre></div>
+</div>
+<p>Let’s examine the timeseries of bed elevations by taking slices out of the <code class="docutils literal notranslate"><span class="pre">'eta'</span></code> variable, at various indicies (<code class="docutils literal notranslate"><span class="pre">t</span></code>) along the 0th dimension.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nt</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">nt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">)</span>  <span class="c1"># linearly interpolate ts</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nt</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ts</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span> 
+<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;t = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> 
+<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span> 
+<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;y-direction&#39;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x-direction&#39;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_bed_timeseries.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_bed_timeseries.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_bed_timeseries.png" src="../_images/userguide_bed_timeseries.png" />
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The 0th dimension of the cube is the <em>time</em> dimension, and the 1st and 2nd dimensions are the <cite>y</cite> and <cite>x</cite> dimensions of the model domain, respectively. The <cite>x</cite> dimension is the <em>cross-channel</em> dimension, Implementations using non-standard data should permute datasets to match this convention.</p>
+</div>
+<p>The CubeVariable supports arbitrary math (all using <cite>numpy</cite> for fast computations!).
+For example:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># compute the change in bed elevation between the last two intervals above</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff_time</span> <span class="o">=</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">-</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">diff_time</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu&#39;</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">diff_time</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">vmin</span><span class="o">=-</span><span class="nb">abs</span><span class="p">(</span><span class="n">diff_time</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cb</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">append_colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>  <span class="c1"># a convenience function</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_bed_elevation_change.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_bed_elevation_change.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_bed_elevation_change.png" src="../_images/userguide_bed_elevation_change.png" />
+</div>
+</div>
+<div class="section" id="manipulating-planform-data">
+<h2>Manipulating Planform data<a class="headerlink" href="#manipulating-planform-data" title="Permalink to this headline">¶</a></h2>
+<p>In addition to indexing directly, slices across the <cite>time</cite> dimension of the cube are referred to as “Planform” cuts.</p>
+<p>TODO</p>
+</div>
+<div class="section" id="default-colors-in-deltametrics">
+<h2>Default Colors in DeltaMetrics<a class="headerlink" href="#default-colors-in-deltametrics" title="Permalink to this headline">¶</a></h2>
+<p>You may have noticed the beautiful colors above, and be wondering: “how are the colors set?”
+We use a custom object (<a class="reference internal" href="../_autosummary/deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a>) to define common plotting properties for all plots.
+The <cite>VariableSet</cite> supports all kinds of other controls, such as custom colormaps for any variable, addition of new defined variables, fixed color limits, color normalizations, and more.
+You can also use these attributes of the <cite>VariableSet</cite> in your own plotting routines.</p>
+<p>See the <a class="reference internal" href="../reference/plot/index.html#default-styling"><span class="std std-ref">default colors in DeltaMetrics here</span></a> for more information.</p>
+<p>Additionally, there are a <a class="reference internal" href="../reference/plot/index.html"><span class="doc">number of plotting routines</span></a> that are helpful in visualizations.</p>
+</div>
+<div class="section" id="manipulating-section-data">
+<h2>Manipulating Section data<a class="headerlink" href="#manipulating-section-data" title="Permalink to this headline">¶</a></h2>
+<p>We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
+In DeltaMetrics, we refer to this preserved history as the “stratigraphy”, and we provide a number of convenient routines for computing stratigraphy and analyzing the deposits.</p>
+<p>Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created.
+We must directly tell the Cube instance to compute stratigraphy by specifying which variable contains the bed elevation history, because this history dictates preservation.</p>
+<p>Mainly, the API works by registering a section of a specified type, and
+assigning it a name (“demo” below). Registered sections are accessed via
+the <code class="docutils literal notranslate"><span class="pre">sections</span></code> attribute of the cube:</p>
+<p>For a data cube, sections are most easily instantiated by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code> method:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>which creates a section across a constant y-value <code class="docutils literal notranslate"><span class="pre">==10</span></code>.
+The path of any <cite>Section</cite> in the <code class="docutils literal notranslate"><span class="pre">x-y</span></code> plane can always be accessed via the <code class="docutils literal notranslate"><span class="pre">.trace</span></code> attribute.
+We can plot the trace on top the the final bed elevation to see where the section will be located.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">trace</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
+<span class="gp">... </span>        <span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">trace</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;r--&#39;</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_strikesection_location.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_strikesection_location.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_strikesection_location.png" src="../_images/userguide_strikesection_location.png" />
+</div>
+<p>Any registered section can then be accessed via the <code class="xref py py-obj docutils literal notranslate"><span class="pre">sections</span></code> attribute of the Cube (returns a <cite>dict</cite>).</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span>
+<span class="go">&lt;deltametrics.section.StrikeSection object at 0x...&gt;</span>
+</pre></div>
+</div>
+<p>Available section types are <code class="docutils literal notranslate"><span class="pre">PathSection</span></code>, <code class="docutils literal notranslate"><span class="pre">StrikeSection</span></code>,
+<code class="docutils literal notranslate"><span class="pre">DipSection</span></code>, and <code class="docutils literal notranslate"><span class="pre">RadialSection</span></code>.
+Notably, <cite>Sections</cite> do not refer to any variable in particular, so <cite>Sections</cite>
+are sliced themselves, similarly to the cube.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span>
+<span class="go">DataSectionVariable([[0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">                     [0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">                     [0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">                     ...,</span>
+<span class="go">                     [0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">                     [0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">                     [0., 0., 0., ..., 0., 0., 0.]], dtype=float32)</span>
+</pre></div>
+</div>
+<p>We can visualize sections:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_three_spacetime_sections.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_three_spacetime_sections.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_three_spacetime_sections.png" src="../_images/userguide_three_spacetime_sections.png" />
+</div>
+<p>You can also create a standalone section, which is not registered to the cube, but still supports slicing from the underlying dataset.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sass</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">sass</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">])</span> 
+<span class="go">True</span>
+</pre></div>
+</div>
+<div class="section" id="quick-stratigraphy">
+<span id="userguide-quick-stratigraphy"></span><h3>“Quick” stratigraphy<a class="headerlink" href="#quick-stratigraphy" title="Permalink to this headline">¶</a></h3>
+<p>We have implemented support for rapid stratigraphy computation for visualization, and preserved-time statistics.
+These quick stratigraphy computations create a mesh of preserved elevations and fill this matrix with values sliced out of the <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code> data.</p>
+<p>Notably, the full “boxy” stratigraphy computation is also quite fast.
+More on that below.
+Compute the quick stratigraphy as:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Now, the <code class="docutils literal notranslate"><span class="pre">DataCube</span></code> has knowledge of stratigraphy, which we can further use to visualize preservation within the spacetime, or visualize as an actual stratigraphic slice.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_preserved</span><span class="p">()</span>
+<span class="go">masked_DataSectionVariable(</span>
+<span class="go">  data=[[0.0, 0.0, 0.0, ..., 0.0, 0.0, 0.0],</span>
+<span class="go">        [--, --, --, ..., --, --, --],</span>
+<span class="go">        [--, --, --, ..., --, --, --],</span>
+<span class="go">        ...,</span>
+<span class="go">        [--, --, --, ..., --, --, --],</span>
+<span class="go">        [--, --, --, ..., --, --, --],</span>
+<span class="go">        [--, --, --, ..., --, --, --]],</span>
+<span class="go">  mask=[[False, False, False, ..., False, False, False],</span>
+<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
+<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
+<span class="go">        ...,</span>
+<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
+<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
+<span class="go">        [ True,  True,  True, ...,  True,  True,  True]],</span>
+<span class="go">  fill_value=1e+20,</span>
+<span class="go">  dtype=float32)</span>
+</pre></div>
+</div>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s1">&#39;preserved&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s1">&#39;stratigraphy&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_quick_stratigraphy_sections.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_quick_stratigraphy_sections.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_quick_stratigraphy_sections.png" src="../_images/userguide_quick_stratigraphy_sections.png" />
+</div>
+<p>Quick stratigraphy makes it easy to visualize the behavior of the model across each of the variables:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">rcm8cube</span><span class="o">.</span><span class="n">dataio</span><span class="o">.</span><span class="n">known_variables</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>      <span class="n">style</span><span class="o">=</span><span class="s1">&#39;shaded&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s1">&#39;stratigraphy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_quick_stratigraphy_all_variables.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_quick_stratigraphy_all_variables.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_quick_stratigraphy_all_variables.png" src="../_images/userguide_quick_stratigraphy_all_variables.png" />
+</div>
+</div>
+<div class="section" id="all-section-types">
+<h3>All Section types<a class="headerlink" href="#all-section-types" title="Permalink to this headline">¶</a></h3>
+<p>There are multiple section types available.
+The following are currently implemented.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_strike</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_path</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">PathSection</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">),</span>
+<span class="gp">... </span>                                                               <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">))))</span>
+</pre></div>
+</div>
+<p>The <cite>Section</cite> classes all inherit from the same <code class="docutils literal notranslate"><span class="pre">BaseSection</span></code> class, which means they mostly have the same options available to them, and have a common API.
+Each has unique instantiation arguments, though, which must be properly specified.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spec</span> <span class="o">=</span> <span class="n">gs</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">axs</span> <span class="o">=</span> <span class="p">[</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,)))]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax0</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">_strike</span><span class="p">,</span> <span class="n">_path</span><span class="p">]):</span>
+<span class="gp">... </span>    <span class="n">ax0</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">trace</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">s</span><span class="o">.</span><span class="n">trace</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;r--&#39;</span><span class="p">)</span> 
+<span class="gp">... </span>    <span class="n">s</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> 
+<span class="gp">... </span>    <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">section_type</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_section_type_demos.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_section_type_demos.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_section_type_demos.png" src="../_images/userguide_section_type_demos.png" />
+</div>
+</div>
+</div>
+<div class="section" id="computing-and-manipulating-stratigraphy">
+<h2>Computing and Manipulating Stratigraphy<a class="headerlink" href="#computing-and-manipulating-stratigraphy" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#userguide-quick-stratigraphy"><span class="std std-ref">Quick stratigraphy</span></a> works great for statistics of what-is-preserved and for quick visualizations, but it has several limitations.
+1) Does not consider volume of sediment filled by preserved-time indicies, 2) cannot be sliced by planform, 3) irregularity does not lend well to computation and other uses (hydrological studies).</p>
+<p>So, we want to be able to create what I refer to as “boxy” stratigraphy.
+This has been done in the past by “placing” values from, e.g., <code class="docutils literal notranslate"><span class="pre">strata_sand_frac</span></code> into stratigraphy.
+This requires full computation for any variable you want to examine though.
+Here, we use a method that computes boxy stratigraphy only once, then synthesizes the volume from
+the precomputed sparse indicies.</p>
+<p>Here’s a simple example to demonstrate how we place data into the stratigraphy.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ets</span> <span class="o">=</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][:,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">120</span><span class="p">]</span>  <span class="c1"># a &quot;real&quot; slice of the model</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dm</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">show_one_dimensional_trajectory_to_strata</span><span class="p">(</span><span class="n">ets</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_1d_example.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_1d_example.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_1d_example2.png" src="../_images/userguide_1d_example2.png" />
+</div>
+<p>Begin by creating a <code class="docutils literal notranslate"><span class="pre">StratigraphyCube</span></code>:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">StratigraphyCube</span><span class="o">.</span><span class="n">from_DataCube</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span><span class="o">.</span><span class="n">variables</span>
+<span class="go">[&#39;x&#39;, &#39;y&#39;, &#39;time&#39;, &#39;eta&#39;, &#39;stage&#39;, &#39;depth&#39;, &#39;discharge&#39;, &#39;velocity&#39;, &#39;strata_age&#39;, &#39;strata_sand_frac&#39;, &#39;strata_depth&#39;]</span>
+</pre></div>
+</div>
+<p>We can then slice this cube in the same way as the <code class="docutils literal notranslate"><span class="pre">DataCube</span></code>, but what we get back is <em>stratigraphy</em> rather than <em>spacetime</em>.
+Compare the slice from the <cite>rcm8cube</cite> (left) to the <cite>sc8cube</cite> (right):</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_compare_slices.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_compare_slices.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_compare_slices.png" src="../_images/userguide_compare_slices.png" />
+</div>
+<p>Validation of the stratigraphy is easily seen by looking at the <code class="docutils literal notranslate"><span class="pre">time</span></code> attribute.
+Note that sections are <em>not</em> inherited from the <code class="docutils literal notranslate"><span class="pre">DataCube</span></code> by default (we’re working on this and related features).</p>
+<p>Let’s add a section at the same location as <code class="docutils literal notranslate"><span class="pre">rcm8cube.sections['demo']</span></code>.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span><span class="o">.</span><span class="n">sections</span>
+<span class="go">{&#39;demo&#39;: &lt;deltametrics.section.StrikeSection object at 0x...&gt;}</span>
+</pre></div>
+</div>
+<p>Let’s examine the stratigraphy in three different visual styles.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;lines&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s1">&#39;stratigraphy&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s1">&#39;stratigraphy&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_three_stratigraphy.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_three_stratigraphy.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_three_stratigraphy.png" src="../_images/userguide_three_stratigraphy.png" />
+</div>
+<p>Similar to the demonstration above, each variable (property) of the underlying cube can be displayed. These displays utilize the same <em>precomputed</em> locations in the stratigraphy and simply filled the synthesized matrix with the different variable values.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">sc8cube</span><span class="o">.</span><span class="n">dataio</span><span class="o">.</span><span class="n">known_variables</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">sc8cube</span><span class="o">.</span><span class="n">show_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="gp">... </span>                         <span class="n">style</span><span class="o">=</span><span class="s1">&#39;shaded&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="s1">&#39;stratigraphy&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_all_vars_stratigraphy.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_all_vars_stratigraphy.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_all_vars_stratigraphy.png" src="../_images/userguide_all_vars_stratigraphy.png" />
+</div>
+<p>The stratigraphy cube allows us to slice planform slabs of stratigraphy
+too. We are working on a method to more easily slice by elevation
+values. This might be done by subclassing <code class="docutils literal notranslate"><span class="pre">xarray</span></code> rather than
+<code class="docutils literal notranslate"><span class="pre">numpy</span></code> for basic data arrays.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">elev_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sc8cube</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="o">-</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>  <span class="c1"># find nearest idx to -2 m</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">,</span> <span class="n">elev_idx</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_stratigraphy_planform_slice.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_stratigraphy_planform_slice.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_stratigraphy_planform_slice.png" src="../_images/userguide_stratigraphy_planform_slice.png" />
+</div>
+<div class="section" id="frozen-stratigraphy-volumes">
+<h3>Frozen stratigraphy volumes<a class="headerlink" href="#frozen-stratigraphy-volumes" title="Permalink to this headline">¶</a></h3>
+<p>We still support creating “frozen” cubes, which might be useful for to
+speed up computations if an array is being accessed over and over.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fs</span> <span class="o">=</span> <span class="n">sc8cube</span><span class="o">.</span><span class="n">export_frozen_variable</span><span class="p">(</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">)</span>
+<span class="n">fe</span> <span class="o">=</span> <span class="n">sc8cube</span><span class="o">.</span><span class="n">Z</span>  <span class="c1"># exported volume does not have coordinate information!</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="n">pcm</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="p">(</span><span class="n">fs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)),</span>
+   <span class="n">fe</span><span class="p">[:,</span><span class="mi">10</span><span class="p">,:],</span> <span class="n">fs</span><span class="p">[:,</span><span class="mi">10</span><span class="p">,:],</span> <span class="n">shading</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+   <span class="n">cmap</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">cmap</span><span class="p">,</span>
+   <span class="n">vmin</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">vmin</span><span class="p">,</span>
+   <span class="n">vmax</span><span class="o">=</span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">varset</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">vmax</span><span class="p">)</span>
+<span class="n">dm</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">append_colorbar</span><span class="p">(</span><span class="n">pcm</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> <span class="c1">#doctest: +SKIP</span>
+</pre></div>
+</div>
+<p>Note than you can also bypass the creation of a <code class="docutils literal notranslate"><span class="pre">StratigraphyCube</span></code>,
+and just directly obtain a frozen volume with:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fs</span><span class="p">,</span> <span class="n">fe</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">strat</span><span class="o">.</span><span class="n">compute_boxy_stratigraphy_volume</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">],</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">],</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>However, this will require recomputing the stratigraphy preservation to create another cube in the future, and because the <code class="docutils literal notranslate"><span class="pre">StratigraphyCube</span></code> stores data on disk, the memory footprint is relatively small, and so we recommend just computing the <code class="docutils literal notranslate"><span class="pre">StratigraphyCube</span></code> and using the <code class="docutils literal notranslate"><span class="pre">export_frozen_variable)</span></code> method.
+Finally, <code class="docutils literal notranslate"><span class="pre">DataCubeVariable</span></code> and <code class="docutils literal notranslate"><span class="pre">StratigraphyCubeVariable</span></code> support a <code class="docutils literal notranslate"><span class="pre">.as_frozen()</span></code> method themselves.</p>
+<p>We should verify that the frozen cubes actually match the underlying data!</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span> <span class="n">fs</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fs</span><span class="p">)]</span> <span class="o">==</span> <span class="n">sc8cube</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">][</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sc8cube</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">])]</span> <span class="p">)</span>
+<span class="go">True</span>
+</pre></div>
+</div>
+<p>The access speed of a frozen volume is <strong>much</strong> faster than a live cube.
+This is because the live cube does not store any data in memory.
+Keeping data on disk is advantageous for large datasets, but slows down access considerably for computation.
+<strong>The speed of access in a frozen cube may be several thousand times faster, so it can be advantageous to export frozen cubes before computation.</strong>
+See a <a class="reference internal" href="examples/computations/comparing_speeds_of_stratigraphy_access.html"><span class="doc">demonstration of the speed comparison in the Examples library</span></a>.</p>
+</div>
+</div>
+<div class="section" id="masks">
+<h2>Masks<a class="headerlink" href="#masks" title="Permalink to this headline">¶</a></h2>
+<p>We have implemented operations to compute masks of several types. These
+operations will be wrapped into the <code class="docutils literal notranslate"><span class="pre">Plan</span></code> API, and we will have
+methods to create new “variables” in the data cube which hold the binary
+values of the masks.</p>
+<dl class="simple">
+<dt>Currently implemented <cite>Masks</cite>:</dt><dd><ul class="simple">
+<li><p>ChannelMask</p></li>
+<li><p>EdgeMask</p></li>
+<li><p>LandMask</p></li>
+<li><p>ShorelineMask</p></li>
+<li><p>WetMask</p></li>
+<li><p>CenterlineMask</p></li>
+</ul>
+</dd>
+</dl>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># use a new cube, code is currently locked to sea_level==0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">maskcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># create the masks from variables in the cube</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">land_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">LandMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wet_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">WetMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ChannelMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">centerline_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">CenterlineMask</span><span class="p">(</span><span class="n">channel_mask</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edge_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">EdgeMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shore_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ShorelineMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+</pre></div>
+</div>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spec</span> <span class="o">=</span> <span class="n">gs</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">axs</span> <span class="o">=</span> <span class="p">[</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,)))]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax0</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">land_mask</span><span class="p">,</span> <span class="n">wet_mask</span><span class="p">,</span> <span class="n">channel_mask</span><span class="p">,</span> <span class="n">centerline_mask</span><span class="p">,</span> <span class="n">edge_mask</span><span class="p">,</span> <span class="n">shore_mask</span><span class="p">]):</span>
+<span class="gp">... </span>    <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span> 
+<span class="gp">... </span>    <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">mask_type</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../pyplots/guides/userguide_masks_all_demo.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_masks_all_demo.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/userguide_masks_all_demo.png" src="../_images/userguide_masks_all_demo.png" />
 </div>
 </div>
 </div>

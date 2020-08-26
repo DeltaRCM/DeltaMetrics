@@ -2,7 +2,8 @@
 10-minute tutorial
 ******************
 
-learn DeltaMetrics in ten minutes!
+This documentation provides a guide to learn the most basic components of DeltaMetrics in just ten minutes!
+For a more in depth guide, be sure to check out the :doc:`userguide`.
 
 .. testsetup:: *
 
@@ -94,7 +95,7 @@ of the Cube at the fortieth (40th) timestep:
     >>> rcm8cube.show_plan('eta', t=40, ax=ax[0])
     >>> rcm8cube.show_plan('velocity', t=40, ax=ax[1], ticks=True)
     >>> rcm8cube.show_plan('strata_sand_frac', t=40, ax=ax[2])
-    >>> plt.show()
+    >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/10min_three_plans.py
 
@@ -113,8 +114,9 @@ We must directly tell the Cube instance to compute stratigraphy by specifying wh
     >>> rcm8cube.stratigraphy_from('eta')
 
 For this example, the stratigraphic computation is relatively fast (< one second), but for large data domains covering a large amount of time, this computation may not be as fast.
+The stratigraphy computed via `stratigraphy_from` is often referred to as "quick" stratigraphy, and may be helpful for visualizing cross sections of the deposit, but we recommend creating a :obj:`~deltametrics.cube.StratigraphyCube` from a `DataCube` for thorough analysis of stratigraphy.
 
-For the sake of simplicity, this documentation uses the :obj:`~deltametrics.section.StrikeSection` as an example, but the following lexicon generalizes across the Section classes.
+For the sake of simplicity, this documentation uses the :obj:`~deltametrics.section.StrikeSection` as an example `Section` type, but the following lexicon generalizes across all of the Section classes.
 
 For a data cube, sections are most easily instantiated by the :obj:`~deltametrics.cube.Cube.register_section` method:
 
@@ -129,14 +131,14 @@ which can then be accessed via the :obj:`~deltametrics.cube.Cube.sections` attri
     >>> rcm8cube.sections['demo']
     <deltametrics.section.StrikeSection object at 0x...>
 
-Visualize all of the available sections as stratigraphy:
+Using the "quick" stratigraphy, we can visualize all of the available data variables (and `'time'`) as stratigraphy:
 
 .. doctest::
 
-    >>> fig, ax = plt.subplots(6, 1, sharex=True, figsize=(8,5))
+    >>> fig, ax = plt.subplots(7, 1, sharex=True, figsize=(8,5))
     >>> ax = ax.flatten()
-    >>> for i, var in enumerate(rcm8cube.dataio.known_variables):
-    ...    rcm8cube.show_section('demo', var, ax=ax[i])
-    >>> plt.show()
+    >>> for i, var in enumerate(['time'] + rcm8cube.dataio.known_variables):
+    ...    rcm8cube.show_section('demo', var, data='stratigraphy', ax=ax[i])
+    >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/10min_all_sections_strat.py

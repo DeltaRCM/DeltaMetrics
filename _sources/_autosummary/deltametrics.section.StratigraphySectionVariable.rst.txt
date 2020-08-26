@@ -15,7 +15,6 @@ deltametrics.section.StratigraphySectionVariable
    
       ~StratigraphySectionVariable.__init__
       ~StratigraphySectionVariable.all
-      ~StratigraphySectionVariable.anom
       ~StratigraphySectionVariable.any
       ~StratigraphySectionVariable.argmax
       ~StratigraphySectionVariable.argmin
@@ -26,11 +25,9 @@ deltametrics.section.StratigraphySectionVariable
       ~StratigraphySectionVariable.choose
       ~StratigraphySectionVariable.clip
       ~StratigraphySectionVariable.compress
-      ~StratigraphySectionVariable.compressed
       ~StratigraphySectionVariable.conj
       ~StratigraphySectionVariable.conjugate
       ~StratigraphySectionVariable.copy
-      ~StratigraphySectionVariable.count
       ~StratigraphySectionVariable.cumprod
       ~StratigraphySectionVariable.cumsum
       ~StratigraphySectionVariable.diagonal
@@ -38,26 +35,17 @@ deltametrics.section.StratigraphySectionVariable
       ~StratigraphySectionVariable.dump
       ~StratigraphySectionVariable.dumps
       ~StratigraphySectionVariable.fill
-      ~StratigraphySectionVariable.filled
       ~StratigraphySectionVariable.flatten
-      ~StratigraphySectionVariable.get_fill_value
-      ~StratigraphySectionVariable.get_imag
-      ~StratigraphySectionVariable.get_real
       ~StratigraphySectionVariable.getfield
-      ~StratigraphySectionVariable.harden_mask
-      ~StratigraphySectionVariable.ids
-      ~StratigraphySectionVariable.iscontiguous
       ~StratigraphySectionVariable.item
       ~StratigraphySectionVariable.itemset
       ~StratigraphySectionVariable.max
       ~StratigraphySectionVariable.mean
       ~StratigraphySectionVariable.min
-      ~StratigraphySectionVariable.mini
       ~StratigraphySectionVariable.newbyteorder
       ~StratigraphySectionVariable.nonzero
       ~StratigraphySectionVariable.partition
       ~StratigraphySectionVariable.prod
-      ~StratigraphySectionVariable.product
       ~StratigraphySectionVariable.ptp
       ~StratigraphySectionVariable.put
       ~StratigraphySectionVariable.ravel
@@ -66,11 +54,8 @@ deltametrics.section.StratigraphySectionVariable
       ~StratigraphySectionVariable.resize
       ~StratigraphySectionVariable.round
       ~StratigraphySectionVariable.searchsorted
-      ~StratigraphySectionVariable.set_fill_value
       ~StratigraphySectionVariable.setfield
       ~StratigraphySectionVariable.setflags
-      ~StratigraphySectionVariable.shrink_mask
-      ~StratigraphySectionVariable.soften_mask
       ~StratigraphySectionVariable.sort
       ~StratigraphySectionVariable.squeeze
       ~StratigraphySectionVariable.std
@@ -79,13 +64,10 @@ deltametrics.section.StratigraphySectionVariable
       ~StratigraphySectionVariable.take
       ~StratigraphySectionVariable.tobytes
       ~StratigraphySectionVariable.tofile
-      ~StratigraphySectionVariable.toflex
       ~StratigraphySectionVariable.tolist
-      ~StratigraphySectionVariable.torecords
       ~StratigraphySectionVariable.tostring
       ~StratigraphySectionVariable.trace
       ~StratigraphySectionVariable.transpose
-      ~StratigraphySectionVariable.unshare_mask
       ~StratigraphySectionVariable.var
       ~StratigraphySectionVariable.view
    
@@ -99,26 +81,19 @@ deltametrics.section.StratigraphySectionVariable
    
       ~StratigraphySectionVariable.T
       ~StratigraphySectionVariable.base
-      ~StratigraphySectionVariable.baseclass
       ~StratigraphySectionVariable.ctypes
       ~StratigraphySectionVariable.data
       ~StratigraphySectionVariable.dtype
-      ~StratigraphySectionVariable.fill_value
       ~StratigraphySectionVariable.flags
       ~StratigraphySectionVariable.flat
-      ~StratigraphySectionVariable.hardmask
       ~StratigraphySectionVariable.imag
       ~StratigraphySectionVariable.itemsize
-      ~StratigraphySectionVariable.mask
+      ~StratigraphySectionVariable.knows_spacetime
       ~StratigraphySectionVariable.nbytes
       ~StratigraphySectionVariable.ndim
       ~StratigraphySectionVariable.real
-      ~StratigraphySectionVariable.recordmask
       ~StratigraphySectionVariable.shape
-      ~StratigraphySectionVariable.sharedmask
       ~StratigraphySectionVariable.size
       ~StratigraphySectionVariable.strides
-      ~StratigraphySectionVariable.t
-      ~StratigraphySectionVariable.z
    
    
