@@ -18,7 +18,8 @@ from . import utils
 from . import plot
 
 
-class CubeVariable(np.ndarray):
+@xr.register_dataarray_accessor("cubevar")
+class CubeVariable():
     """Slice of a Cube.
 
     Slicing an :obj:`~deltametrics.cube.Cube` returns an object of this type.
@@ -46,48 +47,52 @@ class CubeVariable(np.ndarray):
         'velocity'
     """
 
-    def __new__(cls, *args, **kwargs):
-        """Initialize the ndarray.
-        """
-        variable = kwargs.pop('variable', None)
-        coords = kwargs.pop('coords', None)
-        obj = np.array(*args, **kwargs)
-        obj = np.asarray(obj).view(cls)
-        obj.variable = variable
-        if not coords:
-            obj.t, obj.x, obj.y = [np.arange(l) for l in obj.shape]
-        else:
-            obj.t, obj.x, obj.y = coords['t'], coords['x'], coords['y']
-        return obj
+    def __init__(self, xarray_obj):
+        self.data = xarray_obj
+        self.variable = xarray_obj.name
 
-    def __array_finalize__(self, obj):
-        """Place things that must always happen here.
-
-        This method is called when any new array is cast. The ``__new__``
-        method is not called when views are cast of an existing
-        `CubeVariable`, so anything special about the `CubeVariable` needs to
-        implemented here in addition to in ``__new__``.
-
-        This method could be configured to return a standard ndarray if a view
-        is cast, but currently, it will return another CubeVariable instance.
-        """
-        if obj is None:
-            return
-        self.variable = getattr(obj, 'variable', None)
-        self.t, self.x, self.y = getattr(obj, 'coords', range(3))
-
-    def __repr__(self):
-        """Lighterweight repr
-        """
-        if self.size > 5000:
-            return str(type(self)) + ' variable: `' + self.variable \
-                + '`; dtype: ' + str(self.dtype) + ' size: ' + str(self.size)
-        else:
-            return str(self)
-
-    def as_frozen(self):
-        """Export variable as `ndarray`."""
-        return self.view(np.ndarray)
+    # def __new__(cls, *args, **kwargs):
+    #     """Initialize the ndarray.
+    #     """
+    #     variable = kwargs.pop('variable', None)
+    #     coords = kwargs.pop('coords', None)
+    #     obj = np.array(*args, **kwargs)
+    #     obj = np.asarray(obj).view(cls)
+    #     obj.variable = variable
+    #     if not coords:
+    #         obj.t, obj.x, obj.y = [np.arange(l) for l in obj.shape]
+    #     else:
+    #         obj.t, obj.x, obj.y = coords['t'], coords['x'], coords['y']
+    #     return obj
+    #
+    # def __array_finalize__(self, obj):
+    #     """Place things that must always happen here.
+    #
+    #     This method is called when any new array is cast. The ``__new__``
+    #     method is not called when views are cast of an existing
+    #     `CubeVariable`, so anything special about the `CubeVariable` needs to
+    #     implemented here in addition to in ``__new__``.
+    #
+    #     This method could be configured to return a standard ndarray if a view
+    #     is cast, but currently, it will return another CubeVariable instance.
+    #     """
+    #     if obj is None:
+    #         return
+    #     self.variable = getattr(obj, 'variable', None)
+    #     self.t, self.x, self.y = getattr(obj, 'coords', range(3))
+    #
+    # def __repr__(self):
+    #     """Lighterweight repr
+    #     """
+    #     if self.size > 5000:
+    #         return str(type(self)) + ' variable: `' + self.variable \
+    #             + '`; dtype: ' + str(self.dtype) + ' size: ' + str(self.size)
+    #     else:
+    #         return str(self)
+    #
+    # def as_frozen(self):
+    #     """Export variable as `ndarray`."""
+    #     return self.view(np.ndarray)
 
 
 class BaseCube(abc.ABC):
@@ -390,7 +395,7 @@ class BaseCube(abc.ABC):
             NEEDS TO BE PORTED OVER TO WRAP THE .show() METHOD OF PLAN!
         """
 
-        _plan = self[var][t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
+        _plan = self[var].data[t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
 
         if not ax:
             ax = plt.gca()
@@ -484,7 +489,7 @@ class DataCube(BaseCube):
 
         self._t = np.array(self._dataio['time'], copy=True)
         _, self._T, _ = np.meshgrid(self.y, self.t, self.x)
-        self._H, self._L, self._W = self['eta'].shape
+        self._H, self._L, self._W = self['eta'].data.shape
 
         self._knows_stratigraphy = False
 
@@ -510,10 +515,11 @@ class DataCube(BaseCube):
         if var == 'time':
             # a special attribute we add, which matches eta.shape
             _t = np.expand_dims(self.dataio['time'], axis=(1, 2))
-            return CubeVariable(np.tile(_t, (1, *self.shape[1:])),
-                                variable='time')
+            return self._dataio.dataset[var].cubevar
+            # return CubeVariable(np.tile(_t, (1, *self.shape[1:])),
+            #                     variable='time')
         elif var in self._variables:
-            return CubeVariable(self.dataio.dataset[var], variable=var)
+            return self._dataio.dataset[var].cubevar
             # return CubeVariable(self.dataio[var], variable=var)
         else:
             raise AttributeError('No variable of {cube} named {var}'.format(
