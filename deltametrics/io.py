@@ -4,6 +4,7 @@ import os
 import sys
 
 import numpy as np
+import xarray as xr
 import netCDF4
 
 
@@ -143,7 +144,8 @@ class NetCDFIO(BaseIO):
         """Connect to the data file.
 
         Initialize the file if it does not exist, or simply ``return`` if the
-        file already exists.
+        file already exists. This connection to the data file is "lazy"
+        loading, meaning that array values are not being loaded into memory.
 
         .. note::
             This function is automatically called during initialization of any
@@ -151,19 +153,17 @@ class NetCDFIO(BaseIO):
 
         """
         if not os.path.isfile(self.data_path):
-            self.dataset = netCDF4.Dataset(
+            _tempdataset = netCDF4.Dataset(
                 self.data_path, "w", format="NETCDF4")
-        else:
-            if self.write:
-                self.dataset = netCDF4.Dataset(self.data_path, "r+")
-            else:
-                self.dataset = netCDF4.Dataset(self.data_path, "r")
+            _tempdataset.close()
+
+        self.dataset = xr.open_dataset(self.data_path)
 
     def read(self, var):
         """Read variable from file and into memory.
 
-        Converts `variables` in netCDF file to `ndarray` for coersion into a
-        :obj:`~deltametrics.cube.Cube` instance.
+        Converts `variables` in netCDF file to `xarray` objects for coersion
+        into a :obj:`~deltametrics.cube.Cube` instance.
 
         Parameters
         ----------
@@ -171,10 +171,10 @@ class NetCDFIO(BaseIO):
             Which variable to load from the file.
         """
         try:
-            _arr = self.dataset.variables[var]
+            _arr = self.dataset[var]
         except ValueError as e:
             raise e
-        self._in_memory_data[var] = np.array(_arr, copy=True)
+        self._in_memory_data[var] = _arr.load()
 
     def write(self):
         """Write data to file.

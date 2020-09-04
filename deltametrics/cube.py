@@ -5,6 +5,7 @@ import abc
 
 import numpy as np
 import scipy as sp
+import xarray as xr
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
@@ -512,7 +513,8 @@ class DataCube(BaseCube):
             return CubeVariable(np.tile(_t, (1, *self.shape[1:])),
                                 variable='time')
         elif var in self._variables:
-            return CubeVariable(self.dataio[var], variable=var)
+            return CubeVariable(self.dataio.dataset[var], variable=var)
+            # return CubeVariable(self.dataio[var], variable=var)
         else:
             raise AttributeError('No variable of {cube} named {var}'.format(
                                  cube=str(self), var=var))
