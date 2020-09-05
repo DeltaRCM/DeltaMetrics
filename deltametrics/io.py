@@ -157,7 +157,8 @@ class NetCDFIO(BaseIO):
                 self.data_path, "w", format="NETCDF4")
             _tempdataset.close()
 
-        self.dataset = xr.open_dataset(self.data_path)
+        _dataset = xr.open_dataset(self.data_path)
+        self.dataset = _dataset.set_coords(['time', 'y', 'x'])
 
     def read(self, var):
         """Read variable from file and into memory.

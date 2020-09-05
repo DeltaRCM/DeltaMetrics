@@ -310,7 +310,7 @@ class BaseSection(abc.ABC):
                                             'section', self._y, self._x))
             else:
                 return DataSectionVariable(_data=self.cube[var].data[:,
-                                                                     self._y,
+                                                                     self.y,
                                                                      self._x],
                                            _s=self.s, _z=self.z)
         elif type(self.cube) is cube.StratigraphyCube:
@@ -501,7 +501,7 @@ class StrikeSection(BaseSection):
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.
         """
-        _nx = self.cube['eta'].data.shape[2]
+        _nx = self.cube['eta'].shape[2]
         self._x = np.arange(_nx)
         self._y = np.tile(self.y, (_nx))
 
