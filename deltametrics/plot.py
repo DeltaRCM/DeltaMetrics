@@ -535,6 +535,7 @@ def get_display_arrays(VarInst, data=None):
         Three matching-size `ndarray` representing the 1) data, 2) display
         x-coordinates and 3) display y-coordinates.
     """
+    import pdb; pdb.set_trace()
     # # #  SectionVariables  # # #
     if issubclass(type(VarInst), section.BaseSectionVariable):
         # #  DataSection  # #

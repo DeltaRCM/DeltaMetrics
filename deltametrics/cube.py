@@ -48,8 +48,23 @@ class CubeVariable():
     """
 
     def __init__(self, xarray_obj):
+        """Initialize the ``CubeVariable`` object."""
         self.data = xarray_obj
-        self.variable = xarray_obj.name
+
+    def initialize(self, **kwargs):
+        """Initialize with **kwargs."""
+        self.shape = self.data.shape
+        variable = kwargs.pop('variable', None)
+        self.variable = variable
+        coords = kwargs.pop('coords', None)
+        if not coords:
+            self.t, self.x, self.y = [np.arange(itm) for itm in self.shape]
+        else:
+            self.t, self.x, self.y = coords['t'], coords['x'], coords['y']
+
+    def as_frozen(self):
+        """Export variable as `ndarray`."""
+        return self.data.values
 
     # def __new__(cls, *args, **kwargs):
     #     """Initialize the ndarray.
@@ -381,7 +396,8 @@ class BaseCube(abc.ABC):
         if return_cube:
             raise NotImplementedError
         else:
-            return self.__getitem__(var).view(np.ndarray)
+            return self.values
+            # return self.__getitem__(var).view(np.ndarray)
 
     def show_cube(self, var, t=-1, x=-1, y=-1, ax=None):
         """Show the cube in a 3d axis.
@@ -514,12 +530,19 @@ class DataCube(BaseCube):
         """
         if var == 'time':
             # a special attribute we add, which matches eta.shape
-            _t = np.expand_dims(self.dataio['time'], axis=(1, 2))
-            return self._dataio.dataset[var].cubevar
+            _coords = {}
+            _coords['t'] = self.T
+            _coords['x'] = self.X
+            _coords['y'] = self.Y
+            _obj = self._dataio.dataset[var].cubevar
+            _obj.initialize(variable='time', coords=_coords)
+            return _obj
             # return CubeVariable(np.tile(_t, (1, *self.shape[1:])),
             #                     variable='time')
         elif var in self._variables:
-            return self._dataio.dataset[var].cubevar
+            _obj = self._dataio.dataset[var].cubevar
+            _obj.initialize(variable=var)
+            return _obj
             # return CubeVariable(self.dataio[var], variable=var)
         else:
             raise AttributeError('No variable of {cube} named {var}'.format(
@@ -544,9 +567,13 @@ class DataCube(BaseCube):
             initializers.
         """
         if style == 'mesh':
-            self.strat_attr = strat.MeshStratigraphyAttributes(elev=self[variable], **kwargs)
+            self.strat_attr = \
+                strat.MeshStratigraphyAttributes(elev=self[variable].data,
+                                                 **kwargs)
         elif style == 'boxy':
-            self.strat_attr = strat.BoxyStratigraphyAttributes(elev=self[variable], **kwargs)
+            self.strat_attr = \
+                strat.BoxyStratigraphyAttributes(elev=self[variable].data,
+                                                 **kwargs)
         else:
             raise ValueError('Bad "style" argument supplied: %s' % str(style))
         self._knows_stratigraphy = True
@@ -693,9 +720,13 @@ class StratigraphyCube(BaseCube):
                                  cube=str(self), var=var))
 
         # the following lines apply the data to stratigraphy mapping
-        _cut = _var[self.data_coords[:, 0], self.data_coords[:, 1], self.data_coords[:, 2]]
-        _arr[self.strata_coords[:, 0], self.strata_coords[:, 1], self.strata_coords[:, 2]] = _cut
-        return CubeVariable(_arr, variable=var)
+        _cut = _var[self.data_coords[:, 0], self.data_coords[:, 1],
+                    self.data_coords[:, 2]]
+        _arr[self.strata_coords[:, 0], self.strata_coords[:, 1],
+             self.strata_coords[:, 2]] = _cut
+        _obj = xr.DataArray(_arr)
+        _obj.cubevar.initialize(variable=var)
+        return _obj
 
     @property
     def strata(self):

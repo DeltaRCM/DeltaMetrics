@@ -301,16 +301,22 @@ class BaseSection(abc.ABC):
         """
         if type(self.cube) is cube.DataCube:
             if self.cube._knows_stratigraphy:
-                return DataSectionVariable(_data=self.cube[var][:, self._y, self._x],
+                return DataSectionVariable(_data=self.cube[var].data[:,
+                                                                     self._y,
+                                                                     self._x],
                                            _s=self.s, _z=self.z,
-                                           _psvd_mask=self.cube.strat_attr.psvd_idx[
-                                               :, self._y, self._x],
-                                           _strat_attr=self.cube.strat_attr('section', self._y, self._x))
+                                           _psvd_mask=self.cube.strat_attr.psvd_idx[:, self._y, self._x],
+                                           _strat_attr=self.cube.strat_attr(
+                                            'section', self._y, self._x))
             else:
-                return DataSectionVariable(_data=self.cube[var].data[:, self._y, self._x],
+                return DataSectionVariable(_data=self.cube[var].data[:,
+                                                                     self._y,
+                                                                     self._x],
                                            _s=self.s, _z=self.z)
         elif type(self.cube) is cube.StratigraphyCube:
-            return StratigraphySectionVariable(_data=self.cube[var][:, self._y, self._x],
+            return StratigraphySectionVariable(_data=self.cube[var].data[:,
+                                                                    self._y,
+                                                                    self._x],
                                                _s=self.s, _z=self.z)
         elif self.cube is None:
             raise AttributeError(
@@ -397,14 +403,16 @@ class BaseSection(abc.ABC):
         if not ax:
             ax = plt.gca()
         _varinfo = self.cube.varset[SectionAttribute] if \
-            issubclass(type(self.cube), cube.BaseCube) else plot.VariableSet()[SectionAttribute]
+            issubclass(type(self.cube), cube.BaseCube) else \
+            plot.VariableSet()[SectionAttribute]
         SectionVariableInstance = self[SectionAttribute]
 
         # main routines for plot styles
         if style in ['shade', 'shaded']:
             _data, _X, _Y = plot.get_display_arrays(SectionVariableInstance,
                                                     data=data)
-            ci = ax.pcolormesh(_X, _Y, _data, cmap=_varinfo.cmap, norm=_varinfo.norm,
+            ci = ax.pcolormesh(_X, _Y, _data, cmap=_varinfo.cmap,
+                               norm=_varinfo.norm,
                                vmin=_varinfo.vmin, vmax=_varinfo.vmax,
                                rasterized=True, shading='auto')
         elif style in ['line', 'lines']:
