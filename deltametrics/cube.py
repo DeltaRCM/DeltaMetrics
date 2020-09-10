@@ -190,7 +190,7 @@ class BaseCube(abc.ABC):
         _, ext = os.path.splitext(data_path)
         if ext == '.nc':
             self._dataio = io.NetCDFIO(data_path, 'netcdf')
-        elif ext == '.hf5':
+        elif ext == '.hdf5':
             self._dataio = io.NetCDFIO(data_path, 'hdf5')
         else:
             raise ValueError(
@@ -203,10 +203,17 @@ class BaseCube(abc.ABC):
         navigating the variable trees in the stored files.
         """
         self._variables = self._dataio.keys
-        self._X = self._dataio['x']  # mesh grid of x values of cube
-        self._Y = self._dataio['y']  # mesh grid of y values of cube
-        self._x = np.copy(self._X[0, :].squeeze())  # array of x values of cube
-        self._y = np.copy(self._Y[:, 0].squeeze())  # array of y values of cube
+        # if x is 2-D then we assume x and y are mesh grid values
+        if np.ndim(self._dataio['x']) == 2:
+            self._X = self._dataio['x']  # mesh grid of x values of cube
+            self._Y = self._dataio['y']  # mesh grid of y values of cube
+            self._x = np.copy(self._X[0, :].squeeze())  # array of xval of cube
+            self._y = np.copy(self._Y[:, 0].squeeze())  # array of yval of cube
+        # if x is 1-D we do mesh-gridding
+        elif np.ndim(self._dataio['x']) == 1:
+            self._x = self._dataio['x']  # array of xval of cube
+            self._y = self._dataio['y']  # array of yval of cube
+            self._X, self._Y = np.meshgrid(self._x, self._y)  # mesh grids x&y
 
     def read(self, variables):
         """Read variable into memory

@@ -2,6 +2,7 @@
 import abc
 import os
 import sys
+from warnings import warn
 
 import numpy as np
 import xarray as xr
@@ -172,9 +173,13 @@ class NetCDFIO(BaseIO):
 
         try:
             _dataset = xr.open_dataset(self.data_path)
-            self.dataset = _dataset.set_coords(['time', 'y', 'x'])
+            if 'time' and 'y' and 'x' in _dataset.variables:
+                self.dataset = _dataset.set_coords(['time', 'y', 'x'])
+            else:
+                warn('Dimensions "time", "y", and "x" not provided in the \
+                      given data file.', UserWarning)
         except Exception:
-            raise NotImplementedError
+            raise TypeError('File format out of scope for DeltaMetrics')
 
     def read(self, var):
         """Read variable from file and into memory.
