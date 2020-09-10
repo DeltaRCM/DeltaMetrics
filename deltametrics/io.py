@@ -39,13 +39,14 @@ class BaseIO(abc.ABC):
         methods ``connect``, ``read``, ``write``, and ``keys``.
     """
 
-    def __init__(self, data_path, write):
+    def __init__(self, data_path, type, write):
         """Initialize the base IO.
         """
         self.known_variables = known_variables()
         self.known_coords = known_coords()
 
         self.data_path = data_path
+        self.type = type
         self.write = write
 
         self.connect()
@@ -111,15 +112,24 @@ class BaseIO(abc.ABC):
 
 
 class NetCDFIO(BaseIO):
-    """Utility for consistent IO with netCDF files.
+    """Utility for consistent IO with netCDF4 files.
 
     This module wraps calls to the netCDF4 python module in a consistent API,
     so the user can work seamlessly with either netCDF4 files or HDF5 files.
     The public methods of this class are consistent with
     :obj:`~deltametrics.utils.HDFIO`.
+
+    Note that the netCDF4, netCDF4-classic, and HDF5 file standards are very
+    similar and (almost) interchangable. This means that the same data loader
+    can be used to handle these files. We use the `xarray` data reader which
+    supports the netCDF4/HDF5 file-format.
+
+    Older file formats such as netCDF3 or HDF4 are unsupported. For more
+    information about the netCDF4 format, visit the netCDF4
+    `docs <https://www.unidata.ucar.edu/software/netcdf/docs/faq.html>`_.
     """
 
-    def __init__(self, data_path, write=False):
+    def __init__(self, data_path, type, write=False):
         """Initialize the NetCDFIO handler.
 
         Initialize a connection to a NetCDF file.
@@ -129,15 +139,18 @@ class NetCDFIO(BaseIO):
         data_path : `str`
             Path to file to read or write to.
 
+        type : `str`
+            Stores the type of output file loaded, either a netCDF4 file,
+            'netcdf' or an HDF5 file, 'hdf5'.
+
         write : `bool`, optional
             Whether to allow writing to an existing file. Set to False by
             default, if a file already exists at ``data_path``, writing is
             disabled, unless ``write`` is set to True.
         """
 
-        super().__init__(data_path=data_path, write=write)
+        super().__init__(data_path=data_path, type=type, write=write)
 
-        self.type = 'netcdf'
         self._in_memory_data = {}
 
     def connect(self):
@@ -157,8 +170,11 @@ class NetCDFIO(BaseIO):
                 self.data_path, "w", format="NETCDF4")
             _tempdataset.close()
 
-        _dataset = xr.open_dataset(self.data_path)
-        self.dataset = _dataset.set_coords(['time', 'y', 'x'])
+        try:
+            _dataset = xr.open_dataset(self.data_path)
+            self.dataset = _dataset.set_coords(['time', 'y', 'x'])
+        except Exception:
+            raise NotImplementedError
 
     def read(self, var):
         """Read variable from file and into memory.
@@ -199,20 +215,3 @@ class NetCDFIO(BaseIO):
         """Variable names in file.
         """
         return [var for var in self.dataset.variables]
-
-
-class HDFIO(BaseIO):
-    """Utility for consistent IO with HDF5 files.
-
-    This module wraps calls to the hdf5 python module in a consistent API,
-    so the user can work seamlessly with either HDF5 files or netCDF4 files.
-    The public methods of this class are consistent with
-    :obj:`~deltametrics.utils.NetCDFIO`.
-    """
-
-    def __init__(self, data_path):
-        """Initialize the HDF5_IO handler
-
-        parameters
-        """
-        raise NotImplementedError

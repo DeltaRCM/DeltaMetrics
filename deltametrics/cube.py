@@ -189,9 +189,9 @@ class BaseCube(abc.ABC):
         """
         _, ext = os.path.splitext(data_path)
         if ext == '.nc':
-            self._dataio = io.NetCDFIO(data_path)
-        elif ext == '.hf5':  # ?????
-            self._dataio = io.HDFIO(data_path)
+            self._dataio = io.NetCDFIO(data_path, 'netcdf')
+        elif ext == '.hf5':
+            self._dataio = io.NetCDFIO(data_path, 'hdf5')
         else:
             raise ValueError(
                 'Invalid file extension for "data_path": %s' % data_path)
