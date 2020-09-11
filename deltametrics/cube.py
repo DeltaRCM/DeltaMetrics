@@ -512,7 +512,18 @@ class DataCube(BaseCube):
 
         self._t = np.array(self._dataio['time'], copy=True)
         _, self._T, _ = np.meshgrid(self.y, self.t, self.x)
-        self._H, self._L, self._W = self['eta'].data.shape
+
+        # get shape from a variable that is not x, y, or time
+        i = 0
+        while i < len(self.variables):
+            if self.variables[i] == 'x' or self.variables[i] == 'y' \
+               or self.variables[i] == 'time':
+                i += 1
+            else:
+                _var = self.variables[i]
+                i = len(self.variables)
+
+        self._H, self._L, self._W = self[_var].data.shape
 
         self._knows_stratigraphy = False
 
