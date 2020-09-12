@@ -4,6 +4,7 @@ import sys
 import os
 
 import numpy as np
+import xarray as xr
 
 from deltametrics import cube
 
@@ -76,7 +77,7 @@ class TestDataCubeNoStratigraphy:
         slc = rcm8cube['eta']
         assert type(slc) is cube.CubeVariable
         assert slc.ndim == 3
-        assert type(slc.base) is np.ndarray
+        assert type(slc.data) is xr.core.dataarray.DataArray
 
     def test_slice_op_invalid_name(self):
         rcm8cube = cube.DataCube(rcm8_path)

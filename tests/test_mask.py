@@ -19,7 +19,7 @@ class TestShorelineMask:
     def test_default_vals(self):
         """Test that default values are assigned."""
         # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
+        shoremask = mask.ShorelineMask(rcm8cube['eta'].data[-1, :, :])
         # make assertions
         assert shoremask.topo_threshold == -0.5
         assert shoremask.angle_threshold == 75
@@ -29,21 +29,21 @@ class TestShorelineMask:
     def test_maskError(self):
         """Test that TypeError is raised if is_mask is invalid."""
         with pytest.raises(TypeError):
-            shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :],
+            shoremask = mask.ShorelineMask(rcm8cube['eta'].data[-1, :, :],
                                            is_mask='invalid')
 
     def test_maskTrue(self):
         """Test that is_mask is True works."""
         # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :],
+        shoremask = mask.ShorelineMask(rcm8cube['eta'].data[-1, :, :],
                                        is_mask=True)
         # do assertion
-        assert np.all(shoremask.mask == rcm8cube['eta'][-1, :, :])
+        assert np.all(shoremask.mask == rcm8cube['eta'].data[-1, :, :])
 
     def test_assign_vals(self):
         """Test that specified values are assigned."""
         # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :],
+        shoremask = mask.ShorelineMask(rcm8cube['eta'].data[-1, :, :],
                                        topo_threshold=-1.0,
                                        angle_threshold=100,
                                        numviews=5)
@@ -55,7 +55,7 @@ class TestShorelineMask:
     def test_shoreline(self):
         """Check for important variables and the final mask."""
         # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
+        shoremask = mask.ShorelineMask(rcm8cube['eta'].data[-1, :, :])
         # make assertions
         assert np.array_equal(shoremask.mask,
                               shoremask.mask.astype(bool)) is True
@@ -66,7 +66,7 @@ class TestShorelineMask:
     def test_submergedLand(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][0, :, :])
+        shoremask = mask.ShorelineMask(rcm8cube['eta'].data[0, :, :])
         # assert - expect all values to be 0s
         assert np.all(shoremask.mask == 0)
 
@@ -94,7 +94,7 @@ class TestLandMask:
     def test_default_vals(self):
         """Test that default values are assigned."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
+        landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :])
         # make assertions
         assert landmask.topo_threshold == -0.5
         assert landmask.angle_threshold == 75
@@ -104,21 +104,21 @@ class TestLandMask:
     def test_maskError(self):
         """Test that TypeError is raised if is_mask is invalid."""
         with pytest.raises(TypeError):
-            landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
+            landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :],
                                      is_mask='invalid')
 
     def test_maskTrue(self):
         """Test that is_mask is True works."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
+        landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :],
                                  is_mask=True)
         # do assertion
-        assert np.all(landmask.mask == rcm8cube['eta'][-1, :, :])
+        assert np.all(landmask.mask == rcm8cube['eta'].data[-1, :, :])
 
     def test_assign_vals(self):
         """Test that specified values are assigned."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
+        landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :],
                                  angle_threshold=100,
                                  topo_threshold=-1.0,
                                  numviews=5)
@@ -130,14 +130,14 @@ class TestLandMask:
     def test_submergedLand(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][0, :, :])
+        landmask = mask.LandMask(rcm8cube['eta'].data[0, :, :])
         # assert - expect all values to be 1s
         assert np.all(landmask.mask == 1)
 
     def test_land(self):
         """Check for important variables and the final mask."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
+        landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :])
         # make assertions
         assert np.array_equal(landmask.mask,
                               landmask.mask.astype(bool)) is True
@@ -147,8 +147,8 @@ class TestLandMask:
 
     def test_givenshore(self):
         """Test that a ShoreMask can be passed into it."""
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
+        shoremask = mask.ShorelineMask(rcm8cube['eta'].data[-1, :, :])
+        landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :],
                                  shoremask=shoremask)
         # make assertions
         assert hasattr(landmask, 'shoremask') is True
@@ -161,7 +161,7 @@ class TestLandMask:
     def test_givenfakeshore(self):
         """Test that a bad shoreline mask doesn't break the function."""
         shoremask = 'not a mask'
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
+        landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :],
                                  shoremask=shoremask)
         # make assertions
         assert hasattr(landmask, 'shoremask') is True
@@ -190,7 +190,7 @@ class TestWetMask:
     def test_default_vals(self):
         """Test that default values are assigned."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :])
+        wetmask = mask.WetMask(rcm8cube['eta'].data[-1, :, :])
         # make assertions
         assert wetmask.topo_threshold == -0.5
         assert wetmask.angle_threshold == 75
@@ -200,21 +200,21 @@ class TestWetMask:
     def test_maskError(self):
         """Test that TypeError is raised if is_mask is invalid."""
         with pytest.raises(TypeError):
-            wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
+            wetmask = mask.WetMask(rcm8cube['eta'].data[-1, :, :],
                                    is_mask='invalid')
 
     def test_maskTrue(self):
         """Test that is_mask is True works."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
+        wetmask = mask.WetMask(rcm8cube['eta'].data[-1, :, :],
                                is_mask=True)
         # do assertion
-        assert np.all(wetmask.mask == rcm8cube['eta'][-1, :, :])
+        assert np.all(wetmask.mask == rcm8cube['eta'].data[-1, :, :])
 
     def test_assign_vals(self):
         """Test that specified values are assigned."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
+        wetmask = mask.WetMask(rcm8cube['eta'].data[-1, :, :],
                                topo_threshold=-1.0,
                                angle_threshold=100,
                                numviews=5)
@@ -226,7 +226,7 @@ class TestWetMask:
     def test_land(self):
         """Check for important variables and the final mask."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :])
+        wetmask = mask.WetMask(rcm8cube['eta'].data[-1, :, :])
         # make assertions
         assert np.array_equal(wetmask.mask,
                               wetmask.mask.astype(bool)) is True
@@ -236,8 +236,8 @@ class TestWetMask:
 
     def test_givenland(self):
         """Test that a LandMask can be passed into it."""
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
+        landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :])
+        wetmask = mask.WetMask(rcm8cube['eta'].data[-1, :, :],
                                landmask=landmask)
         # make assertions
         assert hasattr(wetmask, 'landmask') is True
@@ -249,7 +249,7 @@ class TestWetMask:
     def test_givenfakeland(self):
         """Test that a bad land mask doesn't break function."""
         landmask = 'not a mask'
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
+        wetmask = mask.WetMask(rcm8cube['eta'].data[-1, :, :],
                                landmask=landmask)
         # make assertions
         assert hasattr(wetmask, 'landmask') is True
@@ -261,15 +261,16 @@ class TestWetMask:
     def test_submerged(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][0, :, :])
+        wetmask = mask.WetMask(rcm8cube['eta'].data[0, :, :])
         # assert - expect all values to be 0s
         assert np.all(wetmask.mask == 0)
 
     def test_submerged_givenland(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][0, :, :])
-        wetmask = mask.WetMask(rcm8cube['eta'][0, :, :], landmask=landmask)
+        landmask = mask.LandMask(rcm8cube['eta'].data[0, :, :])
+        wetmask = mask.WetMask(rcm8cube['eta'].data[0, :, :],
+                               landmask=landmask)
         # assert - expect all values to be 0s
         assert np.all(wetmask.mask == 0)
 
@@ -292,8 +293,8 @@ class TestChannelMask:
     def test_default_vals(self):
         """Test that default values are assigned."""
         # define the mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :])
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :])
         # make assertions
         assert channelmask.velocity_threshold == 0.3
         assert channelmask.topo_threshold == -0.5
@@ -304,24 +305,24 @@ class TestChannelMask:
     def test_maskError(self):
         """Test that TypeError is raised if is_mask is invalid."""
         with pytest.raises(TypeError):
-            channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                           rcm8cube['eta'][-1, :, :],
+            channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                           rcm8cube['eta'].data[-1, :, :],
                                            is_mask='invalid')
 
     def test_maskTrue(self):
         """Test that is_mask is True works."""
         # define the mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :],
                                        is_mask=True)
         # do assertion
-        assert np.all(channelmask.mask == rcm8cube['eta'][-1, :, :])
+        assert np.all(channelmask.mask == rcm8cube['eta'].data[-1, :, :])
 
     def test_assign_vals(self):
         """Test that specified values are assigned."""
         # define the mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :],
                                        velocity_threshold=0.5,
                                        topo_threshold=-1.0,
                                        angle_threshold=100,
@@ -335,8 +336,8 @@ class TestChannelMask:
     def test_imp_vars(self):
         """Check for important variables and the final mask."""
         # define the mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :])
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :])
         # make assertions
         assert np.array_equal(channelmask.mask,
                               channelmask.mask.astype(bool)) is True
@@ -347,9 +348,9 @@ class TestChannelMask:
 
     def test_givenland(self):
         """Test that a LandMask can be passed into it."""
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
+        landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :])
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :],
                                        landmask=landmask)
         # make assertions
         assert hasattr(channelmask, 'landmask') is True
@@ -363,8 +364,8 @@ class TestChannelMask:
     def test_givenfakeland(self):
         """Test that an improperly defined land mask still works."""
         landmask = 'not a mask'
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :],
                                        landmask=landmask)
         # make assertions
         assert hasattr(channelmask, 'landmask') is True
@@ -377,9 +378,9 @@ class TestChannelMask:
 
     def test_givenwet(self):
         """Test that a WetMask can be passed into it."""
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :])
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
+        wetmask = mask.WetMask(rcm8cube['eta'].data[-1, :, :])
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :],
                                        wetmask=wetmask)
         # make assertions
         assert hasattr(channelmask, 'landmask') is True
@@ -392,8 +393,8 @@ class TestChannelMask:
     def test_givenfakewet(self):
         """Test that an improperly defined wet mask still works."""
         wetmask = 'not a mask'
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :],
                                        wetmask=wetmask)
         # make assertions
         assert hasattr(channelmask, 'landmask') is True
@@ -406,21 +407,21 @@ class TestChannelMask:
     def test_submerged(self):
         """Check what happens when there is no land above water."""
         # define zeros velocity array
-        velocity = np.zeros_like(rcm8cube['velocity'][0, :, :].__array__())
+        velocity = np.zeros_like(rcm8cube['velocity'].data[0, :, :].__array__())
         # define the mask
         channelmask = mask.ChannelMask(velocity,
-                                       rcm8cube['eta'][0, :, :])
+                                       rcm8cube['eta'].data[0, :, :])
         # assert - expect all values to be 0s
         assert np.all(channelmask.mask == 0)
 
     def test_submerged_givenland(self):
         """Check what happens when there is no land above water."""
         # define zeros velocity array
-        velocity = np.zeros_like(rcm8cube['velocity'][0, :, :].__array__())
+        velocity = np.zeros_like(rcm8cube['velocity'].data[0, :, :].__array__())
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][0, :, :])
+        landmask = mask.LandMask(rcm8cube['eta'].data[0, :, :])
         channelmask = mask.ChannelMask(velocity,
-                                       rcm8cube['eta'][0, :, :],
+                                       rcm8cube['eta'].data[0, :, :],
                                        landmask=landmask)
         # assert - expect all values to be 0s
         assert np.all(channelmask.mask == 0)
@@ -428,11 +429,11 @@ class TestChannelMask:
     def test_submerged_givenwet(self):
         """Check what happens when there is no land above water."""
         # define zeros velocity array
-        velocity = np.zeros_like(rcm8cube['velocity'][0, :, :].__array__())
+        velocity = np.zeros_like(rcm8cube['velocity'].data[0, :, :].__array__())
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][0, :, :])
+        wetmask = mask.WetMask(rcm8cube['eta'].data[0, :, :])
         channelmask = mask.ChannelMask(velocity,
-                                       rcm8cube['eta'][0, :, :],
+                                       rcm8cube['eta'].data[0, :, :],
                                        wetmask=wetmask)
         # assert - expect all values to be 0s
         assert np.all(channelmask.mask == 0)
@@ -441,7 +442,7 @@ class TestChannelMask:
         """Raise TypeError if invalid velocity type is provided."""
         with pytest.raises(TypeError):
             channelmask = mask.ChannelMask('bad_velocity',
-                                           rcm8cube['eta'][-1, :, :])
+                                           rcm8cube['eta'].data[-1, :, :])
 
     def test_3d(self):
         """Test with multiple time slices."""
@@ -463,7 +464,7 @@ class TestEdgeMask:
     def test_default_vals(self):
         """Test that default values are assigned."""
         # define the mask
-        edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :])
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[-1, :, :])
         # make assertions
         assert edgemask.topo_threshold == -0.5
         assert edgemask.angle_threshold == 75
@@ -473,21 +474,21 @@ class TestEdgeMask:
     def test_maskError(self):
         """Test that TypeError is raised if is_mask is invalid."""
         with pytest.raises(TypeError):
-            edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
+            edgemask = mask.EdgeMask(rcm8cube['eta'].data[-1, :, :],
                                      is_mask='invalid')
 
     def test_maskTrue(self):
         """Test that is_mask is True works."""
         # define the mask
-        edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[-1, :, :],
                                  is_mask=True)
         # do assertion
-        assert np.all(edgemask.mask == rcm8cube['eta'][-1, :, :])
+        assert np.all(edgemask.mask == rcm8cube['eta'].data[-1, :, :])
 
     def test_assign_vals(self):
         """Test that specified values are assigned."""
         # define the mask
-        edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[-1, :, :],
                                  topo_threshold=-1.0,
                                  angle_threshold=100,
                                  numviews=5)
@@ -499,7 +500,7 @@ class TestEdgeMask:
     def test_imp_vars(self):
         """Check for important variables and the final mask."""
         # define the mask
-        edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :])
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[-1, :, :])
         # make assertions
         assert np.array_equal(edgemask.mask,
                               edgemask.mask.astype(bool)) is True
@@ -509,8 +510,8 @@ class TestEdgeMask:
 
     def test_givenland(self):
         """Test that a LandMask can be passed into it."""
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
-        edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
+        landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :])
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[-1, :, :],
                                  landmask=landmask)
         # make assertions
         assert hasattr(edgemask, 'landmask') is True
@@ -521,8 +522,8 @@ class TestEdgeMask:
 
     def test_givenwet(self):
         """Test that a WetMask can be passed into it."""
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :])
-        edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
+        wetmask = mask.WetMask(rcm8cube['eta'].data[-1, :, :])
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[-1, :, :],
                                  wetmask=wetmask)
         # make assertions
         assert hasattr(edgemask, 'landmask') is True
@@ -533,9 +534,9 @@ class TestEdgeMask:
 
     def test_givenwetandland(self):
         """Test that a WetMask and LandMask can be passed into it."""
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :])
-        edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
+        landmask = mask.LandMask(rcm8cube['eta'].data[-1, :, :])
+        wetmask = mask.WetMask(rcm8cube['eta'].data[-1, :, :])
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[-1, :, :],
                                  landmask=landmask,
                                  wetmask=wetmask)
         # make assertions
@@ -549,7 +550,7 @@ class TestEdgeMask:
         """Test that a bad pair of wet and land masks can be passed in."""
         landmask = 'bad land mask'
         wetmask = 'bad wet mask'
-        edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[-1, :, :],
                                  landmask=landmask,
                                  wetmask=wetmask)
         # make assertions
@@ -562,32 +563,34 @@ class TestEdgeMask:
     def test_submerged(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        edgemask = mask.EdgeMask(rcm8cube['eta'][0, :, :])
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[0, :, :])
         # assert - expect all values to be 0s
         assert np.all(edgemask.mask == 0)
 
     def test_submerged_givenland(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][0, :, :])
-        edgemask = mask.EdgeMask(rcm8cube['eta'][0, :, :], landmask=landmask)
+        landmask = mask.LandMask(rcm8cube['eta'].data[0, :, :])
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[0, :, :],
+                                 landmask=landmask)
         # assert - expect all values to be 0s
         assert np.all(edgemask.mask == 0)
 
     def test_submerged_givenwet(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][0, :, :])
-        edgemask = mask.EdgeMask(rcm8cube['eta'][0, :, :], wetmask=wetmask)
+        wetmask = mask.WetMask(rcm8cube['eta'].data[0, :, :])
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[0, :, :],
+                                 wetmask=wetmask)
         # assert - expect all values to be 0s
         assert np.all(edgemask.mask == 0)
 
     def test_submerged_givenboth(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][0, :, :])
-        wetmask = mask.WetMask(rcm8cube['eta'][0, :, :])
-        edgemask = mask.EdgeMask(rcm8cube['eta'][0, :, :],
+        landmask = mask.LandMask(rcm8cube['eta'].data[0, :, :])
+        wetmask = mask.WetMask(rcm8cube['eta'].data[0, :, :])
+        edgemask = mask.EdgeMask(rcm8cube['eta'].data[0, :, :],
                                  wetmask=wetmask,
                                  landmask=landmask)
         # assert - expect all values to be 0s
@@ -645,8 +648,8 @@ class TestCenterlineMask:
     def test_passChannelMask(self):
         """Test that a ChannelMask object can be passed in."""
         # define channel mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :])
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :])
         # define the mask
         centerlinemask = mask.CenterlineMask(channelmask)
         # make assertions - check that mask is binary
@@ -675,8 +678,8 @@ class TestCenterlineMask:
     def test_rivamapDefaults(self):
         """Test rivamap extraction of centerlines."""
         # define channel mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :])
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :])
         # define the mask
         centerlinemask = mask.CenterlineMask(channelmask,
                                              method='rivamap',
@@ -693,8 +696,8 @@ class TestCenterlineMask:
     def test_rivamapCustom(self):
         """Test rivamap extraction of centerlines with custom values."""
         # define channel mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :])
+        channelmask = mask.ChannelMask(rcm8cube['velocity'].data[-1, :, :],
+                                       rcm8cube['eta'].data[-1, :, :])
         # define the mask
         centerlinemask = mask.CenterlineMask(channelmask,
                                              method='rivamap',
@@ -714,7 +717,7 @@ class TestCenterlineMask:
 def test_plotter(tmp_path):
     """Test the show() function."""
     import matplotlib.pyplot as plt
-    shore_mask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
+    shore_mask = mask.ShorelineMask(rcm8cube['eta'].data[-1, :, :])
     shore_mask.show()
     plt.savefig(tmp_path / 'mask_fig.png')
     plt.close()
