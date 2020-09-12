@@ -9,28 +9,6 @@ import xarray as xr
 import netCDF4
 
 
-def known_variables():
-    """A list of known variables.
-
-    These variables are common variables we anticipate being present in all
-    sorts of use-cases. Each one is given a set of default parameters in
-    :obj:`~deltametrics.plot.VariableSet`.
-    """
-    return ['eta', 'stage', 'depth', 'discharge',
-            'velocity', 'strata_sand_frac']
-
-
-def known_coords():
-    """A list of known coordinates.
-
-    These coordinates are commonly defined coordinate matricies that may be
-    stored inside of a file on disk. We don't treat these any differently in
-    the io wrappers, but knowing they are coordinates can be helpful.
-    """
-
-    return ['x', 'y', 'time']
-
-
 class BaseIO(abc.ABC):
     """BaseIO object other file format wrappers inheririt from.
 
@@ -43,14 +21,14 @@ class BaseIO(abc.ABC):
     def __init__(self, data_path, type, write):
         """Initialize the base IO.
         """
-        self.known_variables = known_variables()
-        self.known_coords = known_coords()
-
         self.data_path = data_path
         self.type = type
         self.write = write
 
         self.connect()
+
+        self.get_known_coords()
+        self.get_known_variables()
 
     @property
     def data_path(self):
@@ -63,8 +41,8 @@ class BaseIO(abc.ABC):
 
         Notes
         -----
-        The setter method validates the path, and returns a ``FileNotFoundError`` if
-        the file is not found.
+        The setter method validates the path, and returns a
+        ``FileNotFoundError`` if the file is not found.
         """
         return self._data_path
 
@@ -81,6 +59,22 @@ class BaseIO(abc.ABC):
 
         This function should initialize the file if it does not exist, or
         connect to the file if it already exists---but *do not* read the file.
+        """
+        return
+
+    @abc.abstractmethod
+    def get_known_variables(self):
+        """Should create list of known variables.
+
+        This function needs to populate `self.known_variables`.
+        """
+        return
+
+    @abc.abstractmethod
+    def get_known_coords(self):
+        """A list of known coordinates.
+
+        This function needs to populate `self.known_coords`.
         """
         return
 
@@ -173,18 +167,34 @@ class NetCDFIO(BaseIO):
 
         try:
             _dataset = xr.open_dataset(self.data_path)
+
             if 'time' and 'y' and 'x' in _dataset.variables:
                 self.dataset = _dataset.set_coords(['time', 'y', 'x'])
             else:
                 warn('Dimensions "time", "y", and "x" not provided in the \
                       given data file.', UserWarning)
+
         except Exception:
             raise TypeError('File format out of scope for DeltaMetrics')
+
+    def get_known_variables(self):
+        """List known variables.
+
+        These variables are pulled from the loaded dataset.
+        """
+        self.known_variables = list(self.dataset.variables)
+
+    def get_known_coords(self):
+        """List known coordinates.
+
+        These coordinates are pulled from the loaded dataset.
+        """
+        self.known_coords = list(self.dataset.coords)
 
     def read(self, var):
         """Read variable from file and into memory.
 
-        Converts `variables` in netCDF file to `xarray` objects for coersion
+        Converts `variables` in data file to `xarray` objects for coersion
         into a :obj:`~deltametrics.cube.Cube` instance.
 
         Parameters
@@ -196,6 +206,7 @@ class NetCDFIO(BaseIO):
             _arr = self.dataset[var]
         except ValueError as e:
             raise e
+
         self._in_memory_data[var] = _arr.load()
 
     def write(self):

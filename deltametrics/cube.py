@@ -1,4 +1,5 @@
 import os
+import copy
 import warnings
 import time
 import abc
@@ -54,6 +55,7 @@ class CubeVariable():
     def initialize(self, **kwargs):
         """Initialize with **kwargs."""
         self.shape = self.data.shape
+        self.ndim = len(self.shape)
         variable = kwargs.pop('variable', None)
         self.variable = variable
         coords = kwargs.pop('coords', None)
@@ -65,49 +67,6 @@ class CubeVariable():
     def as_frozen(self):
         """Export variable as `ndarray`."""
         return self.data.values
-
-    # def __new__(cls, *args, **kwargs):
-    #     """Initialize the ndarray.
-    #     """
-    #     variable = kwargs.pop('variable', None)
-    #     coords = kwargs.pop('coords', None)
-    #     obj = np.array(*args, **kwargs)
-    #     obj = np.asarray(obj).view(cls)
-    #     obj.variable = variable
-    #     if not coords:
-    #         obj.t, obj.x, obj.y = [np.arange(l) for l in obj.shape]
-    #     else:
-    #         obj.t, obj.x, obj.y = coords['t'], coords['x'], coords['y']
-    #     return obj
-    #
-    # def __array_finalize__(self, obj):
-    #     """Place things that must always happen here.
-    #
-    #     This method is called when any new array is cast. The ``__new__``
-    #     method is not called when views are cast of an existing
-    #     `CubeVariable`, so anything special about the `CubeVariable` needs to
-    #     implemented here in addition to in ``__new__``.
-    #
-    #     This method could be configured to return a standard ndarray if a view
-    #     is cast, but currently, it will return another CubeVariable instance.
-    #     """
-    #     if obj is None:
-    #         return
-    #     self.variable = getattr(obj, 'variable', None)
-    #     self.t, self.x, self.y = getattr(obj, 'coords', range(3))
-    #
-    # def __repr__(self):
-    #     """Lighterweight repr
-    #     """
-    #     if self.size > 5000:
-    #         return str(type(self)) + ' variable: `' + self.variable \
-    #             + '`; dtype: ' + str(self.dtype) + ' size: ' + str(self.size)
-    #     else:
-    #         return str(self)
-    #
-    # def as_frozen(self):
-    #     """Export variable as `ndarray`."""
-    #     return self.view(np.ndarray)
 
 
 class BaseCube(abc.ABC):
@@ -403,8 +362,7 @@ class BaseCube(abc.ABC):
         if return_cube:
             raise NotImplementedError
         else:
-            return self.values
-            # return self.__getitem__(var).view(np.ndarray)
+            return self[var].data
 
     def show_cube(self, var, t=-1, x=-1, y=-1, ax=None):
         """Show the cube in a 3d axis.
@@ -688,22 +646,23 @@ class StratigraphyCube(BaseCube):
             supplied, a new default VariableSet instance is created.
         """
         super().__init__(data, read, varset)
-
         if isinstance(data, str):
             raise NotImplementedError('Precomputed NetCDF?')
         elif isinstance(data, np.ndarray):
             raise NotImplementedError('Precomputed numpy array?')
         elif isinstance(data, DataCube):
             # i.e., creating from a DataCube
-            _elev = np.array(self.dataio[stratigraphy_from], copy=True)
+            _elev = copy.deepcopy(data[stratigraphy_from])
 
             # set up coordinates of the array
-            self._z = strat._determine_strat_coordinates(_elev, dz=dz)
+            self._z = strat._determine_strat_coordinates(_elev.data, dz=dz)
             self._H = len(self.z)
             self._L, self._W = _elev.shape[1:]
             self._Z = np.tile(self.z, (self.W, self.L, 1)).T
 
-            _out = strat.compute_boxy_stratigraphy_coordinates(_elev, z=self.z, return_strata=True)
+            _out = strat.compute_boxy_stratigraphy_coordinates(_elev.data,
+                                                               z=self.z,
+                                                            return_strata=True)
             self.strata_coords, self.data_coords, self.strata = _out
         else:
             raise TypeError('No other input types implemented yet.')
