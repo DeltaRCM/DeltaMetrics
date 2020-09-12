@@ -78,3 +78,16 @@ def test_netcdf_io_intomemory_read():
     assert dataset_size == dataset_size_after
     assert inmemory_size < inmemory_size_after
     assert sys.getsizeof(_arr) > 1000
+
+
+def test_nofile():
+    with pytest.raises(FileNotFoundError):
+        io.NetCDFIO('badpath', 'netcdf')
+
+
+def test_readvar_intomemory():
+    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    assert netcdf_io._in_memory_data == {}
+
+    netcdf_io.read('eta')
+    assert ('eta' in netcdf_io._in_memory_data.keys()) is True
