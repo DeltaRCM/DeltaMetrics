@@ -293,13 +293,14 @@ class TestFrozenStratigraphyCube:
         'time')
 
     def test_types(self):
-        assert isinstance(self.frozenstratigraphycube, np.ndarray)
+        assert isinstance(self.frozenstratigraphycube,
+                          xr.core.dataarray.DataArray)
 
     def test_matches_underlying_data(self):
         assert not self.frozenstratigraphycube is self.fixedstratigraphycube
-        frzn_log = self.frozenstratigraphycube[
-            ~np.isnan(self.frozenstratigraphycube)]
-        fixd_log = self.fixedstratigraphycube['time'][
-            ~np.isnan(self.fixedstratigraphycube['time'])]
+        frzn_log = self.frozenstratigraphycube.values[
+            ~np.isnan(self.frozenstratigraphycube.values)]
+        fixd_log = self.fixedstratigraphycube['time'].data.values[
+            ~np.isnan(self.fixedstratigraphycube['time'].data.values)]
         assert frzn_log.shape == fixd_log.shape
         assert np.all(fixd_log == frzn_log)

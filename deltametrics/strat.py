@@ -252,7 +252,7 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
         """
         super().__init__('mesh')
 
-        _eta = np.copy(elev)
+        _eta = np.copy(elev.data)
         _strata, _psvd = _compute_elevation_to_preservation(_eta)
         _psvd[0, ...] = True
         self.strata = _strata
@@ -378,13 +378,13 @@ def _compute_elevation_to_preservation(elev):
         To determine whether time from a given *timestep* is preserved, use
         ``psvd.nonzero()[0] - 1``.
     """
-    psvd = np.zeros_like(elev, dtype=np.bool)  # bool, if retained
-    strata = np.zeros_like(elev)  # elev of surface at each t
+    psvd = np.zeros_like(elev.data, dtype=np.bool)  # bool, if retained
+    strata = np.zeros_like(elev.data)  # elev of surface at each t
 
     nt = strata.shape[0]
-    strata[-1, ...] = elev[-1, ...]
+    strata[-1, ...] = elev.data.values[-1, ...]
     for j in np.arange(nt - 2, -1, -1):
-        strata[j, ...] = np.minimum(elev[j, ...],
+        strata[j, ...] = np.minimum(elev.data.values[j, ...],
                                     strata[j + 1, ...])
         psvd[j + 1, ...] = np.less(strata[j, ...],
                                    strata[j + 1, ...])
@@ -534,7 +534,7 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
         ``np.arange(np.min(elev), np.max(elev)+dz, step=dz)``.
 
     nz : :obj:`int`, optional
-        Number of intervals in `z`. Z array is created as 
+        Number of intervals in `z`. Z array is created as
         ``np.linspace(np.min(elev), np.max(elev), num=nz, endpoint=True)``.
     """
     if (dz is None) and (z is None) and (nz is None):
@@ -548,14 +548,14 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
     elif not (dz is None):
         if dz <= 0:
             raise _valerr
-        max_dos = np.max(elev) + dz  # max depth of section, meters
-        min_dos = np.min(elev)       # min dos, meters
+        max_dos = np.max(elev.data) + dz  # max depth of section, meters
+        min_dos = np.min(elev.data)       # min dos, meters
         return np.arange(min_dos, max_dos, step=dz)
     elif not (nz is None):
         if nz <= 0:
             raise _valerr
-        max_dos = np.max(elev)
-        min_dos = np.min(elev)
+        max_dos = np.max(elev.data)
+        min_dos = np.min(elev.data)
         return np.linspace(min_dos, max_dos, num=nz, endpoint=True)
     else:
         raise RuntimeError('No coordinates determined. Check inputs.')

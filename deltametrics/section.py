@@ -314,8 +314,8 @@ class BaseSection(abc.ABC):
                                                                      self._x],
                                            _s=self.s, _z=self.z)
         elif type(self.cube) is cube.StratigraphyCube:
-            return StratigraphySectionVariable(_data=self.cube[var][:,
-                                                                    self._y,
+            return StratigraphySectionVariable(_data=self.cube[var].data.values[:,
+                                                                    self.y,
                                                                     self._x],
                                                _s=self.s, _z=self.z)
         elif self.cube is None:

@@ -504,22 +504,19 @@ class DataCube(BaseCube):
         CubeVariable : `~deltametrics.cube.CubeVariable`
             The instantiated CubeVariable.
         """
-        if var == 'time':
+        if var == 'time' or var == 'x' or var == 'y':
             # a special attribute we add, which matches eta.shape
             _coords = {}
             _coords['t'] = self.T
             _coords['x'] = self.X
             _coords['y'] = self.Y
             _obj = self._dataio.dataset[var].cubevar
-            _obj.initialize(variable='time', coords=_coords)
+            _obj.initialize(variable=var, coords=_coords)
             return _obj
-            # return CubeVariable(np.tile(_t, (1, *self.shape[1:])),
-            #                     variable='time')
         elif var in self._variables:
             _obj = self._dataio.dataset[var].cubevar
             _obj.initialize(variable=var)
             return _obj
-            # return CubeVariable(self.dataio[var], variable=var)
         else:
             raise AttributeError('No variable of {cube} named {var}'.format(
                                  cube=str(self), var=var))
@@ -701,8 +698,8 @@ class StratigraphyCube(BaseCube):
                     self.data_coords[:, 2]]
         _arr[self.strata_coords[:, 0], self.strata_coords[:, 1],
              self.strata_coords[:, 2]] = _cut
-        _obj = xr.DataArray(_arr)
-        _obj.cubevar.initialize(variable=var)
+        _obj = xr.DataArray(_arr).cubevar
+        _obj.initialize(variable=var)
         return _obj
 
     @property
