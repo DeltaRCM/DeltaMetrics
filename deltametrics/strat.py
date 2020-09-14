@@ -1,6 +1,8 @@
 import abc
 
+import copy
 import numpy as np
+import xarray as xr
 from scipy import stats
 import matplotlib.pyplot as plt
 
@@ -88,9 +90,11 @@ def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
     # copy data out and into the stratigraphy based on coordinates
     nx, ny = strata.shape[1:]
     stratigraphy = np.full((len(z), nx, ny), np.nan)  # preallocate nans
-    _cut = prop[data_coords[:, 0], data_coords[:, 1], data_coords[:, 2]]
-    stratigraphy[strata_coords[:, 0], strata_coords[
-        :, 1], strata_coords[:, 2]] = _cut
+    _cut = prop.data.values[data_coords[:, 0], data_coords[:, 1],
+                            data_coords[:, 2]]
+    stratigraphy[strata_coords[:, 0],
+                 strata_coords[:, 1],
+                 strata_coords[:, 2]] = _cut
 
     elevations = np.tile(z, (ny, nx, 1)).T
 
@@ -252,7 +256,7 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
         """
         super().__init__('mesh')
 
-        _eta = np.copy(elev.data)
+        _eta = copy.deepcopy(elev)
         _strata, _psvd = _compute_elevation_to_preservation(_eta)
         _psvd[0, ...] = True
         self.strata = _strata
@@ -272,9 +276,9 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
                                   *_eta.shape[1:]), np.nan)
         for i in np.arange(_eta.shape[1]):
             for j in np.arange(_eta.shape[2]):
-                self.psvd_vxl_eta[0:self.psvd_vxl_cnt[i, j], i, j] = _eta[
+                self.psvd_vxl_eta[0:self.psvd_vxl_cnt[i, j], i, j] = _eta.data[
                     self.psvd_idx[:, i, j], i, j].copy()
-                self.psvd_flld[0:self.psvd_vxl_cnt[i, j], i, j] = _eta[
+                self.psvd_flld[0:self.psvd_vxl_cnt[i, j], i, j] = _eta.data[
                     self.psvd_idx[:, i, j], i, j].copy()
                 self.psvd_flld[self.psvd_vxl_cnt[i, j]:, i, j] = self.psvd_flld[
                     self.psvd_vxl_cnt[i, j] - 1, i, j]
@@ -382,15 +386,36 @@ def _compute_elevation_to_preservation(elev):
     strata = np.zeros_like(elev.data)  # elev of surface at each t
 
     nt = strata.shape[0]
-    strata[-1, ...] = elev.data.values[-1, ...]
-    for j in np.arange(nt - 2, -1, -1):
-        strata[j, ...] = np.minimum(elev.data.values[j, ...],
-                                    strata[j + 1, ...])
-        psvd[j + 1, ...] = np.less(strata[j, ...],
-                                   strata[j + 1, ...])
-    if nt > 1:  # allows a single-time elevation-series to return
-        psvd[0, ...] = np.less(strata[0, ...],
-                               strata[1, ...])
+    if isinstance(elev, np.ndarray) is True:
+        strata[-1, ...] = elev[-1, ...]
+        for j in np.arange(nt - 2, -1, -1):
+            strata[j, ...] = np.minimum(elev[j, ...],
+                                        strata[j + 1, ...])
+            psvd[j + 1, ...] = np.less(strata[j, ...],
+                                       strata[j + 1, ...])
+        if nt > 1:  # allows a single-time elevation-series to return
+            psvd[0, ...] = np.less(strata[0, ...],
+                                   strata[1, ...])
+    elif isinstance(elev, xr.core.dataarray.DataArray) is True:
+        strata[-1, ...] = elev.values[-1, ...]
+        for j in np.arange(nt - 2, -1, -1):
+            strata[j, ...] = np.minimum(elev.values[j, ...],
+                                        strata[j + 1, ...])
+            psvd[j + 1, ...] = np.less(strata[j, ...],
+                                       strata[j + 1, ...])
+        if nt > 1:  # allows a single-time elevation-series to return
+            psvd[0, ...] = np.less(strata[0, ...],
+                                   strata[1, ...])
+    else:
+        strata[-1, ...] = elev.data.values[-1, ...]
+        for j in np.arange(nt - 2, -1, -1):
+            strata[j, ...] = np.minimum(elev.data.values[j, ...],
+                                        strata[j + 1, ...])
+            psvd[j + 1, ...] = np.less(strata[j, ...],
+                                       strata[j + 1, ...])
+        if nt > 1:  # allows a single-time elevation-series to return
+            psvd[0, ...] = np.less(strata[0, ...],
+                                   strata[1, ...])
     return strata, psvd
 
 

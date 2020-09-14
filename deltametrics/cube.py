@@ -24,9 +24,10 @@ class CubeVariable():
     """Slice of a Cube.
 
     Slicing an :obj:`~deltametrics.cube.Cube` returns an object of this type.
-    The ``CubeVariable`` is essentially a thin wrapper around the numpy
-    ``ndarray``, enabling additional iniformation to be augmented, a
-    lighter-weight __repr__, and flexibility for development.
+    The ``CubeVariable`` is an accessor of the `xarray.DataArray` class,
+    enabling additional functions to be added to the object, while retaining
+    the `xarray` object and it's native functionality under
+    ``CubeVariable.data``.
 
     .. warning::
         You probably should not instantiate objects of this type directly.
@@ -41,8 +42,8 @@ class CubeVariable():
         >>> type(rcm8cube['velocity'])
         <class 'deltametrics.cube.CubeVariable'>
 
-        >>> type(rcm8cube['velocity'].base)
-        <class 'numpy.ndarray'>
+        >>> type(rcm8cube['velocity'].data)
+        <class 'xarray.DataArray'>
 
         >>> rcm8cube['velocity'].variable
         'velocity'
@@ -65,7 +66,7 @@ class CubeVariable():
             self.t, self.x, self.y = coords['t'], coords['x'], coords['y']
 
     def as_frozen(self):
-        """Export variable as `ndarray`."""
+        """Export variable values as a `numpy.ndarray`."""
         return self.data.values
 
 
@@ -175,7 +176,7 @@ class BaseCube(abc.ABC):
             self._X, self._Y = np.meshgrid(self._x, self._y)  # mesh grids x&y
 
     def read(self, variables):
-        """Read variable into memory
+        """Read variable into memory.
 
         Parameters
         ----------
@@ -213,7 +214,8 @@ class BaseCube(abc.ABC):
     def data_path(self):
         """:obj:`str` : Path connected to for file IO.
 
-        Returns a string if connected to file, or None if cube initialized from ``dict``.
+        Returns a string if connected to file, or None if cube initialized
+        from ``dict``.
         """
         return self._data_path
 
@@ -366,8 +368,19 @@ class BaseCube(abc.ABC):
 
     def show_cube(self, var, t=-1, x=-1, y=-1, ax=None):
         """Show the cube in a 3d axis.
+
+        3d visualization via `pyvista`.
+
+        .. warning::
+            Implementation is crude and should be revisited.
         """
-        raise NotImplementedError
+        try:
+            import pyvista as pv
+        except ImportError:
+            ImportError('3d plotting dependency, pyvista, was not found.')
+
+        _grid = pv.wrap(self[var].data.values)
+        _grid.plot()
 
     def show_plan(self, var, t=-1, ax=None, title=None, ticks=False):
         """Show planform image.
@@ -505,18 +518,26 @@ class DataCube(BaseCube):
             The instantiated CubeVariable.
         """
         if var == 'time' or var == 'x' or var == 'y':
-            # a special attribute we add, which matches eta.shape
+            # ensure coords can be called by cube[var]
             _coords = {}
             _coords['t'] = self.T
             _coords['x'] = self.X
             _coords['y'] = self.Y
-            _obj = self._dataio.dataset[var].cubevar
+            if var == 'time':  # special case for time
+                _t = np.expand_dims(self.dataio.dataset['time'].values,
+                                    axis=(1, 2))
+                _xrt = xr.DataArray(np.tile(_t, (1, *self.shape[1:])))
+                _obj = _xrt.cubevar
+            else:
+                _obj = self._dataio.dataset[var].cubevar
             _obj.initialize(variable=var, coords=_coords)
             return _obj
+
         elif var in self._variables:
             _obj = self._dataio.dataset[var].cubevar
             _obj.initialize(variable=var)
             return _obj
+
         else:
             raise AttributeError('No variable of {cube} named {var}'.format(
                                  cube=str(self), var=var))
@@ -541,11 +562,11 @@ class DataCube(BaseCube):
         """
         if style == 'mesh':
             self.strat_attr = \
-                strat.MeshStratigraphyAttributes(elev=self[variable].data,
+                strat.MeshStratigraphyAttributes(elev=self[variable],
                                                  **kwargs)
         elif style == 'boxy':
             self.strat_attr = \
-                strat.BoxyStratigraphyAttributes(elev=self[variable].data,
+                strat.BoxyStratigraphyAttributes(elev=self[variable],
                                                  **kwargs)
         else:
             raise ValueError('Bad "style" argument supplied: %s' % str(style))
@@ -657,7 +678,7 @@ class StratigraphyCube(BaseCube):
             self._L, self._W = _elev.shape[1:]
             self._Z = np.tile(self.z, (self.W, self.L, 1)).T
 
-            _out = strat.compute_boxy_stratigraphy_coordinates(_elev.data,
+            _out = strat.compute_boxy_stratigraphy_coordinates(_elev,
                                                                z=self.z,
                                                             return_strata=True)
             self.strata_coords, self.data_coords, self.strata = _out
