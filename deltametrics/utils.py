@@ -106,7 +106,7 @@ class AttributeChecker(object):
     the function works as ``hasattr(self, attr)``, where ``attr`` is the
     attribute of interest.
 
-    The benefit of this methos over ``hasattr`` is that this method optionally
+    The benefit of this method over ``hasattr`` is that this method optionally
     takes a list of arguments, and returns a well-formatted error message, to
     help explain which attribute is necessary for a given operation.
     """
