@@ -192,13 +192,15 @@ class BaseSection(abc.ABC):
 
         If no arguments are passed, an empty section not connected to any cube
         is returned. This cube will will need to be manually connected to have
-        any functionality (via the :meth:`connect` method.
+        any functionality (via the :meth:`connect` method).
         """
         # begin unconnected
         self._s = None
         self._z = None
         self._x = None
         self._y = None
+        self._trace = None
+        self._shape = None
         self._variables = None
         self.cube = None
 
@@ -213,7 +215,7 @@ class BaseSection(abc.ABC):
         else:
             pass
 
-    def connect(self, CubeInstance):
+    def connect(self, CubeInstance, name=None):
         """Connect this Section instance to a Cube instance.
         """
         if not issubclass(type(CubeInstance), cube.BaseCube):
@@ -223,8 +225,13 @@ class BaseSection(abc.ABC):
                                 _gottype=type(CubeInstance)))
         self.cube = CubeInstance
         self._variables = self.cube.variables
+        self._name = name or self.section_type
         self._compute_section_coords()
         self._compute_section_attrs()
+
+    @property
+    def name(self):
+        return self._name
 
     @abc.abstractmethod
     def _compute_section_coords(self):
@@ -250,12 +257,14 @@ class BaseSection(abc.ABC):
         self._s = np.cumsum(np.hstack((0, np.sqrt((self._x[1:] - self._x[:-1])**2
                                                   + (self._y[1:] - self._y[:-1])**2))))
         self._z = self.cube.z
+        self._shape = (len(self._z), len(self._s))
+        self._trace = np.column_stack((self._x, self._y))
 
     @property
     def trace(self):
         """Coordinates of the section in the x-y plane.
         """
-        return np.column_stack((self._x, self._y))
+        return self._trace
 
     @property
     def s(self):
@@ -268,6 +277,14 @@ class BaseSection(abc.ABC):
         return self._z
 
     @property
+    def shape(self):
+        """Section shape.
+
+        Simply a `tuple` equivalent to ``(len(z), len(s))``
+        """
+        return self._shape
+
+    @property
     def variables(self):
         """List of variables.
         """
@@ -275,6 +292,13 @@ class BaseSection(abc.ABC):
 
     @property
     def strat_attr(self):
+        """Stratigraphic attributes data object.
+
+        Raises
+        ------
+        NoStratigraphyError
+            If no stratigraphy information is found for the section.
+        """
         if self.cube._knows_stratigraphy:
             return self.cube.strat_attr
         else:
@@ -365,6 +389,11 @@ class BaseSection(abc.ABC):
             :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
             attempted to coerce to `str`, and the literal is diplayed.
 
+        ax : :obj:`~matplotlib.pyplot.Axes` object, optional
+            A `matplotlib` `Axes` object to plot the section. Optional; if not
+            provided, a call is made to ``plt.gca()`` to get the current (or
+            create a new) `Axes` object.
+
         Examples
         --------
         *Example 1:* Display the `velocity` spacetime section of a DataCube.
@@ -441,6 +470,31 @@ class BaseSection(abc.ABC):
         ax.set_xlim(xmin, xmax)
         ax.set_ylim(ymin, ymax)
 
+    def show_trace(self, *args, ax=None, **kwargs):
+        """Plot section trace (x-y plane path).
+
+        Plot the section trace (:obj:`trace`) onto an x-y planview.
+
+        Parameters
+        ----------
+        *args
+            Passed to `matplotlib` :obj:`~matplotlib.pyplot.plot()`.
+
+        ax : :obj:`~matplotlib.pyplot.Axes` object, optional
+            A `matplotlib` `Axes` object to plot the trace. Optional; if not
+            provided, a call is made to ``plt.gca()`` to get the current (or
+            create a new) `Axes` object.
+
+        **kwargs
+            Passed to `matplotlib` :obj:`~matplotlib.pyplot.plot()`.
+        """
+        if not ax:
+            ax = plt.gca()
+
+        _label = kwargs.pop('label', self.name)
+
+        ax.plot(self._x, self._y, label=_label, *args, **kwargs)
+
 
 class PathSection(BaseSection):
     """Path section object.
@@ -461,13 +515,12 @@ class PathSection(BaseSection):
         Parameters
         ----------
         path : :obj:`ndarray`
-            An Mx2 `ndarray` specifying the x-y pairs of coordinates to
-            extract the section from.
+            An `(N, 2)` `ndarray` specifying the x-y pairs of coordinates that
+            define the verticies of the path to extract the section from.
 
-        Notes
-        -----
+        .. note::
 
-        `path` must be supplied as a keyword argument.
+            :obj:`path` must be supplied as a keyword argument.
 
         """
         self._input_path = path
@@ -476,8 +529,13 @@ class PathSection(BaseSection):
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.
         """
+        # convert the points into segments into lists of cells
+        _segs = utils.coordinates_to_segments(self._input_path)
+        _cell = utils.segments_to_cells(_segs)
+
         # determine only unique coordinates along the path
-        self._path = np.unique(self._input_path, axis=0)
+        self._path = np.unique(_cell, axis=0)
+        self._vertices = np.unique(self._input_path, axis=0)
 
         self._x = self._path[:, 0]
         self._y = self._path[:, 1]
@@ -493,18 +551,94 @@ class PathSection(BaseSection):
 
 class StrikeSection(BaseSection):
     """Strike section object.
+
+    Section oriented along the delta strike (i.e., perpendicular to an inlet
+    channel). Specify the location of the strike section with :obj`y` and
+    :obj:`x` keyword parameter options.
+
+    .. important::
+
+        The `y` and `x` parameters must be specified as cell indices (not
+        actual x and y coordinate values). This is a needed patch.
+
+    Parameters
+    ----------
+    *args : :obj:`DataCube` or `StratigraphyCube`
+        The `Cube` object to link for underlying data. This option should be
+        ommitted if using the :obj:`register_section` method of a `Cube`.
+
+    y : :obj:`int`, optional
+        The `y` location of the section. This is the distance to locate the
+        section from the domain edge with a channel inlet. Defaults to ``0``
+        if no value is given.
+
+    x : :obj:`int`, optional
+        The `x` limits for the section. Defaults to the full domain width.
+        Specify as a two-element `tuple` or `list` of `int`, giving the lower
+        and upper bounds of `x` values to span the section.
+
+    Returns
+    -------
+    section : :obj:`StrikeSection`
+        `StrikeSection` object with specified parameters. The section is
+        automatically connected to the underlying `Cube` data source if the
+        :obj:`register_section` method of a `Cube` is used to set up the
+        section, or the `Cube` is passed as the first positional argument
+        during instantiation.
+
+    Examples
+    --------
+
+    To create a `StrikeSection` that is registered to a `DataCube` at
+    specified `y` coordinate ``=10``, and spans the entire model domain:
+
+    .. plot::
+        :include-source:
+
+        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube.register_section('strike', dm.section.StrikeSection(y=10))
+        >>>
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> rcm8cube.sections['strike'].show_trace('r--', ax=ax[0])
+        >>> rcm8cube.sections['strike'].show('velocity', ax=ax[1])
+        >>> plt.show()
+
+    Similarly, create a `StrikeSection` that is registered to a
+    `StratigraphyCube` at specified `y` coordinate ``=20``, and spans only the
+    left side of the model domain:
+
+    .. plot::
+        :include-source:
+
+        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube)
+        >>> sc8cube.register_section('strike_half', dm.section.StrikeSection(y=20, x=[0, 120]))
+        >>>
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> sc8cube.sections['strike_half'].show_trace('r--', ax=ax[0])
+        >>> sc8cube.sections['strike_half'].show('velocity', ax=ax[1])
+        >>> plt.show()
     """
 
-    def __init__(self, *args, y=0):
+    def __init__(self, *args, y=None, x=None):
 
         self.y = y  # strike coord scalar
+        self._input_xlim = x  # the input x lims
         super().__init__('strike', *args)
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.
         """
-        _nx = self.cube.shape[2]
-        self._x = np.arange(_nx)
+        if self._input_xlim is None:
+            _nx = self.cube['eta'].shape[2]
+            self._x = np.arange(_nx)
+        else:
+            self._x = np.arange(self._input_xlim[0], self._input_xlim[1])
+            _nx = len(self._x)
         self._y = np.tile(self.y, (_nx))
 
 
@@ -518,10 +652,230 @@ class DipSection(BaseSection):
         # choose center point if x=-1
 
 
+class CircularSection(BaseSection):
+    """Circular section object.
+
+    Section drawn as a circular cut, located a along the arc a specified
+    radius from specified origin.  Specify the location of the circular section
+    with :obj`radius` and :obj:`origin` keyword parameter options. The
+    circular section trace is interpolated to the nearest integer model domain
+    cells, following the mid-point circle algorithm
+    (:obj:`~deltametrics.utils.circle_to_cells`).
+
+    .. important::
+
+        The `radius` and `origin` parameters must be specified as cell indices
+        (not actual x and y coordinate values). This is a needed patch.
+
+    .. important::
+
+        The `origin` attempts to detect the land width from bed elevation
+        changes, but should use the value of ``L0`` recorded in the netcdf
+        file, or defined in the cube.
+
+    Parameters
+    ----------
+    *args : :obj:`DataCube` or `StratigraphyCube`
+        The `Cube` object to link for underlying data. This option should be
+        ommitted if using the :obj:`register_section` method of a `Cube`.
+
+    radius : :obj:`float`, `int`, optional
+        The `radius` of the section. This is the distance to locate the
+        section from the :obj:`origin`. If no value is given, the `radius`
+        defaults to half of the minimum model domain edge length if it can be
+        determined, otherwise defaults to ``1``.
+
+    origin : :obj:`tuple` or `list` of `int`, optional
+        The `origin` of the circular section. This is the center of the
+        circle. If no value is given, the origin defaults to the center of the
+        x-direction of the model domain, and offsets into the domain a
+        distance of ``y == L0``, if these values can be determined. I.e., the
+        origin defaults to be centered over the channel inlet. If no value is
+        given, and these values cannot be determined, the origin defaults to
+        ``(0, 0)``.
+
+    Returns
+    -------
+    section : :obj:`CircularSection`
+        `CircularSection` object with specified parameters. The section is
+        automatically connected to the underlying `Cube` data source if the
+        :obj:`register_section` method of a `Cube` is used to set up the
+        section, or the `Cube` is passed as the first positional argument
+        during instantiation.
+
+    Examples
+    --------
+
+    To create a `CircularSection` that is registered to a `DataCube` with
+    radius ``=30``, and using the default `origin` options:
+
+    .. plot::
+        :include-source:
+
+        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube.register_section('circular', dm.section.CircularSection(radius=30))
+        >>>
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> rcm8cube.sections['circular'].show_trace('r--', ax=ax[0])
+        >>> rcm8cube.sections['circular'].show('velocity', ax=ax[1])
+        >>> plt.show()
+    """
+
+    def __init__(self, *args, radius=None, origin=None):
+
+        self._input_radius = radius
+        self._input_origin = origin
+        super().__init__('circular', *args)
+
+    def _compute_section_coords(self):
+        if (self._input_radius is None):
+            if not (self.cube is None):
+                self.radius = int(np.min(self.cube.shape[1:]) / 2)
+            else:
+                self.radius = 1
+        else:
+            self.radius = self._input_radius
+
+        if (self._input_origin is None):
+            if not (self.cube is None):
+                land_width = np.minimum(utils.guess_land_width_from_land(
+                    self.cube['eta'][-1, :, 0]), 5)
+                self.origin = (int(self.cube.shape[2] / 2),
+                               land_width)
+            else:
+                self.origin = (0, 0)
+        else:
+            self.origin = self._input_origin
+
+        xy = utils.circle_to_cells(self.origin, self.radius)
+        self._x = xy[0]
+        self._y = xy[1]
+
+
 class RadialSection(BaseSection):
     """Radial section object.
 
-    """
+    Section drawn as a radial cut, located a along the line starting from
+    `origin` and proceeding away in direction specified by azimuth. Specify
+    the location of the radial section with :obj`azimuth` and :obj:`origin`
+    keyword parameter options. The radial section trace is interpolated to the
+    nearest integer model domain cells, following the a line-walking algorithm
+    (:obj:`~deltametrics.utils.line_to_cells`).
 
-    def __init__(self, apex, radius):
-        raise NotImplementedError
+    .. important::
+
+        The `origin` parameter must be specified as cell indices (not actual x
+        and y coordinate values). This is a needed patch.
+
+    .. important::
+
+        The `origin` attempts to detect the land width from bed elevation
+        changes, but should use the value of ``L0`` recorded in the netcdf
+        file, or defined in the cube.
+
+    Parameters
+    ----------
+    *args : :obj:`DataCube` or `StratigraphyCube`
+        The `Cube` object to link for underlying data. This option should be
+        ommitted if using the :obj:`register_section` method of a `Cube`.
+
+    azimuth : :obj:`float`, `int`, optional
+        The `azimuth` of the section, directed away from the origin. If no
+        value is given, the `azimuth` defaults to ``90``.
+
+    origin : :obj:`tuple` or `list` of `int`, optional
+        The `origin` of the radial section. This is the "start" of the
+        radial line. If no value is given, the origin defaults to the center of the
+        x-direction of the model domain, and offsets into the domain a
+        distance of ``y == L0``, if these values can be determined. I.e., the
+        origin defaults to be centered over the channel inlet. If no value is
+        given and these values cannot be determined, the origin defaults to
+        ``(0, 0)``.
+
+    length : :obj:`float`, `int`, optional
+        The length of the section (note this must be given in pixel length).
+        If no value is given, the length defaults to the length required to
+        reach a model boundary (if a connection to underlying `Cube` exists).
+        Otherwise, length is set to ``1``.
+
+    Returns
+    -------
+    section : :obj:`RadialSection`
+        `RadialSection` object with specified parameters. The section is
+        automatically connected to the underlying `Cube` data source if the
+        :obj:`register_section` method of a `Cube` is used to set up the
+        section, or the `Cube` is passed as the first positional argument
+        during instantiation.
+
+    Examples
+    --------
+
+    To create a `RadialSection` that is registered to a `DataCube` at
+    specified `origin` coordinate, and spans the entire model domain:
+
+    .. plot::
+        :include-source:
+
+        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube.register_section('radial', dm.section.RadialSection(azimuth=45))
+        >>>
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> rcm8cube.sections['radial'].show_trace('r--', ax=ax[0])
+        >>> rcm8cube.sections['radial'].show('velocity', ax=ax[1])
+        >>> plt.show()
+    """
+    def __init__(self, *args, azimuth=None, origin=None, length=None):
+        self._input_azimuth = azimuth
+        self._input_origin = origin
+        self._input_length = length
+        super().__init__('radial', *args)
+
+    def _compute_section_coords(self):
+        if (self._input_azimuth is None):
+            if not (self.cube is None):
+                self.azimuth = int(np.min(self.cube.shape[1:]) / 2)
+            else:
+                self.azimuth = 1
+        else:
+            self.azimuth = self._input_azimuth
+
+        if (self._input_origin is None):
+            if not (self.cube is None):
+                land_width = utils.guess_land_width_from_land(
+                    self.cube['eta'][-1, :, 0])
+                self.origin = (int(self.cube.shape[2] / 2),
+                               land_width)
+            else:
+                self.origin = (0, 0)
+        else:
+            self.origin = self._input_origin
+
+        if (self._input_length is None):
+            if not (self.cube is None):
+                # if self.azimuth < 90:
+                # theta = np.abs(90 - self.azimuth)
+                if self.azimuth > 90:
+                    raise NotImplementedError
+                    theta = np.abs(180 - self.azimuth)
+                else:
+                    theta = self.azimuth
+                m = np.tan(theta * np.pi / 180)
+                b = self.origin[1] - m * self.origin[0]
+                dx = self.cube.W - self.origin[0]
+                dy = np.tan(theta * np.pi / 180) * dx
+                if dy <= self.cube.L:
+                    end_point = (self.cube.W, m * self.cube.W + b)
+                else:
+                    end_point = ((self.cube.L - b) / m, self.cube.L)
+            else:
+                raise NotImplementedError
+        else:
+            raise NotImplementedError
+
+        xy = utils.line_to_cells(self.origin, end_point)
+        self._x = xy[0]
+        self._y = xy[1]
