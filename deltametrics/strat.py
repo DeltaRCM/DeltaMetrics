@@ -1,6 +1,5 @@
 import abc
 
-import copy
 import numpy as np
 import xarray as xr
 from scipy import stats
@@ -256,7 +255,7 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
         """
         super().__init__('mesh')
 
-        _eta = copy.deepcopy(elev)
+        _eta = elev.data.copy()
         _strata, _psvd = _compute_elevation_to_preservation(_eta)
         _psvd[0, ...] = True
         self.strata = _strata
