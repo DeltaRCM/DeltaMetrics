@@ -24,7 +24,6 @@ def test_netcdf_io_keys():
     assert len(netcdf_io.keys) == 11
 
 
-@pytest.mark.xfail()
 def test_netcdf_io_nomemory():
     netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
     dataset_size = sys.getsizeof(netcdf_io.dataset)
@@ -63,6 +62,7 @@ def test_netcdf_io_intomemory_direct():
     assert sys.getsizeof(_arr) > 1000
 
 
+@pytest.mark.xfail()
 def test_netcdf_io_intomemory_read():
     netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
     dataset_size = sys.getsizeof(netcdf_io.dataset)
