@@ -25,6 +25,7 @@ class TestStrikeSection:
     def test_StrikeSection_without_cube(self):
         ss = section.StrikeSection(y=5)
         assert ss.y == 5
+        assert ss.shape is None
         assert ss.cube is None
         assert ss.s is None
         assert np.all(ss.trace == np.array([[None, None]]))
@@ -53,6 +54,18 @@ class TestStrikeSection:
         assert len(rcm8cube.sections['test'].variables) > 0
         assert rcm8cube.sections['test'].cube is rcm8cube
 
+    def test_StrikeSection_register_section_x_limits(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        rcm8cube.register_section('tuple', section.StrikeSection(y=5,
+                                                                x=(10, 110)))
+        rcm8cube.register_section('list', section.StrikeSection(y=5,
+                                                                x=(20, 110)))
+        assert len(rcm8cube.sections) == 2
+        assert rcm8cube.sections['tuple']._x.shape[0] == 100
+        assert rcm8cube.sections['list']._x.shape[0] == 90
+        assert np.all(rcm8cube.sections['list']._y == 5)
+        assert np.all(rcm8cube.sections['tuple']._y == 5)
+
 
 class TestPathSection:
     """Test the basic of the PathSection."""
@@ -62,7 +75,8 @@ class TestPathSection:
 
     def test_without_cube(self):
         ps = section.PathSection(path=self.test_path)
-        assert ps.path.shape[1] == 2
+        assert ps.path is None
+        assert ps.shape is None
         assert ps.cube is None
         assert ps.s is None
         assert np.all(ps.trace == np.array([[None, None]]))
@@ -75,13 +89,14 @@ class TestPathSection:
     def test_bad_cube(self):
         badcube = ['some', 'list']
         with pytest.raises(TypeError, match=r'Expected type is *.'):
-            sass = section.PathSection(badcube, path=self.test_path)
+            saps = section.PathSection(badcube, path=self.test_path)
 
     def test_standalone_instantiation(self):
         rcm8cube = cube.DataCube(rcm8_path)
         saps = section.PathSection(rcm8cube, path=self.test_path)
         assert saps.cube == rcm8cube
-        assert saps.trace.shape == self.test_path.shape
+        assert saps.trace.shape[0] > 20
+        assert saps.trace.shape[1] == self.test_path.shape[1]
         assert len(saps.variables) > 0
 
     def test_register_section(self):
@@ -91,27 +106,85 @@ class TestPathSection:
             'test', section.PathSection(path=self.test_path))
         assert len(rcm8cube.sections['test'].variables) > 0
         assert isinstance(rcm8cube.sections['test'], section.PathSection)
+        assert rcm8cube.sections['test'].shape[0] > 20
 
     def test_return_path(self):
+        # test that returned path and trace are the same
         rcm8cube = cube.DataCube(rcm8_path)
         saps = section.PathSection(rcm8cube, path=self.test_path)
         _t = saps.trace
         _p = saps.path
         assert np.all(_t == _p)
-        assert np.all(_t == self.test_path)
 
     def test_path_reduced_unique(self):
+        # test a first case with a straight line
         rcm8cube = cube.DataCube(rcm8_path)
         xy = np.column_stack((np.linspace(50, 150, num=4000, dtype=np.int),
                               np.linspace(10, 90, num=4000, dtype=np.int)))
         saps1 = section.PathSection(rcm8cube, path=xy)
         assert saps1.path.shape != xy.shape
         assert np.all(saps1.path == np.unique(xy, axis=0))
+
+        # test a second case with small line to ensure non-unique removed
         saps2 = section.PathSection(rcm8cube, path=np.array([[50, 25],
                                                              [50, 26],
                                                              [50, 26],
                                                              [50, 27]]))
         assert saps2.path.shape == (3, 2)
+
+
+class TestCircularSection:
+    """Test the basic of the CircularSection."""
+
+    def test_without_cube(self):
+        cs = section.CircularSection(radius=30)
+        assert cs.shape is None
+        assert cs.cube is None
+        assert cs.s is None
+        assert np.all(cs.trace == np.array([[None, None]]))
+        assert cs._x is None
+        assert cs._y is None
+        assert cs.variables is None
+        with pytest.raises(AttributeError, match=r'No cube connected.*.'):
+            cs['velocity']
+
+    def test_bad_cube(self):
+        badcube = ['some', 'list']
+        with pytest.raises(TypeError, match=r'Expected type is *.'):
+            sacs = section.CircularSection(badcube, radius=30)
+
+    def test_standalone_instantiation(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        sacs = section.CircularSection(rcm8cube, radius=30)
+        assert sacs.cube == rcm8cube
+        assert sacs.trace.shape[0] == 85
+        assert len(sacs.variables) > 0
+        sacs2 = section.CircularSection(rcm8cube, radius=30, origin=(10, 0))
+        assert sacs2.cube == rcm8cube
+        assert sacs2.trace.shape[0] == 85
+        assert len(sacs2.variables) > 0
+        assert scas.origin == (10, 0)
+
+    def test_register_section(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        rcm8cube.stratigraphy_from('eta')
+        rcm8cube.register_section(
+            'test', section.CircularSection(radius=30))
+        assert len(rcm8cube.sections['test'].variables) > 0
+        assert isinstance(rcm8cube.sections['test'], section.CircularSection)
+
+    def test_all_idx_reduced_unique(self):
+        # we try this for a bunch of different radii
+        rcm8cube = cube.DataCube(rcm8_path)
+        sacs1 = section.CircularSection(rcm8cube, radius=40)
+        assert len(sacs1.trace) == len(np.unique(sacs1.trace, axis=0))
+        sacs2 = section.CircularSection(rcm8cube, radius=2334)
+        assert len(sacs2.trace) == len(np.unique(sacs2.trace, axis=0))
+        sacs3 = section.CircularSection(rcm8cube, radius=167)
+        assert len(sacs3.trace) == len(np.unique(sacs3.trace, axis=0))
+        sacs4 = section.CircularSection(rcm8cube, radius=33)
+        assert len(sacs4.trace) == len(np.unique(sacs4.trace, axis=0))
+
 
 class TestCubesWithManySections:
 
