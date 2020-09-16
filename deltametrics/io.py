@@ -207,7 +207,7 @@ class NetCDFIO(BaseIO):
         """
         try:
             _arr = self.dataset[var]
-        except ValueError as e:
+        except KeyError as e:
             raise e
 
         self._in_memory_data[var] = _arr.load()

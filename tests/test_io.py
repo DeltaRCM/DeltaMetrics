@@ -12,6 +12,10 @@ import utilities
 rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
                          'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
 
+hdf_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
+                        'sample_data', 'files',
+                        'LandsatEx.hdf5')
+
 
 def test_netcdf_io_init():
     netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
@@ -83,6 +87,17 @@ def test_netcdf_io_intomemory_read():
     assert inmemory_size < inmemory_size_after
 
 
+def test_hdf5_io_init():
+    netcdf_io = io.NetCDFIO(hdf_path, 'hdf5')
+    assert netcdf_io.type == 'hdf5'
+    assert len(netcdf_io._in_memory_data.keys()) == 0
+
+
+def test_hdf5_io_keys():
+    hdf5_io = io.NetCDFIO(hdf_path, 'hdf5')
+    assert len(hdf5_io.keys) == 7
+
+
 def test_nofile():
     with pytest.raises(FileNotFoundError):
         io.NetCDFIO('badpath', 'netcdf')
@@ -106,3 +121,11 @@ def test_readvar_intomemory():
 
     netcdf_io.read('eta')
     assert ('eta' in netcdf_io._in_memory_data.keys()) is True
+
+
+def test_readvar_intomemory_error():
+    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    assert netcdf_io._in_memory_data == {}
+
+    with pytest.raises(KeyError):
+        netcdf_io.read('nonexistant')

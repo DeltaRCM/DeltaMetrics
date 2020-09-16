@@ -185,7 +185,7 @@ class BaseCube(abc.ABC):
             Which variables to read into memory.
         """
         if variables is True:  # special case, read all variables
-            variables = self._dataio.variables
+            variables = self.variables
         elif type(variables) is str:
             variables = [variables]
         else:
