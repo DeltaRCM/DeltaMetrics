@@ -65,7 +65,7 @@ Inspect which variables are available in the ``rcm8cube``.
     >>> rcm8cube.variables
     ['eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_sand_frac']
 
-We can access the underlying variables by name. The returned object are numpy-like arrays with coordinates ``t-x-y``.
+We can access the underlying variables by name. The returned object are xarray-accessors with coordinates ``t-x-y``.
 For example, access variables as:
 
 .. doctest::
@@ -98,7 +98,7 @@ Let’s examine the timeseries of bed elevations by taking slices out of the ``'
 
     The 0th dimension of the cube is the *time* dimension, and the 1st and 2nd dimensions are the `y` and `x` dimensions of the model domain, respectively. The `x` dimension is the *cross-channel* dimension, Implementations using non-standard data should permute datasets to match this convention.
 
-The CubeVariable supports arbitrary math (all using `numpy` for fast computations!).
+The CubeVariable supports arbitrary math (using `xarray` for fast computations via CubeVariable.data syntax).
 For example:
 
 .. doctest::

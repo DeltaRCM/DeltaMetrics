@@ -52,7 +52,7 @@ Accessing data from a DataCube
 ==============================
 
 A :obj:`~deltametrics.cube.DataCube` can be sliced directly by variable name.
-Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, which is a numpy ``ndarray`` compatible object; this means that it can be manipulated exactly as a standard ``ndarray``, supporting any arbitrary math.
+Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, which is an xarray "accessor"; this means that it contains an xarray object in addition to custom functions.
 
 .. doctest::
 
@@ -62,7 +62,7 @@ Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, wh
     >>> type(rcm8cube['velocity'].data)
     <class 'xarray.core.dataarray.DataArray'>
 
-For example, we could determine how much the average bed elevation change at a specific location in the model domain (43, 123), by slicing the ``eta`` variable, and differencing timesteps.
+The underlying xarray object is accessible using the ``.data`` nomenclature. For example, we could determine how much the average bed elevation change at a specific location in the model domain (43, 123), by slicing the ``eta`` variable, and differencing timesteps.
 
 .. doctest::
 
