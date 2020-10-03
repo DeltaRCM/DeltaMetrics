@@ -35,7 +35,9 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
         Number of time slices (t indices) to use as the time lag
 
     landmap : ndarray, optional
-        A t-x-y shaped array with binary land maps.
+        A t-x-y shaped array with binary land maps. Or a x-y 2D array of a
+        binary base mask that contains 1s in the region to be analyzed and
+        0s elsewhere.
 
     """
     # check binary map types - pull out ndarray from mask or xarray if needed
@@ -76,7 +78,14 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
         raise ValueError('Shape of chmap not 3D (expect t-x-y).')
     if landmap is not None:
         if len(landmap.shape) != 3:
-            raise ValueError('Shape of landmap not 3D (expect t-x-y)')
+            try:
+                tmp_landmap = np.empty(chmap.shape)
+                for i in range(0,tmp_landmap.shape[0]):
+                    tmp_landmap[i, :, :] = landmap
+                landmap = tmp_landmap
+            except Exception:
+                raise ValueError('Landmp does not match chmap, nor could it be'
+                                 ' cast into an array that would match.')
 
         if np.shape(chmap) != np.shape(landmap):
             raise ValueError('Shapes of chmap and landmap do not match.')
@@ -105,7 +114,9 @@ def calc_chan_decay(chmap, landmap, basevalues, time_window):
         A t-x-y shaped array with binary channel maps.
 
     landmap : ndarray
-        A t-x-y shaped array with binary land maps.
+        A t-x-y shaped array with binary land maps. Or an x-y shaped array
+        with the binary region representing the fluvial surface over which
+        the mobility metric should be computed.
 
     basevalues : list
         List of t indices to use as the base channel maps.
@@ -172,7 +183,9 @@ def calc_planform_overlap(chmap, landmap, basevalues, time_window):
         A t-x-y shaped array with binary channel maps
 
     landmap : ndarray
-        A t-x-y shaped array with binary land maps
+        A t-x-y shaped array with binary land maps. Or an x-y shaped array
+        with the binary region representing the fluvial surface over which
+        the mobility metric should be computed.
 
     basevalues : list
         A list of values (t indices) to use for the base channel maps
@@ -221,7 +234,6 @@ def calc_planform_overlap(chmap, landmap, basevalues, time_window):
             phi[j, i] = fwetbase*fdrystep + fdrybase*fwetstep
             # for Ophi use a standard area in denominator, we use base area
             Ophi[j, i] = 1 - D[j, i]/(np.sum(mask_map)*phi[j, i])
-
     # just return the Ophi
     return Ophi
 
@@ -241,7 +253,9 @@ def calc_reworking_fraction(chmap, landmap, basevalues, time_window):
         A t-x-y shaped array with binary channel maps
 
     landmap : ndarray
-        A t-x-y shaped array with binary land maps
+        A t-x-y shaped array with binary land maps. Or an x-y shaped array
+        with the binary region representing the fluvial surface over which
+        the mobility metric should be computed.
 
     basevalues : list
         A list of values (t indices) to use for the base channel maps
@@ -371,5 +385,64 @@ def calc_chan_abandonment(chmap, basevalues, time_window):
 
 
 def mobility_curve_fit(mdata, fit='harmonic'):
-    """Calculate curve fit for channel mobility data."""
-    raise NotImplementedError
+    """
+    Calculate curve fit for channel mobility data.
+
+    Given some mobility data output from one of the mobility metrics, fit a
+    curve to the average of that data. Several functional forms are available
+    for the fitting: exponential, harmonic, and linear functions.
+
+    Parameters
+    ----------
+    mdata : ndarray
+        Mobility data, either already averaged or a 2D array of of shape
+        len(basevalues) x time_window. Any output from one of the mobility
+        functions is acceptable.
+
+    fit : str, optional (default is 'harmonic')
+        A string specifying the type of function to be fit. Options are as
+        follows:
+            - 'exponential' : (a - b) * np.exp(-c * x) + b
+            - 'harmonic' : a / (1 + b * x)
+            - 'linear' : a * x + b
+
+    Returns
+    -------
+    yfit : ndarray
+        y-values corresponding to the fitted function.
+
+    pcov : ndarray
+        Covariance associated with the fitted function parameters.
+
+    perror : ndarray
+        One standard deviation error for the parameters (from pcov)
+
+    """
+    avail_fits = ['exponential', 'harmonic', 'linear']
+    if fit not in avail_fits:
+        raise ValueError('Fit specified is not valid.')
+
+    # average the mobility data if needed
+    if len(mdata.shape) == 2:
+        mdata = np.mean(mdata, axis=0)
+
+    # define x data
+    xdata = np.array(range(0, len(mdata)))
+
+    # do fit
+    if fit == 'harmonic':
+        func_harmonic = lambda x, a, b: a / (1 + b * x)
+        popt, pcov = curve_fit(func_harmonic, xdata, mdata)
+        yfit = func_harmonic(xdata, *popt)
+    elif fit == 'exponential':
+        func_exponential = lambda x, a, b, c: (a - b) * np.exp(-c * x) + b
+        popt, pcov = curve_fit(func_exponential, xdata, mdata)
+        yfit = func_exponential(xdata, *popt)
+    elif fit == 'linear':
+        func_linear = lambda x, a, b: a * x + b
+        popt, pcov = curve_fit(func_linear, xdata, mdata)
+        yfit = func_linear(xdata, *popt)
+
+    perror = np.sqrt(np.diag(pcov))
+
+    return yfit, pcov, perror
