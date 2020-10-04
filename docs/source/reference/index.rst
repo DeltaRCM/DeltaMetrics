@@ -14,6 +14,7 @@ methods.
    cube/index
    plan/index
    mask/index
+   mobility/index
    section/index
    strat/index
    io/index
