@@ -50,6 +50,11 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
     else:
         raise TypeError('chmap data type not understood.')
 
+    if ((chmap == 0) | (chmap == 1)).all():
+        pass
+    else:
+        raise ValueError('chmap was not binary')
+
     if landmap is not None:
         if isinstance(landmap, np.ndarray) is True:
             pass
@@ -59,6 +64,10 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
             landmap = landmap.values
         else:
             raise TypeError('landmap data type not understood.')
+        if ((landmap==0) | (landmap==1)).all():
+            pass
+        else:
+            raise ValueError('landmap was not binary')
 
     # check basevalues and time_window types
     if isinstance(basevalues, list) is False:

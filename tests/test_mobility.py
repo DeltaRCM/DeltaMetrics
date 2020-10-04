@@ -57,6 +57,25 @@ def test_check_input_nolandmask():
     assert isinstance(time_window, int) is True
 
 
+def test_check_input_notbinary_chmap():
+    """Test that nonbinary channel map raises error."""
+    ch_nonbin = np.zeros((3, 3, 3))
+    ch_nonbin[0, 1, 1] = 1
+    ch_nonbin[0, 1, 2] = 2
+    with pytest.raises(ValueError):
+        mob.check_inputs(ch_nonbin, [0], 1)
+
+
+def test_check_input_notbinary_landmap():
+    """Test that nonbinary land map raises error."""
+    land_nonbin = np.zeros((3, 3, 3))
+    land_nonbin[0, 1, 1] = 1
+    land_nonbin[0, 1, 2] = 2
+    ch_bin = np.zeros_like(land_nonbin)
+    with pytest.raises(ValueError):
+        mob.check_inputs(ch_bin, [0], 1, land_nonbin)
+
+
 def test_check_input_invalid_chmap():
     """Test that an invalid channel map input will throw an error."""
     with pytest.raises(TypeError):
