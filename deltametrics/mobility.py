@@ -80,7 +80,7 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
         if len(landmap.shape) != 3:
             try:
                 tmp_landmap = np.empty(chmap.shape)
-                for i in range(0,tmp_landmap.shape[0]):
+                for i in range(0, tmp_landmap.shape[0]):
                     tmp_landmap[i, :, :] = landmap
                 landmap = tmp_landmap
             except Exception:
