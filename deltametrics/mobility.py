@@ -346,8 +346,10 @@ def calc_chan_abandonment(chmap, basevalues, time_window):
     Returns
     -------
     PwetA : ndarray
-        Vector of number of pixels that are abandonded for a given time lag,
-        averaged over the time window under study
+        A 2-D array of the abandoned fraction of the channel over the window of
+        time. It is of shape len(basevalues) x time_window so each row
+        represents the fraction of the channel that has been abandonded, and
+        the columns are associated with each time lag.
 
     """
     # sanitize the inputs first
@@ -355,7 +357,7 @@ def calc_chan_abandonment(chmap, basevalues, time_window):
                                                            basevalues,
                                                            time_window)
     # initialize values
-    PwetA = np.zeros((time_window, 1))
+    PwetA = np.zeros((len(basevalues), time_window))
     chA_base = np.zeros_like(chmap[0, :, :])
     chA_step = np.zeros_like(chmap[0, :, :])
 
@@ -366,20 +368,14 @@ def calc_chan_abandonment(chmap, basevalues, time_window):
         chA_base = chmap[Nbase, :, :]
         # get total number of channel pixels in that map
         baseA = np.sum(chA_base)
-
         # loop through the other maps to be compared against the base map
         for Nstep in range(1, time_window):
             # get the incremental map
             chA_step = chmap[Nbase+Nstep, :, :]
-            # get the number of pixels that are no longer channelized (aka
-            # abandonded)
+            # get the number of pixels that were abandonded
             stepA = len(np.where(chA_base.flatten() > chA_step.flatten())[0])
-            # store this number in the vector PwetA for each incremental map
-            PwetA[Nstep] = PwetA[Nstep] + (1-stepA/baseA)
-
-    # normalize PwetA by the number of incremental steps used to generate each
-    # value
-    PwetA = PwetA/time_window
+            # store this number in the PwetA array for each transient map
+            PwetA[i, Nstep] = stepA/baseA
 
     return PwetA
 
