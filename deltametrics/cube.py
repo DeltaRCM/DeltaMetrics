@@ -70,6 +70,18 @@ class CubeVariable():
         return self.data.values
 
     def __getitem__(self, slc):
+        """Get items from the underlying data.
+
+        Takes a numpy slicing style and slices data from the underlying data.
+        Note that the underlying data is stored in an :obj:`xarray.DataArray`,
+        and this method returns another :obj:`xarray.DataArray`.
+
+        Parameters
+        ----------
+        slc : :obj:`numpy` slice
+            A valid numpy style slice. For example: ``[10, :, :]``. Dimension
+            validation is not performed before slicing.
+        """
         return self.data[slc]
 
 
