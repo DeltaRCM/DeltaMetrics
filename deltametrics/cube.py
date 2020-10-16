@@ -69,6 +69,9 @@ class CubeVariable():
         """Export variable values as a `numpy.ndarray`."""
         return self.data.values
 
+    def __getitem__(self, slc):
+        return self.data[slc]
+
 
 class BaseCube(abc.ABC):
     """Base cube object.
