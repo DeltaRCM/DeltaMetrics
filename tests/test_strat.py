@@ -44,18 +44,18 @@ class TestComputeBoxyStratigraphyVolume:
 
     def test_lessthan3d_error(self):
         with pytest.raises(ValueError, match=r'Input arrays must be three-dimensional.'):
-            strat.compute_boxy_stratigraphy_volume(self.elev.data[:, 10, 120].squeeze(),
-                                                   self.time.data[:, 10, 120].squeeze(),
+            strat.compute_boxy_stratigraphy_volume(self.elev[:, 10, 120].squeeze(),
+                                                   self.time[:, 10, 120].squeeze(),
                                                    dz=0.05)
         with pytest.raises(ValueError, match=r'Input arrays must be three-dimensional.'):
-            strat.compute_boxy_stratigraphy_volume(self.elev.data[:, 10, :].squeeze(),
-                                                   self.time.data[:, 10, :].squeeze(),
+            strat.compute_boxy_stratigraphy_volume(self.elev[:, 10, :].squeeze(),
+                                                   self.time[:, 10, :].squeeze(),
                                                    dz=0.05)
 
     def test_bad_shape_error(self):
         with pytest.raises(ValueError, match=r'Input arrays must be three-dimensional.'):
-            strat.compute_boxy_stratigraphy_volume(self.elev.data[:, 10, 120].squeeze(),
-                                                   self.time.data[:, 10, 120].squeeze(),
+            strat.compute_boxy_stratigraphy_volume(self.elev[:, 10, 120].squeeze(),
+                                                   self.time[:, 10, 120].squeeze(),
                                                    dz=0.05)
 
     def test_no_z_options(self):
@@ -94,7 +94,7 @@ class TestComputeBoxyStratigraphyCoordinates:
 
     def test_no_z_options(self):
         with pytest.raises(ValueError, match=r'You must specify "z", "dz", or "nz.'):
-            strat.compute_boxy_stratigraphy_coordinates(self.elev.data[:, 10, 120].squeeze())
+            strat.compute_boxy_stratigraphy_coordinates(self.elev[:, 10, 120].squeeze())
 
 
 class TestComputeElevationToPreservation:
