@@ -4,8 +4,10 @@ import sys
 import os
 
 import numpy as np
+import xarray as xr
 
 from deltametrics import io
+import utilities
 
 rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
                          'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
@@ -40,7 +42,6 @@ def test_netcdf_io_nomemory():
     assert inmemory_size == inmemory_size_after
 
 
-@pytest.mark.xfail()
 def test_netcdf_io_intomemory_direct():
     netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
     dataset_size = sys.getsizeof(netcdf_io.dataset)
@@ -60,7 +61,6 @@ def test_netcdf_io_intomemory_direct():
     assert sys.getsizeof(_arr) > 1000
 
 
-@pytest.mark.xfail()
 def test_netcdf_io_intomemory_read():
     netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
     dataset_size = sys.getsizeof(netcdf_io.dataset)
@@ -72,17 +72,30 @@ def test_netcdf_io_intomemory_read():
     assert len(netcdf_io._in_memory_data.keys()) == 1
     _arr = netcdf_io._in_memory_data[var]
 
+    assert isinstance(_arr, xr.core.dataarray.DataArray)
+
     dataset_size_after = sys.getsizeof(netcdf_io.dataset)
     inmemory_size_after = sys.getsizeof(netcdf_io._in_memory_data)
 
     assert dataset_size == dataset_size_after
     assert inmemory_size < inmemory_size_after
-    assert sys.getsizeof(_arr) > 1000
 
 
 def test_nofile():
     with pytest.raises(FileNotFoundError):
         io.NetCDFIO('badpath', 'netcdf')
+
+
+def test_empty_file(tmp_path):
+    p = utilities.create_dummy_netcdf(tmp_path)
+    with pytest.warns(UserWarning):
+        io.NetCDFIO(p, 'netcdf')
+
+
+def test_invalid_file(tmp_path):
+    p = utilities.create_dummy_txt_file(tmp_path)
+    with pytest.raises(TypeError):
+        io.NetCDFIO(p, 'netcdf')
 
 
 def test_readvar_intomemory():

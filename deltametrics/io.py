@@ -171,6 +171,7 @@ class NetCDFIO(BaseIO):
             if 'time' and 'y' and 'x' in _dataset.variables:
                 self.dataset = _dataset.set_coords(['time', 'y', 'x'])
             else:
+                self.dataset = _dataset.set_coords([])
                 warn('Dimensions "time", "y", and "x" not provided in the \
                       given data file.', UserWarning)
 
