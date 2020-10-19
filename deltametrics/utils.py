@@ -4,6 +4,7 @@ import sys
 import numpy as np
 import matplotlib.cm as cm
 import matplotlib.colors as colors
+from scipy import optimize
 
 from . import io
 
@@ -149,3 +150,71 @@ class AttributeChecker(object):
             raise RuntimeError('Required attribute(s) not assigned: '
                                + str(log_form))
         return att_dict
+
+
+def curve_fit(data, fit='harmonic'):
+    """
+    Calculate curve fit given some data.
+
+    Several functional forms are available for fitting: exponential, harmonic,
+    and linear. The input `data` can be 1-D, or 2-D, if it is 2-D, the data
+    will be averaged. The expected 2-D shape is (Y-Values, # Values) where the
+    data you wish to have fit is in the first dimension, and the second
+    dimension is of len(# Values).
+
+    E.g. Given some mobility data output from one of the mobility metrics,
+    fit a curve to the average of that data.
+
+    Parameters
+    ----------
+    data : ndarray
+        Data, either already averaged or a 2D array of of shape
+        len(data values) x len(# values).
+
+    fit : str, optional (default is 'harmonic')
+        A string specifying the type of function to be fit. Options are as
+        follows:
+            - 'exponential' : (a - b) * np.exp(-c * x) + b
+            - 'harmonic' : a / (1 + b * x)
+            - 'linear' : a * x + b
+
+    Returns
+    -------
+    yfit : ndarray
+        y-values corresponding to the fitted function.
+
+    pcov : ndarray
+        Covariance associated with the fitted function parameters.
+
+    perror : ndarray
+        One standard deviation error for the parameters (from pcov)
+
+    """
+    avail_fits = ['exponential', 'harmonic', 'linear']
+    if fit not in avail_fits:
+        raise ValueError('Fit specified is not valid.')
+
+    # average the mobility data if needed
+    if len(data.shape) == 2:
+        data = np.mean(data, axis=0)
+
+    # define x data
+    xdata = np.array(range(0, len(data)))
+
+    # do fit
+    if fit == 'harmonic':
+        def func_harmonic(x, a, b): return a / (1 + b * x)
+        popt, pcov = optimize.curve_fit(func_harmonic, xdata, data)
+        yfit = func_harmonic(xdata, *popt)
+    elif fit == 'exponential':
+        def func_exponential(x, a, b, c): return (a - b) * np.exp(-c * x) + b
+        popt, pcov = optimize.curve_fit(func_exponential, xdata, data)
+        yfit = func_exponential(xdata, *popt)
+    elif fit == 'linear':
+        def func_linear(x, a, b): return a * x + b
+        popt, pcov = optimize.curve_fit(func_linear, xdata, data)
+        yfit = func_linear(xdata, *popt)
+
+    perror = np.sqrt(np.diag(pcov))
+
+    return yfit, pcov, perror

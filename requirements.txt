@@ -5,3 +5,4 @@ netCDF4
 pyyaml
 Shapely
 scikit-image
+xarray
