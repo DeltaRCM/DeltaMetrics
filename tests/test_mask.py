@@ -75,6 +75,13 @@ class TestShorelineMask:
         with pytest.raises(TypeError):
             shoremask = mask.ShorelineMask('invalid')
 
+    def test_3d(self):
+        """Test with multiple time slices."""
+        # define the mask
+        shoremask = mask.ShorelineMask(rcm8cube['eta'][30:33, :, :])
+        # assert the shape
+        assert np.shape(shoremask.mask) == (3, 120, 240)
+
 
 class TestLandMask:
     """Tests associated with the mask.LandMask class."""
@@ -163,6 +170,13 @@ class TestLandMask:
         assert hasattr(landmask, 'shore_image') is True
         assert np.array_equal(landmask.mask,
                               landmask.mask.astype(bool)) is True
+
+    def test_3d(self):
+        """Test with multiple time slices."""
+        # define the mask
+        landmask = mask.LandMask(rcm8cube['eta'][30:33, :, :])
+        # assert the shape
+        assert np.shape(landmask.mask) == (3, 120, 240)
 
 
 class TestWetMask:
@@ -258,6 +272,13 @@ class TestWetMask:
         wetmask = mask.WetMask(rcm8cube['eta'][0, :, :], landmask=landmask)
         # assert - expect all values to be 0s
         assert np.all(wetmask.mask == 0)
+
+    def test_3d(self):
+        """Test with multiple time slices."""
+        # define the mask
+        wetmask = mask.WetMask(rcm8cube['eta'][30:33, :, :])
+        # assert the shape
+        assert np.shape(wetmask.mask) == (3, 120, 240)
 
 
 class TestChannelMask:
@@ -422,6 +443,14 @@ class TestChannelMask:
             channelmask = mask.ChannelMask('bad_velocity',
                                            rcm8cube['eta'][-1, :, :])
 
+    def test_3d(self):
+        """Test with multiple time slices."""
+        # define the mask
+        channelmask = mask.ChannelMask(rcm8cube['velocity'][30:33, :, :],
+                                       rcm8cube['eta'][30:33, :, :])
+        # assert the shape
+        assert np.shape(channelmask.mask) == (3, 120, 240)
+
 
 class TestEdgeMask:
     """Tests associated with the mask.EdgeMask class."""
@@ -564,6 +593,13 @@ class TestEdgeMask:
         # assert - expect all values to be 0s
         assert np.all(edgemask.mask == 0)
 
+    def test_3d(self):
+        """Test with multiple time slices."""
+        # define the mask
+        edgemask = mask.EdgeMask(rcm8cube['eta'][30:33, :, :])
+        # assert the shape
+        assert np.shape(edgemask.mask) == (3, 120, 240)
+
 
 class TestCenterlineMask:
     """Tests associated with the mask.CenterlineMask class."""
@@ -625,6 +661,15 @@ class TestCenterlineMask:
         centerlinemask = mask.CenterlineMask(channelmask)
         # assert - expect all values to be 0s
         assert np.all(centerlinemask.mask == 0)
+
+    def test_3d(self):
+        """Test with multiple time slices."""
+        # define the mask
+        channelmask = mask.ChannelMask(rcm8cube['velocity'][30:33, :, :],
+                                       rcm8cube['eta'][30:33, :, :])
+        centerlinemask = mask.CenterlineMask(channelmask)
+        # assert the shape
+        assert np.shape(centerlinemask.mask) == (3, 120, 240)
 
     @pytest.mark.xfail()
     def test_rivamapDefaults(self):
@@ -690,3 +735,10 @@ def test_init_OAM():
     # assertions
     assert oam.mask_type == 'test'
     assert np.all(oam.data == np.zeros((3, 3)))
+
+
+def test_wrong_size():
+    """Raise error if array with bad dimensions is used."""
+    bad_arr = np.arange(0, 5)
+    with pytest.raises(ValueError):
+        mask.BaseMask('bad1D', bad_arr)

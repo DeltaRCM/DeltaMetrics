@@ -25,6 +25,16 @@ class BaseMask(object):
         else:
             self.data = data
 
+        # set data to be 3D even if it is not (assuming t-x-y)
+        if len(np.shape(self.data)) == 3:
+            pass
+        elif len(np.shape(self.data)) == 2:
+            self.data = np.reshape(self.data, [1,
+                                               np.shape(self.data)[0],
+                                               np.shape(self.data)[1]])
+        else:
+            raise ValueError('Input data shape was not 2-D nor 3-D')
+
         self._mask = np.zeros(self.data.shape)
 
     @property
@@ -48,15 +58,22 @@ class BaseMask(object):
         """
         return self._mask
 
-    def show(self, **kwargs):
+    def show(self, t=-1, **kwargs):
         """Show the mask.
+
+        Parameters
+        ----------
+        t : int, optional
+            Value of time slice or integer from first dimension in 3D (t-x-y)
+            convention to display the mask from. Default is -1 so the 'final'
+            mask in time is displayed if this argument is not supplied.
 
         Passes `**kwargs` to ``matplotlib.imshow``.
         """
         cmap = kwargs.pop('cmap', 'gray')
         fig, ax = plt.subplots()
         if hasattr(self, 'mask') and np.sum(self.mask) > 0:
-            ax.imshow(self.mask, cmap=cmap, **kwargs)
+            ax.imshow(self.mask[t, :, :], cmap=cmap, **kwargs)
             ax.set_title('A ' + self.mask_type + ' mask')
         else:
             raise AttributeError('No mask computed and/or mask is all 0s.')
@@ -107,49 +124,51 @@ class OAM(object):
         # write the parameters to self
         self.angle_threshold = angle_threshold
 
-        # use the first column to trim the land_width
-        # (or, can we assume access to the DeltaRCM variable `L0`?)
-        i = 0
-        delt = 10
-        while i < self.data.shape[0] and delt != 0:
-            delt = self.data[i, 0] - self.data[i+1, 0]
-            i += 1
-        trim_idx = i - 1  # assign the trimming index
-        data_trim = self.data[trim_idx:, :]
-        # use topo_threshold to identify oceanmap
-        self.oceanmap = (data_trim < self.topo_threshold) * 1.
-        # if all ocean, there is no shore to be found - exit function
-        if (self.oceanmap == 1).all():
-            self.oceanmap = np.zeros_like(self.data)
-            self.shore_image = np.zeros_like(self.data)
-            return
-        # apply seaangles function
-        _, seaangles = self.Seaangles_mod(self.numviews,
-                                          self.oceanmap)
-        # translate flat seaangles values to the shoreline image
-        shore_image = np.zeros_like(data_trim)
-        flat_inds = list(map(lambda x: np.ravel_multi_index(x,
-                                                            shore_image.shape),
-                             seaangles[:2, :].T.astype(int)))
-        shore_image.flat[flat_inds] = seaangles[-1, :]
-        # grab contour from seaangles corresponding to angle threshold
-        cs = measure.find_contours(shore_image, np.float(self.angle_threshold))
-        C = cs[0]
-        # convert this extracted contour to the shoreline mask
-        shoremap = np.zeros_like(data_trim)
-        flat_inds = list(map(lambda x: np.ravel_multi_index(x, shoremap.shape),
-                             np.round(C).astype(int)))
-        shoremap.flat[flat_inds] = 1
+        # initialize arrays
+        self.oceanmap = np.zeros_like(self.data)
+        self.shore_image = np.zeros_like(self.data)
 
-        # write shoreline map out to data.mask
-        self._mask[trim_idx:, :] = shoremap
-        # assign shore_image to the mask object with proper size
-        self.shore_image = np.zeros(self.data.shape)
-        self.shore_image[trim_idx:, :] = shore_image
-        # resize the oceanmap
-        oceanmap_temp = self.oceanmap.copy()
-        self.oceanmap = np.zeros(self.data.shape)
-        self.oceanmap[trim_idx:, :] = oceanmap_temp
+        # loop through the time dimension
+        for tval in range(0, self.data.shape[0]):
+            # use the first column to trim the land_width
+            # (or, can we assume access to the DeltaRCM variable `L0`?)
+            i = 0
+            delt = 10
+            while i < self.data.shape[1] and delt != 0:
+                delt = self.data[tval, i, 0] - self.data[tval, i+1, 0]
+                i += 1
+            trim_idx = i - 1  # assign the trimming index
+            data_trim = self.data[tval, trim_idx:, :]
+            # use topo_threshold to identify oceanmap
+            omap = (data_trim < self.topo_threshold) * 1.
+            # if all ocean, there is no shore to be found - do next t-slice
+            if (omap == 1).all():
+                pass
+            else:
+                # apply seaangles function
+                _, seaangles = self.Seaangles_mod(self.numviews, omap)
+                # translate flat seaangles values to the shoreline image
+                shore_image = np.zeros_like(data_trim)
+                flat_inds = list(map(lambda x: np.ravel_multi_index(x,
+                                                            shore_image.shape),
+                                     seaangles[:2, :].T.astype(int)))
+                shore_image.flat[flat_inds] = seaangles[-1, :]
+                # grab contour from seaangles corresponding to angle threshold
+                cs = measure.find_contours(shore_image,
+                                           np.float(self.angle_threshold))
+                C = cs[0]
+                # convert this extracted contour to the shoreline mask
+                shoremap = np.zeros_like(data_trim)
+                flat_inds = list(map(lambda x: np.ravel_multi_index(x,
+                                                            shoremap.shape),
+                                     np.round(C).astype(int)))
+                shoremap.flat[flat_inds] = 1
+                # write shoreline map out to data.mask
+                self._mask[tval, trim_idx:, :] = shoremap
+                # assign shore_image to the mask object with proper size
+                self.shore_image[tval, trim_idx:, :] = shore_image
+                # properly assign the oceanmap to the self.oceanmap
+                self.oceanmap[tval, trim_idx:, :] = omap
 
     def Seaangles_mod(self, numviews, thresholdimg):
         """Extract the opening angle map from an image.
@@ -754,9 +773,14 @@ class EdgeMask(BaseMask, OAM):
             self.landmask = (self.shore_image < self.angle_threshold) * 1
             self.wetmask = self.oceanmap * self.landmask
         # compute the edge mask
-        self._mask = np.maximum(0,
-                                feature.canny(self.wetmask)*1 -
-                                feature.canny(self.landmask)*1)
+        for i in range(0, np.shape(self._mask)[0]):
+            self._mask[i, :, :] = np.maximum(0,
+                                             feature.canny(self.wetmask[i,
+                                                                        :,
+                                                                        :])*1 -
+                                             feature.canny(self.landmask[i,
+                                                                         :,
+                                                                         :])*1)
 
 
 class CenterlineMask(BaseMask):
@@ -865,7 +889,8 @@ class CenterlineMask(BaseMask):
         """
         # skimage.morphology.skeletonize() method
         if self.method == 'skeletonize':
-            self._mask = morphology.skeletonize(self.data)
+            for i in range(0, np.shape(self._mask)[0]):
+                self._mask[i, :, :] = morphology.skeletonize(self.data[i, :, :])
 
         if self.method == 'rivamap':
             # rivamap based method - first check for import error
