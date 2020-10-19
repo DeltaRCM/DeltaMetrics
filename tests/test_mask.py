@@ -38,7 +38,7 @@ class TestShorelineMask:
         shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :],
                                        is_mask=True)
         # do assertion
-        assert np.all(shoremask.mask == rcm8cube['eta'][-1, :, :])
+        assert np.all(shoremask.mask[-1, :, :] == rcm8cube['eta'][-1, :, :])
 
     def test_assign_vals(self):
         """Test that specified values are assigned."""
@@ -113,7 +113,7 @@ class TestLandMask:
         landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
                                  is_mask=True)
         # do assertion
-        assert np.all(landmask.mask == rcm8cube['eta'][-1, :, :])
+        assert np.all(landmask.mask[-1, :, :] == rcm8cube['eta'][-1, :, :])
 
     def test_assign_vals(self):
         """Test that specified values are assigned."""
@@ -209,7 +209,7 @@ class TestWetMask:
         wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
                                is_mask=True)
         # do assertion
-        assert np.all(wetmask.mask == rcm8cube['eta'][-1, :, :])
+        assert np.all(wetmask.mask[-1, :, :] == rcm8cube['eta'][-1, :, :])
 
     def test_assign_vals(self):
         """Test that specified values are assigned."""
@@ -316,7 +316,7 @@ class TestChannelMask:
                                        rcm8cube['eta'][-1, :, :],
                                        is_mask=True)
         # do assertion
-        assert np.all(channelmask.mask == rcm8cube['eta'][-1, :, :])
+        assert np.all(channelmask.mask[-1, :, :] == rcm8cube['eta'][-1, :, :])
 
     def test_assign_vals(self):
         """Test that specified values are assigned."""
@@ -483,7 +483,7 @@ class TestEdgeMask:
         edgemask = mask.EdgeMask(rcm8cube['eta'][-1, :, :],
                                  is_mask=True)
         # do assertion
-        assert np.all(edgemask.mask == rcm8cube['eta'][-1, :, :])
+        assert np.all(edgemask.mask[-1, :, :] == rcm8cube['eta'][-1, :, :])
 
     def test_assign_vals(self):
         """Test that specified values are assigned."""
@@ -643,7 +643,7 @@ class TestCenterlineMask:
         centerlinemask = mask.CenterlineMask(channelmask,
                                              is_mask=True)
         # do assertion
-        assert np.all(centerlinemask.mask == channelmask)
+        assert np.all(centerlinemask.mask[-1, :, :] == channelmask)
 
     def test_passChannelMask(self):
         """Test that a ChannelMask object can be passed in."""
