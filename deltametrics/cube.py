@@ -79,8 +79,8 @@ class CubeVariable():
         Parameters
         ----------
         slc : a `numpy` slice
-            A valid `numpy` style slice. For example, :code:`[10, :, :]`. Dimension
-            validation is not performed before slicing.
+            A valid `numpy` style slice. For example, :code:`[10, :, :]`.
+            Dimension validation is not performed before slicing.
         """
         return self.data[slc]
 
@@ -538,7 +538,7 @@ class DataCube(BaseCube):
         CubeVariable : `~deltametrics.cube.CubeVariable`
             The instantiated CubeVariable.
         """
-        if var == 'time' or var == 'x' or var == 'y':
+        if var in self._coords:
             # ensure coords can be called by cube[var]
             _coords = {}
             _coords['t'] = self.T
