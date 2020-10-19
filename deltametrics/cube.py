@@ -162,7 +162,8 @@ class BaseCube(abc.ABC):
         This method is used internally to gather some useful info for
         navigating the variable trees in the stored files.
         """
-        self._variables = self._dataio.keys
+        self._coords = self._dataio.known_coords
+        self._variables = self._dataio.known_variables
         # if x is 2-D then we assume x and y are mesh grid values
         if np.ndim(self._dataio['x']) == 2:
             self._X = self._dataio['x']  # mesh grid of x values of cube
@@ -224,6 +225,11 @@ class BaseCube(abc.ABC):
         """:obj:`~deltametrics.io.BaseIO` subclass : Data I/O handler.
         """
         return self._dataio
+
+    @property
+    def coords(self):
+        """`list` : List of coordinate names as strings."""
+        return self._coords
 
     @property
     def variables(self):

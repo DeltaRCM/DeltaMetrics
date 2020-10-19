@@ -169,7 +169,7 @@ class NetCDFIO(BaseIO):
             _dataset = xr.open_dataset(self.data_path)
 
             if 'time' and 'y' and 'x' in _dataset.variables:
-                self.dataset = _dataset.set_coords(['time', 'y', 'x'])        
+                self.dataset = _dataset.set_coords(['time', 'y', 'x'])
             else:
                 warn('Dimensions "time", "y", and "x" not provided in the \
                       given data file.', UserWarning)
@@ -182,7 +182,9 @@ class NetCDFIO(BaseIO):
 
         These variables are pulled from the loaded dataset.
         """
-        self.known_variables = list(self.dataset.variables)
+        _vars = list(self.dataset.variables)
+        _coords = list(self.dataset.coords) + ['strata_age', 'strata_depth']
+        self.known_variables = [item for item in _vars if item not in _coords]
 
     def get_known_coords(self):
         """List known coordinates.

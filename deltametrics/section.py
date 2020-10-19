@@ -305,7 +305,9 @@ class BaseSection(abc.ABC):
                                                                      self._y,
                                                                      self._x],
                                            _s=self.s, _z=self.z,
-                                           _psvd_mask=self.cube.strat_attr.psvd_idx[:, self._y, self._x],
+                                           _psvd_mask=self.cube.strat_attr.psvd_idx[:,
+                                                                                    self._y,
+                                                                                    self._x],
                                            _strat_attr=self.cube.strat_attr(
                                             'section', self._y, self._x))
             else:
