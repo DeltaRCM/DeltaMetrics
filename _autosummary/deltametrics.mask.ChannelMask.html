@@ -149,7 +149,7 @@ determine the channel mask.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.compute_shoremask" title="deltametrics.mask.ChannelMask.compute_shoremask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_shoremask</span></code></a>([angle_threshold])</p></td>
 <td><p>Compute the shoreline mask.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.show" title="deltametrics.mask.ChannelMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(**kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.show" title="deltametrics.mask.ChannelMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>([t])</p></td>
 <td><p>Show the mask.</p></td>
 </tr>
 </tbody>
@@ -267,9 +267,18 @@ convert everything to uints for speed and size.</p>
 
 <dl class="method">
 <dt id="deltametrics.mask.ChannelMask.show">
-<code class="descname">show</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.show" title="Permalink to this definition">¶</a></dt>
+<code class="descname">show</code><span class="sig-paren">(</span><em>t=-1</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the mask.</p>
-<p>Passes <cite>**kwargs</cite> to <code class="docutils literal notranslate"><span class="pre">matplotlib.imshow</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>t</strong> (<em>int</em><em>, </em><em>optional</em>) – Value of time slice or integer from first dimension in 3D (t-x-y)
+convention to display the mask from. Default is -1 so the ‘final’
+mask in time is displayed if this argument is not supplied.</p></li>
+<li><p><strong>**kwargs to matplotlib.imshow.</strong> (<em>Passes</em>) – </p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

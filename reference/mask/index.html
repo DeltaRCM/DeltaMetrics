@@ -84,6 +84,12 @@
 <p>The package makes available routines for masking out planview attributes of
 the delta.</p>
 <p>This class is defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.mask</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When <cite>Mask</cite> objects are instantiated with single time-slice x-y planform
+data (i.e., <cite>L x W</cite> data), the returned mask is expanded along the first
+dimension to return an object with dimensions <cite>1 x L x W</cite>. This ensures that all <cite>Mask</cite> objects will have the same number of dimensions, but may lead to confusion if writing your own functions.</p>
+</div>
 <div class="section" id="mask-classes">
 <h2>Mask classes<a class="headerlink" href="#mask-classes" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-center">
