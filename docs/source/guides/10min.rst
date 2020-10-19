@@ -62,11 +62,11 @@ Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, wh
     >>> type(rcm8cube['velocity'].data)
     <class 'xarray.core.dataarray.DataArray'>
 
-The underlying xarray object is accessible using the ``.data`` nomenclature. For example, we could determine how much the average bed elevation change at a specific location in the model domain (43, 123), by slicing the ``eta`` variable, and differencing timesteps.
+The underlying xarray object can be directly accessed by using a ``.data`` attribute, however, this is not necessary, and you can slice the `CubeVariable` directly with any valid `numpy` slicing style. For example, we could determine how much the average bed elevation changed at a specific location in the model domain (43, 123), by slicing the ``eta`` variable, and differencing timesteps.
 
 .. doctest::
 
-    >>> np.mean( rcm8cube['eta'].data[1:,43,123] - rcm8cube['eta'].data[:-1,43,123] )
+    >>> np.mean( rcm8cube['eta'][1:,43,123] - rcm8cube['eta'][:-1,43,123] )
     <xarray.DataArray 'eta' ()>
     array(0.08364895, dtype=float32)
     Coordinates:

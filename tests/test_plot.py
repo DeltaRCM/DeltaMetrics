@@ -243,7 +243,7 @@ class TestSODTTST:
         locs = np.array([[48, 152], [8, 63], [14, 102], [92, 218], [102, 168],
                          [26, 114], [62, 135], [61, 201], [65, 193], [23, 175]])
         for i in range(10):
-            _e = rcm8cube['eta'].data[:, locs[i, 0], locs[i, 1]]
+            _e = rcm8cube['eta'][:, locs[i, 0], locs[i, 1]]
             fig, ax = plt.subplots()
             plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax)
             plt.close()
