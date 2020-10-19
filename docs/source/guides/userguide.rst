@@ -2,7 +2,7 @@
 User Guide
 **********
 
-This documentation provides a 
+This documentation provides a
 
 
 
@@ -34,7 +34,7 @@ Setting up your coding environment
 All of the documentation in this package assumes that you have imported the DeltaMetrics package as ``dm``:
 
 .. doctest::
-    
+
     >>> import deltametrics as dm
 
 Additionally, we frequently rely on the `numpy` package, and `matplotlib`. We will assume you have imported these packages by their common shorthand as well; if we import other packages, or other modules from `matplotlib`, these imports will be declared!
@@ -58,7 +58,7 @@ DeltaMetrics centers around the use of “Cubes” in DeltaMetrics language are 
 
 Creating the ``rcm8cube`` connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets. The type of the ``rcm8cube`` is ``DataCube``.
 
-Inspect which variables are available in the ``rcm8cube``. 
+Inspect which variables are available in the ``rcm8cube``.
 
 .. doctest::
 
@@ -97,7 +97,7 @@ Let’s examine the timeseries of bed elevations by taking slices out of the ``'
 
 .. plot:: guides/userguide_bed_timeseries.py
 
-.. note:: 
+.. note::
 
     The 0th dimension of the cube is the *time* dimension, and the 1st and 2nd dimensions are the `y` and `x` dimensions of the model domain, respectively. The `x` dimension is the *cross-channel* dimension, Implementations using non-standard data should permute datasets to match this convention.
 
@@ -144,7 +144,7 @@ Manipulating Section data
 We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
 In DeltaMetrics, we refer to this preserved history as the "stratigraphy", and we provide a number of convenient routines for computing stratigraphy and analyzing the deposits.
 
-Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created. 
+Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created.
 We must directly tell the Cube instance to compute stratigraphy by specifying which variable contains the bed elevation history, because this history dictates preservation.
 
 Mainly, the API works by registering a section of a specified type, and
@@ -157,7 +157,7 @@ For a data cube, sections are most easily instantiated by the :obj:`~deltametric
 
     >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=10))
 
-which creates a section across a constant y-value ``==10``. 
+which creates a section across a constant y-value ``==10``.
 The path of any `Section` in the ``x-y`` plane can always be accessed via the ``.trace`` attribute.
 We can plot the trace on top the the final bed elevation to see where the section will be located.
 
@@ -225,7 +225,7 @@ We have implemented support for rapid stratigraphy computation for visualization
 These quick stratigraphy computations create a mesh of preserved elevations and fill this matrix with values sliced out of the ``t-x-y`` data.
 
 Notably, the full "boxy" stratigraphy computation is also quite fast.
-More on that below. 
+More on that below.
 Compute the quick stratigraphy as:
 
 .. doctest::
@@ -292,9 +292,9 @@ The following are currently implemented.
     >>> _strike = dm.section.StrikeSection(rcm8cube, y=18)
     >>> _path = dm.section.PathSection(rcm8cube, path=np.column_stack((np.linspace(50, 150, num=4000, dtype=np.int),
     ...                                                                np.linspace(10, 90, num=4000, dtype=np.int))))
-    
 
-The `Section` classes all inherit from the same ``BaseSection`` class, which means they mostly have the same options available to them, and have a common API. 
+
+The `Section` classes all inherit from the same ``BaseSection`` class, which means they mostly have the same options available to them, and have a common API.
 Each has unique instantiation arguments, though, which must be properly specified.
 
 .. doctest::
@@ -321,7 +321,7 @@ Computing and Manipulating Stratigraphy
 1) Does not consider volume of sediment filled by preserved-time indicies, 2) cannot be sliced by planform, 3) irregularity does not lend well to computation and other uses (hydrological studies).
 
 So, we want to be able to create what I refer to as "boxy" stratigraphy.
-This has been done in the past by "placing" values from, e.g., ``strata_sand_frac`` into stratigraphy. 
+This has been done in the past by "placing" values from, e.g., ``strata_sand_frac`` into stratigraphy.
 This requires full computation for any variable you want to examine though.
 Here, we use a method that computes boxy stratigraphy only once, then synthesizes the volume from
 the precomputed sparse indicies.
@@ -331,7 +331,7 @@ Here’s a simple example to demonstrate how we place data into the stratigraphy
 .. doctest::
 
     >>> ets = rcm8cube['eta'][:, 25, 120]  # a "real" slice of the model
-    
+
     >>> fig, ax = plt.subplots(figsize=(8, 4))
     >>> dm.plot.show_one_dimensional_trajectory_to_strata(ets, ax=ax, dz=0.25)
     >>> plt.show() #doctest: +SKIP
@@ -423,7 +423,7 @@ speed up computations if an array is being accessed over and over.
 
     fs = sc8cube.export_frozen_variable('strata_sand_frac')
     fe = sc8cube.Z  # exported volume does not have coordinate information!
-    
+
     fig, ax = plt.subplots(figsize=(10, 2))
     pcm = ax.pcolormesh(np.tile(np.arange(fs.shape[2]), (fs.shape[0], 1)),
        fe[:,10,:], fs[:,10,:], shading='auto',
@@ -468,8 +468,8 @@ methods to create new “variables” in the data cube which hold the binary
 values of the masks.
 
 Currently implemented `Masks`:
-  * ChannelMask 
-  * EdgeMask 
+  * ChannelMask
+  * EdgeMask
   * LandMask
   * ShorelineMask
   * WetMask
@@ -479,7 +479,7 @@ Currently implemented `Masks`:
 
     >>> # use a new cube, code is currently locked to sea_level==0
     >>> maskcube = dm.sample_data.cube.rcm8()
-    
+
     >>> # create the masks from variables in the cube
     >>> land_mask = dm.mask.LandMask(maskcube['eta'][-1, :, :])
     >>> wet_mask = dm.mask.WetMask(maskcube['eta'][-1, :, :])
@@ -497,7 +497,7 @@ Currently implemented `Masks`:
 
     >>> ax0.imshow(maskcube['eta'][-1, :, :]) #doctest: +SKIP
     >>> for i, m in enumerate([land_mask, wet_mask, channel_mask, centerline_mask, edge_mask, shore_mask]):
-    ...     axs[i].imshow(m.mask, cmap='gray') #doctest: +SKIP
+    ...     axs[i].imshow(m.mask[-1, :, :], cmap='gray') #doctest: +SKIP
     ...     axs[i].set_title(m.mask_type) #doctest: +SKIP
     >>> plt.show() #doctest: +SKIP
 

@@ -18,5 +18,5 @@ ax0.imshow(rcm8cube['eta'][-1, :, :])
 
 for i, m in enumerate([land_mask, wet_mask, channel_mask,
                        centerline_mask, edge_mask, shore_mask]):
-    axs[i].imshow(m.mask, cmap='gray')
+    axs[i].imshow(m.mask[-1, :, :], cmap='gray')
     axs[i].set_title(m.mask_type)
