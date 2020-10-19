@@ -13,7 +13,6 @@ functions, allowing for decay constants and timescales to be quantified.
 import numpy as np
 from deltametrics import mask
 import xarray as xr
-from scipy.optimize import curve_fit
 
 
 def check_inputs(chmap, basevalues, time_window, landmap=None):
@@ -64,7 +63,7 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
             landmap = landmap.values
         else:
             raise TypeError('landmap data type not understood.')
-        if ((landmap==0) | (landmap==1)).all():
+        if ((landmap == 0) | (landmap == 1)).all():
             pass
         else:
             raise ValueError('landmap was not binary')
@@ -108,7 +107,7 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
     return chmap, landmap, basevalues, time_window
 
 
-def calc_chan_decay(chmap, landmap, basevalues, time_window):
+def calculate_channel_decay(chmap, landmap, basevalues, time_window):
     """
     Calculate channel decay (reduction in dry fraction).
 
@@ -177,7 +176,7 @@ def calc_chan_decay(chmap, landmap, basevalues, time_window):
     return dryfrac
 
 
-def calc_planform_overlap(chmap, landmap, basevalues, time_window):
+def calculate_planform_overlap(chmap, landmap, basevalues, time_window):
     """
     Calculate channel planform overlap.
 
@@ -247,7 +246,7 @@ def calc_planform_overlap(chmap, landmap, basevalues, time_window):
     return Ophi
 
 
-def calc_reworking_fraction(chmap, landmap, basevalues, time_window):
+def calculate_reworking_fraction(chmap, landmap, basevalues, time_window):
     """
     Calculate the reworking fraction.
 
@@ -331,7 +330,7 @@ def calc_reworking_fraction(chmap, landmap, basevalues, time_window):
     return fr
 
 
-def calc_chan_abandonment(chmap, basevalues, time_window):
+def calculate_channel_abandonment(chmap, basevalues, time_window):
     """
     Calculate channel abandonment.
 
@@ -387,67 +386,3 @@ def calc_chan_abandonment(chmap, basevalues, time_window):
             PwetA[i, Nstep] = stepA/baseA
 
     return PwetA
-
-
-def mobility_curve_fit(mdata, fit='harmonic'):
-    """
-    Calculate curve fit for channel mobility data.
-
-    Given some mobility data output from one of the mobility metrics, fit a
-    curve to the average of that data. Several functional forms are available
-    for the fitting: exponential, harmonic, and linear functions.
-
-    Parameters
-    ----------
-    mdata : ndarray
-        Mobility data, either already averaged or a 2D array of of shape
-        len(basevalues) x time_window. Any output from one of the mobility
-        functions is acceptable.
-
-    fit : str, optional (default is 'harmonic')
-        A string specifying the type of function to be fit. Options are as
-        follows:
-            - 'exponential' : (a - b) * np.exp(-c * x) + b
-            - 'harmonic' : a / (1 + b * x)
-            - 'linear' : a * x + b
-
-    Returns
-    -------
-    yfit : ndarray
-        y-values corresponding to the fitted function.
-
-    pcov : ndarray
-        Covariance associated with the fitted function parameters.
-
-    perror : ndarray
-        One standard deviation error for the parameters (from pcov)
-
-    """
-    avail_fits = ['exponential', 'harmonic', 'linear']
-    if fit not in avail_fits:
-        raise ValueError('Fit specified is not valid.')
-
-    # average the mobility data if needed
-    if len(mdata.shape) == 2:
-        mdata = np.mean(mdata, axis=0)
-
-    # define x data
-    xdata = np.array(range(0, len(mdata)))
-
-    # do fit
-    if fit == 'harmonic':
-        func_harmonic = lambda x, a, b: a / (1 + b * x)
-        popt, pcov = curve_fit(func_harmonic, xdata, mdata)
-        yfit = func_harmonic(xdata, *popt)
-    elif fit == 'exponential':
-        func_exponential = lambda x, a, b, c: (a - b) * np.exp(-c * x) + b
-        popt, pcov = curve_fit(func_exponential, xdata, mdata)
-        yfit = func_exponential(xdata, *popt)
-    elif fit == 'linear':
-        func_linear = lambda x, a, b: a * x + b
-        popt, pcov = curve_fit(func_linear, xdata, mdata)
-        yfit = func_linear(xdata, *popt)
-
-    perror = np.sqrt(np.diag(pcov))
-
-    return yfit, pcov, perror

@@ -20,11 +20,11 @@ The functions are defined in ``deltametrics.mobility``.
 .. currentmodule:: deltametrics.mobility
 
 .. autosummary::
-	:toctree: ../../_autosummary
+  :toctree: ../../_autosummary
 
   check_inputs
-	calc_chan_decay
-	calc_planform_overlap
-	calc_reworking_fraction
-	calc_chan_abandonment
-	mobility_curve_fit
+  calc_chan_decay
+  calc_planform_overlap
+  calc_reworking_fraction
+  calc_chan_abandonment
+  mobility_curve_fit

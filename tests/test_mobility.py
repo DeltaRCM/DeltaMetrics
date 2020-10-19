@@ -155,69 +155,25 @@ time_window = 5
 
 def test_dry_decay():
     """Test dry fraction decay."""
-    dryfrac = mob.calc_chan_decay(chmap, fsurf, basevalue, time_window)
+    dryfrac = mob.calculate_channel_decay(chmap, fsurf, basevalue, time_window)
     assert np.all(dryfrac == np.array([[0.75, 0.6875, 0.625, 0.5625, 0.5]]))
 
 
 def test_planform_olap():
     """Test channel planform overlap."""
-    ophi = mob.calc_planform_overlap(chmap, fsurf, basevalue, time_window)
+    ophi = mob.calculate_planform_overlap(chmap, fsurf, basevalue, time_window)
     assert pytest.approx(ophi == np.array([[1., 0.66666667, 0.33333333,
                                             0., -0.33333333]]))
 
 
 def test_reworking():
     """Test reworking index."""
-    fr = mob.calc_reworking_fraction(chmap, fsurf, basevalue, time_window)
+    fr = mob.calculate_reworking_fraction(chmap, fsurf, basevalue, time_window)
     assert pytest.approx(fr == np.array([[0., 0.08333333, 0.16666667,
                                           0.25, 0.33333333]]))
 
 
 def test_channel_abandon():
     """Test channel abandonment function."""
-    ch_abandon = mob.calc_chan_abandonment(chmap, basevalue, time_window)
+    ch_abandon = mob.calculate_channel_abandonment(chmap, basevalue, time_window)
     assert np.all(ch_abandon == np.array([[0., 0.25, 0.5, 0.75, 1.]]))
-
-
-def test_linear_fit():
-    """Test linear curve fitting."""
-    ch_abandon = mob.calc_chan_abandonment(chmap, basevalue, time_window)
-    yfit, cov, err = mob.mobility_curve_fit(ch_abandon, fit='linear')
-    assert pytest.approx(yfit == np.array([4.76315477e-24, 2.50000000e-01,
-                                           5.00000000e-01, 7.50000000e-01,
-                                           1.00000000e+00]))
-    assert pytest.approx(cov == np.array([[1.76300984e-25, -0.00000000e+00],
-                                          [0.00000000e+00,  5.28902953e-24]]))
-    assert pytest.approx(err == np.array([4.19882108e-13, 2.29978902e-12]))
-
-
-def test_harmonic_fit():
-    """Test harmonic curve fitting."""
-    ch_abandon = mob.calc_chan_abandonment(chmap, basevalue, time_window)
-    yfit, cov, err = mob.mobility_curve_fit(ch_abandon, fit='harmonic')
-    assert pytest.approx(yfit == np.array([-0.25986438, 0.41294455,
-                                           0.11505591, 0.06683947,
-                                           0.04710091]))
-    assert pytest.approx(cov == np.array([[0.50676407, 1.26155952],
-                                          [1.26155952, 4.3523343]]))
-    assert pytest.approx(err == np.array([0.71187364, 2.08622489]))
-
-
-def test_invalid_fit():
-    """Test invalid fit parameter."""
-    ch_abandon = mob.calc_chan_abandonment(chmap, basevalue, time_window)
-    with pytest.raises(ValueError):
-        mob.mobility_curve_fit(ch_abandon, fit='invalid')
-
-
-def test_exponential_fit():
-    """Test exponential fitting."""
-    ydata = np.array([10, 5, 2, 1])
-    yfit, cov, err = mob.mobility_curve_fit(ydata, fit='exponential')
-    assert pytest.approx(yfit == np.array([10.02900253, 4.85696353,
-                                           2.22612537, 0.88790858]))
-    assert pytest.approx(cov == np.array([[0.0841566, 0.04554967, 0.01139969],
-                                          [0.04554967, 0.59895713, 0.08422946],
-                                          [0.01139969, 0.08422946,
-                                           0.01327807]]))
-    assert pytest.approx(err == np.array([0.29009757, 0.77392321, 0.11523053]))
