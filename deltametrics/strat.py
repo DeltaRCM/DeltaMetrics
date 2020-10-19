@@ -367,8 +367,8 @@ def _compute_elevation_to_preservation(elev):
 
     Parameters
     ----------
-    elev : :obj:`ndarray`
-        The `t-x-y` ndarry of elevation data to determine stratigraphy.
+    elev : :obj:`ndarray` or :obj:`xr.core.dataarray.DataArray`
+        The `t-x-y` volume of elevation data to determine stratigraphy.
 
     Returns
     -------
@@ -386,35 +386,22 @@ def _compute_elevation_to_preservation(elev):
 
     nt = strata.shape[0]
     if isinstance(elev, np.ndarray) is True:
-        strata[-1, ...] = elev[-1, ...]
-        for j in np.arange(nt - 2, -1, -1):
-            strata[j, ...] = np.minimum(elev[j, ...],
-                                        strata[j + 1, ...])
-            psvd[j + 1, ...] = np.less(strata[j, ...],
-                                       strata[j + 1, ...])
-        if nt > 1:  # allows a single-time elevation-series to return
-            psvd[0, ...] = np.less(strata[0, ...],
-                                   strata[1, ...])
+        _elev = elev
     elif isinstance(elev, xr.core.dataarray.DataArray) is True:
-        strata[-1, ...] = elev.values[-1, ...]
-        for j in np.arange(nt - 2, -1, -1):
-            strata[j, ...] = np.minimum(elev.values[j, ...],
-                                        strata[j + 1, ...])
-            psvd[j + 1, ...] = np.less(strata[j, ...],
-                                       strata[j + 1, ...])
-        if nt > 1:  # allows a single-time elevation-series to return
-            psvd[0, ...] = np.less(strata[0, ...],
-                                   strata[1, ...])
-    else:
-        strata[-1, ...] = elev.data.values[-1, ...]
-        for j in np.arange(nt - 2, -1, -1):
-            strata[j, ...] = np.minimum(elev.data.values[j, ...],
-                                        strata[j + 1, ...])
-            psvd[j + 1, ...] = np.less(strata[j, ...],
-                                       strata[j + 1, ...])
-        if nt > 1:  # allows a single-time elevation-series to return
-            psvd[0, ...] = np.less(strata[0, ...],
-                                   strata[1, ...])
+        _elev = elev.values
+    else:  # case where elev is a CubeVariable
+        _elev = elev.data.values
+
+    strata[-1, ...] = _elev[-1, ...]
+    for j in np.arange(nt - 2, -1, -1):
+        strata[j, ...] = np.minimum(_elev[j, ...],
+                                    strata[j + 1, ...])
+        psvd[j + 1, ...] = np.less(strata[j, ...],
+                                   strata[j + 1, ...])
+    if nt > 1:  # allows a single-time elevation-series to return
+        psvd[0, ...] = np.less(strata[0, ...],
+                               strata[1, ...])
+
     return strata, psvd
 
 
