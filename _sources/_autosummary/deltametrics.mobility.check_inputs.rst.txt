@@ -1,0 +1,6 @@
+deltametrics.mobility.check\_inputs
+===================================
+
+.. currentmodule:: deltametrics.mobility
+
+.. autofunction:: check_inputs
