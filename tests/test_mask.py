@@ -735,3 +735,10 @@ def test_init_OAM():
     # assertions
     assert oam.mask_type == 'test'
     assert np.all(oam.data == np.zeros((3, 3)))
+
+
+def test_wrong_size():
+    """Raise error if array with bad dimensions is used."""
+    bad_arr = np.arange(0, 5)
+    with pytest.raises(ValueError):
+        mask.BaseMask('bad1D', bad_arr)
