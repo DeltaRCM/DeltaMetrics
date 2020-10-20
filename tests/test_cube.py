@@ -4,6 +4,7 @@ import sys
 import os
 
 import numpy as np
+import xarray as xr
 
 from deltametrics import cube
 
@@ -14,6 +15,10 @@ from deltametrics import utils
 # initialize a cube directly from path, rather than using sample_data.py
 rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
                          'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
+
+hdf_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
+                        'sample_data', 'files',
+                        'LandsatEx.hdf5')
 
 
 class TestDataCubeNoStratigraphy:
@@ -76,7 +81,7 @@ class TestDataCubeNoStratigraphy:
         slc = rcm8cube['eta']
         assert type(slc) is cube.CubeVariable
         assert slc.ndim == 3
-        assert type(slc.base) is np.ndarray
+        assert type(slc.data) is xr.core.dataarray.DataArray
 
     def test_slice_op_invalid_name(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -292,13 +297,50 @@ class TestFrozenStratigraphyCube:
         'time')
 
     def test_types(self):
-        assert isinstance(self.frozenstratigraphycube, np.ndarray)
+        assert isinstance(self.frozenstratigraphycube,
+                          xr.core.dataarray.DataArray)
 
     def test_matches_underlying_data(self):
         assert not self.frozenstratigraphycube is self.fixedstratigraphycube
-        frzn_log = self.frozenstratigraphycube[
-            ~np.isnan(self.frozenstratigraphycube)]
-        fixd_log = self.fixedstratigraphycube['time'][
-            ~np.isnan(self.fixedstratigraphycube['time'])]
+        frzn_log = self.frozenstratigraphycube.values[
+            ~np.isnan(self.frozenstratigraphycube.values)]
+        fixd_log = self.fixedstratigraphycube['time'].data.values[
+            ~np.isnan(self.fixedstratigraphycube['time'].data.values)]
         assert frzn_log.shape == fixd_log.shape
         assert np.all(fixd_log == frzn_log)
+
+
+class TestLandsatCube:
+
+    landsatcube = cube.DataCube(hdf_path)
+
+    def test_init_cube_from_path_hdf5(self):
+        hdfcube = cube.DataCube(hdf_path)
+        assert hdfcube._data_path == hdf_path
+        assert hdfcube.dataio.type == 'hdf5'
+        assert hdfcube._plan_set == {}
+        assert hdfcube._section_set == {}
+        assert type(hdfcube.varset) is plot.VariableSet
+
+    def test_read_Blue_intomemory(self):
+        assert self.landsatcube._dataio._in_memory_data == {}
+        assert self.landsatcube.variables == ['Blue', 'Green', 'NIR', 'Red']
+        assert len(self.landsatcube.variables) == 4
+
+        self.landsatcube.read('Blue')
+        assert len(self.landsatcube.dataio._in_memory_data) == 1
+
+    def test_read_all_intomemory(self):
+        assert self.landsatcube.variables == ['Blue', 'Green', 'NIR', 'Red']
+        assert len(self.landsatcube.variables) == 4
+
+        self.landsatcube.read(True)
+        assert len(self.landsatcube.dataio._in_memory_data) == 4
+
+    def test_read_invalid(self):
+        with pytest.raises(TypeError):
+            self.landsatcube.read(5)
+
+    def test_get_coords(self):
+        assert self.landsatcube.coords == ['time', 'x', 'y']
+        assert self.landsatcube._coords == ['time', 'x', 'y']

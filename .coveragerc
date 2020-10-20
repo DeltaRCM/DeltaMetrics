@@ -1,0 +1,7 @@
+[run]
+source = deltametrics
+
+omit =
+    *__init__*
+    */sample_data/*
+    *_version*

@@ -2,31 +2,11 @@
 import abc
 import os
 import sys
+from warnings import warn
 
 import numpy as np
+import xarray as xr
 import netCDF4
-
-
-def known_variables():
-    """A list of known variables.
-
-    These variables are common variables we anticipate being present in all
-    sorts of use-cases. Each one is given a set of default parameters in
-    :obj:`~deltametrics.plot.VariableSet`.
-    """
-    return ['eta', 'stage', 'depth', 'discharge',
-            'velocity', 'strata_sand_frac']
-
-
-def known_coords():
-    """A list of known coordinates.
-
-    These coordinates are commonly defined coordinate matricies that may be
-    stored inside of a file on disk. We don't treat these any differently in
-    the io wrappers, but knowing they are coordinates can be helpful.
-    """
-
-    return ['x', 'y', 'time']
 
 
 class BaseIO(abc.ABC):
@@ -38,16 +18,17 @@ class BaseIO(abc.ABC):
         methods ``connect``, ``read``, ``write``, and ``keys``.
     """
 
-    def __init__(self, data_path, write):
+    def __init__(self, data_path, type, write):
         """Initialize the base IO.
         """
-        self.known_variables = known_variables()
-        self.known_coords = known_coords()
-
         self.data_path = data_path
+        self.type = type
         self.write = write
 
         self.connect()
+
+        self.get_known_coords()
+        self.get_known_variables()
 
     @property
     def data_path(self):
@@ -60,8 +41,8 @@ class BaseIO(abc.ABC):
 
         Notes
         -----
-        The setter method validates the path, and returns a ``FileNotFoundError`` if
-        the file is not found.
+        The setter method validates the path, and returns a
+        ``FileNotFoundError`` if the file is not found.
         """
         return self._data_path
 
@@ -78,6 +59,22 @@ class BaseIO(abc.ABC):
 
         This function should initialize the file if it does not exist, or
         connect to the file if it already exists---but *do not* read the file.
+        """
+        return
+
+    @abc.abstractmethod
+    def get_known_variables(self):
+        """Should create list of known variables.
+
+        This function needs to populate `self.known_variables`.
+        """
+        return
+
+    @abc.abstractmethod
+    def get_known_coords(self):
+        """A list of known coordinates.
+
+        This function needs to populate `self.known_coords`.
         """
         return
 
@@ -110,15 +107,24 @@ class BaseIO(abc.ABC):
 
 
 class NetCDFIO(BaseIO):
-    """Utility for consistent IO with netCDF files.
+    """Utility for consistent IO with netCDF4 files.
 
     This module wraps calls to the netCDF4 python module in a consistent API,
     so the user can work seamlessly with either netCDF4 files or HDF5 files.
     The public methods of this class are consistent with
     :obj:`~deltametrics.utils.HDFIO`.
+
+    Note that the netCDF4, netCDF4-classic, and HDF5 file standards are very
+    similar and (almost) interchangable. This means that the same data loader
+    can be used to handle these files. We use the `xarray` data reader which
+    supports the netCDF4/HDF5 file-format.
+
+    Older file formats such as netCDF3 or HDF4 are unsupported. For more
+    information about the netCDF4 format, visit the netCDF4
+    `docs <https://www.unidata.ucar.edu/software/netcdf/docs/faq.html>`_.
     """
 
-    def __init__(self, data_path, write=False):
+    def __init__(self, data_path, type, write=False):
         """Initialize the NetCDFIO handler.
 
         Initialize a connection to a NetCDF file.
@@ -128,22 +134,26 @@ class NetCDFIO(BaseIO):
         data_path : `str`
             Path to file to read or write to.
 
+        type : `str`
+            Stores the type of output file loaded, either a netCDF4 file,
+            'netcdf' or an HDF5 file, 'hdf5'.
+
         write : `bool`, optional
             Whether to allow writing to an existing file. Set to False by
             default, if a file already exists at ``data_path``, writing is
             disabled, unless ``write`` is set to True.
         """
 
-        super().__init__(data_path=data_path, write=write)
+        super().__init__(data_path=data_path, type=type, write=write)
 
-        self.type = 'netcdf'
         self._in_memory_data = {}
 
     def connect(self):
         """Connect to the data file.
 
         Initialize the file if it does not exist, or simply ``return`` if the
-        file already exists.
+        file already exists. This connection to the data file is "lazy"
+        loading, meaning that array values are not being loaded into memory.
 
         .. note::
             This function is automatically called during initialization of any
@@ -151,19 +161,44 @@ class NetCDFIO(BaseIO):
 
         """
         if not os.path.isfile(self.data_path):
-            self.dataset = netCDF4.Dataset(
+            _tempdataset = netCDF4.Dataset(
                 self.data_path, "w", format="NETCDF4")
-        else:
-            if self.write:
-                self.dataset = netCDF4.Dataset(self.data_path, "r+")
+            _tempdataset.close()
+
+        try:
+            _dataset = xr.open_dataset(self.data_path)
+
+            if 'time' and 'y' and 'x' in _dataset.variables:
+                self.dataset = _dataset.set_coords(['time', 'y', 'x'])
             else:
-                self.dataset = netCDF4.Dataset(self.data_path, "r")
+                self.dataset = _dataset.set_coords([])
+                warn('Dimensions "time", "y", and "x" not provided in the \
+                      given data file.', UserWarning)
+
+        except Exception:
+            raise TypeError('File format out of scope for DeltaMetrics')
+
+    def get_known_variables(self):
+        """List known variables.
+
+        These variables are pulled from the loaded dataset.
+        """
+        _vars = list(self.dataset.variables)
+        _coords = list(self.dataset.coords) + ['strata_age', 'strata_depth']
+        self.known_variables = [item for item in _vars if item not in _coords]
+
+    def get_known_coords(self):
+        """List known coordinates.
+
+        These coordinates are pulled from the loaded dataset.
+        """
+        self.known_coords = list(self.dataset.coords)
 
     def read(self, var):
         """Read variable from file and into memory.
 
-        Converts `variables` in netCDF file to `ndarray` for coersion into a
-        :obj:`~deltametrics.cube.Cube` instance.
+        Converts `variables` in data file to `xarray` objects for coersion
+        into a :obj:`~deltametrics.cube.Cube` instance.
 
         Parameters
         ----------
@@ -171,10 +206,11 @@ class NetCDFIO(BaseIO):
             Which variable to load from the file.
         """
         try:
-            _arr = self.dataset.variables[var]
-        except ValueError as e:
+            _arr = self.dataset[var]
+        except KeyError as e:
             raise e
-        self._in_memory_data[var] = np.array(_arr, copy=True)
+
+        self._in_memory_data[var] = _arr.load()
 
     def write(self):
         """Write data to file.
@@ -198,20 +234,3 @@ class NetCDFIO(BaseIO):
         """Variable names in file.
         """
         return [var for var in self.dataset.variables]
-
-
-class HDFIO(BaseIO):
-    """Utility for consistent IO with HDF5 files.
-
-    This module wraps calls to the hdf5 python module in a consistent API,
-    so the user can work seamlessly with either HDF5 files or netCDF4 files.
-    The public methods of this class are consistent with
-    :obj:`~deltametrics.utils.NetCDFIO`.
-    """
-
-    def __init__(self, data_path):
-        """Initialize the HDF5_IO handler
-
-        parameters
-        """
-        raise NotImplementedError

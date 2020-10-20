@@ -1,10 +1,12 @@
 import os
+import copy
 import warnings
 import time
 import abc
 
 import numpy as np
 import scipy as sp
+import xarray as xr
 
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
@@ -17,13 +19,15 @@ from . import utils
 from . import plot
 
 
-class CubeVariable(np.ndarray):
+@xr.register_dataarray_accessor("cubevar")
+class CubeVariable():
     """Slice of a Cube.
 
     Slicing an :obj:`~deltametrics.cube.Cube` returns an object of this type.
-    The ``CubeVariable`` is essentially a thin wrapper around the numpy
-    ``ndarray``, enabling additional iniformation to be augmented, a
-    lighter-weight __repr__, and flexibility for development.
+    The ``CubeVariable`` is an accessor of the `xarray.DataArray` class,
+    enabling additional functions to be added to the object, while retaining
+    the `xarray` object and it's native functionality under
+    ``CubeVariable.data``.
 
     .. warning::
         You probably should not instantiate objects of this type directly.
@@ -38,55 +42,47 @@ class CubeVariable(np.ndarray):
         >>> type(rcm8cube['velocity'])
         <class 'deltametrics.cube.CubeVariable'>
 
-        >>> type(rcm8cube['velocity'].base)
-        <class 'numpy.ndarray'>
+        >>> type(rcm8cube['velocity'].data)
+        <class 'xarray.DataArray'>
 
         >>> rcm8cube['velocity'].variable
         'velocity'
     """
 
-    def __new__(cls, *args, **kwargs):
-        """Initialize the ndarray.
-        """
+    def __init__(self, xarray_obj):
+        """Initialize the ``CubeVariable`` object."""
+        self.data = xarray_obj
+
+    def initialize(self, **kwargs):
+        """Initialize with **kwargs."""
+        self.shape = self.data.shape
+        self.ndim = len(self.shape)
         variable = kwargs.pop('variable', None)
+        self.variable = variable
         coords = kwargs.pop('coords', None)
-        obj = np.array(*args, **kwargs)
-        obj = np.asarray(obj).view(cls)
-        obj.variable = variable
         if not coords:
-            obj.t, obj.x, obj.y = [np.arange(l) for l in obj.shape]
+            self.t, self.x, self.y = [np.arange(itm) for itm in self.shape]
         else:
-            obj.t, obj.x, obj.y = coords['t'], coords['x'], coords['y']
-        return obj
-
-    def __array_finalize__(self, obj):
-        """Place things that must always happen here.
-
-        This method is called when any new array is cast. The ``__new__``
-        method is not called when views are cast of an existing
-        `CubeVariable`, so anything special about the `CubeVariable` needs to
-        implemented here in addition to in ``__new__``.
-
-        This method could be configured to return a standard ndarray if a view
-        is cast, but currently, it will return another CubeVariable instance.
-        """
-        if obj is None:
-            return
-        self.variable = getattr(obj, 'variable', None)
-        self.t, self.x, self.y = getattr(obj, 'coords', range(3))
-
-    def __repr__(self):
-        """Lighterweight repr
-        """
-        if self.size > 5000:
-            return str(type(self)) + ' variable: `' + self.variable \
-                + '`; dtype: ' + str(self.dtype) + ' size: ' + str(self.size)
-        else:
-            return str(self)
+            self.t, self.x, self.y = coords['t'], coords['x'], coords['y']
 
     def as_frozen(self):
-        """Export variable as `ndarray`."""
-        return self.view(np.ndarray)
+        """Export variable values as a `numpy.ndarray`."""
+        return self.data.values
+
+    def __getitem__(self, slc):
+        """Get items from the underlying data.
+
+        Takes a numpy slicing style and slices data from the underlying data.
+        Note that the underlying data is stored in an :obj:`xarray.DataArray`,
+        and this method returns a :obj:`xarray.DataArray`.
+
+        Parameters
+        ----------
+        slc : a `numpy` slice
+            A valid `numpy` style slice. For example, :code:`[10, :, :]`.
+            Dimension validation is not performed before slicing.
+        """
+        return self.data[slc]
 
 
 class BaseCube(abc.ABC):
@@ -168,9 +164,9 @@ class BaseCube(abc.ABC):
         """
         _, ext = os.path.splitext(data_path)
         if ext == '.nc':
-            self._dataio = io.NetCDFIO(data_path)
-        elif ext == '.hf5':  # ?????
-            self._dataio = io.HDFIO(data_path)
+            self._dataio = io.NetCDFIO(data_path, 'netcdf')
+        elif ext == '.hdf5':
+            self._dataio = io.NetCDFIO(data_path, 'hdf5')
         else:
             raise ValueError(
                 'Invalid file extension for "data_path": %s' % data_path)
@@ -181,14 +177,22 @@ class BaseCube(abc.ABC):
         This method is used internally to gather some useful info for
         navigating the variable trees in the stored files.
         """
-        self._variables = self._dataio.keys
-        self._X = self._dataio['x']  # mesh grid of x values of cube
-        self._Y = self._dataio['y']  # mesh grid of y values of cube
-        self._x = np.copy(self._X[0, :].squeeze())  # array of x values of cube
-        self._y = np.copy(self._Y[:, 0].squeeze())  # array of y values of cube
+        self._coords = self._dataio.known_coords
+        self._variables = self._dataio.known_variables
+        # if x is 2-D then we assume x and y are mesh grid values
+        if np.ndim(self._dataio['x']) == 2:
+            self._X = self._dataio['x']  # mesh grid of x values of cube
+            self._Y = self._dataio['y']  # mesh grid of y values of cube
+            self._x = np.copy(self._X[0, :].squeeze())  # array of xval of cube
+            self._y = np.copy(self._Y[:, 0].squeeze())  # array of yval of cube
+        # if x is 1-D we do mesh-gridding
+        elif np.ndim(self._dataio['x']) == 1:
+            self._x = self._dataio['x']  # array of xval of cube
+            self._y = self._dataio['y']  # array of yval of cube
+            self._X, self._Y = np.meshgrid(self._x, self._y)  # mesh grids x&y
 
     def read(self, variables):
-        """Read variable into memory
+        """Read variable into memory.
 
         Parameters
         ----------
@@ -196,7 +200,7 @@ class BaseCube(abc.ABC):
             Which variables to read into memory.
         """
         if variables is True:  # special case, read all variables
-            variables = self._dataio.variables
+            variables = self.variables
         elif type(variables) is str:
             variables = [variables]
         else:
@@ -226,7 +230,8 @@ class BaseCube(abc.ABC):
     def data_path(self):
         """:obj:`str` : Path connected to for file IO.
 
-        Returns a string if connected to file, or None if cube initialized from ``dict``.
+        Returns a string if connected to file, or None if cube initialized
+        from ``dict``.
         """
         return self._data_path
 
@@ -235,6 +240,11 @@ class BaseCube(abc.ABC):
         """:obj:`~deltametrics.io.BaseIO` subclass : Data I/O handler.
         """
         return self._dataio
+
+    @property
+    def coords(self):
+        """`list` : List of coordinate names as strings."""
+        return self._coords
 
     @property
     def variables(self):
@@ -375,12 +385,23 @@ class BaseCube(abc.ABC):
         if return_cube:
             raise NotImplementedError
         else:
-            return self.__getitem__(var).view(np.ndarray)
+            return self[var].data
 
     def show_cube(self, var, t=-1, x=-1, y=-1, ax=None):
         """Show the cube in a 3d axis.
+
+        3d visualization via `pyvista`.
+
+        .. warning::
+            Implementation is crude and should be revisited.
         """
-        raise NotImplementedError
+        try:
+            import pyvista as pv
+        except ImportError:
+            ImportError('3d plotting dependency, pyvista, was not found.')
+
+        _grid = pv.wrap(self[var].data.values)
+        _grid.plot()
 
     def show_plan(self, var, t=-1, ax=None, title=None, ticks=False):
         """Show planform image.
@@ -389,7 +410,7 @@ class BaseCube(abc.ABC):
             NEEDS TO BE PORTED OVER TO WRAP THE .show() METHOD OF PLAN!
         """
 
-        _plan = self[var][t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
+        _plan = self[var].data[t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
 
         if not ax:
             ax = plt.gca()
@@ -483,7 +504,18 @@ class DataCube(BaseCube):
 
         self._t = np.array(self._dataio['time'], copy=True)
         _, self._T, _ = np.meshgrid(self.y, self.t, self.x)
-        self._H, self._L, self._W = self['eta'].shape
+
+        # get shape from a variable that is not x, y, or time
+        i = 0
+        while i < len(self.variables):
+            if self.variables[i] == 'x' or self.variables[i] == 'y' \
+               or self.variables[i] == 'time':
+                i += 1
+            else:
+                _var = self.variables[i]
+                i = len(self.variables)
+
+        self._H, self._L, self._W = self[_var].data.shape
 
         self._knows_stratigraphy = False
 
@@ -506,13 +538,27 @@ class DataCube(BaseCube):
         CubeVariable : `~deltametrics.cube.CubeVariable`
             The instantiated CubeVariable.
         """
-        if var == 'time':
-            # a special attribute we add, which matches eta.shape
-            _t = np.expand_dims(self.dataio['time'], axis=(1, 2))
-            return CubeVariable(np.tile(_t, (1, *self.shape[1:])),
-                                variable='time')
+        if var in self._coords:
+            # ensure coords can be called by cube[var]
+            _coords = {}
+            _coords['t'] = self.T
+            _coords['x'] = self.X
+            _coords['y'] = self.Y
+            if var == 'time':  # special case for time
+                _t = np.expand_dims(self.dataio.dataset['time'].values,
+                                    axis=(1, 2))
+                _xrt = xr.DataArray(np.tile(_t, (1, *self.shape[1:])))
+                _obj = _xrt.cubevar
+            else:
+                _obj = self._dataio.dataset[var].cubevar
+            _obj.initialize(variable=var, coords=_coords)
+            return _obj
+
         elif var in self._variables:
-            return CubeVariable(self.dataio[var], variable=var)
+            _obj = self._dataio.dataset[var].cubevar
+            _obj.initialize(variable=var)
+            return _obj
+
         else:
             raise AttributeError('No variable of {cube} named {var}'.format(
                                  cube=str(self), var=var))
@@ -536,9 +582,13 @@ class DataCube(BaseCube):
             initializers.
         """
         if style == 'mesh':
-            self.strat_attr = strat.MeshStratigraphyAttributes(elev=self[variable], **kwargs)
+            self.strat_attr = \
+                strat.MeshStratigraphyAttributes(elev=self[variable],
+                                                 **kwargs)
         elif style == 'boxy':
-            self.strat_attr = strat.BoxyStratigraphyAttributes(elev=self[variable], **kwargs)
+            self.strat_attr = \
+                strat.BoxyStratigraphyAttributes(elev=self[variable],
+                                                 **kwargs)
         else:
             raise ValueError('Bad "style" argument supplied: %s' % str(style))
         self._knows_stratigraphy = True
@@ -635,22 +685,23 @@ class StratigraphyCube(BaseCube):
             supplied, a new default VariableSet instance is created.
         """
         super().__init__(data, read, varset)
-
         if isinstance(data, str):
             raise NotImplementedError('Precomputed NetCDF?')
         elif isinstance(data, np.ndarray):
             raise NotImplementedError('Precomputed numpy array?')
         elif isinstance(data, DataCube):
             # i.e., creating from a DataCube
-            _elev = np.array(self.dataio[stratigraphy_from], copy=True)
+            _elev = copy.deepcopy(data[stratigraphy_from])
 
             # set up coordinates of the array
-            self._z = strat._determine_strat_coordinates(_elev, dz=dz)
+            self._z = strat._determine_strat_coordinates(_elev.data, dz=dz)
             self._H = len(self.z)
             self._L, self._W = _elev.shape[1:]
             self._Z = np.tile(self.z, (self.W, self.L, 1)).T
 
-            _out = strat.compute_boxy_stratigraphy_coordinates(_elev, z=self.z, return_strata=True)
+            _out = strat.compute_boxy_stratigraphy_coordinates(_elev,
+                                                               z=self.z,
+                                                            return_strata=True)
             self.strata_coords, self.data_coords, self.strata = _out
         else:
             raise TypeError('No other input types implemented yet.')
@@ -685,9 +736,13 @@ class StratigraphyCube(BaseCube):
                                  cube=str(self), var=var))
 
         # the following lines apply the data to stratigraphy mapping
-        _cut = _var[self.data_coords[:, 0], self.data_coords[:, 1], self.data_coords[:, 2]]
-        _arr[self.strata_coords[:, 0], self.strata_coords[:, 1], self.strata_coords[:, 2]] = _cut
-        return CubeVariable(_arr, variable=var)
+        _cut = _var[self.data_coords[:, 0], self.data_coords[:, 1],
+                    self.data_coords[:, 2]]
+        _arr[self.strata_coords[:, 0], self.strata_coords[:, 1],
+             self.strata_coords[:, 2]] = _cut
+        _obj = xr.DataArray(_arr).cubevar
+        _obj.initialize(variable=var)
+        return _obj
 
     @property
     def strata(self):

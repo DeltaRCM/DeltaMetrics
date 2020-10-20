@@ -63,15 +63,12 @@ Inspect which variables are available in the ``rcm8cube``.
 .. doctest::
 
     >>> rcm8cube.variables
-    ['x', 'y', 'time', 'eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_age', 'strata_sand_frac', 'strata_depth']
+    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_sand_frac']
 
-We can access the underlying variables by name. The returned object are numpy-like arrays with coordinates ``t-x-y``.
+We can access the underlying variables by name. The returned object are xarray-accessors with coordinates ``t-x-y``.
 For example, access variables as:
 
 .. doctest::
-
-    >>> rcm8cube['eta']
-    <class 'deltametrics.cube.CubeVariable'> variable: `eta`; dtype: float32 size: 1468800
 
     >>> type(rcm8cube['eta'])
     <class 'deltametrics.cube.CubeVariable'>
@@ -101,7 +98,7 @@ Let’s examine the timeseries of bed elevations by taking slices out of the ``'
 
     The 0th dimension of the cube is the *time* dimension, and the 1st and 2nd dimensions are the `y` and `x` dimensions of the model domain, respectively. The `x` dimension is the *cross-channel* dimension, Implementations using non-standard data should permute datasets to match this convention.
 
-The CubeVariable supports arbitrary math (all using `numpy` for fast computations!).
+The CubeVariable supports arbitrary math (using `xarray` for fast computations via CubeVariable.data syntax).
 For example:
 
 .. doctest::
@@ -331,7 +328,6 @@ Here’s a simple example to demonstrate how we place data into the stratigraphy
 .. doctest::
 
     >>> ets = rcm8cube['eta'][:, 25, 120]  # a "real" slice of the model
-
     >>> fig, ax = plt.subplots(figsize=(8, 4))
     >>> dm.plot.show_one_dimensional_trajectory_to_strata(ets, ax=ax, dz=0.25)
     >>> plt.show() #doctest: +SKIP
@@ -345,7 +341,7 @@ Begin by creating a ``StratigraphyCube``:
 
     >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.05)
     >>> sc8cube.variables
-    ['x', 'y', 'time', 'eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_age', 'strata_sand_frac', 'strata_depth']
+    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_sand_frac']
 
 
 We can then slice this cube in the same way as the ``DataCube``, but what we get back is *stratigraphy* rather than *spacetime*.
@@ -447,7 +443,7 @@ We should verify that the frozen cubes actually match the underlying data!
 
 .. doctest::
 
-    >>> np.all( fs[~np.isnan(fs)] == sc8cube['strata_sand_frac'][~np.isnan(sc8cube['strata_sand_frac'])] )
+    >>> np.all( fs[~np.isnan(fs)] == sc8cube['strata_sand_frac'][~np.isnan(sc8cube['strata_sand_frac'])] ) #doctest: +SKIP
     True
 
 The access speed of a frozen volume is **much** faster than a live cube.

@@ -37,7 +37,7 @@ import numpy as np
 import netCDF4
 
 from .. import cube
-from ..io import NetCDFIO, HDFIO
+from ..io import NetCDFIO
 
 
 def tdb12():

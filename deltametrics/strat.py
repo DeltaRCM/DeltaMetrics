@@ -1,6 +1,7 @@
 import abc
 
 import numpy as np
+import xarray as xr
 from scipy import stats
 import matplotlib.pyplot as plt
 
@@ -88,9 +89,11 @@ def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
     # copy data out and into the stratigraphy based on coordinates
     nx, ny = strata.shape[1:]
     stratigraphy = np.full((len(z), nx, ny), np.nan)  # preallocate nans
-    _cut = prop[data_coords[:, 0], data_coords[:, 1], data_coords[:, 2]]
-    stratigraphy[strata_coords[:, 0], strata_coords[
-        :, 1], strata_coords[:, 2]] = _cut
+    _cut = prop.data.values[data_coords[:, 0], data_coords[:, 1],
+                            data_coords[:, 2]]
+    stratigraphy[strata_coords[:, 0],
+                 strata_coords[:, 1],
+                 strata_coords[:, 2]] = _cut
 
     elevations = np.tile(z, (ny, nx, 1)).T
 
@@ -252,7 +255,7 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
         """
         super().__init__('mesh')
 
-        _eta = np.copy(elev)
+        _eta = elev.data.copy()
         _strata, _psvd = _compute_elevation_to_preservation(_eta)
         _psvd[0, ...] = True
         self.strata = _strata
@@ -272,9 +275,9 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
                                   *_eta.shape[1:]), np.nan)
         for i in np.arange(_eta.shape[1]):
             for j in np.arange(_eta.shape[2]):
-                self.psvd_vxl_eta[0:self.psvd_vxl_cnt[i, j], i, j] = _eta[
+                self.psvd_vxl_eta[0:self.psvd_vxl_cnt[i, j], i, j] = _eta.data[
                     self.psvd_idx[:, i, j], i, j].copy()
-                self.psvd_flld[0:self.psvd_vxl_cnt[i, j], i, j] = _eta[
+                self.psvd_flld[0:self.psvd_vxl_cnt[i, j], i, j] = _eta.data[
                     self.psvd_idx[:, i, j], i, j].copy()
                 self.psvd_flld[self.psvd_vxl_cnt[i, j]:, i, j] = self.psvd_flld[
                     self.psvd_vxl_cnt[i, j] - 1, i, j]
@@ -364,8 +367,8 @@ def _compute_elevation_to_preservation(elev):
 
     Parameters
     ----------
-    elev : :obj:`ndarray`
-        The `t-x-y` ndarry of elevation data to determine stratigraphy.
+    elev : :obj:`ndarray` or :obj:`xr.core.dataarray.DataArray`
+        The `t-x-y` volume of elevation data to determine stratigraphy.
 
     Returns
     -------
@@ -378,19 +381,27 @@ def _compute_elevation_to_preservation(elev):
         To determine whether time from a given *timestep* is preserved, use
         ``psvd.nonzero()[0] - 1``.
     """
-    psvd = np.zeros_like(elev, dtype=np.bool)  # bool, if retained
-    strata = np.zeros_like(elev)  # elev of surface at each t
+    psvd = np.zeros_like(elev.data, dtype=np.bool)  # bool, if retained
+    strata = np.zeros_like(elev.data)  # elev of surface at each t
 
     nt = strata.shape[0]
-    strata[-1, ...] = elev[-1, ...]
+    if isinstance(elev, np.ndarray) is True:
+        _elev = elev
+    elif isinstance(elev, xr.core.dataarray.DataArray) is True:
+        _elev = elev.values
+    else:  # case where elev is a CubeVariable
+        _elev = elev.data.values
+
+    strata[-1, ...] = _elev[-1, ...]
     for j in np.arange(nt - 2, -1, -1):
-        strata[j, ...] = np.minimum(elev[j, ...],
+        strata[j, ...] = np.minimum(_elev[j, ...],
                                     strata[j + 1, ...])
         psvd[j + 1, ...] = np.less(strata[j, ...],
                                    strata[j + 1, ...])
     if nt > 1:  # allows a single-time elevation-series to return
         psvd[0, ...] = np.less(strata[0, ...],
                                strata[1, ...])
+
     return strata, psvd
 
 
@@ -534,7 +545,7 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
         ``np.arange(np.min(elev), np.max(elev)+dz, step=dz)``.
 
     nz : :obj:`int`, optional
-        Number of intervals in `z`. Z array is created as 
+        Number of intervals in `z`. Z array is created as
         ``np.linspace(np.min(elev), np.max(elev), num=nz, endpoint=True)``.
     """
     if (dz is None) and (z is None) and (nz is None):
@@ -548,14 +559,14 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
     elif not (dz is None):
         if dz <= 0:
             raise _valerr
-        max_dos = np.max(elev) + dz  # max depth of section, meters
-        min_dos = np.min(elev)       # min dos, meters
+        max_dos = np.max(elev.data) + dz  # max depth of section, meters
+        min_dos = np.min(elev.data)       # min dos, meters
         return np.arange(min_dos, max_dos, step=dz)
     elif not (nz is None):
         if nz <= 0:
             raise _valerr
-        max_dos = np.max(elev)
-        min_dos = np.min(elev)
+        max_dos = np.max(elev.data)
+        min_dos = np.min(elev.data)
         return np.linspace(min_dos, max_dos, num=nz, endpoint=True)
     else:
         raise RuntimeError('No coordinates determined. Check inputs.')

@@ -228,7 +228,9 @@ class VariableSet(object):
         """
 
         _added_list = ['net_to_gross']
-        self.known_list = io.known_variables() + io.known_coords() + _added_list
+        self.known_list = ['eta', 'stage', 'depth', 'discharge',
+                           'velocity', 'strata_sand_frac'] + \
+                          ['x', 'y', 'time'] + _added_list
 
         for var in self.known_list:
             # set to defaults defined below (or None if no default)

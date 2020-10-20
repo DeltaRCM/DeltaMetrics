@@ -3,6 +3,7 @@ import pytest
 import sys
 import os
 import numpy as np
+import xarray as xr
 
 from deltametrics import cube
 from deltametrics import strat
@@ -19,14 +20,18 @@ class TestComputeBoxyStratigraphyVolume:
     time = rcm8cube['time']
 
     def test_returns_volume_and_elevations(self):
-        s, e = strat.compute_boxy_stratigraphy_volume(self.elev, self.time, dz=0.05)
+        s, e = strat.compute_boxy_stratigraphy_volume(self.elev,
+                                                      self.time,
+                                                      dz=0.05)
         assert s.ndim == 3
         assert s.shape == e.shape
         assert e[1,0,0] - e[0,0,0] == pytest.approx(0.05)
 
     def test_returns_volume_and_elevations_given_z(self):
         z = np.linspace(-20, 500, 200)
-        s, e = strat.compute_boxy_stratigraphy_volume(self.elev, self.time, z=z)
+        s, e = strat.compute_boxy_stratigraphy_volume(self.elev,
+                                                      self.time,
+                                                      z=z)
         assert s.ndim == 3
         assert s.shape == e.shape
         assert np.all(e[:,0,0] == z)
@@ -34,7 +39,8 @@ class TestComputeBoxyStratigraphyVolume:
     @pytest.mark.xfail(raises=NotImplementedError, strict=True, reason='Not yet developed.')
     def test_return_cube(self):
         s, e = strat.compute_boxy_stratigraphy_volume(self.elev, self.time,
-                                                      dz=0.05, return_cube=True)
+                                                      dz=0.05,
+                                                      return_cube=True)
 
     def test_lessthan3d_error(self):
         with pytest.raises(ValueError, match=r'Input arrays must be three-dimensional.'):
@@ -265,14 +271,15 @@ class TestOneDimStratigraphyExamples:
         assert c[0] == 1
 
     def test_onedim_traj_upsanddowns_negatives(self):
-        e = np.array([0, 0, -1, -4, -2, 3, 3.5, 3, 3, 4, 4])
-        # e = np.expand_dims(e, axis=(1,2))
+        # e = np.array([0, 0, -1, -4, -2, 3, 3.5, 3, 3, 4, 4])
+        e_xr = xr.DataArray([0, 0, -1, -4, -2, 3, 3.5, 3, 3, 4, 4])
+        e = e_xr.cubevar
         z = strat._determine_strat_coordinates(e, dz=0.5)  # vert coordinates
         s, p = strat._compute_elevation_to_preservation(e)  # strat and preservation
         sc, dc = strat._compute_preservation_to_cube(s, z)
         c = self.take_var_time(s, z, sc, dc)
         assert np.all(p.nonzero()[0] == (4, 5, 9))
-    
+
 
 class TestDetermineStratCoordinates:
 
