@@ -289,6 +289,8 @@ The following are currently implemented.
     >>> _strike = dm.section.StrikeSection(rcm8cube, y=18)
     >>> _path = dm.section.PathSection(rcm8cube, path=np.column_stack((np.linspace(50, 150, num=4000, dtype=np.int),
     ...                                                                np.linspace(10, 90, num=4000, dtype=np.int))))
+    >>> _circ = dm.section.CircularSection(rcm8cube, radius=30)
+    >>> _rad = dm.section.RadialSection(rcm8cube, azimuth=70)
 
 
 The `Section` classes all inherit from the same ``BaseSection`` class, which means they mostly have the same options available to them, and have a common API.
@@ -302,7 +304,7 @@ Each has unique instantiation arguments, though, which must be properly specifie
     >>> axs = [fig.add_subplot(spec[i, j]) for i, j in zip(np.repeat(np.arange(1, 3), 2), np.tile(np.arange(2), (3,)))]
 
     >>> rcm8cube.show_plan('eta', t=-1, ax=ax0, ticks=True)
-    >>> for i, s in enumerate([_strike, _path]):
+    >>> for i, s in enumerate([_strike, _path, _circ, _rad]):
     ...     ax0.plot(s.trace[:,0], s.trace[:,1], 'r--') #doctest: +SKIP
     ...     s.show('velocity', ax=axs[i]) #doctest: +SKIP
     ...     axs[i].set_title(s.section_type) #doctest: +SKIP

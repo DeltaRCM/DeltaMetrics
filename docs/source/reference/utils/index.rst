@@ -14,6 +14,7 @@ Utility functions
 
 .. currentmodule:: deltametrics.utils
 
+.. autofunction:: curve_fit
 .. autofunction:: coordinates_to_segments
 .. autofunction:: line_to_cells
 .. autofunction:: _walk_line

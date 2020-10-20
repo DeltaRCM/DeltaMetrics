@@ -778,7 +778,7 @@ class RadialSection(BaseSection):
     .. important::
 
         This Section type will only work for deltas with an inlet along the
-        ``y=0 `` line. For other delta configurations, specify a radial
+        ``y=0`` line. For other delta configurations, specify a radial
         section by defining two end points and instantiating a `Section` with
         the :obj:`PathSection`.
 
@@ -793,8 +793,8 @@ class RadialSection(BaseSection):
         value is given, the `azimuth` defaults to ``90``.
 
     origin : :obj:`tuple` or `list` of `int`, optional
-        The `origin` of the radial section. This is the "start" of the
-        radial line. If no value is given, the origin defaults to the center of the
+        The `origin` of the radial section. This is the "start" of the radial
+        line. If no value is given, the origin defaults to the center of the
         x-direction of the model domain, and offsets into the domain a
         distance of ``y == L0``, if these values can be determined. I.e., the
         origin defaults to be centered over the channel inlet. If no value is

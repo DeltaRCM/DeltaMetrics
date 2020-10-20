@@ -138,42 +138,40 @@ class AttributeChecker(object):
 
 
 def curve_fit(data, fit='harmonic'):
-    """
-    Calculate curve fit given some data.
+    """Calculate curve fit given some data.
 
     Several functional forms are available for fitting: exponential, harmonic,
     and linear. The input `data` can be 1-D, or 2-D, if it is 2-D, the data
     will be averaged. The expected 2-D shape is (Y-Values, # Values) where the
     data you wish to have fit is in the first dimension, and the second
-    dimension is of len(# Values).
+    dimension is of ``len(# Values)``.
 
     E.g. Given some mobility data output from one of the mobility metrics,
     fit a curve to the average of that data.
 
     Parameters
     ----------
-    data : ndarray
+    data : :obj:`ndarray`
         Data, either already averaged or a 2D array of of shape
         len(data values) x len(# values).
 
-    fit : str, optional (default is 'harmonic')
+    fit : :obj:`str`, optional
         A string specifying the type of function to be fit. Options are as
         follows:
-            - 'exponential' : (a - b) * np.exp(-c * x) + b
-            - 'harmonic' : a / (1 + b * x)
-            - 'linear' : a * x + b
+          * `exponential`, which evaluates :code:`(a - b) * np.exp(-c * x) + b`
+          * `harmonic`, (default) which evaluates :code:`a / (1 + b * x)`
+          * `linear`, which evaluates :code:`a * x + b`
 
     Returns
     -------
-    yfit : ndarray
+    yfit : :obj:`ndarray`
         y-values corresponding to the fitted function.
 
-    pcov : ndarray
+    pcov : :obj:`ndarray`
         Covariance associated with the fitted function parameters.
 
-    perror : ndarray
-        One standard deviation error for the parameters (from pcov)
-
+    perror : :obj:`ndarray`
+        One standard deviation error for the parameters (from pcov).
     """
     avail_fits = ['exponential', 'harmonic', 'linear']
     if fit not in avail_fits:
