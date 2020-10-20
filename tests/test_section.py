@@ -190,7 +190,7 @@ class TestRadialSection:
     """Test the basic of the RadialSection."""
 
     def test_without_cube(self):
-        rs = section.RadialSection(azimuth=30)
+        rs = section.RadialSection()
         assert rs.shape is None
         assert rs.cube is None
         assert rs.s is None
@@ -200,6 +200,16 @@ class TestRadialSection:
         assert rs.variables is None
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             rs['velocity']
+        rs2 = section.RadialSection(azimuth=30)
+        assert rs2.shape is None
+        assert rs2.cube is None
+        assert rs2.s is None
+        assert np.all(rs2.trace == np.array([[None, None]]))
+        assert rs2._x is None
+        assert rs2._y is None
+        assert rs2.variables is None
+        with pytest.raises(AttributeError, match=r'No cube connected.*.'):
+            rs2['velocity']
 
     def test_bad_cube(self):
         badcube = ['some', 'list']
@@ -234,7 +244,6 @@ class TestRadialSection:
 
     def test_register_section(self):
         rcm8cube = cube.DataCube(rcm8_path)
-        rcm8cube.stratigraphy_from('eta')
         rcm8cube.register_section(
             'test', section.RadialSection(azimuth=30))
         assert len(rcm8cube.sections['test'].variables) > 0
@@ -242,29 +251,59 @@ class TestRadialSection:
 
     def test_autodetect_origin_range_aziumths(self):
         rcm8cube = cube.DataCube(rcm8_path)
-        rcm8cube.stratigraphy_from('eta')
         rcm8cube.register_section(
             'test', section.RadialSection(azimuth=0))
         assert isinstance(rcm8cube.sections['test'], section.RadialSection)
         assert rcm8cube.sections['test'].trace.shape[0] == 120
+        assert rcm8cube.sections['test']._x[-1] == 239
+        assert rcm8cube.sections['test']._y[-1] == 3
+        assert rcm8cube.sections['test']['velocity'].shape == (51, 120)
         rcm8cube.register_section(
             'test2', section.RadialSection(azimuth=45))
         assert isinstance(rcm8cube.sections['test2'], section.RadialSection)
         assert rcm8cube.sections['test2'].trace.shape[0] == 120
         assert rcm8cube.sections['test2']._x[-1] == 239
         assert rcm8cube.sections['test2']._y[-1] == 119
+        assert rcm8cube.sections['test2']['velocity'].shape == (51, 120)
         rcm8cube.register_section(
             'test3', section.RadialSection(azimuth=85))
         assert isinstance(rcm8cube.sections['test3'], section.RadialSection)
         assert rcm8cube.sections['test3'].trace.shape[0] == 117
         assert rcm8cube.sections['test3']._x[-1] == 130
         assert rcm8cube.sections['test3']._y[-1] == 119
+        assert rcm8cube.sections['test3']['velocity'].shape == (51, 117)
+        rcm8cube.register_section(
+            'test4', section.RadialSection(azimuth=115))
+        assert isinstance(rcm8cube.sections['test4'], section.RadialSection)
+        assert rcm8cube.sections['test4'].trace.shape[0] == 117
+        assert rcm8cube.sections['test4']._x[-1] == 65
+        assert rcm8cube.sections['test4']._y[-1] == 119
+        assert rcm8cube.sections['test4']['velocity'].shape == (51, 117)
+        rcm8cube.register_section(
+            'test5', section.RadialSection(azimuth=165))
+        assert isinstance(rcm8cube.sections['test5'], section.RadialSection)
+        assert rcm8cube.sections['test5'].trace.shape[0] == 121
+        assert rcm8cube.sections['test5']._x[-1] == 120
+        assert rcm8cube.sections['test5']._x[0] == 0
+        assert rcm8cube.sections['test5']._y[-1] == 3
+        assert rcm8cube.sections['test5']['velocity'].shape == (51, 121)
         with pytest.raises(ValueError, match=r'Azimuth must be *.'):
             rcm8cube.register_section(
                 'testfail', section.RadialSection(azimuth=-10))
         with pytest.raises(ValueError, match=r'Azimuth must be *.'):
             rcm8cube.register_section(
                 'testfail', section.RadialSection(azimuth=190))
+
+    def test_specify_origin_and_azimuth(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        rcm8cube.register_section(
+            'test', section.RadialSection(azimuth=145, origin=(20, 3)))
+        assert isinstance(rcm8cube.sections['test'], section.RadialSection)
+        assert rcm8cube.sections['test'].trace.shape[0] == 21
+        assert rcm8cube.sections['test']._x[-1] == 20
+        assert rcm8cube.sections['test']._x[0] == 0
+        assert rcm8cube.sections['test']._y[0] == 17
+        assert rcm8cube.sections['test']._y[-1] == 3
 
 
 class TestCubesWithManySections:
