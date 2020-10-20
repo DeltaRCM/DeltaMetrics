@@ -775,6 +775,13 @@ class RadialSection(BaseSection):
         changes, but should use the value of ``L0`` recorded in the netcdf
         file, or defined in the cube.
 
+    .. important::
+
+        This Section type will only work for deltas with an inlet along the
+        ``y=0 `` line. For other delta configurations, specify a radial
+        section by defining two end points and instantiating a `Section` with
+        the :obj:`PathSection`.
+
     Parameters
     ----------
     *args : :obj:`DataCube` or `StratigraphyCube`
@@ -835,14 +842,14 @@ class RadialSection(BaseSection):
         super().__init__('radial', *args)
 
     def _compute_section_coords(self):
+
+        # determine the azimuth
         if (self._input_azimuth is None):
-            if not (self.cube is None):
-                self.azimuth = int(np.min(self.cube.shape[1:]) / 2)
-            else:
-                self.azimuth = 1
+            self.azimuth = 90
         else:
             self.azimuth = self._input_azimuth
 
+        # determine the origin of the line
         if (self._input_origin is None):
             if not (self.cube is None):
                 land_width = utils.guess_land_width_from_land(
@@ -854,27 +861,49 @@ class RadialSection(BaseSection):
         else:
             self.origin = self._input_origin
 
+        # determine the length of the line to travel
+        # find the line of the azimuth
+        theta = self.azimuth
+        m = np.tan(theta * np.pi / 180)
+        b = self.origin[1] - m * self.origin[0]
         if (self._input_length is None):
+            # if no input
             if not (self.cube is None):
-                # if self.azimuth < 90:
-                # theta = np.abs(90 - self.azimuth)
-                if self.azimuth > 90:
-                    raise NotImplementedError
-                    theta = np.abs(180 - self.azimuth)
+                # if no input and has cube connection
+                # find the intersection with an edge
+                if self.azimuth <= 90.0 and self.azimuth >= 0:
+                    dx = (self.cube.W - self.origin[0])
+                    dy = (np.tan(theta * np.pi / 180) * dx)
+                    if dy <= self.cube.L:
+                        end_y = int(np.minimum(m * (self.cube.W) + b, self.cube.L - 1))
+                        end_point = (self.cube.W - 1, end_y)
+                    else:
+                        end_x = int(np.minimum((self.cube.L - b) / m, self.cube.W - 1))
+                        end_point = (end_x, self.cube.L - 1)
+                elif self.azimuth > 90 and self.azimuth <= 180:
+                    dx = (self.origin[0])
+                    dy = (np.tan(theta * np.pi / 180) * dx)
+                    if np.abs(dy) <= self.cube.L:
+                        end_y = b
+                        end_point = (0, end_y)
+                    else:
+                        end_x = int(np.maximum((self.cube.L - b) / m,
+                                               0))
+                        end_point = (end_x, self.cube.L - 1)
                 else:
-                    theta = self.azimuth
-                m = np.tan(theta * np.pi / 180)
-                b = self.origin[1] - m * self.origin[0]
-                dx = self.cube.W - self.origin[0]
-                dy = np.tan(theta * np.pi / 180) * dx
-                if dy <= self.cube.L:
-                    end_point = (self.cube.W, m * self.cube.W + b)
-                else:
-                    end_point = ((self.cube.L - b) / m, self.cube.L)
+                    raise ValueError('Azimuth must be in range (0, 180).')
             else:
-                raise NotImplementedError
+                # if no input and no cube connection
+                end_point = (self.origin[0], self.origin[1] + 1)
         else:
-            raise NotImplementedError
+            # if input length
+            _len = self._input_length
+            # use vector math to determine end point len along azimuth
+            #   vector is from (0, b) to (origin)
+            vec = np.array([self.origin[0] - 0, self.origin[1] - b])
+            vec_norm = vec / np.sqrt(vec**2)
+            end_point = (self.origin[0] + _len*vec_norm[0],
+                         self.origin[1] + _len*vec_norm[1])
 
         xy = utils.line_to_cells(self.origin, end_point)
         self._x = xy[0]

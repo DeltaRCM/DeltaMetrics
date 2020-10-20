@@ -206,6 +206,15 @@ def curve_fit(data, fit='harmonic'):
 
 
 def guess_land_width_from_land(land_col_0):
+    """Guess the land width from bed elevations.
+
+    Utility to help autodetermine the domain setup. This utility should be
+    replaced when possible by pulling domain setup variables directly from the
+    netCDF file.
+
+    Algortihm works by finding the point where the bed elevation is *flat*
+    (i.e., where there is undisturbed basin).
+    """
     i = 0
     delt = 10
     while i < len(land_col_0) - 1 and delt != 0:

@@ -57,7 +57,7 @@ class TestStrikeSection:
     def test_StrikeSection_register_section_x_limits(self):
         rcm8cube = cube.DataCube(rcm8_path)
         rcm8cube.register_section('tuple', section.StrikeSection(y=5,
-                                                                x=(10, 110)))
+                                                                 x=(10, 110)))
         rcm8cube.register_section('list', section.StrikeSection(y=5,
                                                                 x=(20, 110)))
         assert len(rcm8cube.sections) == 2
@@ -161,9 +161,9 @@ class TestCircularSection:
         assert len(sacs.variables) > 0
         sacs2 = section.CircularSection(rcm8cube, radius=30, origin=(10, 0))
         assert sacs2.cube == rcm8cube
-        assert sacs2.trace.shape[0] == 85
+        assert sacs2.trace.shape[0] == 53
         assert len(sacs2.variables) > 0
-        assert scas.origin == (10, 0)
+        assert sacs2.origin == (10, 0)
 
     def test_register_section(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -184,6 +184,87 @@ class TestCircularSection:
         assert len(sacs3.trace) == len(np.unique(sacs3.trace, axis=0))
         sacs4 = section.CircularSection(rcm8cube, radius=33)
         assert len(sacs4.trace) == len(np.unique(sacs4.trace, axis=0))
+
+
+class TestRadialSection:
+    """Test the basic of the RadialSection."""
+
+    def test_without_cube(self):
+        rs = section.RadialSection(azimuth=30)
+        assert rs.shape is None
+        assert rs.cube is None
+        assert rs.s is None
+        assert np.all(rs.trace == np.array([[None, None]]))
+        assert rs._x is None
+        assert rs._y is None
+        assert rs.variables is None
+        with pytest.raises(AttributeError, match=r'No cube connected.*.'):
+            rs['velocity']
+
+    def test_bad_cube(self):
+        badcube = ['some', 'list']
+        with pytest.raises(TypeError, match=r'Expected type is *.'):
+            sars = section.RadialSection(badcube, azimuth=30)
+
+    def test_standalone_instantiation(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        sars = section.RadialSection(rcm8cube)
+        assert sars.cube == rcm8cube
+        assert sars.trace.shape[0] == 117  # 120 - L0 = 120 - 3
+        assert len(sars.variables) > 0
+        assert sars.azimuth == 90
+        sars1 = section.RadialSection(rcm8cube, azimuth=30)
+        assert sars1.cube == rcm8cube
+        assert sars1.trace.shape[0] == 120
+        assert len(sars1.variables) > 0
+        assert sars1.azimuth == 30
+        sars2 = section.RadialSection(rcm8cube, azimuth=103, origin=(90, 2))
+        assert sars2.cube == rcm8cube
+        assert sars2.trace.shape[0] == 118
+        assert len(sars2.variables) > 0
+        assert sars2.azimuth == 103
+        assert sars2.origin == (90, 2)
+        sars3 = section.RadialSection(
+            rcm8cube, azimuth=178, origin=(143, 18), length=30)
+        assert sars3.cube == rcm8cube
+        assert sars3.trace.shape[0] == 31
+        assert len(sars3.variables) > 0
+        assert sars3.azimuth == 178
+        assert sars3.origin == (143, 18)
+
+    def test_register_section(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        rcm8cube.stratigraphy_from('eta')
+        rcm8cube.register_section(
+            'test', section.RadialSection(azimuth=30))
+        assert len(rcm8cube.sections['test'].variables) > 0
+        assert isinstance(rcm8cube.sections['test'], section.RadialSection)
+
+    def test_autodetect_origin_range_aziumths(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        rcm8cube.stratigraphy_from('eta')
+        rcm8cube.register_section(
+            'test', section.RadialSection(azimuth=0))
+        assert isinstance(rcm8cube.sections['test'], section.RadialSection)
+        assert rcm8cube.sections['test'].trace.shape[0] == 120
+        rcm8cube.register_section(
+            'test2', section.RadialSection(azimuth=45))
+        assert isinstance(rcm8cube.sections['test2'], section.RadialSection)
+        assert rcm8cube.sections['test2'].trace.shape[0] == 120
+        assert rcm8cube.sections['test2']._x[-1] == 239
+        assert rcm8cube.sections['test2']._y[-1] == 119
+        rcm8cube.register_section(
+            'test3', section.RadialSection(azimuth=85))
+        assert isinstance(rcm8cube.sections['test3'], section.RadialSection)
+        assert rcm8cube.sections['test3'].trace.shape[0] == 117
+        assert rcm8cube.sections['test3']._x[-1] == 130
+        assert rcm8cube.sections['test3']._y[-1] == 119
+        with pytest.raises(ValueError, match=r'Azimuth must be *.'):
+            rcm8cube.register_section(
+                'testfail', section.RadialSection(azimuth=-10))
+        with pytest.raises(ValueError, match=r'Azimuth must be *.'):
+            rcm8cube.register_section(
+                'testfail', section.RadialSection(azimuth=190))
 
 
 class TestCubesWithManySections:
@@ -645,7 +726,7 @@ class TestDataSectionVariableNoStratigraphy:
         _z = np.linspace(0, 10, num=50)
         with pytest.raises(ValueError):
             _dsv = section.DataSectionVariable(_arr, _s, _z)
-        
+
     def test_dsv_knows_stratigraphy(self):
         assert self.dsv._knows_stratigraphy is False
         assert self.dsv.knows_stratigraphy is False
@@ -733,7 +814,8 @@ class TestStratigraphySectionVariable:
         assert not _arr is self.ssv
         assert np.all(np.isnan(_arr) == np.isnan(self.ssv))
         _arr2 = (_arr - 5)
-        assert np.all(_arr2[~np.isnan(_arr2)].flatten() == pytest.approx(self.ssv[~np.isnan(self.ssv)].flatten()))
+        assert np.all(_arr2[~np.isnan(_arr2)].flatten() == pytest.approx(
+            self.ssv[~np.isnan(self.ssv)].flatten()))
 
     def test_ssv_instantiate_directly_from_array(self):
         _arr = np.random.rand(100, 200)
