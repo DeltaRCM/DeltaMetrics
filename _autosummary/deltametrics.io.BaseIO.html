@@ -76,7 +76,7 @@
 <h1>deltametrics.io.BaseIO<a class="headerlink" href="#deltametrics-io-baseio" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="deltametrics.io.BaseIO">
-<em class="property">class </em><code class="descclassname">deltametrics.io.</code><code class="descname">BaseIO</code><span class="sig-paren">(</span><em>data_path</em>, <em>write</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">deltametrics.io.</code><code class="descname">BaseIO</code><span class="sig-paren">(</span><em>data_path</em>, <em>type</em>, <em>write</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO" title="Permalink to this definition">¶</a></dt>
 <dd><p>BaseIO object other file format wrappers inheririt from.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -86,7 +86,7 @@ methods <code class="docutils literal notranslate"><span class="pre">connect</sp
 </div>
 <dl class="method">
 <dt id="deltametrics.io.BaseIO.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_path</em>, <em>write</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_path</em>, <em>type</em>, <em>write</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the base IO.</p>
 </dd></dl>
 
@@ -97,11 +97,17 @@ methods <code class="docutils literal notranslate"><span class="pre">connect</sp
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.__init__" title="deltametrics.io.BaseIO.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data_path, write)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.__init__" title="deltametrics.io.BaseIO.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data_path, type, write)</p></td>
 <td><p>Initialize the base IO.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.connect" title="deltametrics.io.BaseIO.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>()</p></td>
 <td><p>Should connect to the data file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.get_known_coords" title="deltametrics.io.BaseIO.get_known_coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_known_coords</span></code></a>()</p></td>
+<td><p>A list of known coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.get_known_variables" title="deltametrics.io.BaseIO.get_known_variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_known_variables</span></code></a>()</p></td>
+<td><p>Should create list of known variables.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.read" title="deltametrics.io.BaseIO.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>()</p></td>
 <td><p>Should read data into memory.</p></td>
@@ -150,13 +156,27 @@ connect to the file if it already exists—but <em>do not</em> read the file.</p
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>The setter method validates the path, and returns a <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> if
-the file is not found.</p>
+<p>The setter method validates the path, and returns a
+<code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> if the file is not found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><cite>str</cite></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.io.BaseIO.get_known_coords">
+<code class="descname">get_known_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.get_known_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>A list of known coordinates.</p>
+<p>This function needs to populate <cite>self.known_coords</cite>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.io.BaseIO.get_known_variables">
+<code class="descname">get_known_variables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.get_known_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should create list of known variables.</p>
+<p>This function needs to populate <cite>self.known_variables</cite>.</p>
 </dd></dl>
 
 <dl class="attribute">

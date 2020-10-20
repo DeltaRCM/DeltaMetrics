@@ -36,6 +36,7 @@ deltametrics.cube.BaseCube
       ~BaseCube.X
       ~BaseCube.Y
       ~BaseCube.Z
+      ~BaseCube.coords
       ~BaseCube.data_path
       ~BaseCube.dataio
       ~BaseCube.plan_set

@@ -13,86 +13,12 @@ deltametrics.cube.CubeVariable
 
    .. autosummary::
    
-      ~CubeVariable.all
-      ~CubeVariable.any
-      ~CubeVariable.argmax
-      ~CubeVariable.argmin
-      ~CubeVariable.argpartition
-      ~CubeVariable.argsort
+      ~CubeVariable.__init__
       ~CubeVariable.as_frozen
-      ~CubeVariable.astype
-      ~CubeVariable.byteswap
-      ~CubeVariable.choose
-      ~CubeVariable.clip
-      ~CubeVariable.compress
-      ~CubeVariable.conj
-      ~CubeVariable.conjugate
-      ~CubeVariable.copy
-      ~CubeVariable.cumprod
-      ~CubeVariable.cumsum
-      ~CubeVariable.diagonal
-      ~CubeVariable.dot
-      ~CubeVariable.dump
-      ~CubeVariable.dumps
-      ~CubeVariable.fill
-      ~CubeVariable.flatten
-      ~CubeVariable.getfield
-      ~CubeVariable.item
-      ~CubeVariable.itemset
-      ~CubeVariable.max
-      ~CubeVariable.mean
-      ~CubeVariable.min
-      ~CubeVariable.newbyteorder
-      ~CubeVariable.nonzero
-      ~CubeVariable.partition
-      ~CubeVariable.prod
-      ~CubeVariable.ptp
-      ~CubeVariable.put
-      ~CubeVariable.ravel
-      ~CubeVariable.repeat
-      ~CubeVariable.reshape
-      ~CubeVariable.resize
-      ~CubeVariable.round
-      ~CubeVariable.searchsorted
-      ~CubeVariable.setfield
-      ~CubeVariable.setflags
-      ~CubeVariable.sort
-      ~CubeVariable.squeeze
-      ~CubeVariable.std
-      ~CubeVariable.sum
-      ~CubeVariable.swapaxes
-      ~CubeVariable.take
-      ~CubeVariable.tobytes
-      ~CubeVariable.tofile
-      ~CubeVariable.tolist
-      ~CubeVariable.tostring
-      ~CubeVariable.trace
-      ~CubeVariable.transpose
-      ~CubeVariable.var
-      ~CubeVariable.view
+      ~CubeVariable.initialize
    
    
 
    
-   
-   .. rubric:: Attributes
-
-   .. autosummary::
-   
-      ~CubeVariable.T
-      ~CubeVariable.base
-      ~CubeVariable.ctypes
-      ~CubeVariable.data
-      ~CubeVariable.dtype
-      ~CubeVariable.flags
-      ~CubeVariable.flat
-      ~CubeVariable.imag
-      ~CubeVariable.itemsize
-      ~CubeVariable.nbytes
-      ~CubeVariable.ndim
-      ~CubeVariable.real
-      ~CubeVariable.shape
-      ~CubeVariable.size
-      ~CubeVariable.strides
    
    

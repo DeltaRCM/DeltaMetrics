@@ -16,7 +16,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="deltametrics.io.HDFIO" href="deltametrics.io.HDFIO.html" />
+    <link rel="next" title="Plotting utilities and functions" href="../reference/plot/index.html" />
     <link rel="prev" title="deltametrics.io.BaseIO" href="deltametrics.io.BaseIO.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,7 +29,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="deltametrics.io.HDFIO.html" title="deltametrics.io.HDFIO"
+          <a href="../reference/plot/index.html" title="Plotting utilities and functions"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="deltametrics.io.BaseIO.html" title="deltametrics.io.BaseIO"
@@ -45,8 +45,8 @@
   <p class="topless"><a href="deltametrics.io.BaseIO.html"
                         title="previous chapter">deltametrics.io.BaseIO</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="deltametrics.io.HDFIO.html"
-                        title="next chapter">deltametrics.io.HDFIO</a></p>
+  <p class="topless"><a href="../reference/plot/index.html"
+                        title="next chapter">Plotting utilities and functions</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -76,21 +76,30 @@
 <h1>deltametrics.io.NetCDFIO<a class="headerlink" href="#deltametrics-io-netcdfio" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="deltametrics.io.NetCDFIO">
-<em class="property">class </em><code class="descclassname">deltametrics.io.</code><code class="descname">NetCDFIO</code><span class="sig-paren">(</span><em>data_path</em>, <em>write=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO" title="Permalink to this definition">¶</a></dt>
-<dd><p>Utility for consistent IO with netCDF files.</p>
+<em class="property">class </em><code class="descclassname">deltametrics.io.</code><code class="descname">NetCDFIO</code><span class="sig-paren">(</span><em>data_path</em>, <em>type</em>, <em>write=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO" title="Permalink to this definition">¶</a></dt>
+<dd><p>Utility for consistent IO with netCDF4 files.</p>
 <p>This module wraps calls to the netCDF4 python module in a consistent API,
 so the user can work seamlessly with either netCDF4 files or HDF5 files.
 The public methods of this class are consistent with
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">HDFIO</span></code>.</p>
+<p>Note that the netCDF4, netCDF4-classic, and HDF5 file standards are very
+similar and (almost) interchangable. This means that the same data loader
+can be used to handle these files. We use the <cite>xarray</cite> data reader which
+supports the netCDF4/HDF5 file-format.</p>
+<p>Older file formats such as netCDF3 or HDF4 are unsupported. For more
+information about the netCDF4 format, visit the netCDF4
+<a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/docs/faq.html">docs</a>.</p>
 <dl class="method">
 <dt id="deltametrics.io.NetCDFIO.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_path</em>, <em>write=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data_path</em>, <em>type</em>, <em>write=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the NetCDFIO handler.</p>
 <p>Initialize a connection to a NetCDF file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_path</strong> (<cite>str</cite>) – Path to file to read or write to.</p></li>
+<li><p><strong>type</strong> (<cite>str</cite>) – Stores the type of output file loaded, either a netCDF4 file,
+‘netcdf’ or an HDF5 file, ‘hdf5’.</p></li>
 <li><p><strong>write</strong> (<cite>bool</cite>, optional) – Whether to allow writing to an existing file. Set to False by
 default, if a file already exists at <code class="docutils literal notranslate"><span class="pre">data_path</span></code>, writing is
 disabled, unless <code class="docutils literal notranslate"><span class="pre">write</span></code> is set to True.</p></li>
@@ -106,11 +115,17 @@ disabled, unless <code class="docutils literal notranslate"><span class="pre">wr
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.NetCDFIO.__init__" title="deltametrics.io.NetCDFIO.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data_path[, write])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.NetCDFIO.__init__" title="deltametrics.io.NetCDFIO.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data_path, type[, write])</p></td>
 <td><p>Initialize the NetCDFIO handler.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.NetCDFIO.connect" title="deltametrics.io.NetCDFIO.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>()</p></td>
 <td><p>Connect to the data file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.NetCDFIO.get_known_coords" title="deltametrics.io.NetCDFIO.get_known_coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_known_coords</span></code></a>()</p></td>
+<td><p>List known coordinates.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.NetCDFIO.get_known_variables" title="deltametrics.io.NetCDFIO.get_known_variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_known_variables</span></code></a>()</p></td>
+<td><p>List known variables.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.NetCDFIO.read" title="deltametrics.io.NetCDFIO.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>(var)</p></td>
 <td><p>Read variable from file and into memory.</p></td>
@@ -140,7 +155,8 @@ disabled, unless <code class="docutils literal notranslate"><span class="pre">wr
 <code class="descname">connect</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connect to the data file.</p>
 <p>Initialize the file if it does not exist, or simply <code class="docutils literal notranslate"><span class="pre">return</span></code> if the
-file already exists.</p>
+file already exists. This connection to the data file is “lazy”
+loading, meaning that array values are not being loaded into memory.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This function is automatically called during initialization of any
@@ -158,13 +174,27 @@ IO object, so it is not necessary to call it directly.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
-<p>The setter method validates the path, and returns a <code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> if
-the file is not found.</p>
+<p>The setter method validates the path, and returns a
+<code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> if the file is not found.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><cite>str</cite></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.io.NetCDFIO.get_known_coords">
+<code class="descname">get_known_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.get_known_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>List known coordinates.</p>
+<p>These coordinates are pulled from the loaded dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.io.NetCDFIO.get_known_variables">
+<code class="descname">get_known_variables</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.get_known_variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>List known variables.</p>
+<p>These variables are pulled from the loaded dataset.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -177,8 +207,8 @@ the file is not found.</p>
 <dt id="deltametrics.io.NetCDFIO.read">
 <code class="descname">read</code><span class="sig-paren">(</span><em>var</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read variable from file and into memory.</p>
-<p>Converts <cite>variables</cite> in netCDF file to <cite>ndarray</cite> for coersion into a
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> instance.</p>
+<p>Converts <cite>variables</cite> in data file to <cite>xarray</cite> objects for coersion
+into a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>var</strong> (<cite>str</cite>) – Which variable to load from the file.</p>
@@ -217,7 +247,7 @@ the file is not found.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="deltametrics.io.HDFIO.html" title="deltametrics.io.HDFIO"
+          <a href="../reference/plot/index.html" title="Plotting utilities and functions"
              >next</a> |</li>
         <li class="right" >
           <a href="deltametrics.io.BaseIO.html" title="deltametrics.io.BaseIO"

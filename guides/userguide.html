@@ -134,15 +134,12 @@
 <p>Creating the <code class="docutils literal notranslate"><span class="pre">rcm8cube</span></code> connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets. The type of the <code class="docutils literal notranslate"><span class="pre">rcm8cube</span></code> is <code class="docutils literal notranslate"><span class="pre">DataCube</span></code>.</p>
 <p>Inspect which variables are available in the <code class="docutils literal notranslate"><span class="pre">rcm8cube</span></code>.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">variables</span>
-<span class="go">[&#39;x&#39;, &#39;y&#39;, &#39;time&#39;, &#39;eta&#39;, &#39;stage&#39;, &#39;depth&#39;, &#39;discharge&#39;, &#39;velocity&#39;, &#39;strata_age&#39;, &#39;strata_sand_frac&#39;, &#39;strata_depth&#39;]</span>
+<span class="go">[&#39;eta&#39;, &#39;stage&#39;, &#39;depth&#39;, &#39;discharge&#39;, &#39;velocity&#39;, &#39;strata_sand_frac&#39;]</span>
 </pre></div>
 </div>
-<p>We can access the underlying variables by name. The returned object are numpy-like arrays with coordinates <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code>.
+<p>We can access the underlying variables by name. The returned object are xarray-accessors with coordinates <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code>.
 For example, access variables as:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span>
-<span class="go">&lt;class &#39;deltametrics.cube.CubeVariable&#39;&gt; variable: `eta`; dtype: float32 size: 1468800</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">])</span>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">])</span>
 <span class="go">&lt;class &#39;deltametrics.cube.CubeVariable&#39;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(51, 120, 240)</span>
@@ -171,7 +168,7 @@ For example, access variables as:</p>
 <p class="admonition-title">Note</p>
 <p>The 0th dimension of the cube is the <em>time</em> dimension, and the 1st and 2nd dimensions are the <cite>y</cite> and <cite>x</cite> dimensions of the model domain, respectively. The <cite>x</cite> dimension is the <em>cross-channel</em> dimension, Implementations using non-standard data should permute datasets to match this convention.</p>
 </div>
-<p>The CubeVariable supports arbitrary math (all using <cite>numpy</cite> for fast computations!).
+<p>The CubeVariable supports arbitrary math (using <cite>xarray</cite> for fast computations via CubeVariable.data syntax).
 For example:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># compute the change in bed elevation between the last two intervals above</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">diff_time</span> <span class="o">=</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">-</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>
@@ -363,7 +360,6 @@ Here, we use a method that computes boxy stratigraphy only once, then synthesize
 the precomputed sparse indicies.</p>
 <p>Here’s a simple example to demonstrate how we place data into the stratigraphy.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">ets</span> <span class="o">=</span> <span class="n">rcm8cube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][:,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">120</span><span class="p">]</span>  <span class="c1"># a &quot;real&quot; slice of the model</span>
-
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dm</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">show_one_dimensional_trajectory_to_strata</span><span class="p">(</span><span class="n">ets</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.25</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
@@ -376,7 +372,7 @@ the precomputed sparse indicies.</p>
 <p>Begin by creating a <code class="docutils literal notranslate"><span class="pre">StratigraphyCube</span></code>:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">StratigraphyCube</span><span class="o">.</span><span class="n">from_DataCube</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span><span class="o">.</span><span class="n">variables</span>
-<span class="go">[&#39;x&#39;, &#39;y&#39;, &#39;time&#39;, &#39;eta&#39;, &#39;stage&#39;, &#39;depth&#39;, &#39;discharge&#39;, &#39;velocity&#39;, &#39;strata_age&#39;, &#39;strata_sand_frac&#39;, &#39;strata_depth&#39;]</span>
+<span class="go">[&#39;eta&#39;, &#39;stage&#39;, &#39;depth&#39;, &#39;discharge&#39;, &#39;velocity&#39;, &#39;strata_sand_frac&#39;]</span>
 </pre></div>
 </div>
 <p>We can then slice this cube in the same way as the <code class="docutils literal notranslate"><span class="pre">DataCube</span></code>, but what we get back is <em>stratigraphy</em> rather than <em>spacetime</em>.
@@ -464,7 +460,7 @@ and just directly obtain a frozen volume with:</p>
 <p>However, this will require recomputing the stratigraphy preservation to create another cube in the future, and because the <code class="docutils literal notranslate"><span class="pre">StratigraphyCube</span></code> stores data on disk, the memory footprint is relatively small, and so we recommend just computing the <code class="docutils literal notranslate"><span class="pre">StratigraphyCube</span></code> and using the <code class="docutils literal notranslate"><span class="pre">export_frozen_variable)</span></code> method.
 Finally, <code class="docutils literal notranslate"><span class="pre">DataCubeVariable</span></code> and <code class="docutils literal notranslate"><span class="pre">StratigraphyCubeVariable</span></code> support a <code class="docutils literal notranslate"><span class="pre">.as_frozen()</span></code> method themselves.</p>
 <p>We should verify that the frozen cubes actually match the underlying data!</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span> <span class="n">fs</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fs</span><span class="p">)]</span> <span class="o">==</span> <span class="n">sc8cube</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">][</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sc8cube</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">])]</span> <span class="p">)</span>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span> <span class="n">fs</span><span class="p">[</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fs</span><span class="p">)]</span> <span class="o">==</span> <span class="n">sc8cube</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">][</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">sc8cube</span><span class="p">[</span><span class="s1">&#39;strata_sand_frac&#39;</span><span class="p">])]</span> <span class="p">)</span> 
 <span class="go">True</span>
 </pre></div>
 </div>

@@ -37,6 +37,7 @@ deltametrics.cube.StratigraphyCube
       ~StratigraphyCube.X
       ~StratigraphyCube.Y
       ~StratigraphyCube.Z
+      ~StratigraphyCube.coords
       ~StratigraphyCube.data_path
       ~StratigraphyCube.dataio
       ~StratigraphyCube.plan_set

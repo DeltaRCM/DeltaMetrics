@@ -13,7 +13,7 @@ For a more in depth guide, be sure to check out the :doc:`userguide`.
 All of the documentation in this package assumes that you have imported the DeltaMetrics package as ``dm``:
 
 .. doctest::
-    
+
     >>> import deltametrics as dm
 
 Additionally, we frequently rely on the `numpy` package, and `matplotlib`. We will assume you have imported these packages by their common shorthand as well; if we import other packages, or other modules from `matplotlib`, these imports will be declared!
@@ -27,7 +27,7 @@ Additionally, we frequently rely on the `numpy` package, and `matplotlib`. We wi
 Connect to data
 ===============
 
-In your application, you will want to connect to a your own dataset, but more on that later. 
+In your application, you will want to connect to a your own dataset, but more on that later.
 For now, let's use a sample dataset that is distributed with DeltaMetrics.
 
 .. doctest::
@@ -45,32 +45,37 @@ Inspect which variables are available in the ``rcm8cube``.
 .. doctest::
 
     >>> rcm8cube.variables
-    ['x', 'y', 'time', 'eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_age', 'strata_sand_frac', 'strata_depth']
-    
+    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_sand_frac']
+
 
 Accessing data from a DataCube
 ==============================
 
 A :obj:`~deltametrics.cube.DataCube` can be sliced directly by variable name.
-Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, which is a numpy ``ndarray`` compatible object; this means that it can be manipulated exactly as a standard ``ndarray``, supporting any arbitrary math.
+Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, which is an xarray "accessor"; this means that it contains an xarray object in addition to custom functions.
 
 .. doctest::
 
     >>> type(rcm8cube['velocity'])
     <class 'deltametrics.cube.CubeVariable'>
 
-    >>> type(rcm8cube['velocity'].base)
-    <class 'numpy.ndarray'>
+    >>> type(rcm8cube['velocity'].data)
+    <class 'xarray.core.dataarray.DataArray'>
 
-For example, we could determine how much the average bed elevation change at a specific location in the model domain (43, 123), by slicing the ``eta`` variable, and differencing timesteps.
+The underlying xarray object can be directly accessed by using a ``.data`` attribute, however, this is not necessary, and you can slice the `CubeVariable` directly with any valid `numpy` slicing style. For example, we could determine how much the average bed elevation changed at a specific location in the model domain (43, 123), by slicing the ``eta`` variable, and differencing timesteps.
 
 .. doctest::
 
     >>> np.mean( rcm8cube['eta'][1:,43,123] - rcm8cube['eta'][:-1,43,123] )
-    0.08364895
+    <xarray.DataArray 'eta' ()>
+    array(0.08364895, dtype=float32)
+    Coordinates:
+        x        float32 123.0
+        y        float32 43.0
 
-The DataCube is often used by taking horizontal or vertical "cuts" of the cube. 
-In this package, we refer to horizontal cuts as "plans" (`Planform` data) and vertical cuts as "sections" (`Section` data). 
+
+The DataCube is often used by taking horizontal or vertical "cuts" of the cube.
+In this package, we refer to horizontal cuts as "plans" (`Planform` data) and vertical cuts as "sections" (`Section` data).
 
 The :doc:`Planform <../reference/plan/index>` and :doc:`Section <../reference/section/index>` data types have a series of helpful classes and functions, which are fully documented in their respective pages.
 
@@ -106,7 +111,7 @@ Section data
 We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
 In DeltaMetrics, we refer to this preserved history as the "stratigraphy", and we provide a number of convenient routines for computing stratigraphy and analyzing the deposits.
 
-Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created. 
+Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created.
 We must directly tell the Cube instance to compute stratigraphy by specifying which variable contains the bed elevation history, because this history dictates preservation.
 
 .. doctest::

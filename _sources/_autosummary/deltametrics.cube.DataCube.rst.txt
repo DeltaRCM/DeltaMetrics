@@ -38,6 +38,7 @@ deltametrics.cube.DataCube
       ~DataCube.X
       ~DataCube.Y
       ~DataCube.Z
+      ~DataCube.coords
       ~DataCube.data_path
       ~DataCube.dataio
       ~DataCube.plan_set
