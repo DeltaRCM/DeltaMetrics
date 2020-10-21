@@ -180,6 +180,11 @@ class TestCircularSection:
         assert len(sacs2.variables) > 0
         assert sacs2.origin == (10, 0)
 
+    @pytest.mark.xfail(AttributeError, reason='Not called if no cube.')
+    def no_radius_if_no_cube(self):
+        sacs3 = section.CircularSection()
+        assert sacs3.radius == 1
+
     def test_register_section(self):
         rcm8cube = cube.DataCube(rcm8_path)
         rcm8cube.stratigraphy_from('eta')
@@ -190,6 +195,9 @@ class TestCircularSection:
         rcm8cube.register_section(
             'test2', section.CircularSection(radius=31, name='different'))
         assert rcm8cube.sections['test2'].name == 'different'
+        rcm8cube.register_section(
+            'test3', section.CircularSection())
+        assert rcm8cube.sections['test3'].radius == 60
 
     def test_all_idx_reduced_unique(self):
         # we try this for a bunch of different radii
@@ -377,12 +385,12 @@ class TestCubesWithManySections:
             'test1'], self.rcm8cube.sections['test2']
         assert not t1 is t2
 
-    def test_show_sections_multiple(self):
+    def test_show_trace_sections_multiple(self):
         self.rcm8cube.register_section('show_test1', section.StrikeSection(y=5))
         self.rcm8cube.register_section('show_test2', section.StrikeSection(y=50))
         fig, ax = plt.subplots(1, 2)
-        self.rcm8cube.sections['show_test2'].show('r--')
-        self.rcm8cube.sections['show_test1'].show('g--', ax=ax[0])
+        self.rcm8cube.sections['show_test2'].show_trace('r--')
+        self.rcm8cube.sections['show_test1'].show_trace('g--', ax=ax[0])
         plt.close()
 
 # test the core functionality common to all section types, for different
