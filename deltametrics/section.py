@@ -178,14 +178,15 @@ class BaseSection(abc.ABC):
 
     """
 
-    def __init__(self, section_type, *args):
+    def __init__(self, section_type, *args, name=None):
         """
         Identify coordinates defining the section.
 
         Parameters
         ----------
         CubeInstance : :obj:`~deltametrics.cube.Cube` subclass instance, optional
-            Connect to this cube. No connection is made if cube is not provided.
+            Connect to this cube. No connection is made if cube is not
+            provided.
 
         Notes
         -----
@@ -202,12 +203,14 @@ class BaseSection(abc.ABC):
         self._trace = None
         self._shape = None
         self._variables = None
+        self._name = name
         self.cube = None
 
         self.section_type = section_type
 
         if len(args) > 1:
-            raise ValueError('Expected single argument to %s instantiation.'
+            raise ValueError('Expected single positional argument to \
+                             %s instantiation.'
                              % type(self))
 
         if len(args) > 0:
@@ -225,7 +228,7 @@ class BaseSection(abc.ABC):
                                 _gottype=type(CubeInstance)))
         self.cube = CubeInstance
         self._variables = self.cube.variables
-        self._name = name or self.section_type
+        self._name = self._name or name or self.section_type
         self._compute_section_coords()
         self._compute_section_attrs()
 
@@ -499,17 +502,61 @@ class BaseSection(abc.ABC):
 class PathSection(BaseSection):
     """Path section object.
 
-    Create a Section along user-specified path.
+    Create a Section along user-specified path. Specify the section location
+    as an `(N, 2)` `ndarray` of x-y pairs of coordinates that define the
+    verticies of the path. All coordinates along the path will be included in
+    the section.
 
-    .. note::
+    .. important::
 
-        Currently, this extracts only *at* the points specified. A good
-        improvement would be to interpolate along the path defined, and
-        extract the section everywhere the path intersects within 50% of the
-        center of the surface area of a grid cell.
+        The vertex coordinates must be specified as cell indices (not
+        actual x and y coordinate values). This is a needed patch.
+
+    Parameters
+    ----------
+    *args : :obj:`DataCube` or `StratigraphyCube`
+        The `Cube` object to link for underlying data. This option should be
+        ommitted if using the :obj:`register_section` method of a `Cube`.
+
+    path : :obj:`ndarray`
+        An `(N, 2)` `ndarray` specifying the x-y pairs of coordinates that
+            define the verticies of the path to extract the section from.
+
+    **kwargs
+        Keyword arguments are passed to `BaseSection.__init__()`. Supported
+        options are `name`.
+
+    Returns
+    -------
+    section : :obj:`PathSection`
+        `PathSection` object with specified parameters. The section is
+        automatically connected to the underlying `Cube` data source if the
+        :obj:`register_section` method of a `Cube` is used to set up the
+        section, or the `Cube` is passed as the first positional argument
+        during instantiation.
+
+    Examples
+    --------
+
+    To create a `PathSection` that is registered to a `DataCube` at
+    specified coordinates:
+
+    .. plot::
+        :include-source:
+
+        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube.register_section('path', section.PathSection(
+        ...     path=np.array([[50, 3], [65, 17], [130, 10]])))
+        >>>
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> rcm8cube.sections['path'].show_trace('r--', ax=ax[0])
+        >>> rcm8cube.sections['path'].show('velocity', ax=ax[1])
+        >>> plt.show()
     """
 
-    def __init__(self, *args, path):
+    def __init__(self, *args, path, **kwargs):
         """Instantiate.
 
         Parameters
@@ -524,7 +571,7 @@ class PathSection(BaseSection):
 
         """
         self._input_path = path
-        super().__init__('path', *args)
+        super().__init__('path', *args, **kwargs)
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.
@@ -577,6 +624,10 @@ class StrikeSection(BaseSection):
         Specify as a two-element `tuple` or `list` of `int`, giving the lower
         and upper bounds of `x` values to span the section.
 
+    **kwargs
+        Keyword arguments are passed to `BaseSection.__init__()`. Supported
+        options are `name`.
+
     Returns
     -------
     section : :obj:`StrikeSection`
@@ -624,11 +675,11 @@ class StrikeSection(BaseSection):
         >>> plt.show()
     """
 
-    def __init__(self, *args, y=None, x=None):
+    def __init__(self, *args, y=None, x=None, **kwargs):
 
         self.y = y  # strike coord scalar
         self._input_xlim = x  # the input x lims
-        super().__init__('strike', *args)
+        super().__init__('strike', *args, **kwargs)
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.
@@ -694,6 +745,10 @@ class CircularSection(BaseSection):
         given, and these values cannot be determined, the origin defaults to
         ``(0, 0)``.
 
+    **kwargs
+        Keyword arguments are passed to `BaseSection.__init__()`. Supported
+        options are `name`.
+
     Returns
     -------
     section : :obj:`CircularSection`
@@ -723,11 +778,11 @@ class CircularSection(BaseSection):
         >>> plt.show()
     """
 
-    def __init__(self, *args, radius=None, origin=None):
+    def __init__(self, *args, radius=None, origin=None, **kwargs):
 
         self._input_radius = radius
         self._input_origin = origin
-        super().__init__('circular', *args)
+        super().__init__('circular', *args, **kwargs)
 
     def _compute_section_coords(self):
         if (self._input_radius is None):
@@ -807,6 +862,10 @@ class RadialSection(BaseSection):
         reach a model boundary (if a connection to underlying `Cube` exists).
         Otherwise, length is set to ``1``.
 
+    **kwargs
+        Keyword arguments are passed to `BaseSection.__init__()`. Supported
+        options are `name`.
+
     Returns
     -------
     section : :obj:`RadialSection`
@@ -835,11 +894,12 @@ class RadialSection(BaseSection):
         >>> rcm8cube.sections['radial'].show('velocity', ax=ax[1])
         >>> plt.show()
     """
-    def __init__(self, *args, azimuth=None, origin=None, length=None):
+    def __init__(self, *args, azimuth=None, origin=None, length=None,
+                 **kwargs):
         self._input_azimuth = azimuth
         self._input_origin = origin
         self._input_length = length
-        super().__init__('radial', *args)
+        super().__init__('radial', *args, **kwargs)
 
     def _compute_section_coords(self):
 

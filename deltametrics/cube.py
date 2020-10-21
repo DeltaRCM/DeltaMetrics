@@ -317,7 +317,7 @@ class BaseCube(abc.ABC):
             raise TypeError
         if not type(name) is str:
             raise TypeError
-        SectionInstance.connect(self)  # attach cube
+        SectionInstance.connect(self, name=name)  # attach cube
         self._section_set[name] = SectionInstance
 
     @property

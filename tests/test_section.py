@@ -24,6 +24,7 @@ class TestStrikeSection:
 
     def test_StrikeSection_without_cube(self):
         ss = section.StrikeSection(y=5)
+        assert ss.name is None
         assert ss.y == 5
         assert ss.shape is None
         assert ss.cube is None
@@ -43,6 +44,7 @@ class TestStrikeSection:
     def test_StrikeSection_standalone_instantiation(self):
         rcm8cube = cube.DataCube(rcm8_path)
         sass = section.StrikeSection(rcm8cube, y=12)
+        assert sass.name == 'strike'
         assert sass.y == 12
         assert sass.cube == rcm8cube
         assert sass.trace.shape == (240, 2)
@@ -51,8 +53,12 @@ class TestStrikeSection:
     def test_StrikeSection_register_section(self):
         rcm8cube = cube.DataCube(rcm8_path)
         rcm8cube.register_section('test', section.StrikeSection(y=5))
+        assert rcm8cube.sections['test'].name == 'test'
         assert len(rcm8cube.sections['test'].variables) > 0
         assert rcm8cube.sections['test'].cube is rcm8cube
+        rcm8cube.register_section('testname', section.StrikeSection(
+            y=5, name='TESTING'))
+        assert rcm8cube.sections['testname'].name == 'TESTING'
 
     def test_StrikeSection_register_section_x_limits(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -75,6 +81,7 @@ class TestPathSection:
 
     def test_without_cube(self):
         ps = section.PathSection(path=self.test_path)
+        assert ps.name is None
         assert ps.path is None
         assert ps.shape is None
         assert ps.cube is None
@@ -94,6 +101,7 @@ class TestPathSection:
     def test_standalone_instantiation(self):
         rcm8cube = cube.DataCube(rcm8_path)
         saps = section.PathSection(rcm8cube, path=self.test_path)
+        assert saps.name == 'path'
         assert saps.cube == rcm8cube
         assert saps.trace.shape[0] > 20
         assert saps.trace.shape[1] == self.test_path.shape[1]
@@ -104,9 +112,13 @@ class TestPathSection:
         rcm8cube.stratigraphy_from('eta')
         rcm8cube.register_section(
             'test', section.PathSection(path=self.test_path))
+        assert rcm8cube.sections['test'].name == 'test'
         assert len(rcm8cube.sections['test'].variables) > 0
         assert isinstance(rcm8cube.sections['test'], section.PathSection)
         assert rcm8cube.sections['test'].shape[0] > 20
+        rcm8cube.register_section(
+            'test2', section.PathSection(path=self.test_path, name='trial'))
+        assert rcm8cube.sections['test2'].name == 'trial'
 
     def test_return_path(self):
         # test that returned path and trace are the same
@@ -138,6 +150,7 @@ class TestCircularSection:
 
     def test_without_cube(self):
         cs = section.CircularSection(radius=30)
+        assert cs.name is None
         assert cs.shape is None
         assert cs.cube is None
         assert cs.s is None
@@ -156,10 +169,12 @@ class TestCircularSection:
     def test_standalone_instantiation(self):
         rcm8cube = cube.DataCube(rcm8_path)
         sacs = section.CircularSection(rcm8cube, radius=30)
+        assert sacs.name == 'circular'
         assert sacs.cube == rcm8cube
         assert sacs.trace.shape[0] == 85
         assert len(sacs.variables) > 0
         sacs2 = section.CircularSection(rcm8cube, radius=30, origin=(10, 0))
+        assert sacs2.name == 'circular'
         assert sacs2.cube == rcm8cube
         assert sacs2.trace.shape[0] == 53
         assert len(sacs2.variables) > 0
@@ -172,6 +187,9 @@ class TestCircularSection:
             'test', section.CircularSection(radius=30))
         assert len(rcm8cube.sections['test'].variables) > 0
         assert isinstance(rcm8cube.sections['test'], section.CircularSection)
+        rcm8cube.register_section(
+            'test2', section.CircularSection(radius=31, name='different'))
+        assert rcm8cube.sections['test2'].name == 'different'
 
     def test_all_idx_reduced_unique(self):
         # we try this for a bunch of different radii
@@ -191,6 +209,7 @@ class TestRadialSection:
 
     def test_without_cube(self):
         rs = section.RadialSection()
+        assert rs.name is None
         assert rs.shape is None
         assert rs.cube is None
         assert rs.s is None
@@ -201,6 +220,7 @@ class TestRadialSection:
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             rs['velocity']
         rs2 = section.RadialSection(azimuth=30)
+        assert rs2.name is None
         assert rs2.shape is None
         assert rs2.cube is None
         assert rs2.s is None
@@ -219,23 +239,27 @@ class TestRadialSection:
     def test_standalone_instantiation(self):
         rcm8cube = cube.DataCube(rcm8_path)
         sars = section.RadialSection(rcm8cube)
+        assert sars.name == 'radial'
         assert sars.cube == rcm8cube
         assert sars.trace.shape[0] == 117  # 120 - L0 = 120 - 3
         assert len(sars.variables) > 0
         assert sars.azimuth == 90
         sars1 = section.RadialSection(rcm8cube, azimuth=30)
+        assert sars1.name == 'radial'
         assert sars1.cube == rcm8cube
         assert sars1.trace.shape[0] == 120
         assert len(sars1.variables) > 0
         assert sars1.azimuth == 30
         sars2 = section.RadialSection(rcm8cube, azimuth=103, origin=(90, 2))
+        assert sars2.name == 'radial'
         assert sars2.cube == rcm8cube
         assert sars2.trace.shape[0] == 118
         assert len(sars2.variables) > 0
         assert sars2.azimuth == 103
         assert sars2.origin == (90, 2)
         sars3 = section.RadialSection(
-            rcm8cube, azimuth=178, origin=(143, 18), length=30)
+            rcm8cube, azimuth=178, origin=(143, 18), length=30, name='diff')
+        assert sars3.name == 'diff'
         assert sars3.cube == rcm8cube
         assert sars3.trace.shape[0] == 31
         assert len(sars3.variables) > 0
@@ -248,6 +272,9 @@ class TestRadialSection:
             'test', section.RadialSection(azimuth=30))
         assert len(rcm8cube.sections['test'].variables) > 0
         assert isinstance(rcm8cube.sections['test'], section.RadialSection)
+        rcm8cube.register_section(
+            'test2', section.RadialSection(azimuth=30, name='notthesame'))
+        assert rcm8cube.sections['test2'].name == 'notthesame'
 
     def test_autodetect_origin_range_aziumths(self):
         rcm8cube = cube.DataCube(rcm8_path)
