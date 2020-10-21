@@ -377,6 +377,13 @@ class TestCubesWithManySections:
             'test1'], self.rcm8cube.sections['test2']
         assert not t1 is t2
 
+    def test_show_sections_multiple(self):
+        self.rcm8cube.register_section('show_test1', section.StrikeSection(y=5))
+        self.rcm8cube.register_section('show_test2', section.StrikeSection(y=50))
+        fig, ax = plt.subplots(1, 2)
+        self.rcm8cube.sections['show_test2'].show('r--')
+        self.rcm8cube.sections['show_test1'].show('g--', ax=ax[0])
+        plt.close()
 
 # test the core functionality common to all section types, for different
 # Cubes and strat
