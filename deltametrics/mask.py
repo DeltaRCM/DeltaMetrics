@@ -978,14 +978,34 @@ class GeometricMask(BaseMask):
                             'but was: ' + str(type(is_mask)))
 
         _, self.L, self.W = np.shape(self._mask)
-        self.xc = int(self.L/2)
+        self.xc = 0
         self.yc = int(self.W/2)
 
-    def angular(self, theta1, theta2):
+    @property
+    def xc(self):
+        """x-coordinate of origin point."""
+        return self._xc
+
+    @xc.setter
+    def xc(self, var):
+        self._xc = var
+
+    @property
+    def yc(self):
+        """y-coordinate of origin point."""
+        return self._yc
+
+    @yc.setter
+    def yc(self, var):
+        self._yc = var
+
+    def angular(self, theta1, theta2, origin=None):
         """Make a mask based on two angles.
 
-        Computes a mask that is bounded by 2 angles input by the user. The
-        origin is the center of the edge where the inlet is assumed to exist.
+        Computes a mask that is bounded by 2 angles input by the user.
+
+        .. note::
+           Currently origin point is not being honored - need to fix function.
 
         Parameters
         ----------
@@ -995,7 +1015,16 @@ class GeometricMask(BaseMask):
         theta2 : float
             Radian value controlling the right bound of the mask
 
+        origin : tuple, optional
+            Tuple containing the (x, y) coordinate of the origin point.
+            If unspecified, it is assumed to be at the center of a boundary
+            where pyDeltaRCM places the inlet.
+
         """
+        if origin is not None:
+            self.xc = origin[0]
+            self.yc = origin[1]
+
         y, x = np.ogrid[0:self.W, -self.L:self.L]
         theta = np.arctan2(x, y) - theta1 + np.pi/2
         theta %= (2*np.pi)
@@ -1004,12 +1033,11 @@ class GeometricMask(BaseMask):
 
         self._mask = self._mask * anglemap
 
-    def radial(self, rad1, rad2=None):
-        """Make a mask based on two radii.
+    def circular(self, rad1, rad2=None, origin=None):
+        """Make a circular mask bounded by two radii.
 
         Computes a mask that is bounded by 2 radial distances which are input
-        by the user. The origin is assumed to be the center of the edge where
-        we assume the inlet is.
+        by the user.
 
         Parameters
         ----------
@@ -1018,14 +1046,24 @@ class GeometricMask(BaseMask):
 
         rad2 : int, optional
             Index value to set the outer radius. If unspecified, this bound
-            is set to extend as the length of the domain.
+            is set to extend as the larger dimension of the domain.
+
+        origin : tuple, optional
+            Tuple containing the (x, y) coordinate of the origin point.
+            If unspecified, it is assumed to be at the center of a boundary
+            where pyDeltaRCM places the inlet.
 
         """
+        if origin is not None:
+            self.xc = origin[0]
+            self.yc = origin[1]
+
         if rad2 is None:
-            rad2 = self.L
+            rad2 = np.max((self.L, self.W))
+
         yy, xx = np.meshgrid(range(self.W), range(self.L))
         # calculate array of distances from inlet
-        raddist = np.sqrt((yy-self.yc)**2 + xx**2)
+        raddist = np.sqrt((yy-self._yc)**2 + (xx-self._xc)**2)
         # identify points within radial bounds
         raddist = np.where(raddist >= rad1, raddist, 0)
         raddist = np.where(raddist <= rad2, raddist, 0)
@@ -1053,6 +1091,7 @@ class GeometricMask(BaseMask):
         """
         if ind2 is None:
             ind2 = self.L
+
         temp_mask = np.zeros_like(self._mask)
         temp_mask[:, ind1:ind2, :] = 1
 
@@ -1080,7 +1119,7 @@ class GeometricMask(BaseMask):
         temp_mask = np.zeros_like(self._mask)
         if ind2 is None:
             w_ind = int(ind1/2)
-            temp_mask[:, :, self.yc-w_ind:self.yc+w_ind] = 1
+            temp_mask[:, :, self._yc-w_ind:self._yc+w_ind+1] = 1
         else:
             temp_mask[:, :, ind1:ind2] = 1
 
