@@ -289,7 +289,7 @@ class BaseCube(abc.ABC):
         """
         return self._section_set
 
-    def register_section(self, name, SectionInstance):
+    def register_section(self, name, SectionInstance, return_section=False):
         """Register a section to the :meth:`section_set`.
 
         Connect a section to the cube.
@@ -301,6 +301,9 @@ class BaseCube(abc.ABC):
 
         SectionInstance : :obj:`~deltametrics.section.BaseSection` subclass instance
             The section instance that will be registered.
+
+        return_section : :obj:`bool`
+            Whether to return the section object.
 
         Notes
         -----
@@ -319,7 +322,8 @@ class BaseCube(abc.ABC):
             raise TypeError
         SectionInstance.connect(self, name=name)  # attach cube
         self._section_set[name] = SectionInstance
-        return self._section_set[name]
+        if return_section:
+            return self._section_set[name]
 
     @property
     def x(self):
