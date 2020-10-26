@@ -133,7 +133,7 @@ class OAM(object):
 
         # loop through the time dimension
         for tval in range(0, self.data.shape[0]):
-            trim_idx = utils.guess_land_width_from_land(self.data[:, 0])
+            trim_idx = utils.guess_land_width_from_land(self.data[tval, :, 0])
             data_trim = self.data[tval, trim_idx:, :]
             # use topo_threshold to identify oceanmap
             omap = (data_trim < self.topo_threshold) * 1.
