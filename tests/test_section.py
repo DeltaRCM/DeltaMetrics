@@ -56,9 +56,10 @@ class TestStrikeSection:
         assert rcm8cube.sections['test'].name == 'test'
         assert len(rcm8cube.sections['test'].variables) > 0
         assert rcm8cube.sections['test'].cube is rcm8cube
-        rcm8cube.register_section('testname', section.StrikeSection(
-            y=5, name='TESTING'))
-        assert rcm8cube.sections['testname'].name == 'TESTING'
+        with pytest.warns(UserWarning):
+            rcm8cube.register_section('testname', section.StrikeSection(
+                y=5, name='TESTING'))
+            assert rcm8cube.sections['testname'].name == 'TESTING'
 
     def test_StrikeSection_register_section_x_limits(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -116,9 +117,10 @@ class TestPathSection:
         assert len(rcm8cube.sections['test'].variables) > 0
         assert isinstance(rcm8cube.sections['test'], section.PathSection)
         assert rcm8cube.sections['test'].shape[0] > 20
-        rcm8cube.register_section(
-            'test2', section.PathSection(path=self.test_path, name='trial'))
-        assert rcm8cube.sections['test2'].name == 'trial'
+        with pytest.warns(UserWarning):
+            rcm8cube.register_section(
+                'test2', section.PathSection(path=self.test_path, name='trial'))
+            assert rcm8cube.sections['test2'].name == 'trial'
 
     def test_return_path(self):
         # test that returned path and trace are the same
@@ -192,9 +194,10 @@ class TestCircularSection:
             'test', section.CircularSection(radius=30))
         assert len(rcm8cube.sections['test'].variables) > 0
         assert isinstance(rcm8cube.sections['test'], section.CircularSection)
-        rcm8cube.register_section(
-            'test2', section.CircularSection(radius=31, name='different'))
-        assert rcm8cube.sections['test2'].name == 'different'
+        with pytest.warns(UserWarning):
+            rcm8cube.register_section(
+                'test2', section.CircularSection(radius=31, name='different'))
+            assert rcm8cube.sections['test2'].name == 'different'
         rcm8cube.register_section(
             'test3', section.CircularSection())
         assert rcm8cube.sections['test3'].radius == 60
@@ -280,9 +283,10 @@ class TestRadialSection:
             'test', section.RadialSection(azimuth=30))
         assert len(rcm8cube.sections['test'].variables) > 0
         assert isinstance(rcm8cube.sections['test'], section.RadialSection)
-        rcm8cube.register_section(
-            'test2', section.RadialSection(azimuth=30, name='notthesame'))
-        assert rcm8cube.sections['test2'].name == 'notthesame'
+        with pytest.warns(UserWarning):
+            rcm8cube.register_section(
+                'test2', section.RadialSection(azimuth=30, name='notthesame'))
+            assert rcm8cube.sections['test2'].name == 'notthesame'
 
     def test_autodetect_origin_range_aziumths(self):
         rcm8cube = cube.DataCube(rcm8_path)

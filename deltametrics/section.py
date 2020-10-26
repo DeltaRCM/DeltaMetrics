@@ -1,4 +1,5 @@
 import abc
+import warnings
 
 import numpy as np
 from scipy import stats, sparse
@@ -203,10 +204,10 @@ class BaseSection(abc.ABC):
         self._trace = None
         self._shape = None
         self._variables = None
-        self._name = name
         self.cube = None
 
         self.section_type = section_type
+        self._name = name
 
         if len(args) > 1:
             raise ValueError('Expected single positional argument to \
@@ -228,13 +229,28 @@ class BaseSection(abc.ABC):
                                 _gottype=type(CubeInstance)))
         self.cube = CubeInstance
         self._variables = self.cube.variables
-        self._name = self._name or name or self.section_type
+        # self._name = self._name or name or self.section_type
+        self.name = name  # use the setter to determine the _name
         self._compute_section_coords()
         self._compute_section_attrs()
 
     @property
     def name(self):
         return self._name
+
+    @name.setter
+    def name(self, var):
+        if (self._name is None):
+            # _name is not yet set
+            self._name = var or self.section_type
+        else:
+            # _name is already set
+            if not (var is None):
+                warnings.warn(UserWarning("`name` argument supplied to \
+                    instantiated `Section` object. To change the name of \
+                    a Section, you must set the attribute directly with \
+                    `section._name = 'name'`."))
+            # do nothing
 
     @abc.abstractmethod
     def _compute_section_coords(self):
