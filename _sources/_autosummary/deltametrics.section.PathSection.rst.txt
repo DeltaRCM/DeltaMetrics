@@ -16,6 +16,7 @@ deltametrics.section.PathSection
       ~PathSection.__init__
       ~PathSection.connect
       ~PathSection.show
+      ~PathSection.show_trace
    
    
 
@@ -25,8 +26,10 @@ deltametrics.section.PathSection
 
    .. autosummary::
    
+      ~PathSection.name
       ~PathSection.path
       ~PathSection.s
+      ~PathSection.shape
       ~PathSection.strat_attr
       ~PathSection.trace
       ~PathSection.variables

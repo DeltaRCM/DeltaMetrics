@@ -1,0 +1,37 @@
+deltametrics.section.CircularSection
+====================================
+
+.. currentmodule:: deltametrics.section
+
+.. autoclass:: CircularSection
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CircularSection.__init__
+      ~CircularSection.connect
+      ~CircularSection.show
+      ~CircularSection.show_trace
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~CircularSection.name
+      ~CircularSection.s
+      ~CircularSection.shape
+      ~CircularSection.strat_attr
+      ~CircularSection.trace
+      ~CircularSection.variables
+      ~CircularSection.z
+   
+   

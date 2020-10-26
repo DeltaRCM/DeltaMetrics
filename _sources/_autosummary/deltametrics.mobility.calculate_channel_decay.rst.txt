@@ -1,0 +1,6 @@
+deltametrics.mobility.calculate\_channel\_decay
+===============================================
+
+.. currentmodule:: deltametrics.mobility
+
+.. autofunction:: calculate_channel_decay

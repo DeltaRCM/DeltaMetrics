@@ -16,7 +16,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="deltametrics.section.RadialSection" href="deltametrics.section.RadialSection.html" />
+    <link rel="next" title="deltametrics.section.CircularSection" href="deltametrics.section.CircularSection.html" />
     <link rel="prev" title="deltametrics.section.StrikeSection" href="deltametrics.section.StrikeSection.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,7 +29,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="deltametrics.section.RadialSection.html" title="deltametrics.section.RadialSection"
+          <a href="deltametrics.section.CircularSection.html" title="deltametrics.section.CircularSection"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="deltametrics.section.StrikeSection.html" title="deltametrics.section.StrikeSection"
@@ -45,8 +45,8 @@
   <p class="topless"><a href="deltametrics.section.StrikeSection.html"
                         title="previous chapter">deltametrics.section.StrikeSection</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="deltametrics.section.RadialSection.html"
-                        title="next chapter">deltametrics.section.RadialSection</a></p>
+  <p class="topless"><a href="deltametrics.section.CircularSection.html"
+                        title="next chapter">deltametrics.section.CircularSection</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -84,13 +84,14 @@
 <dd><p>Identify coordinates defining the section.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>CubeInstance</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> subclass instance, optional) – Connect to this cube. No connection is made if cube is not provided.</p>
+<dd class="field-odd"><p><strong>CubeInstance</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> subclass instance, optional) – Connect to this cube. No connection is made if cube is not
+provided.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
 <p>If no arguments are passed, an empty section not connected to any cube
 is returned. This cube will will need to be manually connected to have
-any functionality (via the <a class="reference internal" href="#deltametrics.section.DipSection.connect" title="deltametrics.section.DipSection.connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a> method.</p>
+any functionality (via the <a class="reference internal" href="#deltametrics.section.DipSection.connect" title="deltametrics.section.DipSection.connect"><code class="xref py py-meth docutils literal notranslate"><span class="pre">connect()</span></code></a> method).</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -103,11 +104,14 @@ any functionality (via the <a class="reference internal" href="#deltametrics.sec
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.__init__" title="deltametrics.section.DipSection.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>([x])</p></td>
 <td><p>Identify coordinates defining the section.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.connect" title="deltametrics.section.DipSection.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(CubeInstance)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.connect" title="deltametrics.section.DipSection.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(CubeInstance[, name])</p></td>
 <td><p>Connect this Section instance to a Cube instance.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.show" title="deltametrics.section.DipSection.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(SectionAttribute[, style, data, label, ax])</p></td>
 <td><p>Show the section.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.show_trace" title="deltametrics.section.DipSection.show_trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_trace</span></code></a>(*args[, ax])</p></td>
+<td><p>Plot section trace (x-y plane path).</p></td>
 </tr>
 </tbody>
 </table>
@@ -118,11 +122,17 @@ any functionality (via the <a class="reference internal" href="#deltametrics.sec
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.s" title="deltametrics.section.DipSection.s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s</span></code></a></p></td>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.s" title="deltametrics.section.DipSection.s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s</span></code></a></p></td>
 <td><p>Along-section coordinate.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">strat_attr</span></code></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.shape" title="deltametrics.section.DipSection.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>Section shape.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.strat_attr" title="deltametrics.section.DipSection.strat_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strat_attr</span></code></a></p></td>
+<td><p>Stratigraphic attributes data object.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.trace" title="deltametrics.section.DipSection.trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></a></p></td>
 <td><p>Coordinates of the section in the x-y plane.</p></td>
@@ -161,7 +171,7 @@ variable <code class="docutils literal notranslate"><span class="pre">var</span>
 
 <dl class="method">
 <dt id="deltametrics.section.DipSection.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><em>CubeInstance</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DipSection.connect" title="Permalink to this definition">¶</a></dt>
+<code class="descname">connect</code><span class="sig-paren">(</span><em>CubeInstance</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DipSection.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connect this Section instance to a Cube instance.</p>
 </dd></dl>
 
@@ -169,6 +179,13 @@ variable <code class="docutils literal notranslate"><span class="pre">var</span>
 <dt id="deltametrics.section.DipSection.s">
 <code class="descname">s</code><a class="headerlink" href="#deltametrics.section.DipSection.s" title="Permalink to this definition">¶</a></dt>
 <dd><p>Along-section coordinate.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.section.DipSection.shape">
+<code class="descname">shape</code><a class="headerlink" href="#deltametrics.section.DipSection.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Section shape.</p>
+<p>Simply a <cite>tuple</cite> equivalent to <code class="docutils literal notranslate"><span class="pre">(len(z),</span> <span class="pre">len(s))</span></code></p>
 </dd></dl>
 
 <dl class="method">
@@ -200,6 +217,9 @@ a <cite>StratigraphyCube</cite> section.</p></li>
 False, display nothing. If <code class="docutils literal notranslate"><span class="pre">label=True</span></code>, the label name from the
 <a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a> is used. Other arguments are
 attempted to coerce to <cite>str</cite>, and the literal is diplayed.</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Axes</span></code> object, optional) – A <cite>matplotlib</cite> <cite>Axes</cite> object to plot the section. Optional; if not
+provided, a call is made to <code class="docutils literal notranslate"><span class="pre">plt.gca()</span></code> to get the current (or
+create a new) <cite>Axes</cite> object.</p></li>
 </ul>
 </dd>
 </dl>
@@ -237,6 +257,35 @@ attempted to coerce to <cite>str</cite>, and the literal is diplayed.</p></li>
 <div class="figure align-center">
 <img alt="../_images/section_demo_quick_strat.png" src="../_images/section_demo_quick_strat.png" />
 </div>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.section.DipSection.show_trace">
+<code class="descname">show_trace</code><span class="sig-paren">(</span><em>*args</em>, <em>ax=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DipSection.show_trace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot section trace (x-y plane path).</p>
+<p>Plot the section trace (<a class="reference internal" href="#deltametrics.section.DipSection.trace" title="deltametrics.section.DipSection.trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></a>) onto an x-y planview.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Passed to <cite>matplotlib</cite> <code class="xref py py-obj docutils literal notranslate"><span class="pre">plot()</span></code>.</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Axes</span></code> object, optional) – A <cite>matplotlib</cite> <cite>Axes</cite> object to plot the trace. Optional; if not
+provided, a call is made to <code class="docutils literal notranslate"><span class="pre">plt.gca()</span></code> to get the current (or
+create a new) <cite>Axes</cite> object.</p></li>
+<li><p><strong>**kwargs</strong> – Passed to <cite>matplotlib</cite> <code class="xref py py-obj docutils literal notranslate"><span class="pre">plot()</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.section.DipSection.strat_attr">
+<code class="descname">strat_attr</code><a class="headerlink" href="#deltametrics.section.DipSection.strat_attr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stratigraphic attributes data object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../reference/utils/index.html#deltametrics.utils.NoStratigraphyError" title="deltametrics.utils.NoStratigraphyError"><strong>NoStratigraphyError</strong></a> – If no stratigraphy information is found for the section.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="attribute">
@@ -277,7 +326,7 @@ attempted to coerce to <cite>str</cite>, and the literal is diplayed.</p></li>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="deltametrics.section.RadialSection.html" title="deltametrics.section.RadialSection"
+          <a href="deltametrics.section.CircularSection.html" title="deltametrics.section.CircularSection"
              >next</a> |</li>
         <li class="right" >
           <a href="deltametrics.section.StrikeSection.html" title="deltametrics.section.StrikeSection"

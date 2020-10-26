@@ -23,8 +23,7 @@ The functions are defined in ``deltametrics.mobility``.
   :toctree: ../../_autosummary
 
   check_inputs
-  calc_chan_decay
-  calc_planform_overlap
-  calc_reworking_fraction
-  calc_chan_abandonment
-  mobility_curve_fit
+  calculate_channel_decay
+  calculate_planform_overlap
+  calculate_reworking_fraction
+  calculate_channel_abandonment

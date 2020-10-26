@@ -16,6 +16,7 @@ deltametrics.section.StrikeSection
       ~StrikeSection.__init__
       ~StrikeSection.connect
       ~StrikeSection.show
+      ~StrikeSection.show_trace
    
    
 
@@ -25,7 +26,9 @@ deltametrics.section.StrikeSection
 
    .. autosummary::
    
+      ~StrikeSection.name
       ~StrikeSection.s
+      ~StrikeSection.shape
       ~StrikeSection.strat_attr
       ~StrikeSection.trace
       ~StrikeSection.variables

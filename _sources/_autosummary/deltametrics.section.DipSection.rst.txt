@@ -16,6 +16,7 @@ deltametrics.section.DipSection
       ~DipSection.__init__
       ~DipSection.connect
       ~DipSection.show
+      ~DipSection.show_trace
    
    
 
@@ -25,7 +26,9 @@ deltametrics.section.DipSection
 
    .. autosummary::
    
+      ~DipSection.name
       ~DipSection.s
+      ~DipSection.shape
       ~DipSection.strat_attr
       ~DipSection.trace
       ~DipSection.variables

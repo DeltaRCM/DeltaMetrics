@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>deltametrics.mobility.calculate_reworking_fraction &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="deltametrics.mobility.calculate_channel_abandonment" href="deltametrics.mobility.calculate_channel_abandonment.html" />
+    <link rel="prev" title="deltametrics.mobility.calculate_planform_overlap" href="deltametrics.mobility.calculate_planform_overlap.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.mobility.calculate_channel_abandonment.html" title="deltametrics.mobility.calculate_channel_abandonment"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.mobility.calculate_planform_overlap.html" title="deltametrics.mobility.calculate_planform_overlap"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/mobility/index.html" accesskey="U">Channel Mobility Functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.mobility.calculate_planform_overlap.html"
+                        title="previous chapter">deltametrics.mobility.calculate_planform_overlap</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.mobility.calculate_channel_abandonment.html"
+                        title="next chapter">deltametrics.mobility.calculate_channel_abandonment</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.mobility.calculate_reworking_fraction.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="deltametrics-mobility-calculate-reworking-fraction">
+<h1>deltametrics.mobility.calculate_reworking_fraction<a class="headerlink" href="#deltametrics-mobility-calculate-reworking-fraction" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="deltametrics.mobility.calculate_reworking_fraction">
+<code class="descclassname">deltametrics.mobility.</code><code class="descname">calculate_reworking_fraction</code><span class="sig-paren">(</span><em>chmap</em>, <em>landmap</em>, <em>basevalues</em>, <em>time_window</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.calculate_reworking_fraction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the reworking fraction.</p>
+<p>Uses a method similar to that described in Wickert et al 2013 to measure
+the reworking of the fluvial surface with time. This requires an input
+channel map, land map, as well as defining the base maps to use and the
+time window over which you want to look.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>chmap</strong> (<em>ndarray</em>) – A t-x-y shaped array with binary channel maps</p></li>
+<li><p><strong>landmap</strong> (<em>ndarray</em>) – A t-x-y shaped array with binary land maps. Or an x-y shaped array
+with the binary region representing the fluvial surface over which
+the mobility metric should be computed.</p></li>
+<li><p><strong>basevalues</strong> (<em>list</em>) – A list of values (t indices) to use for the base channel maps</p></li>
+<li><p><strong>time_window</strong> (<em>int</em>) – Number of time slices (t values) to use for the transient maps</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>fr</strong> – A 2-D array of the reworked fraction values, array is of shape
+len(basevalues) x time_window so each row in the array represents
+the overlap values associated with a given base value and the
+columns are associated with each time lag.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.mobility.calculate_channel_abandonment.html" title="deltametrics.mobility.calculate_channel_abandonment"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.mobility.calculate_planform_overlap.html" title="deltametrics.mobility.calculate_planform_overlap"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/mobility/index.html" >Channel Mobility Functions</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>
