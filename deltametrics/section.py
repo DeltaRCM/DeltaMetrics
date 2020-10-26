@@ -786,21 +786,15 @@ class CircularSection(BaseSection):
 
     def _compute_section_coords(self):
         if (self._input_radius is None):
-            if not (self.cube is None):
-                self.radius = int(np.min(self.cube.shape[1:]) / 2)
-            else:
-                self.radius = 1
+            self.radius = int(np.min(self.cube.shape[1:]) / 2)
         else:
             self.radius = self._input_radius
 
         if (self._input_origin is None):
-            if not (self.cube is None):
-                land_width = np.minimum(utils.guess_land_width_from_land(
-                    self.cube['eta'][-1, :, 0]), 5)
-                self.origin = (int(self.cube.shape[2] / 2),
-                               land_width)
-            else:
-                self.origin = (0, 0)
+            land_width = np.minimum(utils.guess_land_width_from_land(
+                self.cube['eta'][-1, :, 0]), 5)
+            self.origin = (int(self.cube.shape[2] / 2),
+                           land_width)
         else:
             self.origin = self._input_origin
 
@@ -911,13 +905,10 @@ class RadialSection(BaseSection):
 
         # determine the origin of the line
         if (self._input_origin is None):
-            if not (self.cube is None):
-                land_width = utils.guess_land_width_from_land(
-                    self.cube['eta'][-1, :, 0])
-                self.origin = (int(self.cube.shape[2] / 2),
-                               land_width)
-            else:
-                self.origin = (0, 0)
+            land_width = np.minimum(utils.guess_land_width_from_land(
+                self.cube['eta'][-1, :, 0]), 5)
+            self.origin = (int(self.cube.shape[2] / 2),
+                           land_width)
         else:
             self.origin = self._input_origin
 
@@ -928,33 +919,28 @@ class RadialSection(BaseSection):
         b = self.origin[1] - m * self.origin[0]
         if (self._input_length is None):
             # if no input
-            if not (self.cube is None):
-                # if no input and has cube connection
-                # find the intersection with an edge
-                if self.azimuth <= 90.0 and self.azimuth >= 0:
-                    dx = (self.cube.W - self.origin[0])
-                    dy = (np.tan(theta * np.pi / 180) * dx)
-                    if dy <= self.cube.L:
-                        end_y = int(np.minimum(m * (self.cube.W) + b, self.cube.L - 1))
-                        end_point = (self.cube.W - 1, end_y)
-                    else:
-                        end_x = int(np.minimum((self.cube.L - b) / m, self.cube.W - 1))
-                        end_point = (end_x, self.cube.L - 1)
-                elif self.azimuth > 90 and self.azimuth <= 180:
-                    dx = (self.origin[0])
-                    dy = (np.tan(theta * np.pi / 180) * dx)
-                    if np.abs(dy) <= self.cube.L:
-                        end_y = b
-                        end_point = (0, end_y)
-                    else:
-                        end_x = int(np.maximum((self.cube.L - b) / m,
-                                               0))
-                        end_point = (end_x, self.cube.L - 1)
+            # find the intersection with an edge
+            if self.azimuth <= 90.0 and self.azimuth >= 0:
+                dx = (self.cube.W - self.origin[0])
+                dy = (np.tan(theta * np.pi / 180) * dx)
+                if dy <= self.cube.L:
+                    end_y = int(np.minimum(m * (self.cube.W) + b, self.cube.L - 1))
+                    end_point = (self.cube.W - 1, end_y)
                 else:
-                    raise ValueError('Azimuth must be in range (0, 180).')
+                    end_x = int(np.minimum((self.cube.L - b) / m, self.cube.W - 1))
+                    end_point = (end_x, self.cube.L - 1)
+            elif self.azimuth > 90 and self.azimuth <= 180:
+                dx = (self.origin[0])
+                dy = (np.tan(theta * np.pi / 180) * dx)
+                if np.abs(dy) <= self.cube.L:
+                    end_y = b
+                    end_point = (0, end_y)
+                else:
+                    end_x = int(np.maximum((self.cube.L - b) / m,
+                                           0))
+                    end_point = (end_x, self.cube.L - 1)
             else:
-                # if no input and no cube connection
-                end_point = (self.origin[0], self.origin[1] + 1)
+                raise ValueError('Azimuth must be in range (0, 180).')
         else:
             # if input length
             _len = self._input_length
