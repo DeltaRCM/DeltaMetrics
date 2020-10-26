@@ -319,6 +319,7 @@ class BaseCube(abc.ABC):
             raise TypeError
         SectionInstance.connect(self, name=name)  # attach cube
         self._section_set[name] = SectionInstance
+        return self._section_set[name]
 
     @property
     def x(self):

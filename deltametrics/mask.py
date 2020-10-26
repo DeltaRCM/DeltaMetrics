@@ -8,6 +8,8 @@ from skimage import feature
 from skimage import morphology
 from skimage import measure
 
+from . import utils
+
 
 class BaseMask(object):
     """Low-level base class to be inherited by all mask objects."""
@@ -58,7 +60,7 @@ class BaseMask(object):
         """
         return self._mask
 
-    def show(self, t=-1, **kwargs):
+    def show(self, t=-1, ax=None, **kwargs):
         """Show the mask.
 
         Parameters
@@ -70,8 +72,9 @@ class BaseMask(object):
 
         Passes `**kwargs` to ``matplotlib.imshow``.
         """
+        if not ax:
+            ax = plt.gca()
         cmap = kwargs.pop('cmap', 'gray')
-        fig, ax = plt.subplots()
         if hasattr(self, 'mask') and np.sum(self.mask) > 0:
             ax.imshow(self.mask[t, :, :], cmap=cmap, **kwargs)
             ax.set_title('A ' + self.mask_type + ' mask')
@@ -130,14 +133,7 @@ class OAM(object):
 
         # loop through the time dimension
         for tval in range(0, self.data.shape[0]):
-            # use the first column to trim the land_width
-            # (or, can we assume access to the DeltaRCM variable `L0`?)
-            i = 0
-            delt = 10
-            while i < self.data.shape[1] and delt != 0:
-                delt = self.data[tval, i, 0] - self.data[tval, i+1, 0]
-                i += 1
-            trim_idx = i - 1  # assign the trimming index
+            trim_idx = utils.guess_land_width_from_land(self.data[:, 0])
             data_trim = self.data[tval, trim_idx:, :]
             # use topo_threshold to identify oceanmap
             omap = (data_trim < self.topo_threshold) * 1.
