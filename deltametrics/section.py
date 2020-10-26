@@ -561,7 +561,7 @@ class PathSection(BaseSection):
         :include-source:
 
         >>> rcm8cube = dm.sample_data.cube.rcm8()
-        >>> rcm8cube.register_section('path', section.PathSection(
+        >>> rcm8cube.register_section('path', dm.section.PathSection(
         ...     path=np.array([[50, 3], [65, 17], [130, 10]])))
         >>>
         >>> # show the location and the "velocity" variable

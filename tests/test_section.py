@@ -60,6 +60,9 @@ class TestStrikeSection:
             rcm8cube.register_section('testname', section.StrikeSection(
                 y=5, name='TESTING'))
             assert rcm8cube.sections['testname'].name == 'TESTING'
+        _sect = rcm8cube.register_section('test', section.StrikeSection(y=5),
+                                          return_section=True)
+        assert isinstance(_sect, section.StrikeSection)
 
     def test_StrikeSection_register_section_x_limits(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -121,6 +124,10 @@ class TestPathSection:
             rcm8cube.register_section(
                 'test2', section.PathSection(path=self.test_path, name='trial'))
             assert rcm8cube.sections['test2'].name == 'trial'
+        _section = rcm8cube.register_section(
+            'test', section.PathSection(path=self.test_path),
+            return_section=True)
+        assert isinstance(_section, section.PathSection)
 
     def test_return_path(self):
         # test that returned path and trace are the same
@@ -201,6 +208,9 @@ class TestCircularSection:
         rcm8cube.register_section(
             'test3', section.CircularSection())
         assert rcm8cube.sections['test3'].radius == 60
+        _section = rcm8cube.register_section(
+            'test3', section.CircularSection(), return_section=True)
+        assert isinstance(_section, section.CircularSection)
 
     def test_all_idx_reduced_unique(self):
         # we try this for a bunch of different radii
@@ -287,6 +297,14 @@ class TestRadialSection:
             rcm8cube.register_section(
                 'test2', section.RadialSection(azimuth=30, name='notthesame'))
             assert rcm8cube.sections['test2'].name == 'notthesame'
+        _section = rcm8cube.register_section(
+            'test', section.RadialSection(azimuth=30), return_section=True)
+        assert isinstance(_section, section.RadialSection)
+        # with pytest.raises(ValueError):
+        _section2 = rcm8cube.register_section(
+            'test', section.RadialSection(azimuth=30))
+        assert _section2 is None
+
 
     def test_autodetect_origin_range_aziumths(self):
         rcm8cube = cube.DataCube(rcm8_path)

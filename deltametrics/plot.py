@@ -769,7 +769,8 @@ def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
     return coll.PatchCollection(pl, match_original=True)
 
 
-def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
+def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
+                                              show_strata=True):
     """1d elevation to stratigraphy.
 
     This function creates and displays a one-dimensional elevation timeseries
@@ -803,6 +804,11 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
     ax : :obj:`matplotlib.pyplot.axes`, optional
         Axes to plot into. A figure and axes is created, if not given.
 
+    show_strata : :obj:`bool`, optional
+        Whether to plot the resultant stratigraphy as a strip log on a second
+        axis on the right side. This axis included numbers indicating the
+        timestep for each voxel of preserved stratigraphy.
+
     Returns
     -------
     """
@@ -835,7 +841,7 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
                                   y0=np.min(e), facecolor='0.8'))
     _ppc = ax.add_patch(ptch.Rectangle((0, 0), 0, 0, facecolor='0.8',
                                        label='psvd timesteps'))  # add for lgnd
-    _ss = ax.hlines(e[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
+    _ss = ax.hlines(s[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
     _l = ax.axvline(lst, c='k')
     _e = ax.step(t, e, where='post', label='elevation')
     _s = ax.step(t, s, linestyle='--', where='post', label='stratigraphy')
@@ -844,19 +850,21 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None):
     ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
     ax.grid(which='both', axis='x')
 
-    # boxy strata plot
-    divider = axtk.make_axes_locatable(ax)
-    ax_s = divider.append_axes("right", 0.5, pad=0.1, sharey=ax)
-    ax_s.yaxis.tick_right()
-    ax_s.xaxis.set_visible(False)
-    __x, __y = np.meshgrid(np.array([0, 1]), z)
-    _colmap = plt.cm.get_cmap('viridis', e.shape[0])
-    _c = ax_s.pcolormesh(__x, __y, cp,
-                         cmap=_colmap, vmin=0, vmax=e.shape[0], shading='auto')
-    _ss2 = ax_s.hlines(e[p], 0, 1, linestyles='dashed', colors='gray')
-    _cstr = [str(int(cc)) if np.isfinite(cc) else 'nan' for cc in c.flatten()]
-    for i, __cstr in enumerate(_cstr):
-        ax_s.text(0.3, z[i], str(__cstr), fontsize=8)
+    if show_strata:
+        # boxy strata plot
+        divider = axtk.make_axes_locatable(ax)
+        ax_s = divider.append_axes("right", 0.5, pad=0.1, sharey=ax)
+        ax_s.yaxis.tick_right()
+        ax_s.xaxis.set_visible(False)
+        __x, __y = np.meshgrid(np.array([0, 1]), z)
+        _colmap = plt.cm.get_cmap('viridis', e.shape[0])
+        _c = ax_s.pcolormesh(__x, __y, cp,
+                             cmap=_colmap, vmin=0, vmax=e.shape[0], shading='auto')
+        _ss2 = ax_s.hlines(e[p], 0, 1, linestyles='dashed', colors='gray')
+        _cstr = [str(int(cc)) if np.isfinite(cc) else 'nan' for cc in c.flatten()]
+        ax_s.set_xlim(0, 1)
+        for i, __cstr in enumerate(_cstr):
+            ax_s.text(0.3, z[i], str(__cstr), fontsize=8)
 
     # adjust and add legend
     if np.any(e < 0):
