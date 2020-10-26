@@ -76,7 +76,7 @@
 <h1>deltametrics.plot.show_one_dimensional_trajectory_to_strata<a class="headerlink" href="#deltametrics-plot-show-one-dimensional-trajectory-to-strata" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="deltametrics.plot.show_one_dimensional_trajectory_to_strata">
-<code class="descclassname">deltametrics.plot.</code><code class="descname">show_one_dimensional_trajectory_to_strata</code><span class="sig-paren">(</span><em>e</em>, <em>dz=0.05</em>, <em>z=None</em>, <em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.show_one_dimensional_trajectory_to_strata" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">deltametrics.plot.</code><code class="descname">show_one_dimensional_trajectory_to_strata</code><span class="sig-paren">(</span><em>e</em>, <em>dz=0.05</em>, <em>z=None</em>, <em>ax=None</em>, <em>show_strata=True</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.show_one_dimensional_trajectory_to_strata" title="Permalink to this definition">¶</a></dt>
 <dd><p>1d elevation to stratigraphy.</p>
 <p>This function creates and displays a one-dimensional elevation timeseries
 as a trajectory of elevations, resultant stratigraphy, and time preserved
@@ -108,6 +108,9 @@ time-interval is recorded in the stratigraphy at each elevation.</p>
 <li><p><strong>dz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Vertical grid resolution.</p></li>
 <li><p><strong>z</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>, optional) – Vertical grid. Must specify <code class="docutils literal notranslate"><span class="pre">dz=None</span></code> to use this option.</p></li>
 <li><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.pyplot.axes</span></code>, optional) – Axes to plot into. A figure and axes is created, if not given.</p></li>
+<li><p><strong>show_strata</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to plot the resultant stratigraphy as a strip log on a second
+axis on the right side. This axis included numbers indicating the
+timestep for each voxel of preserved stratigraphy.</p></li>
 </ul>
 </dd>
 </dl>

@@ -128,7 +128,7 @@ to style this cube similarly to another cube.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.register_plan" title="deltametrics.cube.BaseCube.register_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_plan</span></code></a>(name, PlanInstance)</p></td>
 <td><p>Register a planform to the cube.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.register_section" title="deltametrics.cube.BaseCube.register_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code></a>(name, SectionInstance)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.register_section" title="deltametrics.cube.BaseCube.register_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code></a>(name, SectionInstance[, …])</p></td>
 <td><p>Register a section to the <a class="reference internal" href="#deltametrics.cube.BaseCube.section_set" title="deltametrics.cube.BaseCube.section_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_set()</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.show_cube" title="deltametrics.cube.BaseCube.show_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_cube</span></code></a>(var[, t, x, y, ax])</p></td>
@@ -341,7 +341,7 @@ data off-disk as needed.</p>
 
 <dl class="method">
 <dt id="deltametrics.cube.BaseCube.register_section">
-<code class="descname">register_section</code><span class="sig-paren">(</span><em>name</em>, <em>SectionInstance</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.register_section" title="Permalink to this definition">¶</a></dt>
+<code class="descname">register_section</code><span class="sig-paren">(</span><em>name</em>, <em>SectionInstance</em>, <em>return_section=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.register_section" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a section to the <a class="reference internal" href="#deltametrics.cube.BaseCube.section_set" title="deltametrics.cube.BaseCube.section_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_set()</span></code></a>.</p>
 <p>Connect a section to the cube.</p>
 <dl class="field-list simple">
@@ -349,6 +349,7 @@ data off-disk as needed.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The name to register the section.</p></li>
 <li><p><strong>SectionInstance</strong> (<a class="reference internal" href="deltametrics.section.BaseSection.html#deltametrics.section.BaseSection" title="deltametrics.section.BaseSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSection</span></code></a> subclass instance) – The section instance that will be registered.</p></li>
+<li><p><strong>return_section</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to return the section object.</p></li>
 </ul>
 </dd>
 </dl>
