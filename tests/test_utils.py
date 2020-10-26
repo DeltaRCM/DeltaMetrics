@@ -27,14 +27,61 @@ class TestNoStratigraphyError:
             raise utils.NoStratigraphyError('someobj', 'somevar')
 
 
+class TestLineToCells:
+
+    def test_flat_inputs(self):
+        x0, y0, x1, y1 = 10, 40, 50, 40
+        ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
+        ret2 = utils.line_to_cells((x0, y0), (x1, y1))
+        ret3 = utils.line_to_cells(x0, y0, x1, y1)
+        ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
+        assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
+        assert ret1.shape[1] == 41
+
+    def test_vert_inputs(self):
+        x0, y0, x1, y1 = 40, 10, 40, 70
+        ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
+        ret2 = utils.line_to_cells((x0, y0), (x1, y1))
+        ret3 = utils.line_to_cells(x0, y0, x1, y1)
+        ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
+        assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
+        assert ret1.shape[1] == 61
+
+    def test_positive_angle_inputs(self):
+        x0, y0, x1, y1 = 10, 10, 60, 92
+        ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
+        ret2 = utils.line_to_cells((x0, y0), (x1, y1))
+        ret3 = utils.line_to_cells(x0, y0, x1, y1)
+        ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
+        assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
+        assert ret1.shape[1] == 83
+
+    def test_negative_angle_inputs(self):
+        x0, y0, x1, y1 = 10, 80, 60, 30
+        ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
+        ret2 = utils.line_to_cells((x0, y0), (x1, y1))
+        ret3 = utils.line_to_cells(x0, y0, x1, y1)
+        ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
+        assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
+        assert ret1.shape[1] == 51
+
+    def test_bad_inputs(self):
+        x0, y0, x1, y1 = 10, 10, 60, 92
+        with pytest.raises(TypeError):
+            ret = utils.line_to_cells(x0, y0, x1, y1, x0, y1)
+        with pytest.raises(ValueError):
+            ret1 = utils.line_to_cells(
+                np.array([[x0, y0], [x1, y1], [x0, y1]]))
+
+
 chmap = np.zeros((5, 4, 4))
 # define time = 0
 chmap[0, :, 1] = 1
 # every time step one cell of the channel will migrate one pixel to the right
 for i in range(1, 5):
-    chmap[i, :, :] = chmap[i-1, :, :].copy()
-    chmap[i, -1*i, 1] = 0
-    chmap[i, -1*i, 2] = 1
+    chmap[i, :, :] = chmap[i - 1, :, :].copy()
+    chmap[i, -1 * i, 1] = 0
+    chmap[i, -1 * i, 2] = 1
 # define the fluvial surface - entire 4x4 area
 fsurf = np.ones((4, 4))
 # define the index corresponding to the basemap at time 0

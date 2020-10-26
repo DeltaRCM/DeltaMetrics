@@ -2,6 +2,7 @@ import os
 import sys
 
 import numpy as np
+import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as colors
 from scipy import optimize
@@ -71,22 +72,6 @@ class NoStratigraphyError(AttributeError):
                       "or stratigraphy information."
         super().__init__(message)
 
-"""
-    yields an exception with:
-
-    .. code::
-
-        deltametrics.utils.NoStratigraphyError: 'DataCube' object
-        has no preservation or stratigraphy information.
-
-
-    .. code::
-
-        deltametrics.utils.NoStratigraphyError: 'DataCube' object
-        has no attribute 'strat_attr'.
-
-
-"""
 
 def needs_stratigraphy(func):
     """Decorator for properties requiring stratigraphy.
@@ -153,42 +138,40 @@ class AttributeChecker(object):
 
 
 def curve_fit(data, fit='harmonic'):
-    """
-    Calculate curve fit given some data.
+    """Calculate curve fit given some data.
 
     Several functional forms are available for fitting: exponential, harmonic,
     and linear. The input `data` can be 1-D, or 2-D, if it is 2-D, the data
     will be averaged. The expected 2-D shape is (Y-Values, # Values) where the
     data you wish to have fit is in the first dimension, and the second
-    dimension is of len(# Values).
+    dimension is of ``len(# Values)``.
 
     E.g. Given some mobility data output from one of the mobility metrics,
     fit a curve to the average of that data.
 
     Parameters
     ----------
-    data : ndarray
+    data : :obj:`ndarray`
         Data, either already averaged or a 2D array of of shape
         len(data values) x len(# values).
 
-    fit : str, optional (default is 'harmonic')
+    fit : :obj:`str`, optional
         A string specifying the type of function to be fit. Options are as
         follows:
-            - 'exponential' : (a - b) * np.exp(-c * x) + b
-            - 'harmonic' : a / (1 + b * x)
-            - 'linear' : a * x + b
+          * `exponential`, which evaluates :code:`(a - b) * np.exp(-c * x) + b`
+          * `harmonic`, (default) which evaluates :code:`a / (1 + b * x)`
+          * `linear`, which evaluates :code:`a * x + b`
 
     Returns
     -------
-    yfit : ndarray
+    yfit : :obj:`ndarray`
         y-values corresponding to the fitted function.
 
-    pcov : ndarray
+    pcov : :obj:`ndarray`
         Covariance associated with the fitted function parameters.
 
-    perror : ndarray
-        One standard deviation error for the parameters (from pcov)
-
+    perror : :obj:`ndarray`
+        One standard deviation error for the parameters (from pcov).
     """
     avail_fits = ['exponential', 'harmonic', 'linear']
     if fit not in avail_fits:
@@ -218,3 +201,280 @@ def curve_fit(data, fit='harmonic'):
     perror = np.sqrt(np.diag(pcov))
 
     return yfit, pcov, perror
+
+
+def guess_land_width_from_land(land_col_0):
+    """Guess the land width from bed elevations.
+
+    Utility to help autodetermine the domain setup. This utility should be
+    replaced when possible by pulling domain setup variables directly from the
+    netCDF file.
+
+    Algortihm works by finding the point where the bed elevation is *flat*
+    (i.e., where there is undisturbed basin).
+    """
+    i = 0
+    delt = 10
+    while i < len(land_col_0) - 1 and delt != 0:
+        delt = land_col_0[i] - land_col_0[i+1]
+        i += 1
+    trim_idx = i - 1  # assign the trimming index
+    return trim_idx
+
+
+def coordinates_to_segments(coordinates):
+    """Transform coordinate [x, y] array into line segments.
+
+    Parameters
+    ----------
+    coordinates : :obj:`ndarray`
+        `[N, 2]` array with `(x, y)` coordinate pairs in rows.
+
+    Returns
+    -------
+    segments
+        `[(N-1), 2, 2` array of line segments with dimensions of
+        `each segment x x-coordinates x y-coordinates`.
+    """
+    _x = np.vstack((coordinates[:-1, 0],
+                    coordinates[1:, 0])).T.reshape(-1, 2, 1)
+    _y = np.vstack((coordinates[:-1, 1],
+                    coordinates[1:, 1])).T.reshape(-1, 2, 1)
+    return np.concatenate([_x, _y], axis=2)
+
+
+def segments_to_cells(segments):
+    """Transform a line segment (or array of segments) into integer coords.
+
+    Helper function to convert a path into cells. This is generally used for
+    determining the path of a `Section`, but is also available to use on any
+    regularly gridded array by metric computation functions.
+
+    Type and shape checking is performed, then the path (which may be
+    composed of multiple vertices) is converted to a single path of cells.
+    """
+    _c = []  # append lists, do not know length of cells a priori
+    for s in np.arange(segments.shape[0]):
+        _c.append(line_to_cells(segments[s, ...]))
+    _c = np.hstack(_c).T
+    return _c
+
+
+def line_to_cells(*args):
+    """Convert a line to cell coordinates along the line.
+
+    Takes as input the line to determine coordinates along. A line defined by
+    two Cartesian coordinate endpoints `p1` and `p2`, may be specified  in one
+    of three ways:
+
+    * a single `ndarray` with fields ``[[x0, y0], [x1, y1]]``
+    * a set of two-tuples with fields ``(x0, y0), (x1, y1)``
+    * a set of four floats ``x0, y0, x1, y1``
+
+    Cell coordinates will be ordered according to the order of the arguments
+    (i.e., as though walking along the line from `p0` to `p1`).
+
+    Parameters
+    ----------
+    line : four :obj:`float`, two :obj:`tuple`, one :obj:`ndarray`
+        The line, defined in one of the options described above.
+
+    Returns
+    -------
+    x : :obj:`ndarray`
+        x-coordinates of cells intersected with line.
+
+    y : :obj:`ndarray`
+        y-coordinates of cells intersected with line.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        >>> from deltametrics.utils import line_to_cells
+        >>> p0 = (1, 6)
+        >>> p1 = (6, 3)
+        >>> x, y = line_to_cells(p0, p1)
+
+        >>> fig, ax = plt.subplots(figsize=(2, 2))
+        >>> _arr = np.zeros((10, 10))
+        >>> _arr[y, x] = 1
+        >>> ax.imshow(_arr, cmap='gray')
+        >>> ax.plot([p0[0], p1[0]], [p0[1], p1[1]], 'r-')
+        >>> plt.show()
+    """
+    # process the args
+    if len(args) == 1:
+        x0, y0, x1, y1 = args[0].ravel()
+    elif len(args) == 2:
+        x0, y0 = args[0]
+        x1, y1 = args[1]
+    elif len(args) == 4:
+        x0, y0, x1, y1 = args
+    else:
+        raise TypeError
+
+    # process the line to cells
+    if np.abs(y1 - y0) < np.abs(x1 - x0):
+        # if the line is "shallow" (dy < dx)
+        if x0 > x1:
+            # if the line is trending down (III)
+            x, y = _walk_line((x1, y1), (x0, y0))
+        else:
+            # if the line is trending up (I)
+            x, y = _walk_line((x0, y0), (x1, y1))
+    else:
+        # if the line is "steep" (dy >= dx)
+        if y0 > y1:
+            # if the line is trending down (IV)
+            y, x = _walk_line((y1, x1), (y0, x0))
+        else:
+            # if the line is trending up (II)
+            y, x = _walk_line((y0, x0), (y1, x1))
+
+    return x, y
+
+
+def _walk_line(p0, p1):
+    """Walk a line to determine cells along path.
+
+    Inputs depend on the steepness and direction of the input line. For a
+    shallow line, where dx > dy, the input tuples should be in the form of
+    `(x, y)` pairs. In contrast, for steep lines (where `dx < dy`), the input
+    tuples should be `(y, x)` pairs.
+
+    Additionally, the order of the tuples should be given based on whether the
+    line is trending upward or downward, with increasing `x`.
+
+    .. note:: TODO: finish descriptions for quadrants
+
+    .. note::
+
+        `x` in the code may not be cartesian x. Depends on quadrant of the
+        line.
+    """
+    # unpack the point tuples
+    x0, y0 = p0
+    x1, y1 = p1
+
+    dx, dy = x1 - x0, y1 - y0
+    yi = 1
+    if dy < 0:
+        yi = -1
+        dy = -dy
+
+    D = 2 * dy - dx
+    x = np.arange(x0, x1 + 1, dtype=np.int).T
+    y = np.zeros((len(x),), dtype=np.int)
+
+    yy = y0
+    for i in np.arange(len(x)):
+        y[i] = yy
+        if D > 0:
+            yy = yy + yi
+            D = D - 2 * dx
+
+        D = D + 2 * dy
+
+    # sort by major axis, and index the cells
+    xI = np.argsort(x)
+    x = x[xI]
+    y = y[xI]
+
+    return x, y
+
+
+def circle_to_cells(origin, radius, remove_duplicates=True):
+    """The x, y pixel coordinates of a circle
+
+    Use the mid-point circle algorithm is used for computation
+    (http://en.wikipedia.org/wiki/Midpoint_circle_algorithm).
+
+    Compute in advance the number of points that will be generated by the
+    algorithm, to pre-allocate the coordinates arrays. Also, this function
+    ensures that sorted coordinates are returned.
+
+    This implementation removes duplicate points. Optionally, specify
+    `remove_duplicates=False` to keep duplicates and achieve faster execution.
+    Note that keeping duplicates is fine for drawing a circle with colored
+    pixels, but for slicing an array along the arc, we need to have only
+    unique and sorted indices.
+
+    Original implementation from Jean-Yves Tinevez.
+    <jeanyves.tinevez@gmail.com> - Nov 2011 - Feb 2012
+    """
+    x0, y0 = origin
+
+    # Compute first the number of points
+    octant_size = np.int((np.sqrt(2) * (radius - 1) + 4) / 2)
+    n_points = 4 * octant_size
+    xc = np.zeros((n_points,), dtype=np.int)
+    yc = np.zeros((n_points,), dtype=np.int)
+
+    x = 0
+    y = radius
+    f = 1 - radius
+    dx = 1
+    dy = - 2 * radius
+
+    # 7th octant -- driver
+    xc[0 * octant_size] = x0 - y
+    yc[0 * octant_size] = y0 + x
+    # 8th octant
+    xc[2 * octant_size - 1] = x0 - x
+    yc[2 * octant_size - 1] = y0 + y
+    # 1st octant
+    xc[2 * octant_size] = x0 + x
+    yc[2 * octant_size] = y0 + y
+    # 2nd octant
+    xc[4 * octant_size - 1] = x0 + y
+    yc[4 * octant_size - 1] = y0 + x
+
+    for i in np.arange(1, n_points / 4, dtype=np.int):
+        # update x and y, follwing midpoint algo
+        if f > 0:
+            y = y - 1
+            dy = dy + 2
+            f = f + dy
+        x = x + 1
+        dx = dx + 2
+        f = f + dx
+
+        # 7th octant
+        xc[i] = x0 - y
+        yc[i] = y0 + x
+        # 8th octant
+        xc[2 * octant_size - i - 1] = x0 - x
+        yc[2 * octant_size - i - 1] = y0 + y
+        # 1st octant
+        xc[2 * octant_size + i] = x0 + x
+        yc[2 * octant_size + i] = y0 + y
+        # 2nd octant
+        xc[4 * octant_size - i - 1] = x0 + y
+        yc[4 * octant_size - i - 1] = y0 + x
+
+    # There may be some duplicate entries
+    #     We loop through to remove duplicates. This is slow, but necessary in
+    #     most of our applications. We have to use something custom, rather
+    #     than np.unique() because we need to preserve the ordering of the
+    #     octants.
+    if remove_duplicates:
+        xyc = np.column_stack((xc, yc))
+        keep = np.ones((n_points,), dtype=np.bool)
+        for i in np.arange(1, 4):
+            prv = xyc[(i-1)*octant_size:i*octant_size, :]
+            nxt = xyc[i*octant_size:(i+1)*octant_size, :]
+            dupe = np.nonzero(np.all(prv == nxt[:, np.newaxis], axis=2))[0]
+            keep[(i*octant_size)+dupe] = False
+        xyc = xyc[keep]
+        xc = xyc[:, 0]
+        yc = xyc[:, 1]
+
+    # limit to positive indices (no wrapping)
+    _and = np.logical_and(xc >= 0, yc >= 0)
+    xc = xc[_and]
+    yc = yc[_and]
+
+    return xc, yc

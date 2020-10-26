@@ -25,6 +25,7 @@ Section types
     PathSection
     StrikeSection
     DipSection
+    CircularSection
     RadialSection
     BaseSection
 

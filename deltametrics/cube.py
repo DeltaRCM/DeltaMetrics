@@ -54,7 +54,7 @@ class CubeVariable():
         self.data = xarray_obj
 
     def initialize(self, **kwargs):
-        """Initialize with **kwargs."""
+        """Initialize with `**kwargs`."""
         self.shape = self.data.shape
         self.ndim = len(self.shape)
         variable = kwargs.pop('variable', None)
@@ -79,7 +79,7 @@ class CubeVariable():
         Parameters
         ----------
         slc : a `numpy` slice
-            A valid `numpy` style slice. For example, :code:`[10, :, :]`.
+            A valid `numpy` style slice. For example, :code:`[10, ...]`.
             Dimension validation is not performed before slicing.
         """
         return self.data[slc]
@@ -317,7 +317,7 @@ class BaseCube(abc.ABC):
             raise TypeError
         if not type(name) is str:
             raise TypeError
-        SectionInstance.connect(self)  # attach cube
+        SectionInstance.connect(self, name=name)  # attach cube
         self._section_set[name] = SectionInstance
 
     @property
