@@ -129,3 +129,10 @@ def test_readvar_intomemory_error():
 
     with pytest.raises(KeyError):
         netcdf_io.read('nonexistant')
+
+
+def test_read_time_correctly():
+    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    assert netcdf_io.dataset.time[-1] == 2500
+    # note that 2500 is the old time format, of saving timestep number.
+    # this will need to be updated if the underlying test dataset is changed.
