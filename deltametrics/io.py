@@ -166,7 +166,7 @@ class NetCDFIO(BaseIO):
             _tempdataset.close()
 
         try:
-            _dataset = xr.open_dataset(self.data_path)
+            _dataset = xr.open_dataset(self.data_path, decode_times=False)
 
             if 'time' and 'y' and 'x' in _dataset.variables:
                 self.dataset = _dataset.set_coords(['time', 'y', 'x'])
