@@ -210,6 +210,10 @@ class BaseCube(abc.ABC):
             self._dataio.read(var)
 
     @property
+    def meta(self):
+        return self._dataio.meta
+
+    @property
     def varset(self):
         """:class:`~deltametrics.plot.VariableSet` : Variable styling for plotting.
 
