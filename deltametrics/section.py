@@ -35,13 +35,17 @@ class BaseSectionVariable(np.ndarray):
 
     def __new__(cls, _data, _s, _z, _psvd_mask=None, **unused_kwargs):
         # Input array is an already formed ndarray instance
+        _data = _data.squeeze()  # collapse any extra dimensions!
         obj = np.asarray(_data).view(cls)
         if (_psvd_mask is not None):
-            _psvd_mask = np.asarray(_psvd_mask)
+            _psvd_mask = np.asarray(_psvd_mask).squeeze()
             if _psvd_mask.shape != obj.shape:
                 raise ValueError('Shape of "_psvd_mask" incompatible with "_data" array.')
         obj._psvd_mask = _psvd_mask
-        if (len(_z) != obj.shape[0]) or (len(_s) != obj.shape[1]):
+        if ((obj.ndim == 1) and (len(_z) != obj.shape[0])):
+            raise ValueError('Shape of "_s" or "_z" incompatible with "_data" array.')
+        elif ((obj.ndim == 2) and (len(_s) != obj.shape[1])) or \
+             ((obj.ndim == 2) and (len(_z) != obj.shape[0])):
             raise ValueError('Shape of "_s" or "_z" incompatible with "_data" array.')
         obj._s = _s
         obj._z = _z
@@ -273,8 +277,10 @@ class BaseSection(abc.ABC):
         Compute the along-section coordinate array from x-y pts pairs
         definining the section.
         """
-        self._s = np.cumsum(np.hstack((0, np.sqrt((self._x[1:] - self._x[:-1])**2
-                                                  + (self._y[1:] - self._y[:-1])**2))))
+        # if len(self._x) > 1:
+        self._s = np.cumsum(np.hstack(
+            (0, np.sqrt((self._x[1:] - self._x[:-1])**2
+             + (self._y[1:] - self._y[:-1])**2))))
         self._z = self.cube.z
         self._shape = (len(self._z), len(self._s))
         self._trace = np.column_stack((self._x, self._y))
@@ -344,25 +350,19 @@ class BaseSection(abc.ABC):
         """
         if type(self.cube) is cube.DataCube:
             if self.cube._knows_stratigraphy:
-                return DataSectionVariable(_data=self.cube[var].data.values[:,
-                                                                     self._y,
-                                                                     self._x],
-                                           _s=self.s, _z=self.z,
-                                           _psvd_mask=self.cube.strat_attr.psvd_idx[:,
-                                                                                    self._y,
-                                                                                    self._x],
-                                           _strat_attr=self.cube.strat_attr(
-                                            'section', self._y, self._x))
+                return DataSectionVariable(
+                    _data=self.cube[var].data.values[:, self._y, self._x],
+                    _s=self.s, _z=self.z,
+                    _psvd_mask=self.cube.strat_attr.psvd_idx[:, self._y, self._x],
+                    _strat_attr=self.cube.strat_attr('section', self._y, self._x))
             else:
-                return DataSectionVariable(_data=self.cube[var].data.values[:,
-                                                                     self._y,
-                                                                     self._x],
-                                           _s=self.s, _z=self.z)
+                return DataSectionVariable(
+                    _data=self.cube[var].data.values[:, self._y, self._x],
+                    _s=self.s, _z=self.z)
         elif type(self.cube) is cube.StratigraphyCube:
-            return StratigraphySectionVariable(_data=self.cube[var].data.values[:,
-                                                                    self._y,
-                                                                    self._x],
-                                               _s=self.s, _z=self.z)
+            return StratigraphySectionVariable(
+                _data=self.cube[var].data.values[:, self._y, self._x],
+                _s=self.s, _z=self.z)
         elif self.cube is None:
             raise AttributeError(
                 'No cube connected. Are you sure you ran `.connect()`?')
@@ -391,16 +391,18 @@ class BaseSection(abc.ABC):
             Which attribute to show.
 
         style : :obj:`str`, optional
-            What style to display the section with. Choices are 'mesh' or 'line'.
+            What style to display the section with. Choices are 'mesh' or
+            'line'.
 
         data : :obj:`str`, optional
             Argument passed to
             :obj:`~deltametrics.section.DataSectionVariable.get_display_arrays`
-            or :obj:`~deltametrics.section.DataSectionVariable.get_display_lines`.
+            or
+            :obj:`~deltametrics.section.DataSectionVariable.get_display_lines`.
             Supported options are `'spacetime'`, `'preserved'`, and
             `'stratigraphy'`. Default is to display full spacetime plot for
-            section generated from a `DataCube`, and stratigraphy for
-            a `StratigraphyCube` section.
+            section generated from a `DataCube`, and stratigraphy for a
+            `StratigraphyCube` section.
 
         label : :obj:`bool`, `str`, optional
             Display a label of the variable name on the plot. Default is
@@ -484,8 +486,8 @@ class BaseSection(abc.ABC):
             ax.text(0.99, 0.8, _label, fontsize=8,
                     horizontalalignment='right', verticalalignment='center',
                     transform=ax.transAxes)
-        xmin, xmax, ymin, ymax = plot.get_display_limits(SectionVariableInstance,
-                                                         data=data)
+        xmin, xmax, ymin, ymax = plot.get_display_limits(
+            SectionVariableInstance, data=data)
         ax.set_xlim(xmin, xmax)
         ax.set_ylim(ymin, ymax)
 
@@ -970,3 +972,55 @@ class RadialSection(BaseSection):
         xy = utils.line_to_cells(self.origin, end_point)
         self._x = xy[0]
         self._y = xy[1]
+
+
+class BaseCore(BaseSection):
+    """BaseCore.
+
+    Passthrough class for type checking differentiation.
+    """
+    def __init__(self, core_type, *args, **kwargs):
+        super().__init__(core_type, *args, **kwargs)
+
+
+class VerticalCore(BaseCore):
+    """A vertical core, 1d section.
+
+    A vertical core through the Cube. Implemented as a subclass (special) of
+    the BaseSection, via the BaseCore.
+    """
+    def __init__(self, *args, px, py, **kwargs):
+        """Instantiate
+
+        Parameters
+        ----------
+        px
+        py
+        length, optional
+        """
+        self._input_px = px
+        self._input_py = py
+        self._input_length = kwargs.pop('length', None)
+        super().__init__('vertical_core', *args, **kwargs)
+
+    def _compute_section_coords(self):
+        """Compute the core index locations."""
+        # determine the length needed
+        if (self._input_length is None):
+            self.length = self.cube.shape[0]
+        else:
+            self.length = self._input_length
+
+        self._x = np.array([self._input_px])
+        self._y = np.array([self._input_py])
+        self._z = np.arange(self.length, dtype=np.int)
+
+
+class HorizontalCore(BaseCore):
+    def __init__(self):
+        raise NotImplementedError
+
+
+class KickoffCore(BaseCore):
+    def __init__(self):
+        raise NotImplementedError

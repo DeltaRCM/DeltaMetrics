@@ -805,7 +805,7 @@ class TestDataSectionVariableNoStratigraphy:
 
     def test_dsv_view_from(self):
         _arr = self.dsv + 5  # takes a view from
-        assert not _arr is self.dsv
+        assert not (_arr is self.dsv)
         _arr2 = (_arr - 5)
         assert np.all(_arr2 == pytest.approx(self.dsv, abs=1e-6))
 
