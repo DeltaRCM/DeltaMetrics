@@ -43,6 +43,10 @@ class TestDataCubeNoStratigraphy:
         with pytest.raises(ValueError):
             nocube = cube.DataCube('./nonexistent/path.doc')
 
+    def test_warning_netcdf_no_metadata(self):
+        with pytest.warns(UserWarning):
+            rcm8cube = cube.DataCube(rcm8_path)
+
     def test_stratigraphy_from_eta(self):
         rcm8cube = cube.DataCube(rcm8_path)
         rcm8cube.stratigraphy_from('eta')
