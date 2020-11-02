@@ -229,7 +229,6 @@ class BaseSection(abc.ABC):
                                 _gottype=type(CubeInstance)))
         self.cube = CubeInstance
         self._variables = self.cube.variables
-        # self._name = self._name or name or self.section_type
         self.name = name  # use the setter to determine the _name
         self._compute_section_coords()
         self._compute_section_attrs()
@@ -246,10 +245,11 @@ class BaseSection(abc.ABC):
         else:
             # _name is already set
             if not (var is None):
-                warnings.warn(UserWarning("`name` argument supplied to \
-                    instantiated `Section` object. To change the name of \
-                    a Section, you must set the attribute directly with \
-                    `section._name = 'name'`."))
+                warnings.warn(
+                    UserWarning("`name` argument supplied to instantiated "
+                                "`Section` object. To change the name of "
+                                "a Section, you must set the attribute "
+                                "directly with `section._name = 'name'`."))
             # do nothing
 
     @abc.abstractmethod
