@@ -400,6 +400,10 @@ class VariableSet(object):
         if not var:
             sandfrac = colors.ListedColormap(
                 ['saddlebrown', 'sienna', 'goldenrod', 'gold'])
+            # thresh = 0.2
+            # nodes = [0, thresh, thresh, 1.0]
+            # clist = ["saddlebrown", "saddlebrown", "sienna", "gold"]
+            # sandfrac = colors.LinearSegmentedColormap.from_list("", list(zip(nodes, clist)))
             sandfrac.set_under('saddlebrown')
             bn = colors.BoundaryNorm([1e-6, 1], sandfrac.N)
             self._strata_sand_frac = VariableInfo('strata_sand_frac',

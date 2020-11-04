@@ -8,12 +8,6 @@ import matplotlib.pyplot as plt
 import multiprocessing
 
 
-def compute_trajectory():
-    """Show 1d profile at point.
-    """
-    pass
-
-
 def compute_compensation(line1, line2):
     """Compute compensation statistic betwen two lines.
 
@@ -35,7 +29,7 @@ def compute_compensation(line1, line2):
         Compensation statistic.
 
     """
-    pass
+    raise NotImplementedError
 
 
 def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
