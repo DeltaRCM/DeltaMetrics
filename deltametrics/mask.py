@@ -999,13 +999,19 @@ class GeometricMask(BaseMask):
     def yc(self, var):
         self._yc = var
 
-    def angular(self, theta1, theta2, origin=None):
+    def angular(self, theta1, theta2):
         """Make a mask based on two angles.
 
         Computes a mask that is bounded by 2 angles input by the user.
 
         .. note::
-           Currently origin point is not being honored - need to fix function.
+           Requires a domain with a width greater than 2x its length right now.
+           Function should be re-factored to be more flexible.
+
+        .. note::
+           Currently origin point is fixed, function should be extended to
+           allow for an input origin point from which the angular bounds are
+           determined.
 
         Parameters
         ----------
@@ -1015,21 +1021,15 @@ class GeometricMask(BaseMask):
         theta2 : float
             Radian value controlling the right bound of the mask
 
-        origin : tuple, optional
-            Tuple containing the (x, y) coordinate of the origin point.
-            If unspecified, it is assumed to be at the center of a boundary
-            where pyDeltaRCM places the inlet.
-
         """
-        if origin is not None:
-            self.xc = origin[0]
-            self.yc = origin[1]
-
+        if self.L/self.W > 0.5:
+            raise ValueError('Width of input array must exceed 2x length.')
         y, x = np.ogrid[0:self.W, -self.L:self.L]
         theta = np.arctan2(x, y) - theta1 + np.pi/2
         theta %= (2*np.pi)
         anglemask = theta <= (theta2-theta1)
-        anglemap = anglemask[:self.L, :self.W]
+        _, B = np.shape(anglemask)
+        anglemap = anglemask[:self.L, int(B/2-self.W/2):int(B/2+self.W/2)]
 
         self._mask = self._mask * anglemap
 

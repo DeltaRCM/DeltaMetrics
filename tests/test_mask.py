@@ -813,6 +813,25 @@ class TestGeometricMask:
         assert np.all(gmsk._mask[0, :, 2:4] == 1)
         assert np.all(gmsk._mask[0, :, 4:] == 0)
 
+    def test_angular_half(self):
+        """Test angular mask over half of domain"""
+        arr = np.zeros((1, 100, 200))
+        gmsk = mask.GeometricMask(arr)
+        theta1 = 0
+        theta2 = np.pi/2
+        gmsk.angular(theta1, theta2)
+        # assert 1s half
+        assert np.all(gmsk._mask[-1, :, :101] == 1)
+        assert np.all(gmsk._mask[-1, :, 101:] == 0)
+
+    def test_angular_bad_dims(self):
+        """raise error."""
+        arr = np.zeros((5, 5))
+        gmsk = mask.GeometricMask(arr)
+        with pytest.raises(ValueError):
+            gmsk.angular(0, np.pi/2)
+
+
 def test_plotter(tmp_path):
     """Test the show() function."""
     import matplotlib.pyplot as plt
