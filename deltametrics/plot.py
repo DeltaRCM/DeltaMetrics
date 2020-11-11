@@ -2,6 +2,7 @@ import os
 import sys
 
 import numpy as np
+import colorsys
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -873,3 +874,41 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
     else:
         ax.set_ylim(np.min(e) * 0.8, np.max(e) * 1.2)
     ax.legend()
+
+
+def scale_lightness(rgb, scale_l):
+    # https://stackoverflow.com/a/60562502/4038393
+    # convert rgb to hls
+    h, l, s = colorsys.rgb_to_hls(*rgb)
+    # manipulate h, l, s values and return as rgb
+    return colorsys.hls_to_rgb(h, min(1, l * np.abs(scale_l)), s=s)
+
+
+def show_histograms(*args, sets=None):
+    """Show multiple histograms, including as sets.
+
+    Each `*args` input argument should be a tuple of (counts, bins).
+
+    `sets` should be a list or array indicating the set each pdf belongs to.
+    For example, [0, 0, 1, 1, 2] incidated the first two args are from the
+    first set, the third and fourth belong to a second set, and the fifth
+    argument belongs to a third set.
+    """
+    sets = np.array(sets)
+
+    fig, ax = plt.subplots()
+    if not(sets is None):
+        n_sets = len(np.unique(sets))
+    else:
+        n_sets = len(*args)
+
+    for i in range(n_sets):
+        CN = 'C%d' % (i)
+        match = np.where((sets == i))[0]
+        scales = np.linspace(0.8, 1.2, num=len(match))
+        CNs = [scale_lightness(colors.to_rgb(CN), sc) for s, sc in enumerate(scales)]
+        for n in range(len(match)):
+            hist, bins = args[match[n]]
+            bin_width = (bins[1:] - bins[:-1])
+            bin_cent = bins[:-1] + (bin_width/2)
+            ax.bar(bin_cent, hist, width=bin_width, edgecolor=CNs[n], facecolor=CNs[n])

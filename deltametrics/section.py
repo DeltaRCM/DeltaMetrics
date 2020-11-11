@@ -371,7 +371,7 @@ class BaseSection(abc.ABC):
                             % type(self.cube))
 
     def show(self, SectionAttribute, style='shaded', data=None,
-             label=False, ax=None):
+             label=False, colorbar=True, ax=None):
         """Show the section.
 
         Method enumerates convenient routines for visualizing sections of data
@@ -407,6 +407,9 @@ class BaseSection(abc.ABC):
             False, display nothing. If ``label=True``, the label name from the
             :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
             attempted to coerce to `str`, and the literal is diplayed.
+
+        colorbar : :obj:`bool`, optional
+            Whether a colorbar is appended to the axis.
 
         ax : :obj:`~matplotlib.pyplot.Axes` object, optional
             A `matplotlib` `Axes` object to plot the section. Optional; if not
@@ -476,7 +479,8 @@ class BaseSection(abc.ABC):
             raise ValueError('Bad style argument: "%s"' % style)
 
         # style adjustments
-        cb = plot.append_colorbar(ci, ax)
+        if colorbar:
+            cb = plot.append_colorbar(ci, ax)
         ax.margins(y=0.2)
         if label:
             _label = _varinfo.label if (label is True) else str(
