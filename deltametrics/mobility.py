@@ -386,3 +386,32 @@ def calculate_channel_abandonment(chmap, basevalues, time_window):
             PwetA[i, Nstep] = stepA/baseA
 
     return PwetA
+
+
+def channel_presence(chmap):
+    """
+    Calculate the normalized channel presence at each pixel location.
+
+    Measure the normalized fraction of time a given pixel is channelized,
+    based on method in Liang et al 2016. This requires providing a 3-D input
+    channel map (t-x-y).
+
+    Parameters
+    ----------
+    chmap : ndarray
+        A t-x-y shaped array with binary channel maps
+
+    Returns
+    -------
+    channel_presence : ndarray
+        A x-y shaped array with the normalized channel presence values.
+
+    """
+    if isinstance(chmap, mask.ChannelMask) is True:
+        chans = chmap._mask
+    elif isinstance(chmap, np.ndarray) is True:
+        chans = chmap
+    else:
+        raise TypeError('chmap data type not understood.')
+    channel_presence = np.sum(chans, axis=0) / chans.shape[0]
+    return channel_presence

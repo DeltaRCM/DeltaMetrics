@@ -177,3 +177,12 @@ def test_channel_abandon():
     """Test channel abandonment function."""
     ch_abandon = mob.calculate_channel_abandonment(chmap, basevalue, time_window)
     assert np.all(ch_abandon == np.array([[0., 0.25, 0.5, 0.75, 1.]]))
+
+
+def test_channel_presence():
+    """Test channel presence."""
+    chan_presence = mob.channel_presence(chmap)
+    assert np.all(chan_presence == np.array([[0., 0.8, 0.2, 0.],
+                                             [0., 0.6, 0.4, 0.],
+                                             [0., 0.4, 0.6, 0.],
+                                             [0., 0.2, 0.8, 0.]]))
