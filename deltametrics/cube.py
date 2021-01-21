@@ -408,7 +408,8 @@ class BaseCube(abc.ABC):
         _grid = pv.wrap(self[var].data.values)
         _grid.plot()
 
-    def show_plan(self, var, t=-1, ax=None, title=None, ticks=False):
+    def show_plan(self, var, t=-1, ax=None, title=None, ticks=False,
+                  colorbar_label=False):
         """Show planform image.
 
         .. warning::
@@ -426,6 +427,10 @@ class BaseCube(abc.ABC):
                        vmin=self.varset[var].vmin,
                        vmax=self.varset[var].vmax)
         cb = plot.append_colorbar(im, ax)
+        if colorbar_label:
+            _colorbar_label = self.varset[var].label if (colorbar_label is True) \
+                else str(colorbar_label)  # use custom if passed
+            cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
 
         if not ticks:
             ax.set_xticks([], minor=[])
