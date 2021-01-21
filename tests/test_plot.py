@@ -444,3 +444,53 @@ class TestGetDisplayLimits:
     def test_ssv_get_display_limits_stratigraphy(self):
         _lims = plot.get_display_limits(self.ssv, data='stratigraphy')
         assert len(_lims) == 4
+
+
+class TestColorMapFunctions:
+    # note, no plotting, just boundaries and values checking
+
+    rcm8cube = cube.DataCube(rcm8_path)
+
+    def test_cartographic_SL0_defaults(self):
+        H_SL = 0
+        cmap, norm = plot.cartographic_colormap(H_SL)
+
+        assert cmap.colors.shape == (10, 4)
+        assert norm.boundaries[0] == H_SL-4.5
+        assert norm.boundaries[-1] == H_SL+1
+
+    def test_cartographic_SL0_h(self):
+        H_SL = 0
+        _h = 10
+        cmap, norm = plot.cartographic_colormap(H_SL, h=_h)
+
+        assert cmap.colors.shape == (10, 4)
+        assert norm.boundaries[0] == H_SL-_h
+        assert norm.boundaries[-1] == H_SL+1
+
+    def test_cartographic_SL0_n(self):
+        H_SL = 0
+        _n = 0.1
+        cmap, norm = plot.cartographic_colormap(H_SL, n=_n)
+
+        assert cmap.colors.shape == (10, 4)
+        assert norm.boundaries[0] == H_SL-4.5
+        assert norm.boundaries[-1] == H_SL+(_n)
+
+    def test_cartographic_SLn1_defaults(self):
+        H_SL = -1
+        cmap, norm = plot.cartographic_colormap(H_SL)
+
+        assert cmap.colors.shape == (10, 4)
+        assert norm.boundaries[0] == H_SL-4.5
+        assert norm.boundaries[-1] == H_SL+1
+
+    def test_cartographic_SL1_hn(self):
+        H_SL = -1
+        _h = 10
+        _n = 0.1
+        cmap, norm = plot.cartographic_colormap(H_SL, h=_h, n=_n)
+
+        assert cmap.colors.shape == (10, 4)
+        assert norm.boundaries[0] == H_SL-_h
+        assert norm.boundaries[-1] == H_SL+(_n)
