@@ -714,6 +714,124 @@ class TestCenterlineMask:
         assert hasattr(centerlinemask, 'mask') is True
 
 
+class TestGeometricMask:
+    """Tests associated with the mask.GeometricMask class."""
+
+    def test_initialize_gm(self):
+        """Test initialization."""
+        arr = np.zeros((1, 10, 10))
+        gmsk = mask.GeometricMask(arr)
+        assert gmsk.mask_type == 'geometric'
+        assert np.shape(gmsk._mask) == np.shape(arr)
+        assert np.all(gmsk._mask == 1)
+        assert gmsk._xc == 0
+        assert gmsk._yc == 5
+        assert gmsk.xc == gmsk._xc
+        assert gmsk.yc == gmsk._yc
+
+    def test_initialize_wrong_ismask(self):
+        """Test with bad input mask."""
+        arr = np.zeros((1, 10, 10))
+        arr[0, 1, 1] = 1
+        arr[0, 0, 0] = 5  # make input non-binary
+        with pytest.raises(TypeError):
+            mask.GeometricMask(arr, is_mask='blah')
+
+    def test_initialize_with_mask(self):
+        """Test init with mask."""
+        msk = np.zeros((1, 10, 10))
+        msk[0, 0, :] = 1
+        gmsk = mask.GeometricMask(msk, is_mask=True)
+        assert np.all(gmsk._mask == msk)
+
+    def test_circular_default(self):
+        """Test circular mask with defaults, small case."""
+        arr = np.zeros((1, 5, 5))
+        gmsk = mask.GeometricMask(arr)
+        gmsk.circular(1)
+        assert gmsk._mask[0, 0, 2] == 0
+
+    def test_circular_2radii(self):
+        """Test circular mask with 2 radii, small case."""
+        arr = np.zeros((1, 7, 7))
+        gmsk = mask.GeometricMask(arr)
+        gmsk.circular(1, 2)
+        assert gmsk._mask[0, 0, 3] == 0
+        assert np.all(gmsk._mask[0, :, -1] == 0)
+        assert np.all(gmsk._mask[0, :, 0] == 0)
+        assert np.all(gmsk._mask[0, -1, :] == 0)
+
+    def test_circular_custom_origin(self):
+        """Test circular mask with defined origin."""
+        arr = np.zeros((1, 7, 7))
+        gmsk = mask.GeometricMask(arr)
+        gmsk.circular(1, 2, origin=(3, 3))
+        assert gmsk._mask[0, 3, 3] == 0
+        assert np.all(gmsk._mask == np.array([[[0., 0., 0., 0., 0., 0., 0.],
+                                               [0., 0., 0., 1., 0., 0., 0.],
+                                               [0., 0., 1., 1., 1., 0., 0.],
+                                               [0., 1., 1., 0., 1., 1., 0.],
+                                               [0., 0., 1., 1., 1., 0., 0.],
+                                               [0., 0., 0., 1., 0., 0., 0.],
+                                               [0., 0., 0., 0., 0., 0., 0.]]])
+                      )
+        assert gmsk.xc == 3
+        assert gmsk.yc == 3
+
+    def test_strike_one(self):
+        """Test strike masking with one value."""
+        arr = np.zeros((1, 7, 7))
+        gmsk = mask.GeometricMask(arr)
+        gmsk.strike(2)
+        assert np.all(gmsk._mask[0, :2, :] == 0)
+        assert np.all(gmsk._mask[0, 2:, :] == 1)
+
+    def test_strike_two(self):
+        """Test strike masking with two values."""
+        arr = np.zeros((1, 7, 7))
+        gmsk = mask.GeometricMask(arr)
+        gmsk.strike(2, 4)
+        assert np.all(gmsk._mask[0, :2, :] == 0)
+        assert np.all(gmsk._mask[0, 2:4, :] == 1)
+        assert np.all(gmsk._mask[0, 4:, :] == 0)
+
+    def test_dip_one(self):
+        """Test dip masking with one value."""
+        arr = np.zeros((1, 7, 7))
+        gmsk = mask.GeometricMask(arr)
+        gmsk.dip(5)
+        assert np.all(gmsk._mask[0, :, 1:-1] == 1)
+        assert np.all(gmsk._mask[0, :, 0] == 0)
+        assert np.all(gmsk._mask[0, :, -1] == 0)
+
+    def test_dip_two(self):
+        """Test dip masking with two values."""
+        arr = np.zeros((1, 7, 7))
+        gmsk = mask.GeometricMask(arr)
+        gmsk.dip(2, 4)
+        assert np.all(gmsk._mask[0, :, 0:2] == 0)
+        assert np.all(gmsk._mask[0, :, 2:4] == 1)
+        assert np.all(gmsk._mask[0, :, 4:] == 0)
+
+    def test_angular_half(self):
+        """Test angular mask over half of domain"""
+        arr = np.zeros((1, 100, 200))
+        gmsk = mask.GeometricMask(arr)
+        theta1 = 0
+        theta2 = np.pi/2
+        gmsk.angular(theta1, theta2)
+        # assert 1s half
+        assert np.all(gmsk._mask[-1, :, :101] == 1)
+        assert np.all(gmsk._mask[-1, :, 101:] == 0)
+
+    def test_angular_bad_dims(self):
+        """raise error."""
+        arr = np.zeros((5, 5))
+        gmsk = mask.GeometricMask(arr)
+        with pytest.raises(ValueError):
+            gmsk.angular(0, np.pi/2)
+
+
 def test_plotter(tmp_path):
     """Test the show() function."""
     import matplotlib.pyplot as plt

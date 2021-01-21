@@ -916,3 +916,211 @@ class CenterlineMask(BaseMask):
             nms_norm = self.nms/self.nms.max()
             # compute mask
             self._mask = (nms_norm > self.nms_threshold) * 1
+
+
+class GeometricMask(BaseMask):
+    """Create simple geometric masks.
+
+    A geometric mask object, allows for creation of subdomains in multiple
+    ways. Angular boundaries can define an area of interest in the shape
+    of an arc. Radial boundaries can define a radial region to mask.
+    Boundaries defined in the strike direction (perpendicular to inlet
+    channel), can be supplied to define a region of interest. Similarly,
+    boundaries can be defined in the dip direction (parallel to inlet channel
+    orientation).
+
+    Examples
+    --------
+    Initialize the geometric mask using model topography as a base.
+        >>> arr = rcm8cube['eta'][-1, :, :]
+        >>> gmsk = dm.mask.GeometricMask(arr)
+
+    Define an angular mask to cover half the domain from 0 to pi/2.
+        >>> gmsk.angular(0, np.pi/2)
+
+    Further mask this region by defining some bounds in the strike direction.
+        >>> gmsk.strike(10, 50)
+
+    Visualize the mask:
+        >>> gmsk.show()
+
+    .. plot:: mask/geomask.py
+
+    """
+
+    def __init__(self, arr, is_mask=False):
+        """Initialize the GeometricMask.
+
+        Initializing the geometric mask object requires a 2-D array of the
+        region you wish to apply the mask to.
+
+        Parameters
+        ----------
+        arr : ndarray
+            2-D array to be masked.
+
+        is_mask : bool, optional
+            Whether the data in :obj:`arr` is already a binary mask. Default
+            value is False. This should be set to True, if you have already
+            binarized the data yourself, using custom routines, or want to
+            further mask a pre-existing mask using geometric boundaries, this
+            should be set to True.
+
+        """
+        super().__init__(mask_type='geometric', data=arr)
+
+        if is_mask is False:
+            self._mask = np.ones_like(self.data)
+        elif is_mask is True:
+            self._mask = self.data
+        else:
+            raise TypeError('is_mask must be a `bool`,'
+                            'but was: ' + str(type(is_mask)))
+
+        _, self.L, self.W = np.shape(self._mask)
+        self.xc = 0
+        self.yc = int(self.W/2)
+
+    @property
+    def xc(self):
+        """x-coordinate of origin point."""
+        return self._xc
+
+    @xc.setter
+    def xc(self, var):
+        self._xc = var
+
+    @property
+    def yc(self):
+        """y-coordinate of origin point."""
+        return self._yc
+
+    @yc.setter
+    def yc(self, var):
+        self._yc = var
+
+    def angular(self, theta1, theta2):
+        """Make a mask based on two angles.
+
+        Computes a mask that is bounded by 2 angles input by the user.
+
+        .. note::
+           Requires a domain with a width greater than 2x its length right now.
+           Function should be re-factored to be more flexible.
+
+        .. note::
+           Currently origin point is fixed, function should be extended to
+           allow for an input origin point from which the angular bounds are
+           determined.
+
+        Parameters
+        ----------
+        theta1 : float
+            Radian value controlling the left bound of the mask
+
+        theta2 : float
+            Radian value controlling the right bound of the mask
+
+        """
+        if self.L/self.W > 0.5:
+            raise ValueError('Width of input array must exceed 2x length.')
+        y, x = np.ogrid[0:self.W, -self.L:self.L]
+        theta = np.arctan2(x, y) - theta1 + np.pi/2
+        theta %= (2*np.pi)
+        anglemask = theta <= (theta2-theta1)
+        _, B = np.shape(anglemask)
+        anglemap = anglemask[:self.L, int(B/2-self.W/2):int(B/2+self.W/2)]
+
+        self._mask = self._mask * anglemap
+
+    def circular(self, rad1, rad2=None, origin=None):
+        """Make a circular mask bounded by two radii.
+
+        Computes a mask that is bounded by 2 radial distances which are input
+        by the user.
+
+        Parameters
+        ----------
+        rad1 : int
+            Index value to set the inner radius.
+
+        rad2 : int, optional
+            Index value to set the outer radius. If unspecified, this bound
+            is set to extend as the larger dimension of the domain.
+
+        origin : tuple, optional
+            Tuple containing the (x, y) coordinate of the origin point.
+            If unspecified, it is assumed to be at the center of a boundary
+            where pyDeltaRCM places the inlet.
+
+        """
+        if origin is not None:
+            self.xc = origin[0]
+            self.yc = origin[1]
+
+        if rad2 is None:
+            rad2 = np.max((self.L, self.W))
+
+        yy, xx = np.meshgrid(range(self.W), range(self.L))
+        # calculate array of distances from inlet
+        raddist = np.sqrt((yy-self._yc)**2 + (xx-self._xc)**2)
+        # identify points within radial bounds
+        raddist = np.where(raddist >= rad1, raddist, 0)
+        raddist = np.where(raddist <= rad2, raddist, 0)
+        raddist = np.where(raddist == 0, raddist, 1)
+        # make 3D to be consistent with mask
+        raddist = np.reshape(raddist, [1, self.L, self.W])
+        # combine with current mask via multiplication
+        self._mask = self._mask * raddist
+
+    def strike(self, ind1, ind2=None):
+        """Make a mask based on two indices.
+
+        Makes a mask bounded by lines perpendicular to the direction of the
+        flow in the inlet channel.
+
+        Parameters
+        ----------
+        ind1 : int
+            Index value to set first boundary (closest to inlet)
+
+        ind2 : int, optional
+            Index value to set second boundary (farther from inlet). This is
+            optional, if unspecified, this is set to the length of the domain.
+
+        """
+        if ind2 is None:
+            ind2 = self.L
+
+        temp_mask = np.zeros_like(self._mask)
+        temp_mask[:, ind1:ind2, :] = 1
+
+        self._mask = self._mask * temp_mask
+
+    def dip(self, ind1, ind2=None):
+        """Make a mask parallel to the inlet.
+
+        Makes a mask that is parallel to the direction of flow in the inlet.
+        If only one value is supplied, then this mask is centered on the
+        inlet and has a width of ind1. If two values are supplied then they
+        set the bounds for the mask.
+
+        Parameters
+        ----------
+        ind1 : int
+            Width of the mask if ind2 is not specified. Otherwise, it sets
+            the left bound of the mask.
+
+        ind2 : int, optional
+            Right bound of the mask if specified. If not specified, then
+            ind1 sets the width of a mask centered on the inlet.
+
+        """
+        temp_mask = np.zeros_like(self._mask)
+        if ind2 is None:
+            w_ind = int(ind1/2)
+            temp_mask[:, :, self._yc-w_ind:self._yc+w_ind+1] = 1
+        else:
+            temp_mask[:, :, ind1:ind2] = 1
+
+        self._mask = self._mask * temp_mask
