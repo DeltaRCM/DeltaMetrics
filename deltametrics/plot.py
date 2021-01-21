@@ -233,9 +233,11 @@ class VariableSet(object):
                            'velocity', 'sedflux', 'strata_sand_frac'] + \
                           ['x', 'y', 'time'] + _added_list
 
+        self._variables = []
         for var in self.known_list:
             # set to defaults defined below (or None if no default)
             setattr(self, var, None)
+            self._variables.append(var)
 
         if override_dict:  # loop override to set if given
             if not type(override_dict) is dict:
@@ -244,6 +246,7 @@ class VariableSet(object):
                                 % type(override_dict))
             for var in override_dict:
                 setattr(self, var, override_dict[var])
+                self._variables.append(var)
 
         self._after_init = True
 
@@ -943,7 +946,48 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
     ax.legend()
 
 
-def scale_lightness(rgb, scale_l):
+def _scale_lightness(rgb, scale_l):
+    """Utility to scale the lightness of some color.
+
+    Make a color perceptually lighter or darker. Adapted from 
+    https://stackoverflow.com/a/60562502/4038393.
+
+    Parameters
+    ----------
+    rgb : :obj:`tuple`
+        A three element tuple of the RGB values for the color.
+
+    scale_l : :obj:`float`
+        The scale factor, relative to a value of `1`. A value of 1 performs no
+        scaling, and values less than 1 darken the color, whereas values
+        greater than 1 brighten the color.
+
+    Returns
+    -------
+    scaled : :obj:`tuple`
+        Scaled color RGB tuple.
+
+    Example
+    -------
+
+    .. plot::
+        
+        fig, ax = plt.subplots(figsize=(5, 2))
+
+        # initial color red
+        red = (1.0, 0.0, 0.0)
+        ax.plot(-1, 1, 'o', color=red)
+        
+        # scale from 1 to 0.05
+        scales = np.arange(1, 0, -0.05)
+        
+        # loop through scales and plot
+        for s, scale in enumerate(scales):
+            darker_red = dm.plot._scale_lightness(red, scale)
+            ax.plot(s, scale, 'o', color=darker_red)
+        
+        plt.show()
+    """
     # https://stackoverflow.com/a/60562502/4038393
     # convert rgb to hls
     h, l, s = colorsys.rgb_to_hls(*rgb)
@@ -951,31 +995,73 @@ def scale_lightness(rgb, scale_l):
     return colorsys.hls_to_rgb(h, min(1, l * np.abs(scale_l)), s=s)
 
 
-def show_histograms(*args, sets=None):
+def show_histograms(*args, sets=None, ax=None, **kwargs):
     """Show multiple histograms, including as sets.
 
-    Each `*args` input argument should be a tuple of (counts, bins).
+    Parameters
+    ----------
+    *args : :obj:`tuple`
+        Any number of comma separated tuples, where each tuple is a set of
+        `(counts, bins)`, for example, as an output from `np.histogram()`.
 
-    `sets` should be a list or array indicating the set each pdf belongs to.
-    For example, [0, 0, 1, 1, 2] incidated the first two args are from the
-    first set, the third and fourth belong to a second set, and the fifth
-    argument belongs to a third set.
-    """
-    sets = np.array(sets)
+    sets : :obj:`list`, optional
+        A list or numpy array indicating the set each pdf belongs to. For
+        example, [0, 0, 1, 1, 2] incidates the first two `*args` are from the
+        first set, the third and fourth belong to a second set, and the fifth
+        argument belongs to a third set. Length of `sets` must match the
+        number of comma separated `*args`. If not supplied, all histograms are
+        colored differently (up to 10).
 
-    fig, ax = plt.subplots()
-    if not(sets is None):
-        n_sets = len(np.unique(sets))
+    ax : :obj:`matplotlib.pyplot.axes`, optional
+        Axes to plot into. A figure and axes is created, if not given.
+
+    **kwargs
+        Additional `matplotlib` keyword arguments passed to the
+        `bar` plotting routine. In current implementation, cannot use
+        arguments `width`, `edgecolor`, or `facecolor`.
+
+    Returns
+    -------
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        locs = [0.25, 1, 0.5, 4, 2]
+        scales = [0.1, 0.25, 0.4, 0.5, 0.1]
+        bins = np.linspace(0, 6, num=40)
+        
+        hist_bin_sets = [np.histogram(np.random.normal(l, s, size=500), bins=bins, density=True) for l, s in zip(locs, scales)]
+
+        fig, ax = plt.subplots()
+        dm.plot.show_histograms(*hist_bin_sets, sets=[0, 1, 0, 1, 2], ax=ax)
+        ax.set_xlim((0, 6))
+        ax.set_ylabel('density')
+        plt.show()
+    """    
+    if not ax:
+        fig, ax = plt.subplots()
+    
+    if (sets is None):
+        n_sets = len(args)
+        sets = np.arange(n_sets)
     else:
-        n_sets = len(*args)
+        n_sets = len(np.unique(sets))
+        sets = np.array(sets)
+
+    if len(sets) != len(args):
+        raise ValueError('Number of histogram tuples must match length of `sets` list.')
 
     for i in range(n_sets):
         CN = 'C%d' % (i)
         match = np.where((sets == i))[0]
         scales = np.linspace(0.8, 1.2, num=len(match))
-        CNs = [scale_lightness(colors.to_rgb(CN), sc) for s, sc in enumerate(scales)]
+        CNs = [_scale_lightness(colors.to_rgb(CN), sc) for s, sc in enumerate(scales)]
         for n in range(len(match)):
             hist, bins = args[match[n]]
             bin_width = (bins[1:] - bins[:-1])
             bin_cent = bins[:-1] + (bin_width/2)
-            ax.bar(bin_cent, hist, width=bin_width, edgecolor=CNs[n], facecolor=CNs[n])
+            ax.bar(bin_cent, hist, width=bin_width, 
+                edgecolor=CNs[n], facecolor=CNs[n], **kwargs)

@@ -43,6 +43,7 @@ Plotting utility functions
 .. autofunction:: get_display_lines
 .. autofunction:: get_display_limits
 .. autofunction:: _fill_steps
+.. autofunction:: _scale_lightness
 
 
 DeltaMetrics plot routines
@@ -52,6 +53,7 @@ DeltaMetrics plot routines
     :toctree: ../../_autosummary
 
     show_one_dimensional_trajectory_to_strata
+    show_histograms
 
 
 DeltaMetrics colormaps
