@@ -10,6 +10,7 @@ from skimage import measure
 
 from . import utils
 
+from numba import jit, njit
 
 class BaseMask(object):
     """Low-level base class to be inherited by all mask objects."""
@@ -81,6 +82,71 @@ class BaseMask(object):
         else:
             raise AttributeError('No mask computed and/or mask is all 0s.')
         plt.draw()
+
+
+@jit(nopython=True)
+def ray_tracing(x, y, poly):
+    n = len(poly)
+    inside = False
+    p2x = 0.0
+    p2y = 0.0
+    xints = 0.0
+    p1x,p1y = poly[0]
+    for i in range(n+1):
+        p2x,p2y = poly[i % n]
+        if y > min(p1y,p2y):
+            if y <= max(p1y,p2y):
+                if x <= max(p1x,p2x):
+                    if p1y != p2y:
+                        xints = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
+                    if p1x == p2x or x <= xints:
+                        inside = not inside
+        p1x,p1y = p2x,p2y
+
+    return inside
+
+
+@jit(nopython=True)
+def _points_in_hull(points, hull):
+    
+    npts = points.shape[0]
+    inside = np.zeros((npts,))
+
+    for i in np.arange(npts):
+        inside[i] = ray_tracing(points[i, 0], points[i, 1], hull)
+
+    return inside
+
+
+@njit
+def _compute_angles_between(c1, shoreandborder, Shallowsea, numviews):
+    maxtheta = np.zeros((numviews, c1))
+    for i in range(c1):
+
+        shallow_reshape = np.atleast_2d(Shallowsea[:, i]).T
+        diff = shoreandborder - shallow_reshape
+        x = diff[0]
+        y = diff[1]
+
+        angles = np.arctan2(x, y)
+        angles = np.sort(angles) * 180. / np.pi
+
+        # dangles = np.zeros_like(angles)
+        # dangles = angles[1:] - angles[:-1]
+        # dangles = np.concatenate((dangles,
+        #                           [360 - (angles.max() - angles.min())]))
+        dangles = np.zeros_like(angles)
+        dangles[:-1] = angles[1:] - angles[:-1]
+        remangle = 360 - (angles.max() - angles.min())
+        # breakpoint()
+        # dangles = np.concatenate((dangles,
+                                  # remangle))
+        dangles[-1] = remangle
+        dangles = np.sort(dangles)
+
+        maxtheta[:, i] = dangles[-numviews:]
+
+    return maxtheta
 
 
 class OAM(object):
@@ -204,16 +270,17 @@ class OAM(object):
         bordermap[0, :] = 1
         points = np.fliplr(np.array(np.where(edges > 0)).T)
         hull = ConvexHull(points, qhull_options='Qc')
-        polygon = Polygon(points[hull.vertices]).buffer(0.01)
 
         # identify set of points to evaluate
         sea = np.fliplr(np.array(np.where(thresholdimg > 0.5)).T)
-        points_to_test = [Point(i[0], i[1]) for i in sea]
+        # points_to_test = [Point(i[0], i[1]) for i in sea]
 
         # identify set of points in both the convex hull polygon and
         # defined as points_to_test and put these binary points into seamap
-        In = np.array(list(map(lambda pt: polygon.contains(pt),
-                               points_to_test)))
+        polygon = Polygon(points[hull.vertices]).buffer(0.01)
+        In = _points_in_hull(sea, np.array(polygon.exterior.coords))
+        In = In.astype(np.bool)
+
         Shallowsea_ = sea[In]
         seamap = np.zeros(bordermap.shape)
         flat_inds = list(map(lambda x: np.ravel_multi_index(x, seamap.shape),
@@ -234,21 +301,26 @@ class OAM(object):
         maxtheta = np.zeros((numviews, c1))
 
         # compute angle between each shallowsea and shoreborder point
-        for i in range(c1):
+        # for i in range(c1):
 
-            diff = shoreandborder - Shallowsea[:, i, np.newaxis]
-            x = diff[0]
-            y = diff[1]
+        #     diff = shoreandborder - Shallowsea[:, i, np.newaxis]
+        #     x = diff[0]
+        #     y = diff[1]
 
-            angles = np.arctan2(x, y)
-            angles = np.sort(angles) * 180. / np.pi
+        #     angles = np.arctan2(x, y)
+        #     angles = np.sort(angles) * 180. / np.pi
 
-            dangles = angles[1:] - angles[:-1]
-            dangles = np.concatenate((dangles,
-                                      [360 - (angles.max() - angles.min())]))
-            dangles = np.sort(dangles)
+        #     dangles = angles[1:] - angles[:-1]
+        #     dangles = np.concatenate((dangles,
+        #                               [360 - (angles.max() - angles.min())]))
+        #     dangles = np.sort(dangles)
 
-            maxtheta[:, i] = dangles[-numviews:]
+        #     maxtheta[:, i] = dangles[-numviews:]
+
+        maxtheta = _compute_angles_between(c1, shoreandborder, Shallowsea, numviews)
+
+        # print(np.all(maxtheta == maxtheta2))
+        # breakpoint()
 
         # set up arrays for tracking the shore points and  their angles
         allshore = np.array(np.where(edges > 0))
@@ -256,21 +328,25 @@ class OAM(object):
         maxthetashore = np.zeros((numviews, c3))
 
         # get angles between the shore points and shoreborder points
-        for i in range(c3):
+        # for i in range(c3):
 
-            diff = shoreandborder - allshore[:, i, np.newaxis]
-            x = diff[0]
-            y = diff[1]
+        #     diff = shoreandborder - allshore[:, i, np.newaxis]
+        #     x = diff[0]
+        #     y = diff[1]
 
-            angles = np.arctan2(x, y)
-            angles = np.sort(angles) * 180. / np.pi
+        #     angles = np.arctan2(x, y)
+        #     angles = np.sort(angles) * 180. / np.pi
 
-            dangles = angles[1:] - angles[:-1]
-            dangles = np.concatenate((dangles,
-                                      [360 - (angles.max() - angles.min())]))
-            dangles = np.sort(dangles)
+        #     dangles = angles[1:] - angles[:-1]
+        #     dangles = np.concatenate((dangles,
+        #                               [360 - (angles.max() - angles.min())]))
+        #     dangles = np.sort(dangles)
 
-            maxthetashore[:, i] = dangles[-numviews:]
+        #     maxthetashore[:, i] = dangles[-numviews:]
+
+        maxthetashore = _compute_angles_between(c3, shoreandborder, allshore, numviews)
+
+        # print(np.all(maxthetashore == maxthetashore2))
 
         # define the shoreangles and seaangles identified
         shoreangles = np.vstack([allshore, maxthetashore])
