@@ -2,6 +2,7 @@ import os
 import sys
 
 import numpy as np
+import colorsys
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -229,12 +230,14 @@ class VariableSet(object):
 
         _added_list = ['net_to_gross']
         self.known_list = ['eta', 'stage', 'depth', 'discharge',
-                           'velocity', 'strata_sand_frac'] + \
+                           'velocity', 'sedflux', 'strata_sand_frac'] + \
                           ['x', 'y', 'time'] + _added_list
 
+        self._variables = []
         for var in self.known_list:
             # set to defaults defined below (or None if no default)
             setattr(self, var, None)
+            self._variables.append(var)
 
         if override_dict:  # loop override to set if given
             if not type(override_dict) is dict:
@@ -243,6 +246,7 @@ class VariableSet(object):
                                 % type(override_dict))
             for var in override_dict:
                 setattr(self, var, override_dict[var])
+                self._variables.append(var)
 
         self._after_init = True
 
@@ -390,6 +394,23 @@ class VariableSet(object):
             raise TypeError
 
     @property
+    def sedflux(self):
+        """Flow sedflux style.
+        """
+        return self._sedflux
+
+    @sedflux.setter
+    def sedflux(self, var):
+        if not var:
+            cmap = cm.get_cmap('magma', 64)
+            self._sedflux = VariableInfo('sedflux', cmap=cmap,
+                                          label='sediment flux')
+        elif type(var) is VariableInfo:
+            self._sedflux = var
+        else:
+            raise TypeError
+
+    @property
     def strata_sand_frac(self):
         """Sand fraction style.
         """
@@ -449,20 +470,68 @@ class VariableSet(object):
             raise TypeError
 
 
-def cartographic_colormap():
+def cartographic_colormap(H_SL=0.0, h=4.5, n=1.0):
     """Colormap for an elevation map style.
 
-    .. warning::
-        Not implemented.
+    Parameters
+    ----------
+    H_SL : :obj:`float`, optional
+        Sea level for the colormap. This is the break-point
+        between blues and greens. Default value is `0.0`.
 
-    .. note::
-        This should implement `something that looks like this
-        <https://matplotlib.org/3.2.1/tutorials/colors/colormapnorms.html#twoslopenorm-different-mapping-on-either-side-of-a-center>`_,
-        and should be configured to always setting the break to whatever
-        sea-level is (or zero?).
+    h : :obj:`float`, optional
+        Channel depth for the colormap. This is some characteristic *below
+        sea-level* relief for the colormap to extend to through the range of
+        blues. Default value is `4.5`.
+
+    n : :obj:`float`, optional
+        Surface topography relief for the colormap. This is some
+        characteristic *above sea-level* relief for the colormap to extend to
+        through the range of greens. Default value is `1.0`.
+
+    Returns
+    -------
+    delta : :obj:`matplotib.colors.ListedColormap`
+        The colormap object, which can then be used by other `matplotlib`
+        plotting routines (see examples below).
+
+    norm : :obj:`matplotib.colors.BoundaryNorm`
+        The color normalization object, which can then be used by other
+        `matplotlib` plotting routines (see examples below).
+
+    Examples
+    --------
+
+    To display with default depth and relief parameters (left) and with adjust
+    parameters to highlight depth variability (right):
+
+    .. plot::
+        :include-source:
+
+        rcm8cube = dm.sample_data.cube.rcm8()
+        
+        cmap0, norm0 = dm.plot.cartographic_colormap(H_SL=0)
+        cmap1, norm1 = dm.plot.cartographic_colormap(H_SL=0, h=5, n=0.5)
+
+        fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+        im0 = ax[0].imshow(rcm8cube['eta'][-1, ...], origin='lower',
+                       cmap=cmap0, norm=norm0)
+        cb0 = dm.plot.append_colorbar(im0, ax[0])
+        im1 = ax[1].imshow(rcm8cube['eta'][-1, ...], origin='lower',
+                       cmap=cmap1, norm=norm1)
+        cb1 = dm.plot.append_colorbar(im1, ax[1])
+        plt.show()
     """
-
-    raise NotImplementedError
+    blues = matplotlib.cm.get_cmap('Blues_r', 64)
+    greens = matplotlib.cm.get_cmap('YlGn_r', 64)
+    combined = np.vstack((blues(np.linspace(0.1, 0.7, 5)),
+                          greens(np.linspace(0.2, 0.8, 5))))
+    delta = matplotlib.colors.ListedColormap(combined, name='delta')
+    bounds = np.hstack(
+        (np.linspace(H_SL-h, H_SL-(n/2), 5),
+         np.linspace(H_SL, H_SL+n, 6)))
+    norm = matplotlib.colors.BoundaryNorm(bounds, len(bounds)-1)
+    return delta, norm
 
 
 def aerial_colormap():
@@ -475,7 +544,7 @@ def aerial_colormap():
     raise NotImplementedError
 
 
-def append_colorbar(ci, ax):
+def append_colorbar(ci, ax, size=2):
     """Append a colorbar, consistently placed.
 
     Adjusts some parameters of the parent axes as well.
@@ -499,9 +568,9 @@ def append_colorbar(ci, ax):
         The colorbar instance created.
     """
     divider = axtk.axes_divider.make_axes_locatable(ax)
-    cax = divider.append_axes("right", size="2%", pad=0.05)
+    cax = divider.append_axes("right", size=str(size)+"%", pad=0.05)
     cb = plt.colorbar(ci, cax=cax)
-    cb.ax.tick_params(labelsize=7)
+    cb.ax.tick_params(labelsize=9)
     ax.use_sticky_edges = False
 
     return cb
@@ -770,7 +839,7 @@ def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
 
 
 def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
-                                              show_strata=True):
+                                              show_strata=True, label_strata=False):
     """1d elevation to stratigraphy.
 
     This function creates and displays a one-dimensional elevation timeseries
@@ -847,7 +916,8 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
     _s = ax.step(t, s, linestyle='--', where='post', label='stratigraphy')
     _pd = ax.plot(t[p], s[p], color='0.5', marker='o',
                   ls='none', label='psvd time')
-    ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
+    if len(t) < 100:
+        ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
     ax.grid(which='both', axis='x')
 
     if show_strata:
@@ -863,8 +933,9 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
         _ss2 = ax_s.hlines(e[p], 0, 1, linestyles='dashed', colors='gray')
         _cstr = [str(int(cc)) if np.isfinite(cc) else 'nan' for cc in c.flatten()]
         ax_s.set_xlim(0, 1)
-        for i, __cstr in enumerate(_cstr):
-            ax_s.text(0.3, z[i], str(__cstr), fontsize=8)
+        if label_strata:
+            for i, __cstr in enumerate(_cstr):
+                ax_s.text(0.3, z[i], str(__cstr), fontsize=8)
 
     # adjust and add legend
     if np.any(e < 0):
@@ -873,3 +944,124 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
     else:
         ax.set_ylim(np.min(e) * 0.8, np.max(e) * 1.2)
     ax.legend()
+
+
+def _scale_lightness(rgb, scale_l):
+    """Utility to scale the lightness of some color.
+
+    Make a color perceptually lighter or darker. Adapted from 
+    https://stackoverflow.com/a/60562502/4038393.
+
+    Parameters
+    ----------
+    rgb : :obj:`tuple`
+        A three element tuple of the RGB values for the color.
+
+    scale_l : :obj:`float`
+        The scale factor, relative to a value of `1`. A value of 1 performs no
+        scaling, and values less than 1 darken the color, whereas values
+        greater than 1 brighten the color.
+
+    Returns
+    -------
+    scaled : :obj:`tuple`
+        Scaled color RGB tuple.
+
+    Example
+    -------
+
+    .. plot::
+        
+        fig, ax = plt.subplots(figsize=(5, 2))
+
+        # initial color red
+        red = (1.0, 0.0, 0.0)
+        ax.plot(-1, 1, 'o', color=red)
+        
+        # scale from 1 to 0.05
+        scales = np.arange(1, 0, -0.05)
+        
+        # loop through scales and plot
+        for s, scale in enumerate(scales):
+            darker_red = dm.plot._scale_lightness(red, scale)
+            ax.plot(s, scale, 'o', color=darker_red)
+        
+        plt.show()
+    """
+    # https://stackoverflow.com/a/60562502/4038393
+    # convert rgb to hls
+    h, l, s = colorsys.rgb_to_hls(*rgb)
+    # manipulate h, l, s values and return as rgb
+    return colorsys.hls_to_rgb(h, min(1, l * np.abs(scale_l)), s=s)
+
+
+def show_histograms(*args, sets=None, ax=None, **kwargs):
+    """Show multiple histograms, including as sets.
+
+    Parameters
+    ----------
+    *args : :obj:`tuple`
+        Any number of comma separated tuples, where each tuple is a set of
+        `(counts, bins)`, for example, as an output from `np.histogram()`.
+
+    sets : :obj:`list`, optional
+        A list or numpy array indicating the set each pdf belongs to. For
+        example, [0, 0, 1, 1, 2] incidates the first two `*args` are from the
+        first set, the third and fourth belong to a second set, and the fifth
+        argument belongs to a third set. Length of `sets` must match the
+        number of comma separated `*args`. If not supplied, all histograms are
+        colored differently (up to 10).
+
+    ax : :obj:`matplotlib.pyplot.axes`, optional
+        Axes to plot into. A figure and axes is created, if not given.
+
+    **kwargs
+        Additional `matplotlib` keyword arguments passed to the
+        `bar` plotting routine. In current implementation, cannot use
+        arguments `width`, `edgecolor`, or `facecolor`.
+
+    Returns
+    -------
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        locs = [0.25, 1, 0.5, 4, 2]
+        scales = [0.1, 0.25, 0.4, 0.5, 0.1]
+        bins = np.linspace(0, 6, num=40)
+        
+        hist_bin_sets = [np.histogram(np.random.normal(l, s, size=500), bins=bins, density=True) for l, s in zip(locs, scales)]
+
+        fig, ax = plt.subplots()
+        dm.plot.show_histograms(*hist_bin_sets, sets=[0, 1, 0, 1, 2], ax=ax)
+        ax.set_xlim((0, 6))
+        ax.set_ylabel('density')
+        plt.show()
+    """    
+    if not ax:
+        fig, ax = plt.subplots()
+    
+    if (sets is None):
+        n_sets = len(args)
+        sets = np.arange(n_sets)
+    else:
+        n_sets = len(np.unique(sets))
+        sets = np.array(sets)
+
+    if len(sets) != len(args):
+        raise ValueError('Number of histogram tuples must match length of `sets` list.')
+
+    for i in range(n_sets):
+        CN = 'C%d' % (i)
+        match = np.where((sets == i))[0]
+        scales = np.linspace(0.8, 1.2, num=len(match))
+        CNs = [_scale_lightness(colors.to_rgb(CN), sc) for s, sc in enumerate(scales)]
+        for n in range(len(match)):
+            hist, bins = args[match[n]]
+            bin_width = (bins[1:] - bins[:-1])
+            bin_cent = bins[:-1] + (bin_width/2)
+            ax.bar(bin_cent, hist, width=bin_width, 
+                edgecolor=CNs[n], facecolor=CNs[n], **kwargs)

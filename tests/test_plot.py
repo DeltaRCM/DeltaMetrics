@@ -15,121 +15,138 @@ from deltametrics import utils
 rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
                          'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
 
+class TestVariableInfo:
 
-def test_initialize_default_VariableInfo():
-    vi = plot.VariableInfo('testinfo')
-    assert vi.cmap.N == 64
+    def test_initialize_default_VariableInfo(self):
+        vi = plot.VariableInfo('testinfo')
+        assert vi.cmap.N == 64
 
+    def test_initialize_default_VariableInfo_noname(self):
+        with pytest.raises(TypeError):
+            vi = plot.VariableInfo()
 
-def test_initialize_default_VariableInfo_noname():
-    with pytest.raises(TypeError):
-        vi = plot.VariableInfo()
+    def test_initialize_default_VariableInfo_name_isstr(self):
+        with pytest.raises(TypeError):
+            vi = plot.VariableInfo(None)
 
+    def test_initialize_VariableInfo_cmap_str(self):
+        vi = plot.VariableInfo('testinfo', cmap='Blues')
+        assert vi.cmap.N == 64
+        assert vi.cmap(0)[0] == pytest.approx(0.96862745)
 
-def test_initialize_default_VariableInfo_name_isstr():
-    with pytest.raises(TypeError):
-        vi = plot.VariableInfo(None)
+    def test_initialize_VariableInfo_cmap_spec(self):
+        vi = plot.VariableInfo('testinfo', cmap=plt.cm.get_cmap('Blues', 7))
+        assert vi.cmap.N == 7
+        assert vi.cmap(0)[0] == pytest.approx(0.96862745)
 
+    def test_initialize_VariableInfo_cmap_tuple(self):
+        vi = plot.VariableInfo('testinfo', cmap=('Blues', 7))
+        assert vi.cmap.N == 7
+        assert vi.cmap(0)[0] == pytest.approx(0.96862745)
 
-def test_initialize_VariableInfo_cmap_str():
-    vi = plot.VariableInfo('testinfo', cmap='Blues')
-    assert vi.cmap.N == 64
-    assert vi.cmap(0)[0] == pytest.approx(0.96862745)
+    def test_initialize_VariableInfo_label_str(self):
+        vi = plot.VariableInfo('testinfo', label='Test Information')
+        assert vi.label == 'Test Information'
+        assert vi.name == 'testinfo'
 
+    def test_VariableInfo_change_label(self):
+        vi = plot.VariableInfo('testinfo')
+        vi.label = 'Test Information'
+        assert vi.label == 'Test Information'
+        assert vi.name == 'testinfo'
+        with pytest.raises(TypeError):
+            vi.label = True
+        with pytest.raises(TypeError):
+            vi.label = 19
 
-def test_initialize_VariableInfo_cmap_spec():
-    vi = plot.VariableInfo('testinfo', cmap=plt.cm.get_cmap('Blues', 7))
-    assert vi.cmap.N == 7
-    assert vi.cmap(0)[0] == pytest.approx(0.96862745)
-
-
-def test_initialize_VariableInfo_cmap_tuple():
-    vi = plot.VariableInfo('testinfo', cmap=('Blues', 7))
-    assert vi.cmap.N == 7
-    assert vi.cmap(0)[0] == pytest.approx(0.96862745)
-
-
-def test_initialize_VariableInfo_label_str():
-    vi = plot.VariableInfo('testinfo', label='Test Information')
-    assert vi.label == 'Test Information'
-    assert vi.name == 'testinfo'
-
-
-def test_VariableInfo_change_label():
-    vi = plot.VariableInfo('testinfo')
-    vi.label = 'Test Information'
-    assert vi.label == 'Test Information'
-    assert vi.name == 'testinfo'
-
-
-def test_initialize_default_VariableSet():
-    vs = plot.VariableSet()
-    assert 'eta' in vs.known_list
-    assert vs['depth'].vmin == 0
-
-
-def test_initialize_VariableSet_override_known_VariableInfo():
-    vi = plot.VariableInfo('depth')
-    od = {'depth': vi}
-    vs = plot.VariableSet(override_dict=od)
-    assert vs['depth'].vmin is None
-
-
-def test_initialize_VariableSet_override_unknown_VariableInfo():
-    vi = plot.VariableInfo('fakevariable', vmin=-9999)
-    od = {'fakevariable': vi}
-    vs = plot.VariableSet(override_dict=od)
-    assert vs['fakevariable'].vmin == -9999
+    def test_VariableInfo_change_cmap(self):
+        vi = plot.VariableInfo('testinfo')
+        _jet = matplotlib.cm.get_cmap('jet', 21)
+        vi.cmap = _jet
+        assert vi.cmap == _jet
+        assert vi.cmap.N == 21
+        vi.cmap = ('Blues', 7)
+        assert vi.cmap.N == 7
+        assert vi.cmap(0)[0] == pytest.approx(0.96862745)
+        with pytest.raises(TypeError):
+            vi.cmap = True
+        with pytest.raises(TypeError):
+            vi.label = 19
 
 
-def test_initialize_VariableSet_override_known_badtype():
-    vi = plot.VariableInfo('depth')
-    od = ('depth', vi)
-    with pytest.raises(TypeError):
+class TestVariableSet:
+
+    def test_initialize_default_VariableSet(self):
+        vs = plot.VariableSet()
+        assert 'eta' in vs.known_list
+        assert vs['depth'].vmin == 0
+        assert vs.variables == vs.known_list
+        # get returns from some properties anc check types
+        assert isinstance(vs.variables, list)
+        assert isinstance(vs.x, plot.VariableInfo)
+        assert isinstance(vs.y, plot.VariableInfo)
+        assert isinstance(vs.eta, plot.VariableInfo)
+        assert isinstance(vs.stage, plot.VariableInfo)
+        assert isinstance(vs.depth, plot.VariableInfo)
+        assert isinstance(vs.discharge, plot.VariableInfo)
+        assert isinstance(vs.velocity, plot.VariableInfo)
+        assert isinstance(vs.strata_sand_frac, plot.VariableInfo)
+        assert isinstance(vs.sedflux, plot.VariableInfo)
+        
+    def test_initialize_VariableSet_override_known_VariableInfo(self):
+        vi = plot.VariableInfo('depth')
+        od = {'depth': vi}
         vs = plot.VariableSet(override_dict=od)
+        assert vs['depth'].vmin is None
 
+    def test_initialize_VariableSet_override_unknown_VariableInfo(self):
+        vi = plot.VariableInfo('fakevariable', vmin=-9999)
+        od = {'fakevariable': vi}
+        vs = plot.VariableSet(override_dict=od)
+        assert vs['fakevariable'].vmin == -9999
 
-def test_VariableSet_add_known_VariableInfo():
-    vs = plot.VariableSet()
-    vi = plot.VariableInfo('depth', vmin=-9999)
-    vs.depth = vi
-    assert vs.depth.vmin == -9999
+    def test_initialize_VariableSet_override_known_badtype(self):
+        vi = plot.VariableInfo('depth')
+        od = ('depth', vi)
+        with pytest.raises(TypeError):
+            vs = plot.VariableSet(override_dict=od)
 
+    def test_VariableSet_add_known_VariableInfo(self):
+        vs = plot.VariableSet()
+        vi = plot.VariableInfo('depth', vmin=-9999)
+        vs.depth = vi
+        assert vs.depth.vmin == -9999
 
-def test_VariableSet_add_unknown_VariableInfo():
-    vs = plot.VariableSet()
-    vi = plot.VariableInfo('fakevariable', vmin=-9999)
-    vs.fakevariable = vi
-    assert vs.fakevariable.vmin == -9999
+    def test_VariableSet_add_unknown_VariableInfo(self):
+        vs = plot.VariableSet()
+        vi = plot.VariableInfo('fakevariable', vmin=-9999)
+        vs.fakevariable = vi
+        assert vs.fakevariable.vmin == -9999
 
+    def test_VariableSet_set_known_VariableInfo_direct(self):
+        vs = plot.VariableSet()
+        vs.depth.vmin = -9999
+        assert vs.depth.vmin == -9999
 
-def test_VariableSet_set_known_VariableInfo_direct():
-    vs = plot.VariableSet()
-    vs.depth.vmin = -9999
-    assert vs.depth.vmin == -9999
+    def test_VariableSet_change_then_default(self):
+        vs = plot.VariableSet()
+        _first = vs.depth.cmap(0)[0]
+        vi = plot.VariableInfo('depth', vmin=-9999)
+        vs.depth = vi
+        assert vs.depth.vmin == -9999
+        vs.depth = None  # reset to default
+        assert vs.depth.cmap(0)[0] == _first
+        assert vs.depth.vmin == 0
 
+    def test_VariableSet_add_known_badtype(self):
+        vs = plot.VariableSet()
+        with pytest.raises(TypeError):
+            vs.depth = 'Yellow!'
 
-def test_VariableSet_change_then_default():
-    vs = plot.VariableSet()
-    _first = vs.depth.cmap(0)[0]
-    vi = plot.VariableInfo('depth', vmin=-9999)
-    vs.depth = vi
-    assert vs.depth.vmin == -9999
-    vs.depth = None  # reset to default
-    assert vs.depth.cmap(0)[0] == _first
-    assert vs.depth.vmin == 0
-
-
-def test_VariableSet_add_known_badtype():
-    vs = plot.VariableSet()
-    with pytest.raises(TypeError):
-        vs.depth = 'Yellow!'
-
-
-def test_VariableSet_add_unknown_badtype():
-    vs = plot.VariableSet()
-    with pytest.raises(TypeError):
-        vs.fakevariable = 'Yellow!'
+    def test_VariableSet_add_unknown_badtype(self):
+        vs = plot.VariableSet()
+        with pytest.raises(TypeError):
+            vs.fakevariable = 'Yellow!'
 
 
 def test_append_colorbar():
@@ -208,6 +225,12 @@ class TestSODTTST:
         plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax)
         plt.close()
 
+    def test_sodttst_makes_labeled_strata(self):
+        _e = np.random.randint(0, 10, size=(50,))
+        fig, ax = plt.subplots()
+        plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax, label_strata=False)
+        plt.close()
+
     def test_sodttst_makes_plot_lims_positives(self):
         _e = np.array([0, 1, 4, 5, 4, 10])
         fig, ax = plt.subplots()
@@ -264,7 +287,6 @@ class TestSODTTST:
             plot.show_one_dimensional_trajectory_to_strata(_e)
         plt.close()
 
-
 class TestGetDisplayArrays:
 
     rcm8cube_nostrat = cube.DataCube(rcm8_path)
@@ -316,6 +338,11 @@ class TestGetDisplayArrays:
         assert (_data.shape[0] == _X.shape[0] - 1)
         assert (_data.shape[1] == _Y.shape[1] - 1)
 
+    def test_dsv_get_display_arrays_badstring(self):
+        with pytest.raises(ValueError, match=r'Bad data *.'):
+            _data, _X, _Y = plot.get_display_arrays(self.dsv,
+                                                data='badstring')
+
     def test_ssv_get_display_arrays_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
             _data, _X, _Y = plot.get_display_arrays(self.ssv,
@@ -330,6 +357,11 @@ class TestGetDisplayArrays:
         _data, _X, _Y = plot.get_display_arrays(self.ssv,
                                                 data='stratigraphy')
         assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+
+    def test_ssv_get_display_arrays_badstring(self):
+        with pytest.raises(ValueError, match=r'Bad data *.'):
+            _data, _X, _Y = plot.get_display_arrays(self.ssv,
+                                                data='badstring')
 
 
 class TestGetDisplayLines:
@@ -377,6 +409,12 @@ class TestGetDisplayLines:
                                                   data='stratigraphy')
         assert _segments.shape[1:] == (2, 2)
 
+
+    def test_dsv_get_display_lines_badstring(self):
+        with pytest.raises(ValueError, match=r'Bad data*.'):
+            plot.get_display_lines(self.dsv,
+                                   data='badstring')
+
     def test_ssv_get_display_lines_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
             _data, _segments = plot.get_display_lines(self.ssv,
@@ -386,6 +424,11 @@ class TestGetDisplayLines:
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
             plot.get_display_lines(self.ssv,
                                    data='preserved')
+
+    def test_ssv_get_display_lines_badstring(self):
+        with pytest.raises(ValueError, match=r'Bad data*.'):
+            plot.get_display_lines(self.ssv,
+                                   data='badstring')
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not determined how to implement yet.')
@@ -433,6 +476,11 @@ class TestGetDisplayLimits:
         _lims = plot.get_display_limits(self.dsv, data='stratigraphy')
         assert len(_lims) == 4
 
+    def test_dsv_get_display_limits_badstring(self):
+        with pytest.raises(ValueError, match=r'Bad data*.'):
+            plot.get_display_limits(self.dsv,
+                                   data='badstring')
+
     def test_ssv_get_display_limits_spacetime(self):
         with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
             _lims = plot.get_display_limits(self.ssv, data='spacetime')
@@ -444,3 +492,132 @@ class TestGetDisplayLimits:
     def test_ssv_get_display_limits_stratigraphy(self):
         _lims = plot.get_display_limits(self.ssv, data='stratigraphy')
         assert len(_lims) == 4
+
+    def test_ssv_get_display_limits_badstring(self):
+        with pytest.raises(ValueError, match=r'Bad data*.'):
+            plot.get_display_limits(self.ssv,
+                                   data='badstring')
+
+class TestColorMapFunctions:
+    # note, no plotting, just boundaries and values checking
+
+    rcm8cube = cube.DataCube(rcm8_path)
+
+    def test_cartographic_SL0_defaults(self):
+        H_SL = 0
+        cmap, norm = plot.cartographic_colormap(H_SL)
+
+        assert cmap.colors.shape == (10, 4)
+        assert norm.boundaries[0] == H_SL-4.5
+        assert norm.boundaries[-1] == H_SL+1
+
+    def test_cartographic_SL0_h(self):
+        H_SL = 0
+        _h = 10
+        cmap, norm = plot.cartographic_colormap(H_SL, h=_h)
+
+        assert cmap.colors.shape == (10, 4)
+        assert norm.boundaries[0] == H_SL-_h
+        assert norm.boundaries[-1] == H_SL+1
+
+    def test_cartographic_SL0_n(self):
+        H_SL = 0
+        _n = 0.1
+        cmap, norm = plot.cartographic_colormap(H_SL, n=_n)
+
+        assert cmap.colors.shape == (10, 4)
+        assert norm.boundaries[0] == H_SL-4.5
+        assert norm.boundaries[-1] == H_SL+(_n)
+
+    def test_cartographic_SLn1_defaults(self):
+        H_SL = -1
+        cmap, norm = plot.cartographic_colormap(H_SL)
+
+        assert cmap.colors.shape == (10, 4)
+        assert norm.boundaries[0] == H_SL-4.5
+        assert norm.boundaries[-1] == H_SL+1
+
+    def test_cartographic_SL1_hn(self):
+        H_SL = -1
+        _h = 10
+        _n = 0.1
+        cmap, norm = plot.cartographic_colormap(H_SL, h=_h, n=_n)
+
+        assert cmap.colors.shape == (10, 4)
+        assert norm.boundaries[0] == H_SL-_h
+        assert norm.boundaries[-1] == H_SL+(_n)
+
+
+class TestScaleLightness:
+
+    def test_no_scaling_one(self):
+        _in = (0.12156862745098039, 0.4666666666666667, 0.7058823529411765)
+        _out = plot._scale_lightness(_in, 1)
+        assert _in == pytest.approx(_out)
+        assert isinstance(_out, tuple)
+
+    def test_limits_zero_one(self):
+        red = (1.0, 0.0, 0.0)  # initial color red
+        _zero = plot._scale_lightness(red, 0)
+        _one = plot._scale_lightness(red, 1)
+        _oneplus = plot._scale_lightness(red, 1.5)
+        assert _zero[0] == pytest.approx(0)
+        assert _one[0] == pytest.approx(1)
+        assert _oneplus[0] == pytest.approx(1)
+
+    def test_scale_down_red(self):
+        red = (1.0, 0.0, 0.0)  # initial color red
+        scales = np.arange(1, 0, -0.05)  # from 1 to 0.05
+        for s, scale in enumerate(scales):
+            darker_red = plot._scale_lightness(red, scale)
+            assert darker_red[0] == pytest.approx(scale)
+
+
+class TestShowHistograms:
+
+    locs = [0.25, 1, 0.5, 4, 2]
+    scales = [0.1, 0.25, 0.4, 0.5, 0.1]
+    bins = np.linspace(0, 6, num=40)
+
+    def test_one_histogram(self):
+        _h, _b = np.histogram(
+            np.random.normal(self.locs[3], self.scales[0], size=500),
+            bins=self.bins, density=True)
+        plot.show_histograms((_h, _b))
+        plt.close()
+
+    def test_one_histogram_with_ax(self):
+        _h, _b = np.histogram(
+            np.random.normal(self.locs[3], self.scales[0], size=500),
+            bins=self.bins, density=True)
+        fig, ax = plt.subplots()
+        plot.show_histograms((_h, _b), ax=ax)
+        plt.close()
+
+    def test_multiple_no_sets(self):
+        sets = [np.histogram(np.random.normal(l, s, size=500),
+                bins=self.bins, density=True) for l, s in zip(self.locs, self.scales)]
+        fig, ax = plt.subplots()
+        plot.show_histograms(*sets, ax=ax)
+        # plt.show()
+        plt.close()
+
+    def test_multiple_no_sets_alphakwarg(self):
+        sets = [np.histogram(np.random.normal(l, s, size=500),
+                bins=self.bins, density=True) for l, s in zip(self.locs, self.scales)]
+        fig, ax = plt.subplots()
+        plot.show_histograms(*sets, ax=ax, alpha=0.4)
+        plt.close()
+
+    def test_multiple_with_sets(self):
+        sets = [np.histogram(np.random.normal(l, s, size=500),
+                bins=self.bins, density=True) for l, s in zip(self.locs, self.scales)]
+
+        fig, ax = plt.subplots()
+        plot.show_histograms(*sets, sets=[0, 0, 1, 1, 2], ax=ax)
+        plt.close()
+
+        with pytest.raises(ValueError, match=r'Number of histogram tuples*.'):
+            # input lengths must match
+            plot.show_histograms(*sets, sets=[0, 1], ax=ax)
+            plt.close()
