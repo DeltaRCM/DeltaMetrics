@@ -34,7 +34,6 @@ import sys
 import os
 import pkg_resources
 import warnings
-# import shutil
 
 import numpy as np
 import netCDF4
@@ -100,8 +99,8 @@ def tdb12():
 
 
 def _get_rcm8_path():
-    rcm8path = REGISTRY.fetch('pyDeltaRCM_Output_8.nc')
-    return rcm8path
+    rcm8_path = REGISTRY.fetch('pyDeltaRCM_Output_8.nc')
+    return rcm8_path
 
 
 def rcm8():
@@ -112,7 +111,7 @@ def rcm8():
         Data is handled by `pooch` and will be downloaded and cached on local
         computer as needed.
     """
-    rcm8path = _get_rcm8_path()
+    rcm8_path = _get_rcm8_path()
     return cube.DataCube(rcm8_path)
 
 

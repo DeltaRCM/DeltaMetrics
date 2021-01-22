@@ -6,3 +6,4 @@ from .sample_data import (
     rcm8,
     landsat,
 )
+from . import cube
