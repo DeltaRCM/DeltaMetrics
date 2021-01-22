@@ -11,7 +11,7 @@ The data that make up the section can view the section as a `spacetime` section 
 
 .. doctest::
 
-    >>> rcm8cube = dm.sample_data.cube.rcm8()
+    >>> rcm8cube = dm.sample_data.rcm8()
     >>> strike = dm.section.StrikeSection(rcm8cube, y=10)
     >>> strike['velocity']
     DataSectionVariable([[0., 0., 0., ..., 0., 0., 0.],

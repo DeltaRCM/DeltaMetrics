@@ -52,7 +52,7 @@ DeltaMetrics centers around the use of “Cubes” in DeltaMetrics language are 
 
 .. doctest::
 
-    >>> rcm8cube = dm.sample_data.cube.rcm8()
+    >>> rcm8cube = dm.sample_data.rcm8()
     >>> rcm8cube
     <deltametrics.cube.DataCube object at 0x...>
 
@@ -475,8 +475,8 @@ Currently implemented `Masks`:
 
 .. doctest::
 
-    >>> # use a new cube, code is currently locked to sea_level==0
-    >>> maskcube = dm.sample_data.cube.rcm8()
+    >>> # use a new cube
+    >>> maskcube = dm.sample_data.rcm8()
 
     >>> # create the masks from variables in the cube
     >>> land_mask = dm.mask.LandMask(maskcube['eta'][-1, :, :])

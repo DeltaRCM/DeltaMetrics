@@ -1,4 +1,4 @@
-rcm8cube = dm.sample_data.cube.rcm8()
+rcm8cube = dm.sample_data.rcm8()
 rcm8cube.register_section('demo', dm.section.StrikeSection(y=10))
 
 fig, ax = plt.subplots(1, 3, figsize=(6, 2))

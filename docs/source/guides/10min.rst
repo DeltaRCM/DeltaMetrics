@@ -32,7 +32,7 @@ For now, let's use a sample dataset that is distributed with DeltaMetrics.
 
 .. doctest::
 
-    >>> rcm8cube = dm.sample_data.cube.rcm8()
+    >>> rcm8cube = dm.sample_data.rcm8()
     >>> type(rcm8cube)
     <class 'deltametrics.cube.DataCube'>
 

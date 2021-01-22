@@ -2,7 +2,7 @@ import numpy as np
 import deltametrics as dm
 import matplotlib.pyplot as plt
 
-rcm8cube = dm.sample_data.cube.rcm8()
+rcm8cube = dm.sample_data.rcm8()
 rcm8cube.stratigraphy_from('eta')
 
 

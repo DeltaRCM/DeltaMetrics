@@ -10,7 +10,7 @@ Keeping data on disk is advantageous for large datasets, but slows down access c
     >>> import time
 
     >>> # set up the cubes
-    >>> rcm8cube = dm.sample_data.cube.rcm8()
+    >>> rcm8cube = dm.sample_data.rcm8()
     >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.05)
     >>> fs, fe = dm.strat.compute_boxy_stratigraphy_volume(rcm8cube['eta'], rcm8cube['strata_sand_frac'], dz=0.05)
 
