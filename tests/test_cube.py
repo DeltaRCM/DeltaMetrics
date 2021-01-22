@@ -11,14 +11,11 @@ from deltametrics import cube
 from deltametrics import plot
 from deltametrics import section
 from deltametrics import utils
+from deltametrics.sample_data import _get_rcm8_path, _get_landsat_path
 
-# initialize a cube directly from path, rather than using sample_data.py
-rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
-                         'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
 
-hdf_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
-                        'sample_data', 'files',
-                        'LandsatEx.hdf5')
+rcm8_path = _get_rcm8_path()
+hdf_path = _get_landsat_path()
 
 
 class TestDataCubeNoStratigraphy:

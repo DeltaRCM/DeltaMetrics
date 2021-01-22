@@ -7,11 +7,13 @@ import numpy as np
 import deltametrics as dm
 from deltametrics import cube
 from deltametrics import mobility as mob
+from deltametrics.sample_data import _get_rcm8_path, _get_landsat_path
 
-# initialize a cube directly from path, rather than using sample_data.py
-rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
-                         'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
+
+rcm8_path = _get_rcm8_path()
 rcm8cube = cube.DataCube(rcm8_path)
+
+
 # define some masks once up top
 chmask = dm.mask.ChannelMask(rcm8cube['velocity'][20:23, :, :],
                              rcm8cube['eta'][20:23, :, :])

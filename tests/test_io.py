@@ -7,14 +7,12 @@ import numpy as np
 import xarray as xr
 
 from deltametrics import io
+from deltametrics.sample_data import _get_rcm8_path, _get_landsat_path
 import utilities
 
-rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
-                         'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
 
-hdf_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
-                        'sample_data', 'files',
-                        'LandsatEx.hdf5')
+rcm8_path = _get_rcm8_path()
+hdf_path = _get_landsat_path()
 
 
 def test_netcdf_io_init():

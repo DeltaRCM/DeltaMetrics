@@ -11,9 +11,10 @@ from deltametrics import plot
 from deltametrics import cube
 from deltametrics import section
 from deltametrics import utils
+from deltametrics.sample_data import _get_rcm8_path
 
-rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
-                         'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
+
+rcm8_path = _get_rcm8_path()
 
 
 def test_initialize_default_VariableInfo():
