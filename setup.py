@@ -14,5 +14,5 @@ setup(name='DeltaMetrics',
       include_package_data=True,
       url='https://github.com/DeltaRCM/DeltaMetrics',
       install_requires=['matplotlib', 'netCDF4',
-                        'scipy', 'numpy', 'pyyaml', 'xarray'],
+                        'scipy', 'numpy', 'pyyaml', 'xarray', 'pooch'],
       )
