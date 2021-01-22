@@ -1,0 +1,3 @@
+golf.zip 8103db9094162b12f80138f4939ea7ad3dbfc6bccc2f94fc9578687a7b0399b0 https://zenodo.org/record/4456144/files/golf.zip?download=1
+pyDeltaRCM_Output_8.nc 6c7e83bddc7043a2723ba8bb5ce056781eea246b0a3fe35ca26cfccda053c86b
+LandsatEx.hdf5 56c5b6b3931b1a1182d9037742a0dc338e93261b1c073f66c2803886b4e2739f
