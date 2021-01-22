@@ -1,0 +1,6 @@
+deltametrics.plot.show\_histograms
+==================================
+
+.. currentmodule:: deltametrics.plot
+
+.. autofunction:: show_histograms

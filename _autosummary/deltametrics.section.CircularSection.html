@@ -173,7 +173,7 @@ any functionality (via the <a class="reference internal" href="#deltametrics.sec
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.CircularSection.connect" title="deltametrics.section.CircularSection.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(CubeInstance[, name])</p></td>
 <td><p>Connect this Section instance to a Cube instance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.CircularSection.show" title="deltametrics.section.CircularSection.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(SectionAttribute[, style, data, label, ax])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.CircularSection.show" title="deltametrics.section.CircularSection.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(SectionAttribute[, style, data, label, …])</p></td>
 <td><p>Show the section.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.CircularSection.show_trace" title="deltametrics.section.CircularSection.show_trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_trace</span></code></a>(*args[, ax])</p></td>
@@ -256,7 +256,7 @@ variable <code class="docutils literal notranslate"><span class="pre">var</span>
 
 <dl class="method">
 <dt id="deltametrics.section.CircularSection.show">
-<code class="descname">show</code><span class="sig-paren">(</span><em>SectionAttribute</em>, <em>style='shaded'</em>, <em>data=None</em>, <em>label=False</em>, <em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.CircularSection.show" title="Permalink to this definition">¶</a></dt>
+<code class="descname">show</code><span class="sig-paren">(</span><em>SectionAttribute</em>, <em>style='shaded'</em>, <em>data=None</em>, <em>label=False</em>, <em>colorbar=True</em>, <em>colorbar_label=False</em>, <em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.CircularSection.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the section.</p>
 <p>Method enumerates convenient routines for visualizing sections of data
 and stratigraphy. Includes support for multiple data <cite>style</cite> and
@@ -280,6 +280,11 @@ Supported options are <cite>‘spacetime’</cite>, <cite>‘preserved’</cite>
 section generated from a <cite>DataCube</cite>, and stratigraphy for
 a <cite>StratigraphyCube</cite> section.</p></li>
 <li><p><strong>label</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, <cite>str</cite>, optional) – Display a label of the variable name on the plot. Default is
+False, display nothing. If <code class="docutils literal notranslate"><span class="pre">label=True</span></code>, the label name from the
+<a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a> is used. Other arguments are
+attempted to coerce to <cite>str</cite>, and the literal is diplayed.</p></li>
+<li><p><strong>colorbar</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether a colorbar is appended to the axis.</p></li>
+<li><p><strong>colorbar_label</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, <cite>str</cite>, optional) – Display a label of the variable name along the colorbar. Default is
 False, display nothing. If <code class="docutils literal notranslate"><span class="pre">label=True</span></code>, the label name from the
 <a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a> is used. Other arguments are
 attempted to coerce to <cite>str</cite>, and the literal is diplayed.</p></li>
