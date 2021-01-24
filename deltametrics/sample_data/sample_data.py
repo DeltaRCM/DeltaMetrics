@@ -31,7 +31,9 @@ with pkg_resources.resource_stream("deltametrics.sample_data", "registry.txt") a
 def _get_golf_path():
     unpack = pooch.Unzip()
     fnames = REGISTRY.fetch('golf.zip', processor=unpack)
-    golf_path = fnames[0]
+    nc_bool = [os.path.splitext(fname)[1] == '.nc' for fname in fnames]
+    nc_idx = [i for i, b in enumerate(nc_bool) if b]
+    golf_path = fnames[nc_idx[0]]
     return golf_path
 
 
