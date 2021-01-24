@@ -19,8 +19,6 @@ The sample data cubes can be accessed as, for example:
 
     >>> import deltametrics as dm
     >>> rcm8cube = dm.sample_data.rcm8()
-    >>> rcm8cube
-    <deltametrics.cube.DataCube at 0x...>
 
 .. note::
 
