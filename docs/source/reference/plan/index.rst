@@ -17,6 +17,8 @@ The functions are defined in ``deltametrics.plan``.
 .. autosummary:: 
 	:toctree: ../../_autosummary
 
+	compute_shoreline_roughness
+	compute_shoreline_length
 	a_land_function
 	compute_delta_radius
 	a_channel_function

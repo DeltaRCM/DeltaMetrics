@@ -12,9 +12,10 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
 
     .. math::
 
-        L_{shore} / \sqrt{A_{land}}
+        L_{shore} / \\sqrt{A_{land}}
 
-    given binary masks of the shoreline and land area.
+    given binary masks of the shoreline and land area. The length of the
+    shoreline is computed internally with :obj:`compute_shoreline_length`.
 
     Parameters
     ----------
@@ -34,6 +35,37 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
     -------
     roughness : :obj:`float`
         Shoreline roughness, computed as described above.
+
+    Examples
+    --------
+
+    Compare the roughness of the shoreline early in the model simulation with
+    the roughness later.
+
+    .. plot::
+        :include-source:
+
+        rcm8 = dm.sample_data.cube.rcm8()
+
+        # early in model run
+        lm0 = dm.mask.LandMask(rcm8['eta'][5, :, :])
+        sm0 = dm.mask.ShorelineMask(rcm8['eta'][5, :, :])
+
+        # late in model run
+        lm1 = dm.mask.LandMask(rcm8['eta'][-1, :, :])
+        sm1 = dm.mask.ShorelineMask(rcm8['eta'][-1, :, :])
+
+        # compute roughnesses
+        rgh0 = dm.plan.compute_shoreline_roughness(sm0, lm0)
+        rgh1 = dm.plan.compute_shoreline_roughness(sm1, lm1)
+
+        # make the plot
+        fig, ax = plt.subplots(1, 2, figsize=(6, 3))
+        rcm8.show_plan('eta', t=5, ax=ax[0])
+        ax[0].set_title('roughness = {:.2f}'.format(rgh0))
+        rcm8.show_plan('eta', t=-1, ax=ax[1])
+        ax[1].set_title('roughness = {:.2f}'.format(rgh1))
+        plt.show()
     """
     # extract data from masks
     if isinstance(land_mask, mask.LandMask):
@@ -61,7 +93,69 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
 def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     """Compute the length of a shoreline from a mask of the shoreline.
 
+    Algorithm attempts to determine the sorted coordinates of the shoreline
+    from a :obj:`~dm.mask.ShorelineMask`.
+
+    .. warning::
+
+        Imperfect algorithm, which may not include all `True` pixels in the
+        `ShorelineMask` in the determined shoreline.
+
+    Parameters
+    ----------
+    shore_mask : :obj:`~deltametrics.mask.ShorelineMask`, :obj:`ndarray`
+        Shoreline mask. Can be a :obj:`~deltametrics.mask.ShorelineMask` object,
+        or a binarized array.
     
+    origin : :obj:`list`, :obj:`np.ndarray`, optional
+        Determines the location from where the starting point of the line
+        sorting is initialized. The starting point of the line is determined
+        as the point nearest to `origin`. For non-standard data
+        configurations, it may be important to set this to an appropriate
+        value. Default is [0, 0].
+
+    return_line : :obj:`bool`
+        Whether to return the sorted line as a second argument. If True, a
+        ``Nx2`` array of x-y points is returned. Default is `False`.
+
+    Returns
+    -------
+    length : :obj:`float`
+        Shoreline length, computed as described above.
+
+    line : :obj:`np.ndarray`
+        If :obj:`return_line` is `True`, the shoreline, as an ``Nx2`` array of
+        x-y points, is returned.
+
+    Examples
+    --------
+
+    Compare the length of the shoreline early in the model simulation with
+    the length later.
+
+    .. plot::
+        :include-source:
+
+        rcm8 = dm.sample_data.cube.rcm8()
+
+        # early in model run
+        sm0 = dm.mask.ShorelineMask(rcm8['eta'][5, :, :])
+
+        # late in model run
+        sm1 = dm.mask.ShorelineMask(rcm8['eta'][-1, :, :])
+
+        # compute lengths
+        len0 = dm.plan.compute_shoreline_length(sm0)
+        len1, line1 = dm.plan.compute_shoreline_length(sm1, return_line=True)
+
+        # make the plot
+        fig, ax = plt.subplots(1, 2, figsize=(6, 3))
+        rcm8.show_plan('eta', t=5, ax=ax[0])
+        ax[0].set_title('length = {:.2f}'.format(len0))
+        rcm8.show_plan('eta', t=-1, ax=ax[1])
+        ax[1].plot(line1[:, 0], line1[:, 1], 'r-')
+        ax[1].set_title('length = {:.2f}'.format(len1))
+        plt.show()
     """
     # check if mask or already array
     if isinstance(shore_mask, mask.ShorelineMask):
