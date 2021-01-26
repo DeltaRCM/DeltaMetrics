@@ -7,10 +7,10 @@ import xarray as xr
 
 from deltametrics import cube
 from deltametrics import strat
+from deltametrics.sample_data import _get_rcm8_path
 
-# initialize a cube directly from path, rather than using sample_data.py
-rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
-                         'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
+
+rcm8_path = _get_rcm8_path()
 rcm8cube = cube.DataCube(rcm8_path)
 
 

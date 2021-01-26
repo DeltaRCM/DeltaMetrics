@@ -6,3 +6,4 @@ pyyaml
 Shapely
 scikit-image
 xarray
+pooch

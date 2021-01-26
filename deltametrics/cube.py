@@ -37,7 +37,7 @@ class CubeVariable():
     .. doctest::
 
         >>> import deltametrics as dm
-        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube = dm.sample_data.rcm8()
 
         >>> type(rcm8cube['velocity'])
         <class 'deltametrics.cube.CubeVariable'>
@@ -641,7 +641,7 @@ class StratigraphyCube(BaseCube):
         --------
         Create a stratigraphy cube from the example ``rcm8cube``:
 
-        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube = dm.sample_data.rcm8()
         >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.05)
 
         Parameters

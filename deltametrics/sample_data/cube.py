@@ -1,54 +1,22 @@
-"""Sample data cubes
+import warnings
 
-A sample of a data cube (x,y,t) for examples, tests, etc.
+from . import rcm8 as moved_rcm8
 
-Example
--------
-
-A Data cube can be instantiated as, for example::
-
-.. doctest::
-
-    >>> import deltametrics as dm
-    >>> rcm8cube = dm.sample_data.cube.rcm8()
-    >>> rcm8cube
-    <deltametrics.cube.DataCube at 0x...>
-
-
-Available information on the data cubes is enumerated in the following
-section.
-
-
-Example data cubes
-------------------------
-
-:meth:`tdb12` : `ndarray`
-    This data cube is from Tulane Delta Basin expt 12.
-
-:meth:`rcm8` : `ndarray`
-    This data cube is from the pyDeltaRCM model.
-
-"""
-
-import sys
-import os
-
-import numpy as np
-import netCDF4
-
-from .. import cube
-from ..io import NetCDFIO
-
-
-def tdb12():
-    raise NotImplementedError
-    return np.array([[]])
+warnings.simplefilter("default")
 
 
 def rcm8():
-    """A sample pyDeltaRCM file, as netCDF.
+    """DEPRECATED rcm8 data cube location.
+
+    The `rcm8` data cube has moved to `deltametrics.sample_data.rcm8()`.
+    Access is maintained here for backwards compatability, but will be removed
+    in a future release.
     """
-    path = os.path.join(os.path.dirname(__file__), 'files',
-                        'pyDeltaRCM_Output_8.nc')
-    _cube = cube.DataCube(path)
-    return _cube
+    warnings.warn(
+        "The `rcm8` data cube has moved to "
+        "`deltametrics.sample_data.rcm8()`. "
+        "Access is maintained here for backwards compatability, "
+        "but will be removed in a future release.",
+        DeprecationWarning,
+    )
+    return moved_rcm8()

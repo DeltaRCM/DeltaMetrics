@@ -1,6 +1,6 @@
 import matplotlib.gridspec as gs
 
-rcm8cube = dm.sample_data.cube.rcm8()
+rcm8cube = dm.sample_data.rcm8()
 
 land_mask = dm.mask.LandMask(rcm8cube['eta'].data[-1, :, :])
 wet_mask = dm.mask.WetMask(rcm8cube['eta'].data[-1, :, :])

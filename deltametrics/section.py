@@ -428,7 +428,7 @@ class BaseSection(abc.ABC):
 
         .. doctest::
 
-            >>> rcm8cube = dm.sample_data.cube.rcm8()
+            >>> rcm8cube = dm.sample_data.rcm8()
             >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=5))
             >>> rcm8cube.sections['demo'].show('velocity')
 
@@ -442,7 +442,7 @@ class BaseSection(abc.ABC):
 
         .. doctest::
 
-            >>> rcm8cube = dm.sample_data.cube.rcm8()
+            >>> rcm8cube = dm.sample_data.rcm8()
             >>> rcm8cube.stratigraphy_from('eta')
             >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=5))
 
@@ -574,7 +574,7 @@ class PathSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube = dm.sample_data.rcm8()
         >>> rcm8cube.register_section('path', dm.section.PathSection(
         ...     path=np.array([[50, 3], [65, 17], [130, 10]])))
         >>>
@@ -676,7 +676,7 @@ class StrikeSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube = dm.sample_data.rcm8()
         >>> rcm8cube.register_section('strike', dm.section.StrikeSection(y=10))
         >>>
         >>> # show the location and the "velocity" variable
@@ -693,7 +693,7 @@ class StrikeSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube = dm.sample_data.rcm8()
         >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube)
         >>> sc8cube.register_section('strike_half', dm.section.StrikeSection(y=20, x=[0, 120]))
         >>>
@@ -797,7 +797,7 @@ class CircularSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube = dm.sample_data.rcm8()
         >>> rcm8cube.register_section('circular', dm.section.CircularSection(radius=30))
         >>>
         >>> # show the location and the "velocity" variable
@@ -908,7 +908,7 @@ class RadialSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.cube.rcm8()
+        >>> rcm8cube = dm.sample_data.rcm8()
         >>> rcm8cube.register_section('radial', dm.section.RadialSection(azimuth=45))
         >>>
         >>> # show the location and the "velocity" variable

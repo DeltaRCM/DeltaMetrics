@@ -1,4 +1,4 @@
-rcm8cube = dm.sample_data.cube.rcm8()
+rcm8cube = dm.sample_data.rcm8()
 
 nt = 5
 ts = np.linspace(0, rcm8cube['eta'].shape[0]-1, num=nt, dtype=np.int)
