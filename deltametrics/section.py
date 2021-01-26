@@ -821,8 +821,13 @@ class CircularSection(BaseSection):
             self.radius = self._input_radius
 
         if (self._input_origin is None):
-            land_width = np.minimum(utils.guess_land_width_from_land(
-                self.cube['eta'][-1, :, 0]), 5)
+            if (self.cube.meta is None):
+                # try and guess the value (should issue a warning?)
+                land_width = np.minimum(utils.guess_land_width_from_land(
+                    self.cube['eta'][-1, :, 0]), 5)
+            else:
+                # extract L0 from the cube
+                land_width = self.cube.meta['L0']
             self.origin = (int(self.cube.shape[2] / 2),
                            land_width)
         else:
@@ -935,8 +940,13 @@ class RadialSection(BaseSection):
 
         # determine the origin of the line
         if (self._input_origin is None):
-            land_width = np.minimum(utils.guess_land_width_from_land(
-                self.cube['eta'][-1, :, 0]), 5)
+            if (self.cube.meta is None):
+                # try and guess the value (should issue a warning?)
+                land_width = np.minimum(utils.guess_land_width_from_land(
+                    self.cube['eta'][-1, :, 0]), 5)
+            else:
+                # extract L0 from the cube
+                land_width = self.cube.meta['L0']
             self.origin = (int(self.cube.shape[2] / 2),
                            land_width)
         else:
