@@ -15,6 +15,7 @@ from deltametrics.sample_data import _get_rcm8_path, _get_landsat_path
 
 
 rcm8_path = _get_rcm8_path()
+golf_path = _get_golf_path()
 hdf_path = _get_landsat_path()
 
 
@@ -22,6 +23,7 @@ class TestDataCubeNoStratigraphy:
 
     # create a fixed cube for variable existing, type checks
     fixeddatacube = cube.DataCube(rcm8_path)
+    golfcube = cube.DataCube(golf_path)
 
     def test_init_cube_from_path_rcm8(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -42,6 +44,9 @@ class TestDataCubeNoStratigraphy:
     def test_error_init_bad_extension(self):
         with pytest.raises(ValueError):
             nocube = cube.DataCube('./nonexistent/path.doc')
+
+    def test_metadata_present(self):
+        assert golfcube.meta is golfcube._dataio.meta
 
     def test_warning_netcdf_no_metadata(self):
         with pytest.warns(UserWarning):
