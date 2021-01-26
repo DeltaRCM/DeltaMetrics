@@ -1,0 +1,6 @@
+deltametrics.plan.compute\_shoreline\_length
+============================================
+
+.. currentmodule:: deltametrics.plan
+
+.. autofunction:: compute_shoreline_length

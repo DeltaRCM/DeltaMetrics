@@ -1,0 +1,6 @@
+deltametrics.plan.compute\_shoreline\_roughness
+===============================================
+
+.. currentmodule:: deltametrics.plan
+
+.. autofunction:: compute_shoreline_roughness
