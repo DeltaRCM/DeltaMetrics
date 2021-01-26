@@ -26,9 +26,6 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="examples/index.html" title="Examples"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -126,7 +123,7 @@
 <div class="section" id="create-and-manipulate-a-datacube">
 <h2>Create and manipulate a “DataCube”<a class="headerlink" href="#create-and-manipulate-a-datacube" title="Permalink to this headline">¶</a></h2>
 <p>DeltaMetrics centers around the use of “Cubes” in DeltaMetrics language are the central office that connects all the different modules and workflows together.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span>
 <span class="go">&lt;deltametrics.cube.DataCube object at 0x...&gt;</span>
 </pre></div>
@@ -490,8 +487,8 @@ values of the masks.</p>
 </ul>
 </dd>
 </dl>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># use a new cube, code is currently locked to sea_level==0</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">maskcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># use a new cube</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">maskcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># create the masks from variables in the cube</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">land_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">LandMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
@@ -533,9 +530,6 @@ values of the masks.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="examples/index.html" title="Examples"
              >next</a> |</li>

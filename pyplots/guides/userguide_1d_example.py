@@ -1,4 +1,4 @@
-rcm8cube = dm.sample_data.cube.rcm8()
+rcm8cube = dm.sample_data.rcm8()
 
 ets = rcm8cube['eta'].data[:, 25, 120]  # a "real" slice of the model
 

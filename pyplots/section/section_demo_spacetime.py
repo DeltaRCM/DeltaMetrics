@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 
 import deltametrics as dm
 
-rcm8cube = dm.sample_data.cube.rcm8()
+rcm8cube = dm.sample_data.rcm8()
 
 
 fig, ax = plt.subplots(figsize=(8, 2))

@@ -1,4 +1,4 @@
-rcm8cube = dm.sample_data.cube.rcm8()
+rcm8cube = dm.sample_data.rcm8()
 rcm8cube.register_section('radial', dm.section.RadialSection(azimuth=45))
 # >>>
 # show the location and the "velocity" variable

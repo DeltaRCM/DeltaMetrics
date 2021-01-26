@@ -14,7 +14,7 @@ Section display types
 
 .. doctest::
 
-    >>> rcm8cube = dm.sample_data.cube.rcm8()
+    >>> rcm8cube = dm.sample_data.rcm8()
     >>> rcm8cube.stratigraphy_from('eta')
     >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=10))
     >>> _v = 'velocity'

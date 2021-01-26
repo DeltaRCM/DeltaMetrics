@@ -1,4 +1,4 @@
-rcm8cube = dm.sample_data.cube.rcm8()
+rcm8cube = dm.sample_data.rcm8()
 sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube)
 sc8cube.register_section('strike_half', dm.section.StrikeSection(y=20, x=[0, 120]))
 # >>>

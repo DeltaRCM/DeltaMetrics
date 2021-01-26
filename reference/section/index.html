@@ -26,9 +26,6 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
           <a href="../../_autosummary/deltametrics.section.PathSection.html" title="deltametrics.section.PathSection"
              accesskey="N">next</a> |</li>
         <li class="right" >
@@ -90,7 +87,7 @@
 <p>Most importantly, a Section is defined by a set of coordinates in the x-y plane of a <cite>Cube</cite>.</p>
 <p>Therefore, we transform variable definitions when extracting the <cite>Section</cite>, and the coordinate system of the section is defined by the along-section direction <img class="math" src="../../_images/math/63751cb2e98ba393b0f22e45ca127c3cebb61487.png" alt="s"/> and a vertical section coordinate, which is <img class="math" src="../../_images/math/683f2dd9129a91d21aaf1c04afa6f78b39d4cb0a.png" alt="z"/> when viewing stratigraphy, and <img class="math" src="../../_images/math/5ec053cf70dc1c98cc297322250569eda193e7a4.png" alt="t"/> when viewing a spacetime section.</p>
 <p>The data that make up the section can view the section as a <cite>spacetime</cite> section by simply calling a <cite>DataSectionVariable</cite> directly.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span>
 <span class="go">DataSectionVariable([[0., 0., 0., ..., 0., 0., 0.],</span>
@@ -203,9 +200,6 @@ See the <a class="reference external" href="https://numpy.org/doc/stable/referen
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
         <li class="right" >
           <a href="../../_autosummary/deltametrics.section.PathSection.html" title="deltametrics.section.PathSection"
              >next</a> |</li>
