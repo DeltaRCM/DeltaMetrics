@@ -119,10 +119,10 @@ def _get_landsat_path():
 def landsat():
     """Landsat image dataset.
 
-    This is a set of satellite images from the Landsat X (?) satellite, over
-    the Xxxxxx Delta. The dataset includes scenes from four different years
-    (`[1995, 2000, 2005, 2010]`) and includes data collected from four bands
-    (`['Red', 'Green', 'Blue', 'NIR']`).
+    This is a set of satellite images from the Landsat 5 satellite, collected
+    over the Krishna River delta, India. The dataset includes annual-composite
+    scenes from four different years (`[1995, 2000, 2005, 2010]`) and includes
+    data collected from four bands (`['Red', 'Green', 'Blue', 'NIR']`).
 
     .. plot::
 
