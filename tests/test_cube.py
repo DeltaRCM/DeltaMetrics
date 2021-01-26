@@ -11,7 +11,7 @@ from deltametrics import cube
 from deltametrics import plot
 from deltametrics import section
 from deltametrics import utils
-from deltametrics.sample_data import _get_rcm8_path, _get_landsat_path
+from deltametrics.sample_data import _get_golf_path, _get_rcm8_path, _get_landsat_path
 
 
 rcm8_path = _get_rcm8_path()
@@ -44,9 +44,6 @@ class TestDataCubeNoStratigraphy:
     def test_error_init_bad_extension(self):
         with pytest.raises(ValueError):
             nocube = cube.DataCube('./nonexistent/path.doc')
-
-    def test_metadata_present(self):
-        assert golfcube.meta is golfcube._dataio.meta
 
     def test_warning_netcdf_no_metadata(self):
         with pytest.warns(UserWarning):
@@ -148,6 +145,12 @@ class TestDataCubeNoStratigraphy:
     def test_fixeddatacube_init_sections(self):
         assert type(self.fixeddatacube.sections) is dict
         assert self.fixeddatacube.sections is self.fixeddatacube.section_set
+
+    def test_metadata_present(self):
+        assert self.golfcube.meta is self.golfcube._dataio.meta
+
+    def test_metadata_none_nometa(self):
+        assert self.fixeddatacube.meta is None
 
     def test_fixeddatacube_x(self):
         assert self.fixeddatacube.x.shape == (240,)

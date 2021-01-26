@@ -182,6 +182,7 @@ class NetCDFIO(BaseIO):
         except OSError:
             warn('No associated metadata was found in the given data file.',
                  UserWarning)
+            self.meta = None
 
     def get_known_variables(self):
         """List known variables.
