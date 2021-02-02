@@ -109,17 +109,17 @@ The <code class="docutils literal notranslate"><span class="pre">__new__</span><
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.__init__" title="deltametrics.section.DataSectionVariable.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(_data, _s, _z[, _psvd_mask, …])</p></td>
 <td><p>Construct the array from section info.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.all" title="deltametrics.section.DataSectionVariable.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a>([axis, out, keepdims])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.all" title="deltametrics.section.DataSectionVariable.all"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all</span></code></a>([axis, out, keepdims, where])</p></td>
 <td><p>Returns True if all elements evaluate to True.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.any" title="deltametrics.section.DataSectionVariable.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a>([axis, out, keepdims])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.any" title="deltametrics.section.DataSectionVariable.any"><code class="xref py py-obj docutils literal notranslate"><span class="pre">any</span></code></a>([axis, out, keepdims, where])</p></td>
 <td><p>Returns True if any of the elements of <cite>a</cite> evaluate to True.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.argmax" title="deltametrics.section.DataSectionVariable.argmax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">argmax</span></code></a>([axis, out])</p></td>
 <td><p>Return indices of the maximum values along the given axis.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.argmin" title="deltametrics.section.DataSectionVariable.argmin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">argmin</span></code></a>([axis, out])</p></td>
-<td><p>Return indices of the minimum values along the given axis of <cite>a</cite>.</p></td>
+<td><p>Return indices of the minimum values along the given axis.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.argpartition" title="deltametrics.section.DataSectionVariable.argpartition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">argpartition</span></code></a>(kth[, axis, kind, order])</p></td>
 <td><p>Returns the indices that would partition this array.</p></td>
@@ -193,7 +193,7 @@ The <code class="docutils literal notranslate"><span class="pre">__new__</span><
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.max" title="deltametrics.section.DataSectionVariable.max"><code class="xref py py-obj docutils literal notranslate"><span class="pre">max</span></code></a>([axis, out, keepdims, initial, where])</p></td>
 <td><p>Return the maximum along a given axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.mean" title="deltametrics.section.DataSectionVariable.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([axis, dtype, out, keepdims])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.mean" title="deltametrics.section.DataSectionVariable.mean"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean</span></code></a>([axis, dtype, out, keepdims, where])</p></td>
 <td><p>Returns the average of the array elements along given axis.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.min" title="deltametrics.section.DataSectionVariable.min"><code class="xref py py-obj docutils literal notranslate"><span class="pre">min</span></code></a>([axis, out, keepdims, initial, where])</p></td>
@@ -245,9 +245,9 @@ The <code class="docutils literal notranslate"><span class="pre">__new__</span><
 <td><p>Sort an array in-place.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.squeeze" title="deltametrics.section.DataSectionVariable.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">squeeze</span></code></a>([axis])</p></td>
-<td><p>Remove single-dimensional entries from the shape of <cite>a</cite>.</p></td>
+<td><p>Remove axes of length one from <cite>a</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.std" title="deltametrics.section.DataSectionVariable.std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code></a>([axis, dtype, out, ddof, keepdims])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.std" title="deltametrics.section.DataSectionVariable.std"><code class="xref py py-obj docutils literal notranslate"><span class="pre">std</span></code></a>([axis, dtype, out, ddof, keepdims, where])</p></td>
 <td><p>Returns the standard deviation of the array elements along given axis.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.sum" title="deltametrics.section.DataSectionVariable.sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sum</span></code></a>([axis, dtype, out, keepdims, initial, where])</p></td>
@@ -277,7 +277,7 @@ The <code class="docutils literal notranslate"><span class="pre">__new__</span><
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.transpose" title="deltametrics.section.DataSectionVariable.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">transpose</span></code></a>(*axes)</p></td>
 <td><p>Returns a view of the array with axes transposed.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.var" title="deltametrics.section.DataSectionVariable.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a>([axis, dtype, out, ddof, keepdims])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.var" title="deltametrics.section.DataSectionVariable.var"><code class="xref py py-obj docutils literal notranslate"><span class="pre">var</span></code></a>([axis, dtype, out, ddof, keepdims, where])</p></td>
 <td><p>Returns the variance of the array elements, along given axis.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DataSectionVariable.view" title="deltametrics.section.DataSectionVariable.view"><code class="xref py py-obj docutils literal notranslate"><span class="pre">view</span></code></a>([dtype][, type])</p></td>
@@ -370,7 +370,7 @@ The <code class="docutils literal notranslate"><span class="pre">__new__</span><
 
 <dl class="method">
 <dt id="deltametrics.section.DataSectionVariable.all">
-<code class="descname">all</code><span class="sig-paren">(</span><em>axis=None</em>, <em>out=None</em>, <em>keepdims=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.all" title="Permalink to this definition">¶</a></dt>
+<code class="descname">all</code><span class="sig-paren">(</span><em>axis=None</em>, <em>out=None</em>, <em>keepdims=False</em>, <em>*</em>, <em>where=True</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.all" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if all elements evaluate to True.</p>
 <p>Refer to <cite>numpy.all</cite> for full documentation.</p>
 <div class="admonition seealso">
@@ -384,7 +384,7 @@ The <code class="docutils literal notranslate"><span class="pre">__new__</span><
 
 <dl class="method">
 <dt id="deltametrics.section.DataSectionVariable.any">
-<code class="descname">any</code><span class="sig-paren">(</span><em>axis=None</em>, <em>out=None</em>, <em>keepdims=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.any" title="Permalink to this definition">¶</a></dt>
+<code class="descname">any</code><span class="sig-paren">(</span><em>axis=None</em>, <em>out=None</em>, <em>keepdims=False</em>, <em>*</em>, <em>where=True</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.any" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns True if any of the elements of <cite>a</cite> evaluate to True.</p>
 <p>Refer to <cite>numpy.any</cite> for full documentation.</p>
 <div class="admonition seealso">
@@ -413,7 +413,7 @@ The <code class="docutils literal notranslate"><span class="pre">__new__</span><
 <dl class="method">
 <dt id="deltametrics.section.DataSectionVariable.argmin">
 <code class="descname">argmin</code><span class="sig-paren">(</span><em>axis=None</em>, <em>out=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.argmin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return indices of the minimum values along the given axis of <cite>a</cite>.</p>
+<dd><p>Return indices of the minimum values along the given axis.</p>
 <p>Refer to <cite>numpy.argmin</cite> for detailed documentation.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -1414,7 +1414,7 @@ look-up at each loop iteration.</p>
 
 <dl class="method">
 <dt id="deltametrics.section.DataSectionVariable.mean">
-<code class="descname">mean</code><span class="sig-paren">(</span><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em>, <em>keepdims=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.mean" title="Permalink to this definition">¶</a></dt>
+<code class="descname">mean</code><span class="sig-paren">(</span><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em>, <em>keepdims=False</em>, <em>*</em>, <em>where=True</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.mean" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the average of the array elements along given axis.</p>
 <p>Refer to <cite>numpy.mean</cite> for full documentation.</p>
 <div class="admonition seealso">
@@ -1474,7 +1474,7 @@ array object.</p>
 
 <dl class="method">
 <dt id="deltametrics.section.DataSectionVariable.newbyteorder">
-<code class="descname">newbyteorder</code><span class="sig-paren">(</span><em>new_order='S'</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.newbyteorder" title="Permalink to this definition">¶</a></dt>
+<code class="descname">newbyteorder</code><span class="sig-paren">(</span><em>new_order='S'</em>, <em>/</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.newbyteorder" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the array with the same data viewed with a different byte order.</p>
 <p>Equivalent to:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">newbytorder</span><span class="p">(</span><span class="n">new_order</span><span class="p">))</span>
@@ -1488,15 +1488,13 @@ type.</p>
 below. <cite>new_order</cite> codes can be any of:</p>
 <ul class="simple">
 <li><p>’S’ - swap dtype from current to opposite endian</p></li>
-<li><p>{‘&lt;’, ‘L’} - little endian</p></li>
-<li><p>{‘&gt;’, ‘B’} - big endian</p></li>
-<li><p>{‘=’, ‘N’} - native order</p></li>
+<li><p>{‘&lt;’, ‘little’} - little endian</p></li>
+<li><p>{‘&gt;’, ‘big’} - big endian</p></li>
+<li><p>’=’ - native order, equivalent to <cite>sys.byteorder</cite></p></li>
 <li><p>{‘|’, ‘I’} - ignore (no change to byte order)</p></li>
 </ul>
 <p>The default value (‘S’) results in swapping the current
-byte order. The code does a case-insensitive check on the first
-letter of <cite>new_order</cite> for the alternatives above.  For example,
-any of ‘B’ or ‘b’ or ‘biggish’ are valid to specify big-endian.</p>
+byte order.</p>
 </p>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -2062,7 +2060,7 @@ structured array:</p>
 <dl class="method">
 <dt id="deltametrics.section.DataSectionVariable.squeeze">
 <code class="descname">squeeze</code><span class="sig-paren">(</span><em>axis=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.squeeze" title="Permalink to this definition">¶</a></dt>
-<dd><p>Remove single-dimensional entries from the shape of <cite>a</cite>.</p>
+<dd><p>Remove axes of length one from <cite>a</cite>.</p>
 <p>Refer to <cite>numpy.squeeze</cite> for full documentation.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -2075,7 +2073,7 @@ structured array:</p>
 
 <dl class="method">
 <dt id="deltametrics.section.DataSectionVariable.std">
-<code class="descname">std</code><span class="sig-paren">(</span><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em>, <em>ddof=0</em>, <em>keepdims=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.std" title="Permalink to this definition">¶</a></dt>
+<code class="descname">std</code><span class="sig-paren">(</span><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em>, <em>ddof=0</em>, <em>keepdims=False</em>, <em>*</em>, <em>where=True</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.std" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the standard deviation of the array elements along given axis.</p>
 <p>Refer to <cite>numpy.std</cite> for full documentation.</p>
 <div class="admonition seealso">
@@ -2193,17 +2191,16 @@ position in the next row.  As such, the strides for the array <cite>x</cite> wil
 <code class="descname">tobytes</code><span class="sig-paren">(</span><em>order='C'</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.tobytes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct Python bytes containing the raw data bytes in the array.</p>
 <p>Constructs Python bytes showing a copy of the raw contents of
-data memory. The bytes object can be produced in either ‘C’ or ‘Fortran’,
-or ‘Any’ order (the default is ‘C’-order). ‘Any’ order means C-order
-unless the F_CONTIGUOUS flag in the array is set, in which case it
-means ‘Fortran’ order.</p>
+data memory. The bytes object is produced in C-order by default.
+This behavior is controlled by the <code class="docutils literal notranslate"><span class="pre">order</span></code> parameter.</p>
 <div class="versionadded">
 <p><span class="versionmodified added">New in version 1.9.0.</span></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>order</strong> (<em>{'C'</em><em>, </em><em>'F'</em><em>, </em><em>None}</em><em>, </em><em>optional</em>) – Order of the data for multidimensional arrays:
-C, Fortran, or the same as for the original array.</p>
+<dd class="field-odd"><p><strong>order</strong> (<em>{'C'</em><em>, </em><em>'F'</em><em>, </em><em>'A'}</em><em>, </em><em>optional</em>) – Controls the memory layout of the bytes object. ‘C’ means C-order,
+‘F’ means F-order, ‘A’ (short for <em>Any</em>) means ‘F’ if <cite>a</cite> is
+Fortran contiguous, ‘C’ otherwise. Default is ‘C’.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><strong>s</strong> – Python bytes exhibiting a copy of <cite>a</cite>’s raw data.</p>
@@ -2404,7 +2401,7 @@ intended simply as a “convenience” alternative to the tuple form)</p></li>
 
 <dl class="method">
 <dt id="deltametrics.section.DataSectionVariable.var">
-<code class="descname">var</code><span class="sig-paren">(</span><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em>, <em>ddof=0</em>, <em>keepdims=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.var" title="Permalink to this definition">¶</a></dt>
+<code class="descname">var</code><span class="sig-paren">(</span><em>axis=None</em>, <em>dtype=None</em>, <em>out=None</em>, <em>ddof=0</em>, <em>keepdims=False</em>, <em>*</em>, <em>where=True</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DataSectionVariable.var" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the variance of the array elements, along given axis.</p>
 <p>Refer to <cite>numpy.var</cite> for full documentation.</p>
 <div class="admonition seealso">
