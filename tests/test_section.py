@@ -11,10 +11,11 @@ from deltametrics import cube
 from deltametrics import plot
 from deltametrics import section
 from deltametrics import utils
-from deltametrics.sample_data import _get_rcm8_path
+from deltametrics.sample_data import _get_rcm8_path, _get_golf_path
 
 
 rcm8_path = _get_rcm8_path()
+golf_path = _get_golf_path()
 
 
 # Test the basics of each different section type
@@ -189,6 +190,21 @@ class TestCircularSection:
         assert len(sacs2.variables) > 0
         assert sacs2.origin == (10, 0)
 
+    def test_standalone_instantiation_withmeta(self):
+        golfcube = cube.DataCube(golf_path)
+        sacs = section.CircularSection(golfcube, radius=30)
+        assert sacs.name == 'circular'
+        assert sacs.cube == golfcube
+        assert sacs.trace.shape[0] == 85
+        assert len(sacs.variables) > 0
+        assert sacs.origin[1] == golfcube.meta['L0']
+        sacs2 = section.CircularSection(golfcube, radius=30, origin=(10, 0))
+        assert sacs2.name == 'circular'
+        assert sacs2.cube == golfcube
+        assert sacs2.trace.shape[0] == 53
+        assert len(sacs2.variables) > 0
+        assert sacs2.origin == (10, 0)
+
     @pytest.mark.xfail(AttributeError, reason='Not called if no cube.')
     def no_radius_if_no_cube(self):
         sacs3 = section.CircularSection()
@@ -285,6 +301,19 @@ class TestRadialSection:
         assert sars3.trace.shape[0] == 31
         assert len(sars3.variables) > 0
         assert sars3.azimuth == 178
+        assert sars3.origin == (143, 18)
+
+    def test_standalone_instantiation_withmeta(self):
+        golfcube = cube.DataCube(golf_path)
+        sars = section.RadialSection(golfcube)
+        assert sars.origin[1] == golfcube.meta['L0']
+        sars1 = section.RadialSection(golfcube, azimuth=30)
+        assert sars.origin[1] == golfcube.meta['L0']
+        sars2 = section.RadialSection(golfcube, azimuth=103, origin=(90, 2))
+        assert sars2.origin == (90, 2)
+        sars3 = section.RadialSection(
+            golfcube, azimuth=178, origin=(143, 18), length=30, name='diff')
+        assert sars3.name == 'diff'
         assert sars3.origin == (143, 18)
 
     def test_register_section(self):

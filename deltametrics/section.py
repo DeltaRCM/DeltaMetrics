@@ -229,7 +229,6 @@ class BaseSection(abc.ABC):
                                 _gottype=type(CubeInstance)))
         self.cube = CubeInstance
         self._variables = self.cube.variables
-        # self._name = self._name or name or self.section_type
         self.name = name  # use the setter to determine the _name
         self._compute_section_coords()
         self._compute_section_attrs()
@@ -246,10 +245,11 @@ class BaseSection(abc.ABC):
         else:
             # _name is already set
             if not (var is None):
-                warnings.warn(UserWarning("`name` argument supplied to \
-                    instantiated `Section` object. To change the name of \
-                    a Section, you must set the attribute directly with \
-                    `section._name = 'name'`."))
+                warnings.warn(
+                    UserWarning("`name` argument supplied to instantiated "
+                                "`Section` object. To change the name of "
+                                "a Section, you must set the attribute "
+                                "directly with `section._name = 'name'`."))
             # do nothing
 
     @abc.abstractmethod
@@ -821,8 +821,13 @@ class CircularSection(BaseSection):
             self.radius = self._input_radius
 
         if (self._input_origin is None):
-            land_width = np.minimum(utils.guess_land_width_from_land(
-                self.cube['eta'][-1, :, 0]), 5)
+            if (self.cube.meta is None):
+                # try and guess the value (should issue a warning?)
+                land_width = np.minimum(utils.guess_land_width_from_land(
+                    self.cube['eta'][-1, :, 0]), 5)
+            else:
+                # extract L0 from the cube
+                land_width = self.cube.meta['L0']
             self.origin = (int(self.cube.shape[2] / 2),
                            land_width)
         else:
@@ -935,8 +940,13 @@ class RadialSection(BaseSection):
 
         # determine the origin of the line
         if (self._input_origin is None):
-            land_width = np.minimum(utils.guess_land_width_from_land(
-                self.cube['eta'][-1, :, 0]), 5)
+            if (self.cube.meta is None):
+                # try and guess the value (should issue a warning?)
+                land_width = np.minimum(utils.guess_land_width_from_land(
+                    self.cube['eta'][-1, :, 0]), 5)
+            else:
+                # extract L0 from the cube
+                land_width = self.cube.meta['L0']
             self.origin = (int(self.cube.shape[2] / 2),
                            land_width)
         else:

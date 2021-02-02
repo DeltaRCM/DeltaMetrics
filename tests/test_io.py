@@ -127,3 +127,9 @@ def test_readvar_intomemory_error():
 
     with pytest.raises(KeyError):
         netcdf_io.read('nonexistant')
+
+
+def test_netcdf_no_metadata():
+    # works fine, because there is no `connect` call in io init
+    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    assert len(netcdf_io._in_memory_data.keys()) == 0

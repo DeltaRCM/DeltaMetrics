@@ -167,16 +167,22 @@ class NetCDFIO(BaseIO):
 
         try:
             _dataset = xr.open_dataset(self.data_path)
-
             if 'time' and 'y' and 'x' in _dataset.variables:
                 self.dataset = _dataset.set_coords(['time', 'y', 'x'])
             else:
                 self.dataset = _dataset.set_coords([])
                 warn('Dimensions "time", "y", and "x" not provided in the \
                       given data file.', UserWarning)
-
         except Exception:
             raise TypeError('File format out of scope for DeltaMetrics')
+
+        try:
+            _meta = xr.open_dataset(self.data_path, group='meta')
+            self.meta = _meta
+        except OSError:
+            warn('No associated metadata was found in the given data file.',
+                 UserWarning)
+            self.meta = None
 
     def get_known_variables(self):
         """List known variables.
