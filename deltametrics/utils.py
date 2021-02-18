@@ -167,6 +167,10 @@ def curve_fit(data, fit='harmonic'):
     yfit : :obj:`ndarray`
         y-values corresponding to the fitted function.
 
+    popt : :obj:`array`
+        Optimal values for the parameters of the function. Number of
+        parameters is dependent on the functional form used.
+
     pcov : :obj:`ndarray`
         Covariance associated with the fitted function parameters.
 
@@ -200,7 +204,7 @@ def curve_fit(data, fit='harmonic'):
 
     perror = np.sqrt(np.diag(pcov))
 
-    return yfit, pcov, perror
+    return yfit, popt, pcov, perror
 
 
 def guess_land_width_from_land(land_col_0):
