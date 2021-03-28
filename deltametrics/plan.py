@@ -2,7 +2,220 @@ import numpy as np
 from scipy import stats
 import matplotlib.pyplot as plt
 
+from scipy.spatial import ConvexHull
+from shapely.geometry import Point
+from shapely.geometry.polygon import Polygon
+from skimage import feature
+from skimage import morphology
+from skimage import measure
+
+from numba import jit, njit
+
+import abc
+import warnings
+
 from . import mask
+from . import cube
+from . import plot
+from . import utils
+
+
+class BasePlanform(abc.ABC):
+    """Base planform object.
+
+    Defines common attributes and methods of a planform object.
+
+    This object should wrap around many of the functions available from
+    :obj:`~deltametrics.mask` and :obj:`~deltametrics.mobility`.
+    """
+
+    def __init__(self, planform_type, *args, name=None):
+        """
+        Identify coordinates defining the planform.
+
+        Parameters
+        ----------
+        CubeInstance : :obj:`~deltametrics.cube.Cube` subclass instance, optional
+            Connect to this cube. No connection is made if cube is not
+            provided.
+
+        Notes
+        -----
+
+        If no arguments are passed, an empty planform not connected to any cube
+        is returned. This cube will will need to be manually connected to have
+        any functionality (via the :meth:`connect` method).
+        """
+        # begin unconnected
+        self._x = None
+        self._y = None
+        self._shape = None
+        self._variables = None
+        self.cube = None
+
+        self.planform_type = planform_type
+        self._name = name
+
+        if len(args) > 1:
+            raise ValueError('Expected single positional argument to \
+                             %s instantiation.'
+                             % type(self))
+
+        if len(args) > 0:
+            self.connect(args[0])
+        else:
+            pass
+
+    def connect(self, CubeInstance, name=None):
+        """Connect this Planform instance to a Cube instance.
+        """
+        if not issubclass(type(CubeInstance), cube.BaseCube):
+            raise TypeError('Expected type is subclass of {_exptype}, '
+                            'but received was {_gottype}.'.format(
+                                _exptype=type(cube.BaseCube),
+                                _gottype=type(CubeInstance)))
+        self.cube = CubeInstance
+        self._variables = self.cube.variables
+        self.name = name  # use the setter to determine the _name
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, var):
+        if (self._name is None):
+            # _name is not yet set
+            self._name = var or self.planform_type
+        else:
+            # _name is already set
+            if not (var is None):
+                warnings.warn(
+                    UserWarning("`name` argument supplied to instantiated "
+                                "`Planform` object. To change the name of "
+                                "a Planform, you must set the attribute "
+                                "directly with `plan._name = 'name'`."))
+            # do nothing
+
+    @property
+    def shape(self):
+        return self._shape
+
+
+class OpeningAnglePlanform(BasePlanform):
+    """Planform for handling the Shaw Opening Angle Method.
+
+
+    """
+
+    @staticmethod
+    def from_arrays(*args):
+        raise NotImplementedError
+
+    @staticmethod
+    def from_ElevationMask(ElevationMask):
+        _omask = 1 - (ElevationMask.mask)
+
+        _OAP = OpeningAnglePlanform(allow_empty=True)
+        _OAP._shape = _omask.shape
+        _OAP._compute_from_ocean_mask(_omask)
+        return _OAP
+
+    @staticmethod
+    def from_mask(UnknownMask):
+        if isinstance(UnknownMask, mask.ElevationMask):
+            return OpeningAnglePlanform.from_ElevationMask(UnknownMask)
+        else:
+            raise TypeError('Must be type: ElevationMask.')
+
+    def __init__(self, *args, **kwargs):
+        """Init.
+
+        .. todo:: needs docstring.
+        """
+        super().__init__('opening angle')
+        self._shape = None
+        self._sea_angles = None
+        self._ocean_mask = None
+
+        # check for inputs to return or proceed
+        if (len(args) == 0):
+            _allow_empty = kwargs.pop('allow_empty', False)
+            if _allow_empty:
+                # do nothing and return partially instantiated object
+                return
+            else:
+                raise ValueError('Expected 1 input, got 0.')
+        if not (len(args) == 1):
+            raise ValueError('Expected 1 input, got %s.' % str(len(args)))
+
+        # process the argument to the omask needed for Shaw OAM
+        if utils.is_ndarray_or_xarray(args[0]):
+            # grab argument to array
+            eta_array = args[0]
+            # pop kwarg
+            self._elevation_threshold = kwargs.pop('elevation_threshold', -0.5)
+            # make a temporary mask
+            _em = mask.ElevationMask(
+                eta_array, elevation_threshold=self._elevation_threshold)
+            # extract value for omask
+            _omask = 1 - (_em.mask)
+
+        elif isinstance(args[0], mask.ElevationMask):
+            # grab argument to mask
+            _em = args[0]
+            # extract elevation thresh from mask
+            self._elevation_threshold = _em.elevation_threshold
+            _omask = 1 - (_em.mask)
+
+        else:
+            # bad type supplied as argument
+            raise TypeError('Invalid type for argument.')
+
+        self._shape = _omask.shape
+
+        self._compute_from_ocean_mask(_omask)
+
+    def _compute_from_ocean_mask(self, ocean_mask, **kwargs):
+
+        sea_angles = np.zeros(self._shape)
+
+        if np.any(ocean_mask == 0):
+
+            # pixels present in the mask
+            shoreangles, seaangles = shaw_opening_angle_method(
+                ocean_mask, **kwargs)
+
+            # translate flat seaangles values to the shoreline image
+            flat_inds = list(map(
+                lambda x: np.ravel_multi_index(x, sea_angles.shape),
+                seaangles[:2, :].T.astype(int)))
+            sea_angles.flat[flat_inds] = seaangles[-1, :]
+
+        # assign shore_image to the mask object with proper size
+        # self._shore_angles = shoreangles
+        self._sea_angles = sea_angles
+
+        # properly assign the oceanmap to the self.ocean_mask
+        self._ocean_mask = ocean_mask
+
+    @property
+    def sea_angles(self):
+        """Maximum opening angle view of the sea from a pixel.
+        """
+        return self._sea_angles
+
+    @property
+    def ocean_mask(self):
+        """Ocean mask.
+        """
+        return self._ocean_mask
+
+    @property
+    def elevation_threshold(self):
+        """Elevation threshold.
+        """
+        return self._elevation_threshold
 
 
 def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
@@ -277,93 +490,127 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
         return length
 
 
-def a_land_function(mask):
-    """Compute a land-water function
+@njit
+def _compute_angles_between(c1, shoreandborder, Shallowsea, numviews):
+    maxtheta = np.zeros((numviews, c1))
+    for i in range(c1):
 
-    This function does blah blah...
+        shallow_reshape = np.atleast_2d(Shallowsea[:, i]).T
+        diff = shoreandborder - shallow_reshape
+        x = diff[0]
+        y = diff[1]
 
-    Parameters
-    ----------
-    mask : land-waterMask
-        A land-water mask instance.
+        angles = np.arctan2(x, y)
+        angles = np.sort(angles) * 180. / np.pi
 
-    Returns
-    -------
-    float
-        something who knows what, maybe has math: :math:`\\alpha`.
-    """
-    pass
+        dangles = np.zeros_like(angles)
+        dangles[:-1] = angles[1:] - angles[:-1]
+        remangle = 360 - (angles.max() - angles.min())
+        dangles[-1] = remangle
+        dangles = np.sort(dangles)
 
+        maxtheta[:, i] = dangles[-numviews:]
 
-def compute_delta_radius(mask):
-    """Compute the delta radius
-
-    This function does blah blah...
-
-    Parameters
-    ----------
-    mask : land-waterMask
-        A land-water mask instance.
-
-    Returns
-    -------
-    float
-        something who knows what, maybe has math: :math:`\\alpha`.
-    """
-    pass
+    return maxtheta
 
 
-def a_channel_function(mask):
-    """Compute a channel function
+def shaw_opening_angle_method(ocean_mask, numviews=3):
+    """Extract the opening angle map from an image.
 
-    This function does blah blah...
+    Applies the opening angle method [1]_ to compute the shoreline mask.
+    Adapted from the Matlab implementation in [2]_.
 
-    Parameters
-    ----------
-    mask : ChannelMask
-        A channel mask instance.
+    This *function* takes an image and extracts its opening angle map.
 
-    Returns
-    -------
-    float
-        something who knows what, maybe has math: :math:`\\alpha`.
-    """
-    pass
+    .. [1] Shaw, John B., et al. "An image‐based method for
+       shoreline mapping on complex coasts." Geophysical Research Letters
+       35.12 (2008).
 
-
-def compute_shoreline_angles(mask, param2=False):
-    """Compute shoreline angle.
-
-    Computes some stuff according to:
-
-    .. math::
-
-        \\theta = 7 \\frac{\\rho}{10-\\tau}
-
-    where :math:`\\rho` is something, :math:`\\tau` is another.
+    .. [2] Liang, Man, Corey Van Dyk, and Paola Passalacqua.
+       "Quantifying the patterns and dynamics of river deltas under
+       conditions of steady forcing and relative sea level rise." Journal
+       of Geophysical Research: Earth Surface 121.2 (2016): 465-496.
 
     Parameters
     ----------
+    ocean_mask : ndarray
+        Binary image that has been thresholded to split deep water/land.
 
-    mask : :obj:`~deltametrics.land.LandMask`
-        LandMask with shoreline to compute along.
-
-    param2 : float, optional
-        Something else? It's assumed to be false.
-
+    numviews : int
+        Defines the number of times to 'look' for the opening angle map.
+        Default is 3.
 
     Returns
     -------
+    shoreangles : ndarray
+        Flattened values corresponding to the shoreangle detected for each
+        'look' of the opening angle method
 
-    vol_conc : float
-        Volumetric concentration.
-
-
-    Examples
-    --------
-
-    >>> dm.plan.compute_shoreline_angles(True, True)
-    0.54
-
+    seaangles : ndarray
+        Flattened values corresponding to the 'sea' angle detected for each
+        'look' of the opening angle method. The 'sea' region is the convex
+        hull which envelops the shoreline as well as the delta interior.
     """
-    return 0.54
+
+    Sx, Sy = np.gradient(ocean_mask)
+    G = np.sqrt((Sx*Sx) + (Sy*Sy))
+
+    # threshold the gradient to produce edges
+    edges = np.logical_and((G > 0), (ocean_mask > 0))
+
+    if np.sum(edges) == 0:
+        raise ValueError(
+            'No pixels identified in ocean_mask. '
+            'Cannot compute the Opening Angle Method.')
+
+    # extract coordinates of the edge pixels and define convex hull
+    bordermap = np.pad(np.zeros_like(edges), 1, 'edge')
+    bordermap[:-2, 1:-1] = edges
+    bordermap[0, :] = 1
+    points = np.fliplr(np.array(np.where(edges > 0)).T)
+    hull = ConvexHull(points, qhull_options='Qc')
+
+    # identify set of points to evaluate
+    sea = np.fliplr(np.array(np.where(ocean_mask > 0.5)).T)
+
+    # identify set of points in both the convex hull polygon and
+    #   defined as points_to_test and put these binary points into seamap
+    polygon = Polygon(points[hull.vertices]).buffer(0.01)
+    In = utils._points_in_polygon(sea, np.array(polygon.exterior.coords))
+    In = In.astype(np.bool)
+
+    Shallowsea_ = sea[In]
+    seamap = np.zeros(bordermap.shape)
+    flat_inds = list(map(lambda x: np.ravel_multi_index(x, seamap.shape),
+                         np.fliplr(Shallowsea_)))
+    seamap.flat[flat_inds] = 1
+    seamap[:3, :] = 0
+
+    # define other points as these 'Deepsea' points
+    Deepsea_ = sea[~In]
+    Deepsea = np.zeros((numviews+2, len(Deepsea_)))
+    Deepsea[:2, :] = np.flipud(Deepsea_.T)
+    Deepsea[-1, :] = 200.  # 200 is a background value for waves1s later
+
+    # define points for the shallow sea and the shoreborder
+    Shallowsea = np.array(np.where(seamap > 0.5))
+    shoreandborder = np.array(np.where(bordermap > 0.5))
+    c1 = len(Shallowsea[0])
+    maxtheta = np.zeros((numviews, c1))
+
+    # compute angle between each shallowsea and shoreborder point
+    maxtheta = _compute_angles_between(c1, shoreandborder, Shallowsea, numviews)
+
+    # set up arrays for tracking the shore points and  their angles
+    allshore = np.array(np.where(edges > 0))
+    c3 = len(allshore[0])
+    maxthetashore = np.zeros((numviews, c3))
+
+    # get angles between the shore points and shoreborder points
+    maxthetashore = _compute_angles_between(c3, shoreandborder, allshore, numviews)
+
+    # define the shoreangles and seaangles identified
+    shoreangles = np.vstack([allshore, maxthetashore])
+    seaangles = np.hstack([np.vstack([Shallowsea, maxtheta]), Deepsea])
+
+    return shoreangles, seaangles

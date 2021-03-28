@@ -2,6 +2,7 @@ import os
 import sys
 
 import numpy as np
+import xarray as xr
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as colors
@@ -137,6 +138,14 @@ class AttributeChecker(object):
             raise RuntimeError('Required attribute(s) not assigned: '
                                + str(log_form))
         return att_dict
+
+
+def is_ndarray_or_xarray(data):
+    """Check that data is numpy array or xarray data.
+    """
+    truth = (isinstance(data, xr.core.dataarray.DataArray) or
+             isinstance(data, np.ndarray))
+    return truth
 
 
 def curve_fit(data, fit='harmonic'):
