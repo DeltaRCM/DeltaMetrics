@@ -3,180 +3,286 @@ import pytest
 import sys
 import os
 import numpy as np
+import matplotlib.pyplot as plt
+
+import unittest.mock as mock
 
 from deltametrics import cube
 from deltametrics import mask
-from deltametrics.sample_data import _get_rcm8_path
+from deltametrics.plan import OpeningAnglePlanform
+from deltametrics.sample_data import _get_rcm8_path, _get_golf_path
 
 
 rcm8_path = _get_rcm8_path()
 rcm8cube = cube.DataCube(rcm8_path)
 
+golf_path = _get_golf_path()
+golfcube = cube.DataCube(golf_path)
+
+
+@mock.patch.multiple(mask.BaseMask,
+                     __abstractmethods__=set())
+class TestBaseMask:
+    """
+    To test the BaseMask, we patch the base job with a filled abstract method
+    `.run()`.
+
+    .. note:: This patch is handled at the class level above!!
+    """
+
+    fake_input = np.ones((100, 200))
+
+    @mock.patch('deltametrics.mask.BaseMask._set_shape_mask')
+    def test_name_setter(self, patched):
+        basemask = mask.BaseMask('somename', self.fake_input)
+        assert basemask.mask_type == 'somename'
+        patched.assert_called()  # this would change the shape
+        assert basemask.shape is None  # so shape is not set
+        assert basemask._mask is None  # so mask is not set
+
+    def test_simple_example(self):
+        basemask = mask.BaseMask('field', self.fake_input)
+
+        # make a bunch of assertions
+        assert np.all(basemask._mask == False)
+        assert np.all(basemask.integer_mask == 0)
+        assert basemask._mask is basemask.mask
+        assert basemask.shape == self.fake_input.shape
+
+    def test_show(self):
+        """
+        Here, we just test whether it works, and whether it takes a
+        specific axis.
+        """
+        basemask = mask.BaseMask('field', self.fake_input)
+
+        # test show with nothing
+        basemask.show()
+        plt.close()
+
+        # test show with axes, bad values
+        fig, ax = plt.subplots()
+        basemask.show(ax=ax)
+        plt.close()
+
+    def test_no_data(self):
+        """Test when no data input raises error."""
+        with pytest.raises(ValueError, match=r'Expected 1 input, got 0.'):
+            _ = mask.BaseMask('field')
+
+    def test_invalid_data(self):
+        """Test invalid data input."""
+        with pytest.raises(TypeError, match=r'Input to mask instantiation *.'):
+            _ = mask.BaseMask('field', 'a string!!')
+
+    def test_return_empty(self):
+        """Test when no data input, but allow empty, returns empty."""
+        empty_basemask = mask.BaseMask('field', allow_empty=True)
+        assert empty_basemask.mask_type == 'field'
+        assert empty_basemask.shape is None
+        assert empty_basemask._mask is None
+        assert empty_basemask._mask is empty_basemask.mask
+
+    def test_is_mask_deprecationwarning(self):
+        """Test that TypeError is raised if is_mask is invalid."""
+        with pytest.warns(DeprecationWarning):
+            _ = mask.BaseMask('field', self.fake_input,
+                              is_mask='invalid')
+        with pytest.warns(DeprecationWarning):
+            _ = mask.BaseMask('field', self.fake_input,
+                              is_mask=True)
+
+    def test_3dinput_deprecationerror(self):
+        """Test that TypeError is raised if is_mask is invalid."""
+        with pytest.raises(ValueError, match=r'Creating a `Mask` *.'):
+            _ = mask.BaseMask('field', np.random.uniform(size=(10, 100, 200)))
+
 
 class TestShorelineMask:
     """Tests associated with the mask.ShorelineMask class."""
 
-    def test_default_vals(self):
-        """Test that default values are assigned."""
+    # define an input mask for the mask instantiation pathway
+    _ElevationMask = mask.ElevationMask(
+            rcm8cube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+    def test_default_vals_array(self):
+        """Test that instantiation works for an array."""
         # define the mask
         shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
         # make assertions
-        assert shoremask.topo_threshold == -0.5
-        assert shoremask.angle_threshold == 75
-        assert shoremask.numviews == 3
-        assert shoremask.mask_type == 'shore'
+        assert shoremask._input_flag == 'array'
+        assert shoremask.mask_type == 'shoreline'
+        assert shoremask.angle_threshold > 0
+        assert shoremask._mask.dtype == np.bool
 
-    def test_maskError(self):
-        """Test that TypeError is raised if is_mask is invalid."""
-        with pytest.raises(TypeError):
-            shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :],
-                                           is_mask='invalid')
-
-    def test_maskTrue(self):
-        """Test that is_mask is True works."""
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_cube(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :],
-                                       is_mask=True)
-        # do assertion
-        assert np.all(shoremask.mask[-1, :, :] == rcm8cube['eta'][-1, :, :])
-
-    def test_assign_vals(self):
-        """Test that specified values are assigned."""
-        # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :],
-                                       topo_threshold=-1.0,
-                                       angle_threshold=100,
-                                       numviews=5)
+        shoremask = mask.ShorelineMask(rcm8cube, t=-1)
         # make assertions
-        assert shoremask.topo_threshold == -1.0
-        assert shoremask.angle_threshold == 100
-        assert shoremask.numviews == 5
+        assert shoremask._input_flag == 'cube'
+        assert shoremask.mask_type == 'shoreline'
+        assert shoremask.angle_threshold > 0
+        assert shoremask._mask.dtype == np.bool
 
-    def test_shoreline(self):
-        """Check for important variables and the final mask."""
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_cubewithmeta(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
+        shoremask = mask.ShorelineMask(golfcube, t=-1)
         # make assertions
-        assert np.array_equal(shoremask.mask,
-                              shoremask.mask.astype(bool)) is True
-        assert hasattr(shoremask, 'oceanmap') is True
-        assert hasattr(shoremask, 'mask') is True
-        assert hasattr(shoremask, 'shore_image') is True
+        assert shoremask._input_flag == 'cube'
+        assert shoremask.mask_type == 'shoreline'
+        assert shoremask.angle_threshold > 0
+        assert shoremask._mask.dtype == np.bool
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_mask(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        shoremask = mask.ShorelineMask(self._ElevationMask)
+        # make assertions
+        assert shoremask._input_flag == 'mask'
+        assert shoremask.mask_type == 'shoreline'
+        assert shoremask.angle_threshold > 0
+        assert shoremask._mask.dtype == np.bool
+
+    def test_angle_threshold(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        shoremask_default = mask.ShorelineMask(
+            rcm8cube['eta'][-1, :, :])
+        shoremask = mask.ShorelineMask(
+            rcm8cube['eta'][-1, :, :],
+            angle_threshold=45)
+        # make assertions
+        assert shoremask.angle_threshold == 45
+        assert not np.all(shoremask_default == shoremask)
 
     def test_submergedLand(self):
         """Check what happens when there is no land above water."""
         # define the mask
         shoremask = mask.ShorelineMask(rcm8cube['eta'][0, :, :])
-        # assert - expect all values to be 0s
-        assert np.all(shoremask.mask == 0)
-
-    def test_invalid_data(self):
-        """Test invalid data input."""
-        with pytest.raises(TypeError):
-            shoremask = mask.ShorelineMask('invalid')
-
-    def test_3d(self):
-        """Test with multiple time slices."""
-        # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][30:33, :, :])
-        # assert the shape
-        assert np.shape(shoremask.mask) == (3, 120, 240)
+        # assert - expect all values to be False
+        assert np.all(shoremask._mask == 0)
 
 
 class TestLandMask:
     """Tests associated with the mask.LandMask class."""
 
-    def test_invalid_data(self):
-        """Test invalid data input."""
-        with pytest.raises(TypeError):
-            landmask = mask.LandMask('invalid')
+    # define an input mask for the mask instantiation pathway
+    _ElevationMask = mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
 
-    def test_default_vals(self):
-        """Test that default values are assigned."""
+    _OAP_0 = OpeningAnglePlanform(
+        golfcube['eta'][-1, :, :],
+        elevation_threshold=0)
+    _OAP_05 = OpeningAnglePlanform(
+        golfcube['eta'][-1, :, :],
+        elevation_threshold=0.5)
+
+    def test_default_vals_array(self):
+        """Test that instantiation works for an array."""
         # define the mask
         landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
         # make assertions
-        assert landmask.topo_threshold == -0.5
-        assert landmask.angle_threshold == 75
-        assert landmask.numviews == 3
+        assert landmask._input_flag == 'array'
         assert landmask.mask_type == 'land'
+        assert landmask.angle_threshold > 0
+        assert landmask._mask.dtype == np.bool
 
-    def test_maskError(self):
-        """Test that TypeError is raised if is_mask is invalid."""
-        with pytest.raises(TypeError):
-            landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
-                                     is_mask='invalid')
-
-    def test_maskTrue(self):
-        """Test that is_mask is True works."""
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_cube(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
-                                 is_mask=True)
-        # do assertion
-        assert np.all(landmask.mask[-1, :, :] == rcm8cube['eta'][-1, :, :])
-
-    def test_assign_vals(self):
-        """Test that specified values are assigned."""
-        # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
-                                 angle_threshold=100,
-                                 topo_threshold=-1.0,
-                                 numviews=5)
+        landmask = mask.LandMask(rcm8cube, t=-1)
         # make assertions
-        assert landmask.angle_threshold == 100
-        assert landmask.topo_threshold == -1.0
-        assert landmask.numviews == 5
+        assert landmask._input_flag == 'cube'
+        assert landmask.mask_type == 'land'
+        assert landmask.angle_threshold > 0
+        assert landmask._mask.dtype == np.bool
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_cubewithmeta(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        landmask = mask.LandMask(golfcube, t=-1)
+        # make assertions
+        assert landmask._input_flag == 'cube'
+        assert landmask.mask_type == 'land'
+        assert landmask.angle_threshold > 0
+        assert landmask._mask.dtype == np.bool
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_mask(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        landmask = mask.LandMask(self._ElevationMask)
+        # make assertions
+        assert landmask._input_flag == 'mask'
+        assert landmask.mask_type == 'land'
+        assert landmask.angle_threshold > 0
+        assert landmask._mask.dtype == np.bool
+
+    def test_angle_threshold(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        landmask_default = mask.LandMask(
+            rcm8cube['eta'][-1, :, :])
+        landmask = mask.LandMask(
+            rcm8cube['eta'][-1, :, :],
+            angle_threshold=45)
+        # make assertions
+        assert landmask.angle_threshold == 45
+        assert not np.all(landmask_default == landmask)
 
     def test_submergedLand(self):
         """Check what happens when there is no land above water."""
         # define the mask
         landmask = mask.LandMask(rcm8cube['eta'][0, :, :])
-        # assert - expect all values to be 1s
-        assert np.all(landmask.mask == 1)
+        # assert - expect all values to be False
+        assert np.all(landmask._mask == 0)
 
-    def test_land(self):
-        """Check for important variables and the final mask."""
+    def test_static_from_OAP(self):
+        landmask = mask.LandMask(golfcube['eta'][-1, :, :])
+        mfOAP = mask.LandMask.from_OAP(self._OAP_0)
+
+        landmask_05 = mask.LandMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0.5)
+        mfOAP_05 = mask.LandMask.from_OAP(self._OAP_05)
+
+        assert np.all(landmask._mask == mfOAP._mask)
+        assert np.all(landmask_05._mask == mfOAP_05._mask)
+
+    def test_static_from_mask_ElevationMask(self):
+        landmask = mask.LandMask(golfcube['eta'][-1, :, :])
+        mfem = mask.LandMask.from_mask(self._ElevationMask)
+
+        landmask_05 = mask.LandMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0.5)
+
+        assert np.all(landmask._mask == mfem._mask)
+        assert np.sum(landmask_05.integer_mask) < np.sum(landmask.integer_mask)
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_static_from_array(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
+        landmask = mask.LandMask.from_array(np.ones((100, 200)))
         # make assertions
-        assert np.array_equal(landmask.mask,
-                              landmask.mask.astype(bool)) is True
-        assert hasattr(landmask, 'oceanmap') is True
-        assert hasattr(landmask, 'mask') is True
-        assert hasattr(landmask, 'shore_image') is True
-
-    def test_givenshore(self):
-        """Test that a ShoreMask can be passed into it."""
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
-                                 shoremask=shoremask)
-        # make assertions
-        assert hasattr(landmask, 'shoremask') is True
-        assert hasattr(landmask, 'angle_threshold') is True
-        assert hasattr(landmask, 'mask') is True
-        assert hasattr(landmask, 'shore_image') is True
-        assert np.array_equal(landmask.mask,
-                              landmask.mask.astype(bool)) is True
-
-    def test_givenfakeshore(self):
-        """Test that a bad shoreline mask doesn't break the function."""
-        shoremask = 'not a mask'
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :],
-                                 shoremask=shoremask)
-        # make assertions
-        assert hasattr(landmask, 'shoremask') is True
-        assert hasattr(landmask, 'angle_threshold') is True
-        assert hasattr(landmask, 'mask') is True
-        assert hasattr(landmask, 'shore_image') is True
-        assert np.array_equal(landmask.mask,
-                              landmask.mask.astype(bool)) is True
-
-    def test_3d(self):
-        """Test with multiple time slices."""
-        # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][30:33, :, :])
-        # assert the shape
-        assert np.shape(landmask.mask) == (3, 120, 240)
+        assert landmask._input_flag == 'land'
 
 
 class TestWetMask:

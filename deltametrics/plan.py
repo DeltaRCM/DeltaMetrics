@@ -154,7 +154,7 @@ class OpeningAnglePlanform(BasePlanform):
             # grab argument to array
             eta_array = args[0]
             # pop kwarg
-            self._elevation_threshold = kwargs.pop('elevation_threshold', -0.5)
+            self._elevation_threshold = kwargs.pop('elevation_threshold', 0)
             # make a temporary mask
             _em = mask.ElevationMask(
                 eta_array, elevation_threshold=self._elevation_threshold)
