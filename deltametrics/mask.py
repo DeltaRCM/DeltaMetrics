@@ -1,9 +1,6 @@
 """Classes and methods to create masks of planform features and attributes."""
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.spatial import ConvexHull
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
 from skimage import feature
 from skimage import morphology
 from skimage import measure
@@ -14,9 +11,7 @@ import warnings
 from . import utils
 from . import cube
 from . import plan
-
-from numba import jit, njit
-import xarray as xr
+from . import plot
 
 
 class BaseMask(abc.ABC):
@@ -133,7 +128,8 @@ class BaseMask(abc.ABC):
         """
         return self._mask.astype(np.int)
 
-    def show(self, ax=None, **kwargs):
+    def show(self, ax=None, title=None, ticks=False,
+             colorbar=False, **kwargs):
         """Show the mask.
 
         The `Mask` is shown in a `matplotlib` axis with `imshow`. The `mask`
@@ -153,13 +149,24 @@ class BaseMask(abc.ABC):
         """
         if not ax:
             ax = plt.gca()
+
         cmap = kwargs.pop('cmap', 'gray')
         if self._mask is None:
             raise RuntimeError(
                 '`mask` field has not been intialized yet. '
                 'If this is unexpected, please report error.')
 
-        ax.imshow(self.integer_mask, cmap=cmap, **kwargs)
+        im = ax.imshow(
+            self.integer_mask, origin='lower',
+            cmap=cmap, **kwargs)
+        if colorbar:
+            _ = plot.append_colorbar(im, ax)
+
+        if not ticks:
+            ax.set_xticks([], minor=[])
+            ax.set_yticks([], minor=[])
+        if title:
+            ax.set_title(str(title))
 
         plt.draw()
 
@@ -219,6 +226,23 @@ class ElevationMask(ThresholdValueMask):
 
     This mask implements a binarization of a raster based on elevation
     values.
+
+    Examples
+    --------
+    Initialize the `ElevationMask` from elevation data:
+
+    .. plot::
+        :include-source:
+
+        golfcube = dm.sample_data.golf()
+        emsk = dm.mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        emsk.show(ax=ax[1])
+        plt.show()
     """
     def __init__(self, *args, elevation_threshold, **kwargs):
 
@@ -260,6 +284,27 @@ class FlowMask(ThresholdValueMask):
 
     If you pass a cube, we will try the 'velocity' field. To use a different
     field from the cube, specify the :obj:`cube_key` argument.
+
+    Examples
+    --------
+    Initialize one `FlowMask` from velocity data and one from discharge data:
+
+    .. plot::
+        :include-source:
+
+        golfcube = dm.sample_data.golf()
+        fvmsk = dm.mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=0.3)
+        fdmsk = dm.mask.FlowMask(
+            golfcube['discharge'][-1, :, :],
+            flow_threshold=4)
+
+        fig, ax = plt.subplots(1, 2)
+        fvmsk.show(ax=ax[0])
+        fdmsk.show(ax=ax[1])
+        plt.show()
+
     """
     def __init__(self, *args, flow_threshold,
                  cube_key='velocity', **kwargs):
@@ -297,15 +342,22 @@ class ChannelMask(BaseMask):
 
     Examples
     --------
-    Initialize the channel mask
-        >>> velocity = rcm8cube['velocity'][-1, :, :]
-        >>> topo = rcm8cube['eta'][-1, :, :]
-        >>> cmsk = dm.mask.ChannelMask(velocity, topo)
+    Initialize the `ChannelMask` from elevation and flow data:
 
-    And visualize the mask:
-        >>> cmsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/channelmask.py
+        golfcube = dm.sample_data.golf()
+        cmsk = dm.mask.ChannelMask(
+            golfcube['eta'][-1, :, :],
+            golfcube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.3)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        cmsk.show(ax=ax[1])
+        plt.show()
 
     """
 
@@ -509,31 +561,22 @@ class WetMask(BaseMask):
 
     Examples
     --------
-    Initialize the wet mask
-        >>> arr = rcm8cube['eta'][-1, :, :]
-        >>> wmsk = dm.mask.WetMask(arr)
+    Initialize the `WetMask` from elevation data:
 
-    And visualize the mask:
-        >>> wmsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/wetmask.py
+        golfcube = dm.sample_data.golf()
+        wmsk = dm.mask.WetMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        wmsk.show(ax=ax[1])
+        plt.show()
 
     """
-
-    # @staticmethod
-    # def from_OAP_and_ElevationMask(_OAP, _ElevationMask, **kwargs):
-
-    #     # set up the empty shoreline mask
-    #     _CM = WetMask(allow_empty=True, **kwargs)
-    #     _CM._set_shape_mask(_OAP.shape)
-
-    #     # set up the needed flow mask and landmask
-    #     _LM = LandMask.from_OAP(_OAP)
-    #     _EM = _ElevationMask
-
-    #     # compute the mask
-    #     _CM._compute_mask(_LM, _EM)
-    #     return _CM
 
     @staticmethod
     def from_OAP(_OAP, **kwargs):
@@ -734,19 +777,32 @@ class LandMask(BaseMask):
 
     Examples
     --------
-    Initialize the mask.
-        >>> arr = rcm8cube['eta'][-1, :, :]
-        >>> lmsk = dm.mask.LandMask(arr)
+    Initialize the `LandMask` from elevation data:
 
-    And visualize the mask:
-        >>> lmsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/landmask.py
+        golfcube = dm.sample_data.golf()
+        lmsk = dm.mask.LandMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        lmsk.show(ax=ax[1])
+        plt.show()
 
     """
 
     @staticmethod
     def from_OAP(_OAP, **kwargs):
+        """Compute LandMask from OpeningAnglePlanform.
+
+        Parameters
+        ----------
+        OAP
+
+        """
         # set up the empty shoreline mask
         _LM = LandMask(allow_empty=True, **kwargs)
         _LM._set_shape_mask(_OAP.shape)
@@ -762,9 +818,25 @@ class LandMask(BaseMask):
 
     @staticmethod
     def from_mask(UnknownMask, **kwargs):
-        """Create a ShorelineMask directly from another mask.
+        """Create a LandMask directly from another mask.
 
-        Can take either an ElevationMask as input.
+        Takes an :obj:`ElevationMask` as input and returns a :obj:`LandMask`;
+        note that this method computes an :obj:`OpeningAnglePlanform`
+        internally.
+
+        Parameters
+        ----------
+        ElevationMask : :obj:`ElevationMask`
+            Input `ElevationMask` to compute from.
+
+        **kwargs
+            Keyword arguments are passed to instantiation of all intermediate
+            object; use these to control behavior of instantiation of other
+            masks or planforms.
+
+        Returns
+        -------
+        LandMask : :obj:`LandMask`
         """
         if isinstance(UnknownMask, ElevationMask):
             # make intermediate shoreline mask
@@ -921,14 +993,20 @@ class ShorelineMask(BaseMask):
 
     Examples
     --------
-    Initialize the mask.
-        >>> arr = rcm8cube['eta'][-1, :, :]
-        >>> shrmsk = dm.mask.ShorelineMask(arr)
+    Initialize the `ShorelineMask` from elevation data:
 
-    Visualize the mask:
-        >>> shrmsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/shoremask.py
+        golfcube = dm.sample_data.golf()
+        smsk = dm.mask.ShorelineMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        smsk.show(ax=ax[1])
+        plt.show()
 
     """
 
@@ -983,11 +1061,6 @@ class ShorelineMask(BaseMask):
 
     def __init__(self, *args, angle_threshold=75, **kwargs):
         """Initialize the ShorelineMask.
-
-        Initializing the shoreline mask requires a 2-D array of data. The
-        shoreline mask is computed using the opening angle method (OAM)
-        described in [1]_. The default parameters are designed for
-        DeltaRCM and follow the implementation described in [2]_.
 
         .. note::
 
@@ -1111,12 +1184,6 @@ class ShorelineMask(BaseMask):
         # write shoreline map out to data.mask
         self._mask = np.copy(shoremap.astype(np.bool))
 
-        # assign sea_angles to the mask object with proper size
-        # self._sea_angles = sea_angles
-
-        # properly assign the oceanmap to the self.oceanmap
-        # self._oceanmap = _below_mask
-
     @property
     def angle_threshold(self):
         """Threshold angle used for picking shoreline contour.
@@ -1131,14 +1198,20 @@ class EdgeMask(BaseMask):
 
     Examples
     --------
-    Initialize the edge mask
-        >>> arr = rcm8cube['eta'][-1, :, :]
-        >>> emsk = dm.mask.EdgeMask(arr)
+    Initialize the edge mask from elevation data:
 
-    Visualize the mask:
-        >>> emsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/edgemask.py
+        golfcube = dm.sample_data.golf()
+        edgmsk = dm.mask.EdgeMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        edgmsk.show(ax=ax[1])
+        plt.show()
 
     """
 
@@ -1350,15 +1423,22 @@ class CenterlineMask(BaseMask):
 
     Examples
     --------
-    Initialize the centerline mask
-        >>> channelmask = dm.mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                              rcm8cube['eta'][-1, :, :])
-        >>> clmsk = dm.mask.CenterlineMask(channelmask)
+    Initialize the `CenterlineMask` from elevation and flow data:
 
-    Visualize the mask
-        >>> clmsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/centerlinemask.py
+        golfcube = dm.sample_data.golf()
+        cntmsk = dm.mask.CenterlineMask(
+            golfcube['eta'][-1, :, :],
+            golfcube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.3)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        cntmsk.show(ax=ax[1])
+        plt.show()
 
     """
     @staticmethod
@@ -1402,7 +1482,7 @@ class CenterlineMask(BaseMask):
         Can take either an ElevationMask or LandMask and a
         FlowMask, OR just a ChannelMask, as input.
 
-        .. todo:: finish docstring
+        .. note:: finish docstring
 
         Examples
         --------

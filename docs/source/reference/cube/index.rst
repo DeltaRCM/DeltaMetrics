@@ -1,5 +1,3 @@
-.. api.cube:
-
 *********************************
 The Cube
 *********************************
@@ -26,7 +24,7 @@ Cube types
     StratigraphyCube
         :special-members:
     BaseCube
-    	:special-members:
+        :special-members:
 
 
 Cube returns
@@ -35,5 +33,5 @@ Cube returns
 .. autosummary:: 
     :toctree: ../../_autosummary
 
-	CubeVariable
-		:no-members:
+    CubeVariable
+        :no-members:

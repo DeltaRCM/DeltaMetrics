@@ -119,7 +119,7 @@ class OpeningAnglePlanform(BasePlanform):
         This process creates an ElevationMask from the input elevation array,
         and proceeds to make the OAP from the below sea level mask.
 
-        . todo:: finish docstring
+        .. note:: finish docstring
 
         """
         # make a temporary mask
@@ -147,7 +147,7 @@ class OpeningAnglePlanform(BasePlanform):
 
         EXPECTS A BINARY OCEAN MASK AS THE INPUT!
 
-        .. todo:: needs docstring.
+        .. note:: needs docstring.
 
         """
         super().__init__('opening angle')
@@ -265,15 +265,23 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
     .. plot::
         :include-source:
 
-        rcm8 = dm.sample_data.cube.rcm8()
+        golf = dm.sample_data.golf()
 
         # early in model run
-        lm0 = dm.mask.LandMask(rcm8['eta'][5, :, :])
-        sm0 = dm.mask.ShorelineMask(rcm8['eta'][5, :, :])
+        lm0 = dm.mask.LandMask(
+            golf['eta'][15, :, :],
+            elevation_threshold=0)
+        sm0 = dm.mask.ShorelineMask(
+            golf['eta'][15, :, :],
+            elevation_threshold=0)
 
         # late in model run
-        lm1 = dm.mask.LandMask(rcm8['eta'][-1, :, :])
-        sm1 = dm.mask.ShorelineMask(rcm8['eta'][-1, :, :])
+        lm1 = dm.mask.LandMask(
+            golf['eta'][-1, :, :],
+            elevation_threshold=0)
+        sm1 = dm.mask.ShorelineMask(
+            golf['eta'][-1, :, :],
+            elevation_threshold=0)
 
         # compute roughnesses
         rgh0 = dm.plan.compute_shoreline_roughness(sm0, lm0)
@@ -281,9 +289,9 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
 
         # make the plot
         fig, ax = plt.subplots(1, 2, figsize=(6, 3))
-        rcm8.show_plan('eta', t=5, ax=ax[0])
+        golf.show_plan('eta', t=15, ax=ax[0])
         ax[0].set_title('roughness = {:.2f}'.format(rgh0))
-        rcm8.show_plan('eta', t=-1, ax=ax[1])
+        golf.show_plan('eta', t=-1, ax=ax[1])
         ax[1].set_title('roughness = {:.2f}'.format(rgh1))
         plt.show()
     """
@@ -324,9 +332,9 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     Parameters
     ----------
     shore_mask : :obj:`~deltametrics.mask.ShorelineMask`, :obj:`ndarray`
-        Shoreline mask. Can be a :obj:`~deltametrics.mask.ShorelineMask` object,
-        or a binarized array.
-    
+        Shoreline mask. Can be a :obj:`~deltametrics.mask.ShorelineMask`
+        object, or a binarized array.
+
     origin : :obj:`list`, :obj:`np.ndarray`, optional
         Determines the location from where the starting point of the line
         sorting is initialized. The starting point of the line is determined
@@ -356,13 +364,17 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     .. plot::
         :include-source:
 
-        rcm8 = dm.sample_data.cube.rcm8()
+        golf = dm.sample_data.golf()
 
         # early in model run
-        sm0 = dm.mask.ShorelineMask(rcm8['eta'][5, :, :])
+        sm0 = dm.mask.ShorelineMask(
+            golf['eta'][15, :, :],
+            elevation_threshold=0)
 
         # late in model run
-        sm1 = dm.mask.ShorelineMask(rcm8['eta'][-1, :, :])
+        sm1 = dm.mask.ShorelineMask(
+            golf['eta'][-1, :, :],
+            elevation_threshold=0)
 
         # compute lengths
         len0 = dm.plan.compute_shoreline_length(sm0)
@@ -370,9 +382,9 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
 
         # make the plot
         fig, ax = plt.subplots(1, 2, figsize=(6, 3))
-        rcm8.show_plan('eta', t=5, ax=ax[0])
+        golf.show_plan('eta', t=15, ax=ax[0])
         ax[0].set_title('length = {:.2f}'.format(len0))
-        rcm8.show_plan('eta', t=-1, ax=ax[1])
+        golf.show_plan('eta', t=-1, ax=ax[1])
         ax[1].plot(line1[:, 0], line1[:, 1], 'r-')
         ax[1].set_title('length = {:.2f}'.format(len1))
         plt.show()
@@ -401,7 +413,7 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
         np.sqrt((_x - origin[0])**2 + (_y - origin[1])**2))
     line_xs_0[0] = _x[_closest]
     line_ys_0[0] = _y[_closest]
-    
+
     # preallocate an array to track whether a point has been used
     hit_pts = np.zeros(len(_x), dtype=np.bool)
     hit_pts[_closest] = True
@@ -414,7 +426,7 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     # # loop through all of the other points and organize into a line
     idx = 0
     while (dist_next <= dist_max):
-        
+
         idx += 1
 
         # find where the distance is minimized (i.e., next point)
@@ -454,7 +466,7 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
         # loop through all of the other points and organize into a line
         idx = -1
         while (dist_next <= dist_max):
-            
+
             idx += 1
 
             # find where the distance is minimized (i.e., next point)

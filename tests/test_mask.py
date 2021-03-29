@@ -80,7 +80,7 @@ class TestBaseMask:
 
     def test_invalid_data(self):
         """Test invalid data input."""
-        with pytest.raises(TypeError, match=r'Unexpected type was input .*'):
+        with pytest.raises(TypeError, match=r'Unexpected type was input: .*'):
             _ = mask.BaseMask('field', 'a string!!')
 
     def test_return_empty(self):
