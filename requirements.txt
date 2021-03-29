@@ -7,3 +7,4 @@ Shapely
 scikit-image
 xarray
 pooch
+numba
