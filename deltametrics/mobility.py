@@ -46,6 +46,10 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
         chmap = chmap.mask
     elif isinstance(chmap, xr.core.dataarray.DataArray) is True:
         chmap = chmap.values
+    elif isinstance(chmap, list):
+        # assume it is a timeseries of masks set into a list
+        _arrs = [msk._mask.astype(np.int) for msk in chmap]
+        chmap = np.array(_arrs)
     else:
         raise TypeError('chmap data type not understood.')
 
@@ -61,6 +65,10 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
             landmap = landmap.mask
         elif isinstance(landmap, xr.core.dataarray.DataArray) is True:
             landmap = landmap.values
+        elif isinstance(landmap, list):
+            # assume it is a timeseries of masks set into a list
+            _arrs = [msk._mask.astype(np.int) for msk in landmap]
+            landmap = np.array(_arrs)
         else:
             raise TypeError('landmap data type not understood.')
         if ((landmap == 0) | (landmap == 1)).all():
