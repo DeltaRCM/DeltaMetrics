@@ -14,10 +14,18 @@ from deltametrics.sample_data import _get_rcm8_path, _get_golf_path
 
 
 rcm8_path = _get_rcm8_path()
-rcm8cube = cube.DataCube(rcm8_path)
+with pytest.warns(UserWarning):
+    rcm8cube = cube.DataCube(rcm8_path)
 
 golf_path = _get_golf_path()
 golfcube = cube.DataCube(golf_path)
+
+_OAP_0 = OpeningAnglePlanform.from_elevation_data(
+    golfcube['eta'][-1, :, :],
+    elevation_threshold=0)
+_OAP_05 = OpeningAnglePlanform.from_elevation_data(
+    golfcube['eta'][-1, :, :],
+    elevation_threshold=0.5)
 
 
 @mock.patch.multiple(mask.BaseMask,
@@ -72,7 +80,7 @@ class TestBaseMask:
 
     def test_invalid_data(self):
         """Test invalid data input."""
-        with pytest.raises(TypeError, match=r'Input to mask instantiation *.'):
+        with pytest.raises(TypeError, match=r'Unexpected type was input .*'):
             _ = mask.BaseMask('field', 'a string!!')
 
     def test_return_empty(self):
@@ -94,7 +102,7 @@ class TestBaseMask:
 
     def test_3dinput_deprecationerror(self):
         """Test that TypeError is raised if is_mask is invalid."""
-        with pytest.raises(ValueError, match=r'Creating a `Mask` *.'):
+        with pytest.raises(ValueError, match=r'Creating a `Mask` .*'):
             _ = mask.BaseMask('field', np.random.uniform(size=(10, 100, 200)))
 
 
@@ -103,13 +111,15 @@ class TestShorelineMask:
 
     # define an input mask for the mask instantiation pathway
     _ElevationMask = mask.ElevationMask(
-            rcm8cube['eta'][-1, :, :],
+            golfcube['eta'][-1, :, :],
             elevation_threshold=0)
 
     def test_default_vals_array(self):
         """Test that instantiation works for an array."""
         # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][-1, :, :])
+        shoremask = mask.ShorelineMask(
+            rcm8cube['eta'][-1, :, :],
+            elevation_threshold=0)
         # make assertions
         assert shoremask._input_flag == 'array'
         assert shoremask.mask_type == 'shoreline'
@@ -156,9 +166,11 @@ class TestShorelineMask:
         """Test that instantiation works for an array."""
         # define the mask
         shoremask_default = mask.ShorelineMask(
-            rcm8cube['eta'][-1, :, :])
+            rcm8cube['eta'][-1, :, :],
+            elevation_threshold=0)
         shoremask = mask.ShorelineMask(
             rcm8cube['eta'][-1, :, :],
+            elevation_threshold=0,
             angle_threshold=45)
         # make assertions
         assert shoremask.angle_threshold == 45
@@ -167,9 +179,59 @@ class TestShorelineMask:
     def test_submergedLand(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        shoremask = mask.ShorelineMask(rcm8cube['eta'][0, :, :])
+        shoremask = mask.ShorelineMask(
+            rcm8cube['eta'][0, :, :],
+            elevation_threshold=0)
         # assert - expect all values to be False
         assert np.all(shoremask._mask == 0)
+
+    def test_static_from_OAP(self):
+        shoremask = mask.ShorelineMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        mfOAP = mask.ShorelineMask.from_OAP(_OAP_0)
+
+        shoremask_05 = mask.ShorelineMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0.5)
+        mfOAP_05 = mask.ShorelineMask.from_OAP(_OAP_05)
+
+        assert np.all(shoremask._mask == mfOAP._mask)
+        assert np.all(shoremask_05._mask == mfOAP_05._mask)
+
+    def test_static_from_mask_ElevationMask(self):
+        shoremask = mask.ShorelineMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        mfem = mask.ShorelineMask.from_mask(self._ElevationMask)
+
+        shoremask_05 = mask.ShorelineMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0.5)
+
+        assert np.all(shoremask._mask == mfem._mask)
+        assert np.sum(shoremask_05.integer_mask) < np.sum(shoremask.integer_mask)
+
+    def test_static_from_array(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        _arr = np.ones((100, 200))
+        _arr[50:55, :] = 0
+
+        shoremask = mask.ShorelineMask.from_array(_arr)
+        # make assertions
+        assert shoremask._input_flag is None
+        assert np.all(shoremask._mask == _arr)
+
+        _arr2 = np.random.uniform(size=(100, 200))
+        _arr2_bool = _arr2.astype(np.bool)
+
+        assert _arr2.dtype == np.float
+
+        shoremask2 = mask.ShorelineMask.from_array(_arr2)
+        # make assertions
+        assert shoremask2._input_flag is None
+        assert np.all(shoremask2._mask == _arr2_bool)
 
 
 class TestLandMask:
@@ -180,22 +242,30 @@ class TestLandMask:
             golfcube['eta'][-1, :, :],
             elevation_threshold=0)
 
-    _OAP_0 = OpeningAnglePlanform(
+    _OAP_0 = OpeningAnglePlanform.from_elevation_data(
         golfcube['eta'][-1, :, :],
         elevation_threshold=0)
-    _OAP_05 = OpeningAnglePlanform(
+    _OAP_05 = OpeningAnglePlanform.from_elevation_data(
         golfcube['eta'][-1, :, :],
         elevation_threshold=0.5)
 
     def test_default_vals_array(self):
         """Test that instantiation works for an array."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
+        landmask = mask.LandMask(
+            rcm8cube['eta'][-1, :, :],
+            elevation_threshold=0)
         # make assertions
         assert landmask._input_flag == 'array'
         assert landmask.mask_type == 'land'
         assert landmask.angle_threshold > 0
         assert landmask._mask.dtype == np.bool
+
+    def test_default_vals_array_needs_elevation_threshold(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        with pytest.raises(TypeError, match=r'.* missing'):
+            _ = mask.LandMask(rcm8cube['eta'][-1, :, :])
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -234,12 +304,17 @@ class TestLandMask:
         assert landmask._mask.dtype == np.bool
 
     def test_angle_threshold(self):
-        """Test that instantiation works for an array."""
+        """
+        Test that the angle threshold argument is used by the LandMask
+        when instantiated.
+        """
         # define the mask
         landmask_default = mask.LandMask(
-            rcm8cube['eta'][-1, :, :])
+            rcm8cube['eta'][-1, :, :],
+            elevation_threshold=0)
         landmask = mask.LandMask(
             rcm8cube['eta'][-1, :, :],
+            elevation_threshold=0,
             angle_threshold=45)
         # make assertions
         assert landmask.angle_threshold == 45
@@ -248,24 +323,30 @@ class TestLandMask:
     def test_submergedLand(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][0, :, :])
+        landmask = mask.LandMask(
+            rcm8cube['eta'][0, :, :],
+            elevation_threshold=0)
         # assert - expect all values to be False
         assert np.all(landmask._mask == 0)
 
     def test_static_from_OAP(self):
-        landmask = mask.LandMask(golfcube['eta'][-1, :, :])
-        mfOAP = mask.LandMask.from_OAP(self._OAP_0)
+        landmask = mask.LandMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        mfOAP = mask.LandMask.from_OAP(_OAP_0)
 
         landmask_05 = mask.LandMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0.5)
-        mfOAP_05 = mask.LandMask.from_OAP(self._OAP_05)
+        mfOAP_05 = mask.LandMask.from_OAP(_OAP_05)
 
         assert np.all(landmask._mask == mfOAP._mask)
         assert np.all(landmask_05._mask == mfOAP_05._mask)
 
     def test_static_from_mask_ElevationMask(self):
-        landmask = mask.LandMask(golfcube['eta'][-1, :, :])
+        landmask = mask.LandMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
         mfem = mask.LandMask.from_mask(self._ElevationMask)
 
         landmask_05 = mask.LandMask(
@@ -288,275 +369,305 @@ class TestLandMask:
 class TestWetMask:
     """Tests associated with the mask.WetMask class."""
 
-    def test_invalid_data(self):
-        """Test invalid data input."""
-        with pytest.raises(TypeError):
-            wetmask = mask.WetMask('invalid')
+    # define an input mask for the mask instantiation pathway
+    _ElevationMask = mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
 
-    def test_default_vals(self):
-        """Test that default values are assigned."""
+    def test_default_vals_array(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :])
+        wetmask = mask.WetMask(
+            rcm8cube['eta'][-1, :, :],
+            elevation_threshold=0)
         # make assertions
-        assert wetmask.topo_threshold == -0.5
-        assert wetmask.angle_threshold == 75
-        assert wetmask.numviews == 3
+        assert wetmask._input_flag == 'array'
         assert wetmask.mask_type == 'wet'
+        assert wetmask._mask.dtype == np.bool
 
-    def test_maskError(self):
-        """Test that TypeError is raised if is_mask is invalid."""
-        with pytest.raises(TypeError):
-            wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
-                                   is_mask='invalid')
-
-    def test_maskTrue(self):
-        """Test that is_mask is True works."""
+    def test_default_vals_array_needs_elevation_threshold(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
-                               is_mask=True)
-        # do assertion
-        assert np.all(wetmask.mask[-1, :, :] == rcm8cube['eta'][-1, :, :])
+        with pytest.raises(ValueError, match=r'You must supply .*'):
+            _ = mask.WetMask(rcm8cube['eta'][-1, :, :])
 
-    def test_assign_vals(self):
-        """Test that specified values are assigned."""
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_cube(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
-                               topo_threshold=-1.0,
-                               angle_threshold=100,
-                               numviews=5)
+        wetmask = mask.WetMask(rcm8cube, t=-1)
         # make assertions
-        assert wetmask.topo_threshold == -1.0
-        assert wetmask.angle_threshold == 100
-        assert wetmask.numviews == 5
+        assert wetmask._input_flag == 'cube'
+        assert wetmask.mask_type == 'wet'
+        assert wetmask._mask.dtype == np.bool
 
-    def test_land(self):
-        """Check for important variables and the final mask."""
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_cubewithmeta(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :])
+        wetmask = mask.WetMask(golfcube, t=-1)
         # make assertions
-        assert np.array_equal(wetmask.mask,
-                              wetmask.mask.astype(bool)) is True
-        assert hasattr(wetmask, 'oceanmap') is True
-        assert hasattr(wetmask, 'mask') is True
-        assert hasattr(wetmask, 'landmask') is True
+        assert wetmask._input_flag == 'cube'
+        assert wetmask.mask_type == 'wet'
+        assert wetmask._mask.dtype == np.bool
 
-    def test_givenland(self):
-        """Test that a LandMask can be passed into it."""
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
-                               landmask=landmask)
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_mask(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        wetmask = mask.WetMask(self._ElevationMask)
         # make assertions
-        assert hasattr(wetmask, 'landmask') is True
-        assert hasattr(wetmask, 'oceanmap') is True
-        assert hasattr(wetmask, 'mask') is True
-        assert np.array_equal(wetmask.mask,
-                              wetmask.mask.astype(bool)) is True
+        assert wetmask._input_flag == 'mask'
+        assert wetmask.mask_type == 'wet'
+        assert wetmask._mask.dtype == np.bool
 
-    def test_givenfakeland(self):
-        """Test that a bad land mask doesn't break function."""
-        landmask = 'not a mask'
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :],
-                               landmask=landmask)
+    def test_angle_threshold(self):
+        """
+        Test that the angle threshold argument is passed along to the LandMask
+        when instantiated.
+        """
+        # define the mask
+        wetmask_default = mask.WetMask(
+            rcm8cube['eta'][-1, :, :],
+            elevation_threshold=0)
+        wetmask = mask.WetMask(
+            rcm8cube['eta'][-1, :, :],
+            elevation_threshold=0,
+            angle_threshold=45)
         # make assertions
-        assert hasattr(wetmask, 'landmask') is True
-        assert hasattr(wetmask, 'oceanmap') is True
-        assert hasattr(wetmask, 'mask') is True
-        assert np.array_equal(wetmask.mask,
-                              wetmask.mask.astype(bool)) is True
+        assert not np.all(wetmask_default == wetmask)
+        assert np.sum(wetmask.integer_mask) < np.sum(wetmask_default.integer_mask)
 
-    def test_submerged(self):
+    def test_submergedLand(self):
         """Check what happens when there is no land above water."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][0, :, :])
-        # assert - expect all values to be 0s
-        assert np.all(wetmask.mask == 0)
+        wetmask = mask.WetMask(
+            rcm8cube['eta'][0, :, :],
+            elevation_threshold=0)
+        # assert - expect all values to be False
+        assert np.all(wetmask._mask == 0)
 
-    def test_submerged_givenland(self):
-        """Check what happens when there is no land above water."""
-        # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][0, :, :])
-        wetmask = mask.WetMask(rcm8cube['eta'][0, :, :],
-                               landmask=landmask)
-        # assert - expect all values to be 0s
-        assert np.all(wetmask.mask == 0)
+    def test_static_from_OAP(self):
+        # create two with sea level = 0
+        landmask = mask.LandMask(golfcube['eta'][-1, :, :])
+        mfOAP = mask.LandMask.from_OAP(_OAP_0)
 
-    def test_3d(self):
-        """Test with multiple time slices."""
+        # create two with diff elevation threshold
+        landmask_05 = mask.LandMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0.5)
+        mfOAP_05 = mask.LandMask.from_OAP(_OAP_05)
+
+        assert np.all(landmask._mask == mfOAP._mask)
+        assert np.all(landmask_05._mask == mfOAP_05._mask)
+
+    def test_static_from_mask_ElevationMask(self):
+        wetmask = mask.WetMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        mfem = mask.WetMask.from_mask(self._ElevationMask)
+
+        wetmask_05 = mask.WetMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0.5)
+
+        assert np.all(wetmask._mask == mfem._mask)
+        assert np.sum(wetmask_05.integer_mask) < np.sum(wetmask.integer_mask)
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_static_from_array(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][30:33, :, :])
-        # assert the shape
-        assert np.shape(wetmask.mask) == (3, 120, 240)
+        wetmask = mask.WetMask.from_array(np.ones((100, 200)))
+        # make assertions
+        assert wetmask._input_flag == 'land'
 
 
 class TestChannelMask:
     """Tests associated with the mask.ChannelMask class."""
 
-    def test_invalid_data(self):
-        """Test invalid data input."""
-        with pytest.raises(TypeError):
-            channelmask = mask.ChannelMask('invalid-velocity', 'invalid-topo')
+    # define an input mask for the mask instantiation pathway
+    _ElevationMask = mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
 
-    def test_default_vals(self):
-        """Test that default values are assigned."""
+    def test_default_vals_array(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :])
+        channelmask = mask.ChannelMask(
+            rcm8cube['eta'][-1, :, :],
+            rcm8cube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.5)
         # make assertions
-        assert channelmask.velocity_threshold == 0.3
-        assert channelmask.topo_threshold == -0.5
-        assert channelmask.angle_threshold == 75
-        assert channelmask.numviews == 3
+        assert channelmask._input_flag == 'array'
         assert channelmask.mask_type == 'channel'
+        assert channelmask._mask.dtype == np.bool
 
-    def test_maskError(self):
-        """Test that TypeError is raised if is_mask is invalid."""
-        with pytest.raises(TypeError):
-            channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                           rcm8cube['eta'][-1, :, :],
-                                           is_mask='invalid')
-
-    def test_maskTrue(self):
-        """Test that is_mask is True works."""
+    def test_default_vals_array_needs_elevation_threshold(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
-                                       is_mask=True)
-        # do assertion
-        assert np.all(channelmask.mask[-1, :, :] == rcm8cube['eta'][-1, :, :])
+        with pytest.raises(TypeError, match=r'__init__() missing .*'):
+            _ = mask.ChannelMask(
+                rcm8cube['eta'][-1, :, :],
+                rcm8cube['velocity'][-1, :, :],
+                flow_threshold=10)
 
-    def test_assign_vals(self):
-        """Test that specified values are assigned."""
+    def test_default_vals_array_needs_flow_threshold(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
-                                       velocity_threshold=0.5,
-                                       topo_threshold=-1.0,
-                                       angle_threshold=100,
-                                       numviews=5)
-        # make assertions
-        assert channelmask.velocity_threshold == 0.5
-        assert channelmask.topo_threshold == -1.0
-        assert channelmask.angle_threshold == 100
-        assert channelmask.numviews == 5
+        with pytest.raises(TypeError, match=r'__init__() missing .*'):
+            _ = mask.ChannelMask(
+                rcm8cube['eta'][-1, :, :],
+                rcm8cube['velocity'][-1, :, :],
+                elevation_threshold=10)
 
-    def test_imp_vars(self):
-        """Check for important variables and the final mask."""
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_cube(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :])
+        channelmask = mask.ChannelMask(rcm8cube, t=-1)
         # make assertions
-        assert np.array_equal(channelmask.mask,
-                              channelmask.mask.astype(bool)) is True
-        assert hasattr(channelmask, 'mask') is True
-        assert hasattr(channelmask, 'landmask') is True
-        assert hasattr(channelmask, 'flowmap') is True
-        assert hasattr(channelmask, 'velocity') is True
+        assert channelmask._input_flag == 'cube'
+        assert channelmask.mask_type == 'channel'
+        assert channelmask._mask.dtype == np.bool
 
-    def test_givenland(self):
-        """Test that a LandMask can be passed into it."""
-        landmask = mask.LandMask(rcm8cube['eta'][-1, :, :])
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
-                                       landmask=landmask)
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_cubewithmeta(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        channelmask = mask.ChannelMask(golfcube, t=-1)
         # make assertions
-        assert hasattr(channelmask, 'landmask') is True
-        assert hasattr(channelmask, 'oceanmap') is True
-        assert hasattr(channelmask, 'mask') is True
-        assert hasattr(channelmask, 'velocity') is True
-        assert hasattr(channelmask, 'flowmap') is True
-        assert np.array_equal(channelmask.mask,
-                              channelmask.mask.astype(bool)) is True
+        assert channelmask._input_flag == 'cube'
+        assert channelmask.mask_type == 'channel'
+        assert channelmask._mask.dtype == np.bool
 
-    def test_givenfakeland(self):
-        """Test that an improperly defined land mask still works."""
-        landmask = 'not a mask'
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
-                                       landmask=landmask)
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_mask(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        channelmask = mask.ChannelMask(self._ElevationMask)
         # make assertions
-        assert hasattr(channelmask, 'landmask') is True
-        assert hasattr(channelmask, 'oceanmap') is True
-        assert hasattr(channelmask, 'mask') is True
-        assert hasattr(channelmask, 'velocity') is True
-        assert hasattr(channelmask, 'flowmap') is True
-        assert np.array_equal(channelmask.mask,
-                              channelmask.mask.astype(bool)) is True
+        assert channelmask._input_flag == 'mask'
+        assert channelmask.mask_type == 'channel'
+        assert channelmask._mask.dtype == np.bool
 
-    def test_givenwet(self):
-        """Test that a WetMask can be passed into it."""
-        wetmask = mask.WetMask(rcm8cube['eta'][-1, :, :])
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
-                                       wetmask=wetmask)
+    def test_angle_threshold(self):
+        """
+        Test that the angle threshold argument is passed along to the 
+        when instantiated.
+        """
+        # define the mask
+        channelmask_default = mask.ChannelMask(
+            rcm8cube['eta'][-1, :, :],
+            rcm8cube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.5)
+        channelmask = mask.ChannelMask(
+            rcm8cube['eta'][-1, :, :],
+            rcm8cube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.5,
+            angle_threshold=45)
         # make assertions
-        assert hasattr(channelmask, 'landmask') is True
-        assert hasattr(channelmask, 'mask') is True
-        assert hasattr(channelmask, 'velocity') is True
-        assert hasattr(channelmask, 'flowmap') is True
-        assert np.array_equal(channelmask.mask,
-                              channelmask.mask.astype(bool)) is True
+        assert not np.all(channelmask_default == channelmask)
+        assert np.sum(channelmask.integer_mask) < np.sum(channelmask_default.integer_mask)
 
-    def test_givenfakewet(self):
-        """Test that an improperly defined wet mask still works."""
-        wetmask = 'not a mask'
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                       rcm8cube['eta'][-1, :, :],
-                                       wetmask=wetmask)
-        # make assertions
-        assert hasattr(channelmask, 'landmask') is True
-        assert hasattr(channelmask, 'mask') is True
-        assert hasattr(channelmask, 'velocity') is True
-        assert hasattr(channelmask, 'flowmap') is True
-        assert np.array_equal(channelmask.mask,
-                              channelmask.mask.astype(bool)) is True
-
-    def test_submerged(self):
+    def test_submergedLand(self):
         """Check what happens when there is no land above water."""
-        # define zeros velocity array
-        velocity = np.zeros_like(rcm8cube['velocity'][0, :, :].__array__())
         # define the mask
-        channelmask = mask.ChannelMask(velocity,
-                                       rcm8cube['eta'][0, :, :])
-        # assert - expect all values to be 0s
-        assert np.all(channelmask.mask == 0)
+        channelmask = mask.ChannelMask(
+            rcm8cube['eta'][0, :, :],
+            rcm8cube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.5)
+        # assert - expect all values to be False
+        assert np.all(channelmask._mask == 0)
 
-    def test_submerged_givenland(self):
-        """Check what happens when there is no land above water."""
-        # define zeros velocity array
-        velocity = np.zeros_like(rcm8cube['velocity'][0, :, :].__array__())
+    def test_static_from_OAP_not_implemented(self):
+        with pytest.raises(NotImplementedError,
+                           match=r'`from_OAP` is not defined .*'):
+            _ = mask.ChannelMask.from_OAP(_OAP_0)
+
+    def test_static_from_OAP_and_FlowMask(self):
+        """
+        Test combinations to ensure that arguments passed to array instant
+        match the arguments passed to the independ FlowMask and OAP
+        objects.
+        """
+        channelmask_03 = mask.ChannelMask(
+            golfcube['eta'][-1, :, :],
+            golfcube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.3)
+        flowmask_03 = mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=0.3)
+        mfOAP_03 = mask.ChannelMask.from_OAP_and_FlowMask(_OAP_0, flowmask_03)
+
+        channelmask_06 = mask.ChannelMask(
+            golfcube['eta'][-1, :, :],
+            golfcube['velocity'][-1, :, :],
+            elevation_threshold=0.5,
+            flow_threshold=0.6)
+        flowmask_06 = mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=0.6)
+        mfOAP_06 = mask.ChannelMask.from_OAP_and_FlowMask(_OAP_05, flowmask_06)
+
+        assert np.all(channelmask_03._mask == mfOAP_03._mask)
+        assert np.all(channelmask_06._mask == mfOAP_06._mask)
+        assert not np.all(channelmask_03._mask == mfOAP_06._mask)
+        assert not np.all(channelmask_03._mask == channelmask_06._mask)
+        assert np.sum(mfOAP_06.integer_mask) < np.sum(mfOAP_03.integer_mask)
+
+    def test_static_from_mask_ElevationMask_FlowMask(self):
+        channelmask_comp = mask.ChannelMask(
+            golfcube['eta'][-1, :, :],
+            golfcube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.3)
+        flowmask = mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=0.3)
+        mfem = mask.ChannelMask.from_mask(self._ElevationMask, flowmask)
+        mfem2 = mask.ChannelMask.from_mask(flowmask, self._ElevationMask)
+
+        assert np.all(channelmask_comp._mask == mfem2._mask)
+        assert np.all(mfem._mask == mfem2._mask)
+
+    def test_static_from_mask_LandMask_FlowMask(self):
+        channelmask_comp = mask.ChannelMask(
+            golfcube['eta'][-1, :, :],
+            golfcube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.3)
+        flowmask = mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=0.3)
+        landmask = mask.LandMask.from_OAP(_OAP_0)
+
+        mfem = mask.ChannelMask.from_mask(landmask, flowmask)
+        mfem2 = mask.ChannelMask.from_mask(flowmask, landmask)
+
+        assert np.all(channelmask_comp._mask == mfem2._mask)
+        assert np.all(mfem._mask == mfem2._mask)
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_static_from_array(self):
+        """Test that instantiation works for an array."""
         # define the mask
-        landmask = mask.LandMask(rcm8cube['eta'][0, :, :])
-        channelmask = mask.ChannelMask(velocity,
-                                       rcm8cube['eta'][0, :, :],
-                                       landmask=landmask)
-        # assert - expect all values to be 0s
-        assert np.all(channelmask.mask == 0)
-
-    def test_submerged_givenwet(self):
-        """Check what happens when there is no land above water."""
-        # define zeros velocity array
-        velocity = np.zeros_like(rcm8cube['velocity'][0, :, :].__array__())
-        # define the mask
-        wetmask = mask.WetMask(rcm8cube['eta'][0, :, :])
-        channelmask = mask.ChannelMask(velocity,
-                                       rcm8cube['eta'][0, :, :],
-                                       wetmask=wetmask)
-        # assert - expect all values to be 0s
-        assert np.all(channelmask.mask == 0)
-
-    def test_invalidvelocity(self):
-        """Raise TypeError if invalid velocity type is provided."""
-        with pytest.raises(TypeError):
-            channelmask = mask.ChannelMask('bad_velocity',
-                                           rcm8cube['eta'][-1, :, :])
-
-    def test_3d(self):
-        """Test with multiple time slices."""
-        # define the mask
-        channelmask = mask.ChannelMask(rcm8cube['velocity'][30:33, :, :],
-                                       rcm8cube['eta'][30:33, :, :])
-        # assert the shape
-        assert np.shape(channelmask.mask) == (3, 120, 240)
+        channelmask = mask.ChannelMask.from_array(np.ones((100, 200)))
+        # make assertions
+        assert channelmask._input_flag == 'land'
 
 
 class TestEdgeMask:
@@ -712,6 +823,11 @@ class TestEdgeMask:
 
 class TestCenterlineMask:
     """Tests associated with the mask.CenterlineMask class."""
+
+    def test_static_from_OAP_not_implemented(self):
+        with pytest.raises(NotImplementedError,
+                           match=r'`from_OAP` is not defined .*'):
+            _ = mask.WetMask.from_OAP(_OAP_0)
 
     def test_default_vals(self):
         """Test that default values are assigned."""

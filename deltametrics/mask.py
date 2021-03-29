@@ -520,9 +520,24 @@ class WetMask(BaseMask):
 
     """
 
+    # @staticmethod
+    # def from_OAP_and_ElevationMask(_OAP, _ElevationMask, **kwargs):
+
+    #     # set up the empty shoreline mask
+    #     _CM = WetMask(allow_empty=True, **kwargs)
+    #     _CM._set_shape_mask(_OAP.shape)
+
+    #     # set up the needed flow mask and landmask
+    #     _LM = LandMask.from_OAP(_OAP)
+    #     _EM = _ElevationMask
+
+    #     # compute the mask
+    #     _CM._compute_mask(_LM, _EM)
+    #     return _CM
+
     @staticmethod
-    def from_OAP_and_ElevationMask(_OAP, _ElevationMask, **kwargs):
-        """Create from an OAP and a FlowMask.
+    def from_OAP(_OAP, **kwargs):
+        """Create from an OAP.
         """
         # set up the empty shoreline mask
         _CM = WetMask(allow_empty=True, **kwargs)
@@ -530,23 +545,11 @@ class WetMask(BaseMask):
 
         # set up the needed flow mask and landmask
         _LM = LandMask.from_OAP(_OAP)
-        _EM = _ElevationMask
+        _below_mask = _OAP.below_mask
 
-        # compute the mask
-        _CM._compute_mask(_LM, _EM)
+        # compute the mask (pass as arrays!)
+        _CM._compute_mask(_LM._mask, _below_mask)
         return _CM
-
-    @staticmethod
-    def from_OAP(*args, **kwargs):
-        # undocumented, hopefully helpful error
-        #   Note, an alternative here is to implement this method and take an
-        #   OAP and information to create an ElevationMask, raising an error
-        #   if the elevation information is missing.
-        raise NotImplementedError(
-            '`from_OAP` is not defined for `WetMask` instantiation '
-            'because the process additionally requires an '
-            'ElevationMask / information. Consider alternative methods '
-            '`from_OAP_and_ElevationMask()')
 
     @staticmethod
     def from_masks(*args, **kwargs):
@@ -675,41 +678,50 @@ class WetMask(BaseMask):
             #    landmask, and ocean/elevation mask
             raise NotImplementedError
         elif self._input_flag == 'array':
-            # first make a landmask
             _eta = args[0]
+            # first make a landmask
             _lm = LandMask(_eta, **kwargs)._mask
-            _em = ElevationMask(_eta, **kwargs)
-            _omap = 1 - _em._mask
+            # requires elevation_threshold to be in kwargs
+            if 'elevation_threshold' in kwargs:
+                _em = ElevationMask(_eta, **kwargs)
+            else:
+                raise ValueError(
+                    'You must supply the keyword argument '
+                    '`elevation_threshold` if instantiating a `WetMask` '
+                    'directly from arrays (it is used to create an '
+                    '`ElevationMask` internally).')
+            # pull the wet area as the area below the elevation threshold
+            _below_mask = ~_em._mask
         else:
             raise ValueError(
                 'Invalid _input_flag. Did you modify this attribute?')
 
         # process to make the mask
-        self._compute_mask(_lm, _omap, **kwargs)
+        self._compute_mask(_lm, _below_mask, **kwargs)
 
     def _compute_mask(self, *args, **kwargs):
         """Compute the WetMask.
 
-        Requires arrays of omap and landmask. There are multiple ways these
-        can be supplied. For example, a LandMask object and an ElevationMask
-        object, or two arrays *already corrected* for ocean pixels.
+        Requires arrays of area below the "sea level" and landmask. There are
+        multiple ways these can be supplied. For example, a LandMask object
+        and an ElevationMask object, or two arrays *already corrected* for
+        ocean pixels.
         """
         if len(args) == 2:
             if isinstance(args[0], LandMask):
                 lm_array = args[0]._mask
-                omap_array = 1 - args[1]._mask  # go from elevation mask
+                below_array = 1 - args[1]._mask  # go from elevation mask
             elif utils.is_ndarray_or_xarray(args[0]):
                 lm_array = args[0]
-                omap_array = args[1]
+                below_array = args[1]
             else:
                 raise TypeError(
                     'Type must be array but was %s' % type(args[0]))
         else:
             raise ValueError
 
-        # calculate the channelmask as the cells exceeding the threshold
-        #   within the topset of the delta (ignoring flow in ocean)
-        self._mask = omap_array * lm_array
+        # calculate the WetMask
+        self._mask = np.logical_and(below_array, lm_array)
 
 
 class LandMask(BaseMask):
@@ -855,7 +867,7 @@ class LandMask(BaseMask):
                 'Invalid _input_flag. Did you modify this attribute?')
 
         # create an OAP to determine the sea_angles
-        _OAP = plan.OpeningAnglePlanform(
+        _OAP = plan.OpeningAnglePlanform.from_elevation_data(
             _eta,
             **kwargs)
 
@@ -966,7 +978,7 @@ class ShorelineMask(BaseMask):
         _SM = ShorelineMask(allow_empty=True)
         _SM._angle_threshold = None
         _SM._input_flag = None
-        _SM._mask = _arr  # set the array as mask
+        _SM._mask = _arr.astype(np.bool)  # set the array as mask
         return _SM
 
     def __init__(self, *args, angle_threshold=75, **kwargs):
@@ -1037,16 +1049,16 @@ class ShorelineMask(BaseMask):
                 'Invalid _input_flag. Did you modify this attribute?')
 
         # use an OAP to get the ocean mask and sea angles fields
-        _OAP = plan.OpeningAnglePlanform(
+        _OAP = plan.OpeningAnglePlanform.from_elevation_data(
             _eta,
             **kwargs)
 
         # get fields out of the OAP
-        _omask = _OAP._ocean_mask
+        _below_mask = _OAP._below_mask
         _sea_angles = _OAP._sea_angles
 
         # compute the mask
-        self._compute_mask(_omask, _sea_angles)
+        self._compute_mask(_below_mask, _sea_angles)
 
     def _compute_mask(self, *args, **kwargs):
         """Compute the shoreline mask.
@@ -1070,11 +1082,11 @@ class ShorelineMask(BaseMask):
         if len(args) == 1:
             if not isinstance(args[0], plan.OpeningAnglePlanform):
                 raise TypeError('Must be type OAP.')
-            omask = args[0]._ocean_mask
-            sea_angles = args[0]._sea_angles
+            _below_mask = args[0]._below_mask
+            _sea_angles = args[0]._sea_angles
         elif len(args) == 2:
-            omask = args[0]
-            sea_angles = args[1]
+            _below_mask = args[0]
+            _sea_angles = args[1]
         else:
             raise ValueError
 
@@ -1082,11 +1094,11 @@ class ShorelineMask(BaseMask):
         shoremap = np.zeros(self._shape)
 
         # if all ocean, there is no shore to be found
-        if (omask == 1).all():
+        if (_below_mask == 1).all():
             pass
         else:
             # grab contour from sea_angles corresponding to angle threshold
-            cs = measure.find_contours(sea_angles,
+            cs = measure.find_contours(_sea_angles,
                                        self.angle_threshold)
             C = cs[0]
 
@@ -1103,7 +1115,7 @@ class ShorelineMask(BaseMask):
         # self._sea_angles = sea_angles
 
         # properly assign the oceanmap to the self.oceanmap
-        # self._oceanmap = omask
+        # self._oceanmap = _below_mask
 
     @property
     def angle_threshold(self):
@@ -1308,7 +1320,7 @@ class EdgeMask(BaseMask):
                 'Invalid _input_flag. Did you modify this attribute?')
 
         # make the required Masks. Both need OAP
-        _OAP = plan.OpeningAnglePlanform(
+        _OAP = plan.OpeningAnglePlanform.from_elevation_data(
                 _eta,
                 **kwargs)
 

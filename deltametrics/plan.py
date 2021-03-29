@@ -113,13 +113,27 @@ class OpeningAnglePlanform(BasePlanform):
         raise NotImplementedError
 
     @staticmethod
-    def from_ElevationMask(ElevationMask):
-        _omask = 1 - (ElevationMask.mask)
+    def from_elevation_data(_arr, **kwargs):
+        """Create the Opening Angle Planform from elevation data.
 
-        _OAP = OpeningAnglePlanform(allow_empty=True)
-        _OAP._shape = _omask.shape
-        _OAP._compute_from_ocean_mask(_omask)
-        return _OAP
+        This process creates an ElevationMask from the input elevation array,
+        and proceeds to make the OAP from the below sea level mask.
+
+        . todo:: finish docstring
+
+        """
+        # make a temporary mask
+        _em = mask.ElevationMask(
+            _arr, **kwargs)
+        # extract value for omask
+        _below_mask = ~(_em.mask)
+        return OpeningAnglePlanform(_below_mask)
+
+    @staticmethod
+    def from_ElevationMask(ElevationMask):
+        _below_mask = ~(ElevationMask.mask)
+
+        return OpeningAnglePlanform(_below_mask)
 
     @staticmethod
     def from_mask(UnknownMask):
@@ -131,12 +145,15 @@ class OpeningAnglePlanform(BasePlanform):
     def __init__(self, *args, **kwargs):
         """Init.
 
+        EXPECTS A BINARY OCEAN MASK AS THE INPUT!
+
         .. todo:: needs docstring.
+
         """
         super().__init__('opening angle')
         self._shape = None
         self._sea_angles = None
-        self._ocean_mask = None
+        self._below_mask = None
 
         # check for inputs to return or proceed
         if (len(args) == 0):
@@ -151,40 +168,34 @@ class OpeningAnglePlanform(BasePlanform):
 
         # process the argument to the omask needed for Shaw OAM
         if utils.is_ndarray_or_xarray(args[0]):
-            # grab argument to array
-            eta_array = args[0]
-            # pop kwarg
-            self._elevation_threshold = kwargs.pop('elevation_threshold', 0)
-            # make a temporary mask
-            _em = mask.ElevationMask(
-                eta_array, elevation_threshold=self._elevation_threshold)
-            # extract value for omask
-            _omask = 1 - (_em.mask)
-
-        elif isinstance(args[0], mask.ElevationMask):
-            # grab argument to mask
-            _em = args[0]
-            # extract elevation thresh from mask
-            self._elevation_threshold = _em.elevation_threshold
-            _omask = 1 - (_em.mask)
-
+            _arr = args[0]
+            # check that is boolean or integer binary
+            if (_arr.dtype == np.bool):
+                _below_mask = _arr.astype(np.int)
+            elif (_arr.dtype == np.int):
+                if np.logical_or(_arr == 0, _arr == 1):
+                    _below_mask = _arr
+                else:
+                    ValueError('Not all 0 and 1 ints.')
+            else:
+                raise TypeError('Not bool or int')
         else:
             # bad type supplied as argument
             raise TypeError('Invalid type for argument.')
 
-        self._shape = _omask.shape
+        self._shape = _below_mask.shape
 
-        self._compute_from_ocean_mask(_omask)
+        self._compute_from_below_mask(_below_mask)
 
-    def _compute_from_ocean_mask(self, ocean_mask, **kwargs):
+    def _compute_from_below_mask(self, below_mask, **kwargs):
 
         sea_angles = np.zeros(self._shape)
 
-        if np.any(ocean_mask == 0):
+        if np.any(below_mask == 0):
 
             # pixels present in the mask
             shoreangles, seaangles = shaw_opening_angle_method(
-                ocean_mask, **kwargs)
+                below_mask, **kwargs)
 
             # translate flat seaangles values to the shoreline image
             flat_inds = list(map(
@@ -196,8 +207,8 @@ class OpeningAnglePlanform(BasePlanform):
         # self._shore_angles = shoreangles
         self._sea_angles = sea_angles
 
-        # properly assign the oceanmap to the self.ocean_mask
-        self._ocean_mask = ocean_mask
+        # properly assign the oceanmap to the self.below_mask
+        self._below_mask = below_mask
 
     @property
     def sea_angles(self):
@@ -206,16 +217,12 @@ class OpeningAnglePlanform(BasePlanform):
         return self._sea_angles
 
     @property
-    def ocean_mask(self):
-        """Ocean mask.
-        """
-        return self._ocean_mask
+    def below_mask(self):
+        """Mask for below sea level pixels.
 
-    @property
-    def elevation_threshold(self):
-        """Elevation threshold.
+        This is the starting point for the Opening Angle Method solution.
         """
-        return self._elevation_threshold
+        return self._below_mask
 
 
 def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
@@ -514,7 +521,7 @@ def _compute_angles_between(c1, shoreandborder, Shallowsea, numviews):
     return maxtheta
 
 
-def shaw_opening_angle_method(ocean_mask, numviews=3):
+def shaw_opening_angle_method(below_mask, numviews=3):
     """Extract the opening angle map from an image.
 
     Applies the opening angle method [1]_ to compute the shoreline mask.
@@ -533,8 +540,12 @@ def shaw_opening_angle_method(ocean_mask, numviews=3):
 
     Parameters
     ----------
-    ocean_mask : ndarray
-        Binary image that has been thresholded to split deep water/land.
+    below_mask : ndarray
+        Binary image that has been thresholded to split water/land. At
+        minimum, this should be a thresholded elevation matrix, or some
+        classification of land/water based on pixel color or reflectance
+        intensity. This is the startin point (i.e., guess) for the opening
+        angle method.
 
     numviews : int
         Defines the number of times to 'look' for the opening angle map.
@@ -552,15 +563,15 @@ def shaw_opening_angle_method(ocean_mask, numviews=3):
         hull which envelops the shoreline as well as the delta interior.
     """
 
-    Sx, Sy = np.gradient(ocean_mask)
+    Sx, Sy = np.gradient(below_mask)
     G = np.sqrt((Sx*Sx) + (Sy*Sy))
 
     # threshold the gradient to produce edges
-    edges = np.logical_and((G > 0), (ocean_mask > 0))
+    edges = np.logical_and((G > 0), (below_mask > 0))
 
     if np.sum(edges) == 0:
         raise ValueError(
-            'No pixels identified in ocean_mask. '
+            'No pixels identified in below_mask. '
             'Cannot compute the Opening Angle Method.')
 
     # extract coordinates of the edge pixels and define convex hull
@@ -571,7 +582,7 @@ def shaw_opening_angle_method(ocean_mask, numviews=3):
     hull = ConvexHull(points, qhull_options='Qc')
 
     # identify set of points to evaluate
-    sea = np.fliplr(np.array(np.where(ocean_mask > 0.5)).T)
+    sea = np.fliplr(np.array(np.where(below_mask > 0.5)).T)
 
     # identify set of points in both the convex hull polygon and
     #   defined as points_to_test and put these binary points into seamap
