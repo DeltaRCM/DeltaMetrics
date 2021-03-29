@@ -1123,15 +1123,6 @@ class ShorelineMask(BaseMask):
         """
         return self._angle_threshold
 
-    # I THINK THESE SHOULD BE REMOVED! DON'T KEEP UN-NEEDED INFO HERE!
-    # @property
-    # def sea_angles(self):
-    #     return self._sea_angles
-
-    # @property
-    # def oceanmap(self):
-    #     return self._oceanmap
-
 
 class EdgeMask(BaseMask):
     """Identify the land-water edges.
@@ -1153,7 +1144,22 @@ class EdgeMask(BaseMask):
 
     @staticmethod
     def from_OAP_and_WetMask(_OAP, _WetMask, **kwargs):
-        """Create from an OAP and an ElevationMask.
+        """Create from an OAP and a WetMask.
+
+        .. important::
+
+            This instantiation pathway should only be used for custom WetMask
+            implementations, where the :obj:`below_mask` from the
+            :obj:`OpeningAnglePlanform` is not sufficient to capture the wet
+            area of the delta.
+
+        .. hint::
+
+            To create an EdgeMask from an existing `WetMask` *and* `LandMask`,
+            see the static method :obj:`from_mask`.
+
+        Examples
+        --------
         """
         # set up the empty edge mask mask
         _EGM = EdgeMask(allow_empty=True, **kwargs)
@@ -1171,37 +1177,19 @@ class EdgeMask(BaseMask):
         return _EGM
 
     @staticmethod
-    def from_OAP_and_ElevationMask(_OAP, _ElevationMask, **kwargs):
-        """Create from an OAP and an ElevationMask.
+    def from_OAP(_OAP, **kwargs):
+        """Create EdgeMask from an OAP.
         """
-        # set up the empty edge mask mask
         _EGM = EdgeMask(allow_empty=True, **kwargs)
         _EGM._set_shape_mask(_OAP.shape)
 
         # set up the needed flow mask and landmask
         _LM = LandMask.from_OAP(_OAP, **kwargs)
-        if isinstance(_ElevationMask, ElevationMask):
-            _EM = _ElevationMask
-        else:
-            raise TypeError
-        _WM = WetMask.from_OAP_and_ElevationMask(_OAP, _EM, **kwargs)
+        _WM = WetMask.from_OAP(_OAP, **kwargs)
 
         # compute the mask
         _EGM._compute_mask(_LM, _WM)
         return _EGM
-
-    @staticmethod
-    def from_OAP(*args, **kwargs):
-        # undocumented, hopefully helpful error
-        #   Note, an alternative here is to implement this method and take an
-        #   OAP and a Mask, and then try to make one of the other static
-        #   methods work with this information.
-        raise NotImplementedError(
-            '`from_OAP` is not defined for `EdgeMask` instantiation '
-            'because the process additionally requires an '
-            'ElevationMask / information and a WetMask / information. '
-            'Consider alternative methods `from_OAP_and_ElevationMask()` '
-            'and `from_OAP_and_WetMask()`.')
 
     @staticmethod
     def from_mask(*args, **kwargs):
@@ -1240,7 +1228,7 @@ class EdgeMask(BaseMask):
 
     @staticmethod
     def from_array(_arr):
-        """Create a ShorelineMask from an array.
+        """Create an EdgeMask from an array.
 
         .. note::
 
@@ -1255,11 +1243,7 @@ class EdgeMask(BaseMask):
             The array with values to set as the mask. Can be any `dtype` but
             will be coerced to `boolean`.
         """
-        _SM = ShorelineMask(allow_empty=True)
-        _SM._angle_threshold = None
-        _SM._input_flag = None
-        _SM._mask = _arr  # set the array as mask
-        return _SM
+        raise NotImplementedError
 
     def __init__(self, *args, **kwargs):
         """Initialize the EdgeMask.
@@ -1294,7 +1278,7 @@ class EdgeMask(BaseMask):
             Keyword arguments for :obj:`compute_shoremask`.
 
         """
-        super().__init__('shoreline', *args, **kwargs)
+        super().__init__('edge', *args, **kwargs)
 
         # temporary storage of args as needed for processing
         if self._input_flag is None:
@@ -1326,8 +1310,7 @@ class EdgeMask(BaseMask):
 
         # get Masks from the OAP
         _LM = LandMask.from_OAP(_OAP, **kwargs)
-        _EM = ElevationMask(_eta, **kwargs)
-        _WM = WetMask.from_OAP_and_ElevationMask(_OAP, _EM, **kwargs)
+        _WM = WetMask.from_OAP(_OAP, **kwargs)
 
         # compute the mask
         self._compute_mask(_LM, _WM)
@@ -1351,13 +1334,13 @@ class EdgeMask(BaseMask):
                     'Type must be array but was %s' % type(args[0]))
         else:
             raise ValueError(
-                'Must supply `LandMask` and `EdgeMask` information.')
+                'Must supply `LandMask` and `WetMask` information.')
 
         # compute the mask with canny edge detection
         #   the arrays must be type float for this to work!
         self._mask = np.maximum(
                 0, (feature.canny(wm_array) * 1 -
-                    feature.canny(lm_array) * 1))
+                    feature.canny(lm_array) * 1)).astype(np.bool)
 
 
 class CenterlineMask(BaseMask):
@@ -1419,6 +1402,8 @@ class CenterlineMask(BaseMask):
         Can take either an ElevationMask or LandMask and a
         FlowMask, OR just a ChannelMask, as input.
 
+        .. todo:: finish docstring
+
         Examples
         --------
 
@@ -1445,9 +1430,6 @@ class CenterlineMask(BaseMask):
             raise ValueError(
                 'Must pass single ChannelMask, or two Masks to static '
                 '`from_mask` for CenterlineMask.')
-
-        # if not _has_ChannelMask:
-            # _CM = ChannelMask.from_mask(_LM, _FM)
 
         # set up the empty shoreline mask
         _CntM = CenterlineMask(allow_empty=True)
@@ -1602,10 +1584,12 @@ class CenterlineMask(BaseMask):
                 from rivamap.singularity_index import applyMMSI as MMSI
                 from rivamap.singularity_index import SingularityIndexFilters as SF
                 from rivamap.delineate import extractCenterlines as eCL
-            except Exception:
-                raise ImportError('You must install the optional dependency:'
-                                  ' rivamap, to use this centerline extraction'
-                                  ' method')
+            except ImportError:
+                raise ImportError(
+                    'You must install the optional dependency: rivamap, to '
+                    'use the centerline extraction method.')
+            except Exception as e:
+                raise e
 
             # pop the kwargs
             self.minScale = kwargs.pop('minScale', 1.5)
@@ -1666,53 +1650,91 @@ class GeometricMask(BaseMask):
     .. plot:: mask/geomask.py
 
     """
+    @staticmethod
+    def from_array(_arr):
+        """Create a `GeometricMask` from an array.
 
-    def __init__(self, *args, **kwargs):
-        """Initialize the GeometricMask.
+        .. note::
 
-        Initializing the geometric mask object requires a 2-D array of the
-        region you wish to apply the mask to.
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
 
         Parameters
         ----------
-        arr : ndarray
-            2-D array to be masked.
-
-        is_mask : bool, optional
-            Whether the data in :obj:`arr` is already a binary mask. Default
-            value is False. This should be set to True, if you have already
-            binarized the data yourself, using custom routines, or want to
-            further mask a pre-existing mask using geometric boundaries, this
-            should be set to True.
-
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
         """
-        # super().__init__(mask_type='geometric', data=arr)
+        # set directly
+        raise NotImplementedError
+
+    def __init__(self, *args, origin=None, **kwargs):
+        """Initialize the GeometricMask.
+
+        Initializing the geometric mask object requires information regarding
+        the shape of the 2-D array of the region you wish to apply the mask
+        to.
+
+        .. important::
+
+            The `GeometricMask` is initializes with all values set to
+            ``True``; this is the opposite of all other `Mask` types, which
+            are set to ``False`` during initialization.
+
+        Parameters
+        ----------
+        *args :
+            Various input arguments can be used to initialize the
+            `GeometricMask`. Input may be a two-element `tuple`, specifying
+            the array dimensions, or an `ndarray`, `Mask`, or `Cube` from
+            which the shape is inferred.
+
+        origin : `tuple`
+            The "origin" of the domain. Usually this is the water/sediment
+            inlet location. The `origin` is used as the mathematical origin
+            point for computation setting the mask within the `GeometricMask`
+            methods. If unspecified, it is inferred, based on the default
+            configuration of a pyDeltaRCM model inlet.
+
+        Examples
+        --------
+        """
         super().__init__('geometric', *args, **kwargs)
 
-        self.L, self.W = np.shape(self._mask)
-        self.xc = 0
-        self.yc = int(self.W/2)
-
         # FOR GEOMETRIC, NEED START FROM ALL TRUE
-        self._mask = np.ones(self.shape)
+        #   replace values from init immediately
+        self._mask = np.ones(self.shape, dtype=np.bool)
+
+        # pull the shape into components for convenience
+        self._L, self._W = self.shape
+
+        # set the origin from argument
+        if origin is None:
+            # try to infer it from the input type
+            if self._input_flag == 'cube':
+                raise NotImplementedError
+                # get the value from CTR and L0 if meta present
+            else:
+                self._xc = 0
+                self._yc = int(self._W / 2)
+        elif isinstance(origin, tuple):
+            # use the values in the tuple
+            self._xc = origin[0]
+            self._yc = origin[1]
+        else:
+            raise ValueError
 
     @property
     def xc(self):
         """x-coordinate of origin point."""
         return self._xc
 
-    @xc.setter
-    def xc(self, var):
-        self._xc = var
-
     @property
     def yc(self):
         """y-coordinate of origin point."""
         return self._yc
-
-    @yc.setter
-    def yc(self, var):
-        self._yc = var
 
     def angular(self, theta1, theta2):
         """Make a mask based on two angles.
@@ -1720,10 +1742,12 @@ class GeometricMask(BaseMask):
         Computes a mask that is bounded by 2 angles input by the user.
 
         .. note::
+
            Requires a domain with a width greater than 2x its length right now.
            Function should be re-factored to be more flexible.
 
         .. note::
+
            Currently origin point is fixed, function should be extended to
            allow for an input origin point from which the angular bounds are
            determined.
@@ -1736,16 +1760,22 @@ class GeometricMask(BaseMask):
         theta2 : float
             Radian value controlling the right bound of the mask
 
+        Examples
+        --------
+
+        .. todo:: write examples.
+
         """
-        if self.L/self.W > 0.5:
+        if (self._L / self._W) > 0.5:
             raise ValueError('Width of input array must exceed 2x length.')
-        w = self.L if (self.L % 2 == 0) else self.L+1
-        y, x = np.ogrid[0:self.W, -self.L:w]
+
+        w = self._L if (self._L % 2 == 0) else self._L+1
+        y, x = np.ogrid[0:self._W, -self._L:w]
         theta = np.arctan2(x, y) - theta1 + np.pi/2
         theta %= (2*np.pi)
         anglemask = theta <= (theta2-theta1)
         _, B = np.shape(anglemask)
-        anglemap = anglemask[:self.L, int(B/2-self.W/2):int(B/2+self.W/2)]
+        anglemap = anglemask[:self._L, int(B/2-self._W/2):int(B/2+self._W/2)]
 
         self._mask = self._mask * anglemap
 
@@ -1764,28 +1794,37 @@ class GeometricMask(BaseMask):
             Index value to set the outer radius. If unspecified, this bound
             is set to extend as the larger dimension of the domain.
 
-        origin : tuple, optional
-            Tuple containing the (x, y) coordinate of the origin point.
-            If unspecified, it is assumed to be at the center of a boundary
-            where pyDeltaRCM places the inlet.
+        origin : :obj:`tuple`, optional
+            Optionally specify an origin to use for computing the circle. Will
+            use the `GeometricMask` origin, if not supplied.
+
+        Examples
+        --------
+
+        .. todo:: write examples.
 
         """
-        if origin is not None:
-            self.xc = origin[0]
-            self.yc = origin[1]
+        if origin is None:
+            _xc = self._xc
+            _yc = self._yc
+        elif isinstance(origin, tuple):
+            _xc = origin[0]
+            _yc = origin[1]
+        else:
+            raise ValueError
 
         if rad2 is None:
-            rad2 = np.max((self.L, self.W))
+            rad2 = np.max((self._L, self._W))
 
-        yy, xx = np.meshgrid(range(self.W), range(self.L))
+        yy, xx = np.meshgrid(range(self._W), range(self._L))
         # calculate array of distances from inlet
-        raddist = np.sqrt((yy-self._yc)**2 + (xx-self._xc)**2)
+        raddist = np.sqrt((yy-_yc)**2 + (xx-_xc)**2)
         # identify points within radial bounds
         raddist = np.where(raddist >= rad1, raddist, 0)
         raddist = np.where(raddist <= rad2, raddist, 0)
         raddist = np.where(raddist == 0, raddist, 1)
         # make 3D to be consistent with mask
-        raddist = np.reshape(raddist, [self.L, self.W])
+        raddist = np.reshape(raddist, [self._L, self._W])
         # combine with current mask via multiplication
         self._mask = self._mask * raddist
 
@@ -1804,12 +1843,17 @@ class GeometricMask(BaseMask):
             Index value to set second boundary (farther from inlet). This is
             optional, if unspecified, this is set to the length of the domain.
 
+        Examples
+        --------
+
+        .. todo:: write examples.
+
         """
         if ind2 is None:
-            ind2 = self.L
+            ind2 = self._L
 
         temp_mask = np.zeros_like(self._mask)
-        temp_mask[:, ind1:ind2, :] = 1
+        temp_mask[ind1:ind2, :] = 1
 
         self._mask = self._mask * temp_mask
 
@@ -1831,13 +1875,18 @@ class GeometricMask(BaseMask):
             Right bound of the mask if specified. If not specified, then
             ind1 sets the width of a mask centered on the inlet.
 
+        Examples
+        --------
+
+        .. todo:: write examples.
+
         """
         temp_mask = np.zeros_like(self._mask)
         if ind2 is None:
             w_ind = int(ind1/2)
-            temp_mask[:, :, self._yc-w_ind:self._yc+w_ind+1] = 1
+            temp_mask[:, self._yc-w_ind:self._yc+w_ind+1] = 1
         else:
-            temp_mask[:, :, ind1:ind2] = 1
+            temp_mask[:, ind1:ind2] = 1
 
         self._mask = self._mask * temp_mask
 
