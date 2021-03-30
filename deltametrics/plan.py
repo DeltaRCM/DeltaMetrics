@@ -56,15 +56,16 @@ class BasePlanform(abc.ABC):
         self.planform_type = planform_type
         self._name = name
 
-        if len(args) > 1:
+        if len(args) != 1:
             raise ValueError('Expected single positional argument to \
                              %s instantiation.'
                              % type(self))
 
-        if len(args) > 0:
+        if issubclass(type(args[0]), cube.BaseCube):
             self.connect(args[0])
         else:
-            pass
+            # use first argument as an array to get shape
+            self._shape = args[0].shape
 
     def connect(self, CubeInstance, name=None):
         """Connect this Planform instance to a Cube instance.
@@ -77,9 +78,14 @@ class BasePlanform(abc.ABC):
         self.cube = CubeInstance
         self._variables = self.cube.variables
         self.name = name  # use the setter to determine the _name
+        self._shape = self.cube.shape[1:]
 
     @property
     def name(self):
+        """Planform name.
+
+        Helpful to differentiate multiple Planforms.
+        """
         return self._name
 
     @name.setter
@@ -99,6 +105,8 @@ class BasePlanform(abc.ABC):
 
     @property
     def shape(self):
+        """Planform shape.
+        """
         return self._shape
 
 
@@ -266,7 +274,7 @@ class OpeningAnglePlanform(BasePlanform):
         .. note:: needs docstring.
 
         """
-        super().__init__('opening angle')
+        super().__init__('opening angle', *args)
         self._shape = None
         self._sea_angles = None
         self._below_mask = None
@@ -278,30 +286,41 @@ class OpeningAnglePlanform(BasePlanform):
                 # do nothing and return partially instantiated object
                 return
             else:
-                raise ValueError('Expected 1 input, got 0.')
+                raise ValueError(
+                    'Expected 1 input, got 0.')
         if not (len(args) == 1):
-            raise ValueError('Expected 1 input, got %s.' % str(len(args)))
+            raise ValueError(
+                'Expected 1 input, got %s.' % str(len(args)))
 
         # process the argument to the omask needed for Shaw OAM
         if utils.is_ndarray_or_xarray(args[0]):
             _arr = args[0]
             # check that is boolean or integer binary
             if (_arr.dtype == np.bool):
-                _below_mask = _arr.astype(np.int)
+                _below_mask = _arr
             elif (_arr.dtype == np.int):
-                if np.logical_or(_arr == 0, _arr == 1):
+                if np.all(np.logical_or(_arr == 0, _arr == 1)):
                     _below_mask = _arr
                 else:
-                    ValueError('Not all 0 and 1 ints.')
+                    ValueError(
+                        'The input was an integer array, but some elements in '
+                        'the array were not 0 or 1.')
             else:
-                raise TypeError('Not bool or int')
+                raise TypeError(
+                    'The input was not an integer or boolean array, but was '
+                    '{0}. If you are trying to instantiate an OAP from '
+                    'elevation data directly, see static method '
+                    '`OpeningAnglePlanform.from_elevation_data`.')
+        elif issubclass(type(args[0]), cube.BaseCube):
+            raise NotImplementedError(
+                'Instantiation from a Cube is not yet implemented.')
         else:
             # bad type supplied as argument
             raise TypeError('Invalid type for argument.')
 
         self._shape = _below_mask.shape
 
-        self._compute_from_below_mask(_below_mask)
+        self._compute_from_below_mask(_below_mask, **kwargs)
 
     def _compute_from_below_mask(self, below_mask, **kwargs):
         """Method for actual computation of the arrays.
@@ -321,9 +340,17 @@ class OpeningAnglePlanform(BasePlanform):
         # check if there is any *land*
         if np.any(below_mask == 0):
 
+            # need to convert type to integer
+            below_mask = below_mask.astype(np.int)
+
+            # pull out the shaw oam keywords
+            shaw_kwargs = {}
+            if 'numviews' in kwargs:
+                shaw_kwargs['numviews'] = kwargs.pop('numviews')
+
             # pixels present in the mask
             shoreangles, seaangles = shaw_opening_angle_method(
-                below_mask, **kwargs)
+                below_mask, **shaw_kwargs)
 
             # translate flat seaangles values to the shoreline image
             #  this is a good target for optimization (return reshaped?)
@@ -336,7 +363,8 @@ class OpeningAnglePlanform(BasePlanform):
         self._sea_angles = sea_angles
 
         # properly assign the oceanmap to the self.below_mask
-        self._below_mask = below_mask
+        #   set it to be bool regardless of input type
+        self._below_mask = below_mask.astype(np.bool)
 
     @property
     def sea_angles(self):
@@ -390,30 +418,71 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
 
     Examples
     --------
-
     Compare the roughness of the shoreline early in the model simulation with
-    the roughness later.
+    the roughness later. Here, we use the `elevation_offset` parameter (passed
+    to :obj:`~deltametrics.mask.ElevationMask`) to better capture the
+    topography of the `pyDeltaRCM` model results.
 
     .. plot::
         :include-source:
+        :context: reset
 
         golf = dm.sample_data.golf()
 
         # early in model run
         lm0 = dm.mask.LandMask(
             golf['eta'][15, :, :],
-            elevation_threshold=0)
+            elevation_threshold=0,
+            elevation_offset=-0.5)
         sm0 = dm.mask.ShorelineMask(
             golf['eta'][15, :, :],
-            elevation_threshold=0)
+            elevation_threshold=0,
+            elevation_offset=-0.5)
 
         # late in model run
         lm1 = dm.mask.LandMask(
             golf['eta'][-1, :, :],
-            elevation_threshold=0)
+            elevation_threshold=0,
+            elevation_offset=-0.5)
         sm1 = dm.mask.ShorelineMask(
             golf['eta'][-1, :, :],
-            elevation_threshold=0)
+            elevation_threshold=0,
+            elevation_offset=-0.5)
+
+    Let's take a quick peek at the masks that we have created.
+
+    .. plot::
+        :include-source:
+        :context:
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 3))
+        lm0.show(ax=ax[0])
+        sm0.show(ax=ax[1])
+        plt.show()
+
+    In order for these masks to work as expected in the shoreline roughness
+    computation, we need to modify the mask values slightly, to remove the
+    land-water boundary that is not really a part of the delta. We use the
+    :meth:`~deltametrics.mask.BaseMask.trim_mask` method to trim a mask.
+
+    .. plot::
+        :context: close-figs
+
+        lm0.trim_mask(length=golf.meta['L0'].data+1)
+        sm0.trim_mask(length=golf.meta['L0'].data+1)
+        lm1.trim_mask(length=golf.meta['L0'].data+1)
+        sm1.trim_mask(length=golf.meta['L0'].data+1)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 3))
+        lm0.show(ax=ax[0])
+        sm0.show(ax=ax[1])
+        plt.show()
+
+    And now, we can proceed with the calculation.
+
+    .. plot::
+        :include-source:
+        :context: close-figs
 
         # compute roughnesses
         rgh0 = dm.plan.compute_shoreline_roughness(sm0, lm0)
@@ -491,7 +560,9 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     --------
 
     Compare the length of the shoreline early in the model simulation with
-    the length later.
+    the length later. Here, we use the `elevation_offset` parameter (passed to
+    :obj:`~deltametrics.mask.ElevationMask`) to better capture the topography
+    of the `pyDeltaRCM` model results.
 
     .. plot::
         :include-source:
@@ -501,12 +572,14 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
         # early in model run
         sm0 = dm.mask.ShorelineMask(
             golf['eta'][15, :, :],
-            elevation_threshold=0)
+            elevation_threshold=0,
+            elevation_offset=-0.5)
 
         # late in model run
         sm1 = dm.mask.ShorelineMask(
             golf['eta'][-1, :, :],
-            elevation_threshold=0)
+            elevation_threshold=0,
+            elevation_offset=-0.5)
 
         # compute lengths
         len0 = dm.plan.compute_shoreline_length(sm0)
@@ -643,6 +716,10 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
 
 @njit
 def _compute_angles_between(c1, shoreandborder, Shallowsea, numviews):
+    """Private helper for shaw_opening_angle_method.
+
+    Good target for code style, organization, and optimization.
+    """
     maxtheta = np.zeros((numviews, c1))
     for i in range(c1):
 
@@ -692,8 +769,8 @@ def shaw_opening_angle_method(below_mask, numviews=3):
         angle method.
 
     numviews : int
-        Defines the number of times to 'look' for the opening angle map.
-        Default is 3.
+        Defines the number of largest angles to consider for the opening angle
+        map for each pixel. Default is 3, based on [1]_.
 
     Returns
     -------

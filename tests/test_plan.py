@@ -20,6 +20,91 @@ simple_shore_array = np.array([[3, 3, 4, 4, 4, 4, 4, 3, 3, 3],
 simple_shore[simple_shore_array[:, 0], simple_shore_array[:, 1]] = 1
 
 
+class TestOpeningAnglePlanform:
+
+    simple_ocean = (1 - simple_land)
+
+    golf_path = _get_golf_path()
+    golfcube = cube.DataCube(golf_path)
+
+    def test_defaults_array_int(self):
+
+        oap = plan.OpeningAnglePlanform(self.simple_ocean.astype(np.int))
+        assert isinstance(oap.sea_angles, np.ndarray)
+        assert oap.sea_angles.shape == self.simple_ocean.shape
+        assert oap.below_mask.dtype == np.bool
+
+    def test_defaults_array_bool(self):
+
+        oap = plan.OpeningAnglePlanform(self.simple_ocean.astype(np.bool))
+        assert isinstance(oap.sea_angles, np.ndarray)
+        assert oap.sea_angles.shape == self.simple_ocean.shape
+        assert oap.below_mask.dtype == np.bool
+
+    def test_defaults_array_float_erro(self):
+
+        with pytest.raises(TypeError):
+            _ = plan.OpeningAnglePlanform(self.simple_ocean.astype(np.float))
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_defaults_cube(self):
+
+        _ = plan.OpeningAnglePlanform(self.golfcube, t=-1)
+
+    def test_defaults_static_from_elevation_data(self):
+
+        oap = plan.OpeningAnglePlanform.from_elevation_data(
+            self.golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        assert isinstance(oap.sea_angles, np.ndarray)
+        assert oap.sea_angles.shape == self.golfcube.shape[1:]
+        assert oap.below_mask.dtype == np.bool
+
+    def test_defaults_static_from_elevation_data_needs_threshold(self):
+
+        with pytest.raises(TypeError):
+            _ = plan.OpeningAnglePlanform.from_elevation_data(
+                self.golfcube['eta'][-1, :, :])
+
+    def test_defaults_static_from_ElevationMask(self):
+
+        _em = mask.ElevationMask(
+            self.golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        oap = plan.OpeningAnglePlanform.from_ElevationMask(_em)
+
+        assert isinstance(oap.sea_angles, np.ndarray)
+        assert oap.sea_angles.shape == _em.shape
+        assert oap.below_mask.dtype == np.bool
+
+    def test_defaults_static_from_elevation_data_kwargs_passed(self):
+
+        oap_default = plan.OpeningAnglePlanform.from_elevation_data(
+            self.golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        oap_diff = plan.OpeningAnglePlanform.from_elevation_data(
+            self.golfcube['eta'][-1, :, :],
+            elevation_threshold=0,
+            numviews=10)
+
+        # this test needs assertions -- currently numviews has no effect for
+        #   this example, but I did verify it is actually be passed to the
+        #   function.
+
+
+class TestShawOpeningAngleMethod:
+
+    simple_ocean = (1 - simple_land)
+
+    # NEED TESTS
+
+    def test_null(self):
+        pass
+
+
 class TestShorelineRoughness:
 
     rcm8_path = _get_rcm8_path()
@@ -39,10 +124,17 @@ class TestShorelineRoughness:
         rcm8['eta'][0, :, :],
         elevation_threshold=0)
 
-    rcm8_expected = 5.9941268725889385
+    _trim_length = 4
+    lm.trim_mask(length=_trim_length)
+    sm.trim_mask(length=_trim_length)
+    lm0.trim_mask(length=_trim_length)
+    sm0.trim_mask(length=_trim_length)
+
+    rcm8_expected = 4.476379600936939
 
     def test_simple_case(self):
-        simple_rgh = plan.compute_shoreline_roughness(simple_shore, simple_land)
+        simple_rgh = plan.compute_shoreline_roughness(
+            simple_shore, simple_land)
         exp_area = 45
         exp_len = (7*1)+(2*1.41421356)
         exp_rgh = exp_len / np.sqrt(exp_area)
@@ -51,29 +143,34 @@ class TestShorelineRoughness:
     def test_rcm8_defaults(self):
         # test it with default options
         rgh_0 = plan.compute_shoreline_roughness(self.sm, self.lm)
-        assert rgh_0 == pytest.approx(self.rcm8_expected)
+        assert rgh_0 == pytest.approx(self.rcm8_expected, abs=0.1)
 
     def test_rcm8_ignore_return_line(self):
         # test that it ignores return_line arg
         rgh_1 = plan.compute_shoreline_roughness(self.sm, self.lm,
                                                  return_line=False)
-        assert rgh_1 == pytest.approx(self.rcm8_expected)
+        assert rgh_1 == pytest.approx(self.rcm8_expected, abs=0.1)
 
     def test_rcm8_defaults_opposite(self):
         # test that it is the same with opposite side origin
-        rgh_2 = plan.compute_shoreline_roughness(self.sm, self.lm,
-                                                 origin=[0, self.rcm8.shape[1]])
-        assert rgh_2 == pytest.approx(self.rcm8_expected, abs=0.1)
+        rgh_2 = plan.compute_shoreline_roughness(
+            self.sm, self.lm,
+            origin=[0, self.rcm8.shape[1]])
+        assert rgh_2 == pytest.approx(self.rcm8_expected, abs=0.2)
 
     def test_rcm8_fail_no_shoreline(self):
-        # check raises error 
+        # check raises error
         with pytest.raises(ValueError, match=r'No pixels in shoreline mask.'):
-            plan.compute_shoreline_roughness(self.sm0, self.lm)
+            plan.compute_shoreline_roughness(
+                np.zeros((10, 10)),
+                self.lm)
 
     def test_rcm8_fail_no_land(self):
-        # check raises error 
+        # check raises error
         with pytest.raises(ValueError, match=r'No pixels in land mask.'):
-            plan.compute_shoreline_roughness(self.sm, self.lm0)
+            plan.compute_shoreline_roughness(
+                self.sm,
+                np.zeros((10, 10)))
 
     def test_compute_shoreline_roughness_asarray(self):
         # test it with default options
@@ -82,7 +179,7 @@ class TestShorelineRoughness:
         assert isinstance(_smarr, np.ndarray)
         assert isinstance(_lmarr, np.ndarray)
         rgh_3 = plan.compute_shoreline_roughness(_smarr, _lmarr)
-        assert rgh_3 == pytest.approx(self.rcm8_expected)
+        assert rgh_3 == pytest.approx(self.rcm8_expected, abs=0.1)
 
 
 class TestShorelineLength:
@@ -98,19 +195,23 @@ class TestShorelineLength:
         rcm8['eta'][0, :, :],
         elevation_threshold=0)
 
-    rcm8_expected = 451.71224690336953
+    _trim_length = 4
+    sm.trim_mask(length=_trim_length)
+    sm0.trim_mask(length=_trim_length)
+
+    rcm8_expected = 331.61484154404747
 
     def test_simple_case(self):
         simple_len = plan.compute_shoreline_length(
             simple_shore)
         exp_len = (7*1)+(2*1.41421356)
-        assert simple_len == pytest.approx(exp_len)
+        assert simple_len == pytest.approx(exp_len, abs=0.1)
 
     def test_simple_case_opposite(self):
         simple_len = plan.compute_shoreline_length(
             simple_shore, origin=[10, 0])
         exp_len = (7*1)+(2*1.41421356)
-        assert simple_len == pytest.approx(exp_len)
+        assert simple_len == pytest.approx(exp_len, abs=0.1)
 
     def test_simple_case_return_line(self):
         simple_len, simple_line = plan.compute_shoreline_length(
@@ -123,7 +224,7 @@ class TestShorelineLength:
         # test that it is the same with opposite side origin
         len_0 = plan.compute_shoreline_length(
             self.sm)
-        assert len_0 == pytest.approx(self.rcm8_expected)
+        assert len_0 == pytest.approx(self.rcm8_expected, abs=0.1)
 
     def test_rcm8_defaults_opposite(self):
         # test that it is the same with opposite side origin

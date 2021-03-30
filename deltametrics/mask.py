@@ -87,6 +87,50 @@ class BaseMask(abc.ABC):
         self._shape = _shape
         self._mask = np.zeros(self._shape, dtype=np.bool)
 
+    def trim_mask(self, *args, value=False, edge=1, length=None):
+        """Replace a part of the mask with a new value.
+
+        This is sometimes necessary before using a mask in certain
+        computations. Most often, this method is used to manually correct
+        domain edge effects.
+
+        Parameters
+        ----------
+        *args : :obj:`BaseCube` subclass, optional
+            Optionally pass a `Cube` object to the mask, and the dimensions to
+            trim/replace the mask by will be inferred from the cube. In this
+            case, :obj:`edge` and :obj:`length` have no effect.
+
+        value
+            Value to replace in the trim region with. Default is ``False``.
+
+        edge
+            Which edge to apply the trim of :obj:`length` to. Default is 1,
+            the top domain edge.
+
+        length
+            The length of the trim. Note that this is **not the array index**.
+
+        Examples
+        --------
+
+        """
+        # if any argument supplied, it is a cube
+        if len(args) == 1:
+            raise NotImplementedError('Passing a Cube is not yet implemented.')
+
+        # if no args, look at keyword args
+        elif len(args) == 0:
+            if length is None:
+                # try to infer it from something?
+                raise NotImplementedError
+
+            if edge == 1:
+                self._mask[:length, :] = bool(value)
+
+        else:
+            raise NotImplementedError
+
     @abc.abstractmethod
     def _compute_mask(self):
         ...
@@ -265,11 +309,20 @@ class ElevationMask(ThresholdValueMask):
         plt.show()
     """
 
-    def __init__(self, *args, elevation_threshold,
+    def __init__(self, *args, elevation_threshold, elevation_offset=0,
                  cube_key='eta', **kwargs):
+        """Initialize the ElevationMask.
+
+        .. note:: Needs docstring!
+
+        """
+
+        self._input_elevation_threshold = elevation_threshold
+        self._elevation_offset = elevation_offset
+        _threshold = elevation_threshold + elevation_offset
 
         BaseMask.__init__(self, 'elevation', *args, **kwargs)
-        ThresholdValueMask.__init__(self, *args, threshold=elevation_threshold,
+        ThresholdValueMask.__init__(self, *args, threshold=_threshold,
                                     cube_key=cube_key)
 
     def _compute_mask(self, _eta, **kwargs):
@@ -287,7 +340,18 @@ class ElevationMask(ThresholdValueMask):
 
     @property
     def elevation_threshold(self):
+        """Elevation value used to threshold the elevation data.
+
+        Determined during instantiation as the sum of input arguments to
+        :obj:`__init__` `elevation_threshold` and `elevation_offset`.
+        """
         return self._threshold
+
+    @property
+    def elevation_offset(self):
+        """An optional offset to apply to input threshold.
+        """
+        return self._elevation_offset
 
     @property
     def trim_width(self):
@@ -322,11 +386,14 @@ class FlowMask(ThresholdValueMask):
         fvmsk.show(ax=ax[0])
         fdmsk.show(ax=ax[1])
         plt.show()
-
     """
 
-    def __init__(self, *args, flow_threshold,
-                 cube_key='velocity', **kwargs):
+    def __init__(self, *args, flow_threshold, cube_key='velocity', **kwargs):
+        """Initialize the FlowMask.
+
+        .. note:: Needs docstring!
+
+        """
 
         BaseMask.__init__(self, 'flow', *args, **kwargs)
         ThresholdValueMask.__init__(self, *args, threshold=flow_threshold,
