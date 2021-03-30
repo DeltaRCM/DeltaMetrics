@@ -8,6 +8,9 @@ the delta.
 This class is defined in ``deltametrics.mask``.
 
 
+.. include:: lexicon.rst
+
+
 Mask types
 ==========
 

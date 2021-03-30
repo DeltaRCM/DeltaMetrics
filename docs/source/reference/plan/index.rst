@@ -8,8 +8,6 @@ The package makes available functions relating to planview operations on data.
 
 The functions are defined in ``deltametrics.plan``. 
 
-.. include:: lexicon.rst
-
 
 Planform types
 ==============
