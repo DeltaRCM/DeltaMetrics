@@ -60,8 +60,9 @@ class BaseMask(abc.ABC):
             for i in range(len(args)):
                 if not utils.is_ndarray_or_xarray(args[i]):
                     raise TypeError(
-                        'Input to mask instantiation was '
-                        'not an array. Input type was {}'.format(
+                        'First input to mask instantiation was an array '
+                        'but then a later argument was not an array. '
+                        'This is not supported. Type was {}'.format(
                             type(args[i])))
             self._set_shape_mask(args[0].shape)
         else:
@@ -87,7 +88,7 @@ class BaseMask(abc.ABC):
         self._shape = _shape
         self._mask = np.zeros(self._shape, dtype=np.bool)
 
-    def trim_mask(self, *args, value=False, edge=1, length=None):
+    def trim_mask(self, *args, value=False, axis=1, length=None):
         """Replace a part of the mask with a new value.
 
         This is sometimes necessary before using a mask in certain
@@ -99,12 +100,12 @@ class BaseMask(abc.ABC):
         *args : :obj:`BaseCube` subclass, optional
             Optionally pass a `Cube` object to the mask, and the dimensions to
             trim/replace the mask by will be inferred from the cube. In this
-            case, :obj:`edge` and :obj:`length` have no effect.
+            case, :obj:`axis` and :obj:`length` have no effect.
 
         value
             Value to replace in the trim region with. Default is ``False``.
 
-        edge
+        axis
             Which edge to apply the trim of :obj:`length` to. Default is 1,
             the top domain edge.
 
@@ -125,11 +126,16 @@ class BaseMask(abc.ABC):
                 # try to infer it from something?
                 raise NotImplementedError
 
-            if edge == 1:
+            if axis == 1:
                 self._mask[:length, :] = bool(value)
+            elif axis == 0:
+                self._mask[:, :length] = bool(value)
+            else:
+                raise ValueError('`edge` must be 0 or 1.')
 
         else:
-            raise NotImplementedError
+            raise ValueError(
+                'Too many arguments.')
 
     @abc.abstractmethod
     def _compute_mask(self):
@@ -327,16 +333,11 @@ class ElevationMask(ThresholdValueMask):
 
     def _compute_mask(self, _eta, **kwargs):
 
-        # trim the data
-        # self._trim_width = utils.determine_land_width(_eta[:, 0])
-        self._trim_width = 0
-        data_trim = _eta[self._trim_width:, :]
-
         # use elevation_threshold to identify field
-        emap = (data_trim > self._threshold)
+        emap = (_eta > self._threshold)
 
         # set the data into the mask
-        self._mask[self._trim_width:, :] = emap
+        self._mask[:, :] = emap
 
     @property
     def elevation_threshold(self):
@@ -352,10 +353,6 @@ class ElevationMask(ThresholdValueMask):
         """An optional offset to apply to input threshold.
         """
         return self._elevation_offset
-
-    @property
-    def trim_width(self):
-        return self._trim_width
 
 
 class FlowMask(ThresholdValueMask):
@@ -578,9 +575,9 @@ class ChannelMask(BaseMask):
 
         elif self._input_flag == 'cube':
             raise NotImplementedError
-            _tval = kwargs.pop('t', -1)
-            _eta = args[0]['eta'][_tval, :, :]
-            _flow = args[0]['velocity'][_tval, :, :]
+            # _tval = kwargs.pop('t', -1)
+            # _eta = args[0]['eta'][_tval, :, :]
+            # _flow = args[0]['velocity'][_tval, :, :]
             # need to convert these fields to proper masks
 
         elif self._input_flag == 'mask':
@@ -591,9 +588,9 @@ class ChannelMask(BaseMask):
         elif self._input_flag == 'array':
             # first make a landmas
             _eta = args[0]
-            _lm = LandMask(_eta, **kwargs)
+            _lm = LandMask(_eta, **kwargs)._mask
             _flow = args[1]
-            _fm = FlowMask(_flow, **kwargs)
+            _fm = FlowMask(_flow, **kwargs)._mask
 
         else:
             raise ValueError('Invalid _input_flag. Did you modify this attribute?')
@@ -1658,9 +1655,9 @@ class CenterlineMask(BaseMask):
 
         elif self._input_flag == 'cube':
             raise NotImplementedError
-            _tval = kwargs.pop('t', -1)
-            _eta = args[0]['eta'][_tval, :, :]
-            _flow = args[0]['velocity'][_tval, :, :]
+            # _tval = kwargs.pop('t', -1)
+            # _eta = args[0]['eta'][_tval, :, :]
+            # _flow = args[0]['velocity'][_tval, :, :]
             # need to convert these fields to proper masks
 
         elif self._input_flag == 'mask':

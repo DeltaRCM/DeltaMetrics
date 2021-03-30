@@ -57,6 +57,101 @@ class TestBaseMask:
         assert basemask._mask is basemask.mask
         assert basemask.shape == self.fake_input.shape
 
+    def test_trim_mask_length(self):
+        basemask = mask.BaseMask('field', self.fake_input)
+        # mock as though the mask were made
+        basemask._mask = self.fake_input.astype(np.bool)
+
+        assert np.all(basemask.integer_mask == 1)
+
+        _l = 5
+        basemask.trim_mask(length=_l)
+
+        assert basemask._mask.dtype == np.bool
+        assert np.all(basemask.integer_mask[:_l, :] == 0)
+        assert np.all(basemask.integer_mask[_l:, :] == 1)
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_trim_mask_cube(self):
+        basemask = mask.BaseMask('field', self.fake_input)
+        # mock as though the mask were made
+        basemask._mask = self.fake_input.astype(np.bool)
+
+        assert np.all(basemask.integer_mask == 1)
+
+        basemask.trim_mask(golfcube)
+        # assert np.all(basemask.integer_mask[:5, :] == 0)
+        # assert np.all(basemask.integer_mask[5:, :] == 1)
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_trim_mask_noargs(self):
+        basemask = mask.BaseMask('field', self.fake_input)
+        # mock as though the mask were made
+        basemask._mask = self.fake_input.astype(np.bool)
+
+        assert np.all(basemask.integer_mask == 1)
+
+        basemask.trim_mask()
+        # assert np.all(basemask.integer_mask[:5, :] == 0)
+        # assert np.all(basemask.integer_mask[5:, :] == 1)
+
+    def test_trim_mask_axis1_withlength(self):
+        basemask = mask.BaseMask('field', self.fake_input)
+        # mock as though the mask were made
+        basemask._mask = self.fake_input.astype(np.bool)
+
+        assert np.all(basemask.integer_mask == 1)
+
+        _l = 5
+        basemask.trim_mask(axis=0, length=_l)
+        assert basemask._mask.dtype == np.bool
+        assert np.all(basemask.integer_mask[:, :_l] == 0)
+        assert np.all(basemask.integer_mask[:, _l:] == 1)
+
+    def test_trim_mask_diff_True(self):
+        basemask = mask.BaseMask('field', self.fake_input)
+
+        # everything is False (0)
+        assert np.all(basemask.integer_mask == 0)
+
+        _l = 5
+        basemask.trim_mask(value=True, length=_l)
+
+        assert basemask._mask.dtype == np.bool
+        assert np.all(basemask.integer_mask[:_l, :] == 1)
+        assert np.all(basemask.integer_mask[_l:, :] == 0)
+
+    def test_trim_mask_diff_ints(self):
+        basemask = mask.BaseMask('field', self.fake_input)
+
+        # everything is False (0)
+        assert np.all(basemask.integer_mask == 0)
+
+        _l = 5
+        basemask.trim_mask(value=1, length=_l)
+        assert basemask._mask.dtype == np.bool
+        assert np.all(basemask.integer_mask[:_l, :] == 1)
+
+        basemask.trim_mask(value=0, length=_l)
+        assert basemask._mask.dtype == np.bool
+        assert np.all(basemask.integer_mask[:_l, :] == 0)
+
+        basemask.trim_mask(value=5, length=_l)
+        assert basemask._mask.dtype == np.bool
+        assert np.all(basemask.integer_mask[:_l, :] == 1)
+
+        basemask.trim_mask(value=5.534, length=_l)
+        assert basemask._mask.dtype == np.bool
+        assert np.all(basemask.integer_mask[:_l, :] == 1)
+
+    def test_trim_mask_toomanyargs(self):
+        basemask = mask.BaseMask('field', self.fake_input)
+
+        with pytest.raises(ValueError):
+            basemask.trim_mask('arg1', 'arg2', value=1, length=1)
+
     def test_show(self):
         """
         Here, we just test whether it works, and whether it takes a
@@ -68,10 +163,31 @@ class TestBaseMask:
         basemask.show()
         plt.close()
 
+        # test show with colorbar
+        basemask.show(colorbar=True)
+        plt.close()
+
+        # test show with title
+        basemask.show(title='a title')
+        plt.close()
+
         # test show with axes, bad values
         fig, ax = plt.subplots()
         basemask.show(ax=ax)
         plt.close()
+
+    def test_show_error_nomask(self):
+        """
+        Here, we just test whether it works, and whether it takes a
+        specific axis.
+        """
+        basemask = mask.BaseMask('field', self.fake_input)
+
+        # mock as though something went wrong
+        basemask._mask = None
+
+        with pytest.raises(RuntimeError):
+            basemask.show()
 
     def test_no_data(self):
         """Test when no data input raises error."""
@@ -82,6 +198,11 @@ class TestBaseMask:
         """Test invalid data input."""
         with pytest.raises(TypeError, match=r'Unexpected type was input: .*'):
             _ = mask.BaseMask('field', 'a string!!')
+
+    def test_invalid_second_data(self):
+        """Test invalid data input."""
+        with pytest.raises(TypeError, match=r'First input to mask .*'):
+            _ = mask.BaseMask('field', np.zeros((100, 200)), 'a string!!')
 
     def test_return_empty(self):
         """Test when no data input, but allow empty, returns empty."""
@@ -252,6 +373,8 @@ class TestElevationMask:
         assert elevationmask._input_flag == 'array'
         assert elevationmask.mask_type == 'elevation'
         assert elevationmask.elevation_threshold == 0
+        assert elevationmask.threshold == 0
+        assert elevationmask.elevation_threshold is elevationmask.threshold
         assert elevationmask._mask.dtype == np.bool
 
     def test_all_below_threshold(self):
@@ -262,6 +385,8 @@ class TestElevationMask:
         assert elevationmask._input_flag == 'array'
         assert elevationmask.mask_type == 'elevation'
         assert elevationmask.elevation_threshold == 10
+        assert elevationmask.threshold == 10
+        assert elevationmask.elevation_threshold is elevationmask.threshold
         assert elevationmask._mask.dtype == np.bool
         assert np.all(elevationmask.mask == 0)
 
@@ -273,6 +398,8 @@ class TestElevationMask:
         assert elevationmask._input_flag == 'array'
         assert elevationmask.mask_type == 'elevation'
         assert elevationmask.elevation_threshold == -10
+        assert elevationmask.threshold == -10
+        assert elevationmask.elevation_threshold is elevationmask.threshold
         assert elevationmask._mask.dtype == np.bool
         assert np.all(elevationmask.mask == 1)
 
@@ -379,6 +506,8 @@ class TestFlowMask:
         assert flowmask._input_flag == 'array'
         assert flowmask.mask_type == 'flow'
         assert flowmask.flow_threshold == 0.3
+        assert flowmask.threshold == 0.3
+        assert flowmask.flow_threshold is flowmask.threshold
         assert flowmask._mask.dtype == np.bool
 
         # note that, the mask will take any array though...
@@ -390,6 +519,8 @@ class TestFlowMask:
         assert flowmask_any._input_flag == 'array'
         assert flowmask_any.mask_type == 'flow'
         assert flowmask_any.flow_threshold == 0
+        assert flowmask_any.threshold == 0
+        assert flowmask_any.flow_threshold is flowmask_any.threshold
 
     def test_all_below_threshold(self):
         flowmask = mask.FlowMask(
@@ -399,6 +530,8 @@ class TestFlowMask:
         assert flowmask._input_flag == 'array'
         assert flowmask.mask_type == 'flow'
         assert flowmask.flow_threshold == 20
+        assert flowmask.threshold == 20
+        assert flowmask.flow_threshold is flowmask.threshold
         assert flowmask._mask.dtype == np.bool
         assert np.all(flowmask.mask == 0)
 
@@ -410,6 +543,8 @@ class TestFlowMask:
         assert flowmask._input_flag == 'array'
         assert flowmask.mask_type == 'flow'
         assert flowmask.flow_threshold == -5
+        assert flowmask.threshold == -5
+        assert flowmask.flow_threshold is flowmask.threshold
         assert flowmask._mask.dtype == np.bool
         assert np.all(flowmask.mask == 1)
 
