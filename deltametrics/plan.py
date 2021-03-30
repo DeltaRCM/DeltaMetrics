@@ -105,42 +105,158 @@ class BasePlanform(abc.ABC):
 class OpeningAnglePlanform(BasePlanform):
     """Planform for handling the Shaw Opening Angle Method.
 
+    This `Planform` (called `OAP` for short) is a wrapper/handler for the
+    input and output from the :func:`shaw_opening_angle_method`. The `OAP` is a
+    conventient way to manage the extraction of a shoreline or a delta topset
+    area.
 
+    Moreover, the `OAP` can be used as the input for :doc:`many types of
+    Mask </reference/mask/index>` objects, so it is often computationally
+    advantageous to compute this `Planform` once, and then use it to create
+    many different types of masks.
+
+    Examples
+    --------
+    Instantiate the `OpeningAnglePlanform` from an **inverted** binary mask of
+    elevation data (i.e., from an :obj:`~deltametrics.mask.ElevationMask`).
+
+    Note that the below example is the most verbose method for creating the
+    `OAP`. Consider available static methods.
+
+    .. plot::
+        :context: reset
+        :include-source:
+
+        >>> golfcube = dm.sample_data.golf()
+        >>> _EM = dm.mask.ElevationMask(
+        ...     golfcube['eta'][-1, :, :],
+        ...     elevation_threshold=0)
+
+        # extract a mask of area below sea level as the
+        #   inverse of the ElevationMask
+        >>> _below_mask = ~(_EM.mask)
+
+        >>> OAP = dm.plan.OpeningAnglePlanform(_below_mask)
+
+    The OAP stores information computed from the
+    :func:`shaw_opening_angle_method`. See the two properties of the OAP
+    :obj:`below_mask` and :obj:`sea_angles`.
+
+    .. plot::
+        :context:
+
+        fig, ax = plt.subplots(1, 3, figsize=(10, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        im1 = ax[1].imshow(OAP.below_mask,
+                           cmap='Greys_r', origin='lower')
+        im2 = ax[2].imshow(OAP.sea_angles,
+                           cmap='jet', origin='lower')
+        dm.plot.append_colorbar(im2, ax=ax[2])
+        ax[0].set_title('input elevation data')
+        ax[1].set_title('OAP.below_mask')
+        ax[2].set_title('OAP.sea_angles')
+        for i in range(1, 3):
+            ax[i].set_xticks([])
+            ax[i].set_yticks([])
     """
 
     @staticmethod
     def from_arrays(*args):
+        """Create directly from arrays.
+
+        .. warning:: not implemented.
+        """
         raise NotImplementedError
 
     @staticmethod
-    def from_elevation_data(_arr, **kwargs):
-        """Create the Opening Angle Planform from elevation data.
+    def from_elevation_data(elevation_data, **kwargs):
+        """Create an `OpeningAnglePlanform` from elevation data.
 
         This process creates an ElevationMask from the input elevation array,
         and proceeds to make the OAP from the below sea level mask.
 
-        .. note:: finish docstring
+        .. note::
 
+            Keyword arguments are passed to the `ElevationMask` *and* to the
+            `OpeningAnglePlanform`, and thus passed to
+            :func:`shaw_opening_angle_method`.
+
+        .. important::
+
+            The `elevation_threshold` argument is implicitly required in this
+            method, because it is required to instantiate an
+            :obj:`ElevationMask` from elevation data.
+
+        Parameters
+        ----------
+        elevation_data : :obj:`ndarray`
+            The elevation data to create the `ElevationMask` that is in
+            turn used to create the `OpeningAnglePlanform`.
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> golfcube = dm.sample_data.golf()
+
+            >>> OAP = dm.plan.OpeningAnglePlanform.from_elevation_data(
+            ...     golfcube['eta'][-1, :, :],
+            ...     elevation_threshold=0)
         """
         # make a temporary mask
         _em = mask.ElevationMask(
-            _arr, **kwargs)
-        # extract value for omask
+            elevation_data, **kwargs)
+
+        # invert the mask for the below sea level area
         _below_mask = ~(_em.mask)
-        return OpeningAnglePlanform(_below_mask)
+
+        # compute from __init__ pathway
+        return OpeningAnglePlanform(_below_mask, **kwargs)
 
     @staticmethod
-    def from_ElevationMask(ElevationMask):
+    def from_ElevationMask(ElevationMask, **kwargs):
+        """Create an `OpeningAnglePlanform` from an `ElevationMask`.
+
+        .. note::
+
+            Keyword arguments are passed to the `OpeningAnglePlanform`, and
+            thus passed to :func:`shaw_opening_angle_method`.
+
+        Parameters
+        ----------
+        ElevationMask : :obj:`~deltametrics.mask.ElevationMask`
+            The :obj:`ElevationMask` to be used to create the
+            `OpeningAnglePlanform`.
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> golfcube = dm.sample_data.golf()
+            >>> _EM = dm.mask.ElevationMask(
+            ...     golfcube['eta'][-1, :, :],
+            ...     elevation_threshold=0)
+
+            >>> OAP = dm.plan.OpeningAnglePlanform.from_ElevationMask(
+            ...     _EM)
+        """
+        if not isinstance(ElevationMask, mask.ElevationMask):
+            raise TypeError('Must be type: ElevationMask.')
+
+        # invert the mask for the below sea level area
         _below_mask = ~(ElevationMask.mask)
 
+        # compute from __init__ pathway
         return OpeningAnglePlanform(_below_mask)
 
     @staticmethod
-    def from_mask(UnknownMask):
-        if isinstance(UnknownMask, mask.ElevationMask):
-            return OpeningAnglePlanform.from_ElevationMask(UnknownMask)
-        else:
-            raise TypeError('Must be type: ElevationMask.')
+    def from_mask(UnknownMask, **kwargs):
+        """Wraps :obj:`from_ElevationMask`.
+        """
+        return OpeningAnglePlanform.from_ElevationMask(
+                UnknownMask, **kwargs)
 
     def __init__(self, *args, **kwargs):
         """Init.
@@ -188,9 +304,21 @@ class OpeningAnglePlanform(BasePlanform):
         self._compute_from_below_mask(_below_mask)
 
     def _compute_from_below_mask(self, below_mask, **kwargs):
+        """Method for actual computation of the arrays.
+
+        Parameters
+        ----------
+        below_mask
+            The binarized array of values that should be considered as the
+            ocean pixels.
+
+        **kwargs
+            Passed to :func:`shaw_opening_angle_method`.
+        """
 
         sea_angles = np.zeros(self._shape)
 
+        # check if there is any *land*
         if np.any(below_mask == 0):
 
             # pixels present in the mask
@@ -198,13 +326,13 @@ class OpeningAnglePlanform(BasePlanform):
                 below_mask, **kwargs)
 
             # translate flat seaangles values to the shoreline image
+            #  this is a good target for optimization (return reshaped?)
             flat_inds = list(map(
                 lambda x: np.ravel_multi_index(x, sea_angles.shape),
                 seaangles[:2, :].T.astype(int)))
             sea_angles.flat[flat_inds] = seaangles[-1, :]
 
         # assign shore_image to the mask object with proper size
-        # self._shore_angles = shoreangles
         self._sea_angles = sea_angles
 
         # properly assign the oceanmap to the self.below_mask
@@ -213,6 +341,8 @@ class OpeningAnglePlanform(BasePlanform):
     @property
     def sea_angles(self):
         """Maximum opening angle view of the sea from a pixel.
+
+        See figure in main docstring for visual example.
         """
         return self._sea_angles
 
@@ -221,6 +351,8 @@ class OpeningAnglePlanform(BasePlanform):
         """Mask for below sea level pixels.
 
         This is the starting point for the Opening Angle Method solution.
+
+        See figure in main docstring for visual example.
         """
         return self._below_mask
 
@@ -613,7 +745,7 @@ def shaw_opening_angle_method(below_mask, numviews=3):
     Deepsea_ = sea[~In]
     Deepsea = np.zeros((numviews+2, len(Deepsea_)))
     Deepsea[:2, :] = np.flipud(Deepsea_.T)
-    Deepsea[-1, :] = 200.  # 200 is a background value for waves1s later
+    Deepsea[-1, :] = 180.  # 180 is a background value for waves1s later
 
     # define points for the shallow sea and the shoreborder
     Shallowsea = np.array(np.where(seamap > 0.5))

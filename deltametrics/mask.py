@@ -1028,7 +1028,8 @@ class ShorelineMask(BaseMask):
             # make intermediate shoreline mask
             raise TypeError('Input must be ElevationMask')
 
-        _OAP = plan.OpeningAnglePlanform.from_ElevationMask(UnknownMask)
+        _OAP = plan.OpeningAnglePlanform.from_ElevationMask(
+            UnknownMask)
         return ShorelineMask.from_OAP(_OAP, **kwargs)
 
     @staticmethod
@@ -1078,7 +1079,7 @@ class ShorelineMask(BaseMask):
 
         angle_threshold : float, optional
             Threshold opening angle used to determine shoreline contour based
-            on the sea_angles from the OpeningAngleMethod.
+            on the sea_angles from the :obj:`OpeningAnglePlanform`.
 
         Other Parameters
         ----------------
