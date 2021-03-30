@@ -215,6 +215,8 @@ def curve_fit(data, fit='harmonic'):
 
 
 def determine_land_width(data, land_width_input=None):
+    """Determine the land width from a dataset.
+    """
     if (land_width_input is None):
         # determine the land width if not supplied explicitly
         trim_idx = guess_land_width_from_land(data)
