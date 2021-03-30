@@ -191,6 +191,26 @@ class ThresholdValueMask(BaseMask, abc.ABC):
     This mask implements a binarization of a raster based on a threshold
     values.
     """
+    @staticmethod
+    def from_array(_arr):
+        """Create an `ElevationMask` from an array.
+
+        .. note::
+
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
+
+        Parameters
+        ----------
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        # set directly
+        raise NotImplementedError
+
     def __init__(self, *args, threshold, cube_key=None, **kwargs):
 
         self._threshold = threshold
@@ -201,24 +221,24 @@ class ThresholdValueMask(BaseMask, abc.ABC):
             return
         elif self._input_flag == 'cube':
             _tval = kwargs.pop('t', -1)
-            self._field = args[0][cube_key][_tval, :, :]
+            _field = args[0][cube_key][_tval, :, :]
+        elif self._input_flag == 'mask':
+            raise NotImplementedError(
+                'Cannot instantiate `ThresholdValueMask` or '
+                'andy subclasses from another mask.')
         elif self._input_flag == 'array':
-            self._field = args[0]
+            _field = args[0]
         else:
             raise ValueError(
                 'Invalid _input_flag. Did you modify this attribute?')
 
-    def _compute_threshold(self, _field):
-
-        # use _threshold to identify field
-        threshed = (_field > self._threshold) * 1.
-
-        # set the data into the mask
-        return threshed
+        self._compute_mask(_field, **kwargs)
 
     @property
-    def field(self):
-        return self._field
+    def threshold(self):
+        """Generic property for ThresholdValueMask threshold.
+        """
+        return self._threshold
 
 
 class ElevationMask(ThresholdValueMask):
@@ -244,36 +264,34 @@ class ElevationMask(ThresholdValueMask):
         emsk.show(ax=ax[1])
         plt.show()
     """
-    def __init__(self, *args, elevation_threshold, **kwargs):
+
+    def __init__(self, *args, elevation_threshold,
+                 cube_key='eta', **kwargs):
 
         BaseMask.__init__(self, 'elevation', *args, **kwargs)
         ThresholdValueMask.__init__(self, *args, threshold=elevation_threshold,
-                                    cube_key='eta')
-
-        # define the *args arguments needed to process this mask
-        _eta = self._field
-
-        self._compute_mask(_eta, **kwargs)
+                                    cube_key=cube_key)
 
     def _compute_mask(self, _eta, **kwargs):
 
         # trim the data
-        trim_idx = utils.determine_land_width(_eta[:, 0])
-        data_trim = _eta[trim_idx:, :]
+        # self._trim_width = utils.determine_land_width(_eta[:, 0])
+        self._trim_width = 0
+        data_trim = _eta[self._trim_width:, :]
 
         # use elevation_threshold to identify field
-        emap = self._compute_threshold(data_trim)
+        emap = (data_trim > self._threshold)
 
         # set the data into the mask
-        self._mask[trim_idx:, :] = emap
+        self._mask[self._trim_width:, :] = emap
 
     @property
     def elevation_threshold(self):
         return self._threshold
 
     @property
-    def elevation(self):
-        return self._field
+    def trim_width(self):
+        return self._trim_width
 
 
 class FlowMask(ThresholdValueMask):
@@ -306,22 +324,18 @@ class FlowMask(ThresholdValueMask):
         plt.show()
 
     """
+
     def __init__(self, *args, flow_threshold,
                  cube_key='velocity', **kwargs):
 
-        BaseMask.__init__(self, 'velocity', *args, **kwargs)
+        BaseMask.__init__(self, 'flow', *args, **kwargs)
         ThresholdValueMask.__init__(self, *args, threshold=flow_threshold,
                                     cube_key=cube_key)
-
-        # define the *args arguments needed to process this mask
-        _flow = self._field
-
-        self._compute_mask(_flow, **kwargs)
 
     def _compute_mask(self, _flow, **kwargs):
 
         # use flow_threshold to identify field
-        fmap = self._compute_threshold(_flow)
+        fmap = (_flow > self._threshold)
 
         # set the data into the mask
         self._mask = fmap
@@ -329,10 +343,6 @@ class FlowMask(ThresholdValueMask):
     @property
     def flow_threshold(self):
         return self._threshold
-
-    @property
-    def flow(self):
-        return self._field
 
 
 class ChannelMask(BaseMask):
@@ -1196,6 +1206,8 @@ class EdgeMask(BaseMask):
     """Identify the land-water edges.
 
     An edge mask object, delineates the boundaries between land and water.
+    Edge identification is implemented via Canny edge detection from `skimage`
+    (``skimage.feature.canny``).
 
     Examples
     --------

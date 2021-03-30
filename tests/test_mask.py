@@ -125,6 +125,7 @@ class TestShorelineMask:
         assert shoremask.mask_type == 'shoreline'
         assert shoremask.angle_threshold > 0
         assert shoremask._mask.dtype == np.bool
+        assert isinstance(shoremask._mask, np.ndarray)
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -182,8 +183,12 @@ class TestShorelineMask:
         shoremask = mask.ShorelineMask(
             rcm8cube['eta'][0, :, :],
             elevation_threshold=0)
-        # assert - expect all values to be False
-        assert np.all(shoremask._mask == 0)
+        # assert - expect all True values should be in one row
+        _whr_edge = np.where(shoremask._mask[:, 0])
+        assert _whr_edge[0].size > 0  # if fails, no shoreline found!
+        _row = int(_whr_edge[0][0])
+        assert np.all(shoremask._mask[_row, :] == 1)
+        assert np.all(shoremask._mask[_row+1:, :] == 0)
 
     def test_static_from_OAP(self):
         shoremask = mask.ShorelineMask(
@@ -232,6 +237,296 @@ class TestShorelineMask:
         # make assertions
         assert shoremask2._input_flag is None
         assert np.all(shoremask2._mask == _arr2_bool)
+
+
+class TestElevationMask:
+    """Tests associated with the mask.LandMask class."""
+
+    def test_default_vals_array(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        elevationmask = mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        # make assertions
+        assert elevationmask._input_flag == 'array'
+        assert elevationmask.mask_type == 'elevation'
+        assert elevationmask.elevation_threshold == 0
+        assert elevationmask._mask.dtype == np.bool
+
+    def test_all_below_threshold(self):
+        elevationmask = mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=10)
+        # make assertions
+        assert elevationmask._input_flag == 'array'
+        assert elevationmask.mask_type == 'elevation'
+        assert elevationmask.elevation_threshold == 10
+        assert elevationmask._mask.dtype == np.bool
+        assert np.all(elevationmask.mask == 0)
+
+    def test_all_above_threshold(self):
+        elevationmask = mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=-10)
+        # make assertions
+        assert elevationmask._input_flag == 'array'
+        assert elevationmask.mask_type == 'elevation'
+        assert elevationmask.elevation_threshold == -10
+        assert elevationmask._mask.dtype == np.bool
+        assert np.all(elevationmask.mask == 1)
+
+    def test_default_vals_array_needs_elevation_threshold(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        with pytest.raises(TypeError, match=r'.* missing'):
+            _ = mask.ElevationMask(rcm8cube['eta'][-1, :, :])
+
+    def test_default_vals_cube(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        elevationmask = mask.ElevationMask(
+            rcm8cube, t=-1,
+            elevation_threshold=0)
+        # make assertions
+        assert elevationmask._input_flag == 'cube'
+        assert elevationmask.mask_type == 'elevation'
+        assert elevationmask._mask.dtype == np.bool
+
+    def test_default_vals_cubewithmeta(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        elevationmask = mask.ElevationMask(
+            golfcube, t=-1,
+            elevation_threshold=0)
+        # make assertions
+        assert elevationmask._input_flag == 'cube'
+        assert elevationmask.mask_type == 'elevation'
+        assert elevationmask._mask.dtype == np.bool
+
+        # compare with another instantiated from array
+        elevationmask_comp = mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        assert np.all(elevationmask_comp.mask == elevationmask.mask)
+
+        # try with a different elevation_threshold (higher)
+        elevationmask_higher = mask.ElevationMask(
+            golfcube, t=-1,
+            elevation_threshold=0.5)
+
+        assert (np.sum(elevationmask_higher.integer_mask) <
+                np.sum(elevationmask.integer_mask))
+
+    def test_default_vals_cube_needs_elevation_threshold(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        with pytest.raises(TypeError, match=r'.* missing'):
+            _ = mask.ElevationMask(
+                rcm8cube, t=-1)
+
+        with pytest.raises(TypeError, match=r'.* missing'):
+            _ = mask.ElevationMask(
+                golfcube, t=-1)
+
+    def test_default_vals_mask_notimplemented(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        _ElevationMask = mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        with pytest.raises(NotImplementedError,
+                           match=r'Cannot instantiate .*'):
+            _ = mask.ElevationMask(
+                _ElevationMask,
+                elevation_threshold=0)
+
+    def test_submergedLand(self):
+        """Check what happens when there is no land above water."""
+        # define the mask
+        elevationmask = mask.ElevationMask(
+            rcm8cube['eta'][0, :, :],
+            elevation_threshold=0)
+        # assert - expect all True values should be up to a point
+        _whr_land = np.where(elevationmask._mask[:, 0])
+        assert _whr_land[0].size > 0  # if fails, no land found!
+        _row = int(_whr_land[0][-1]) + 1  # last index
+        third = elevationmask.shape[1]//3  # limit to left of inlet
+        assert np.all(elevationmask._mask[:_row, :third] == 1)
+        assert np.all(elevationmask._mask[_row:, :] == 0)
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_static_from_array(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        elevationmask = mask.ElevationMask.from_array(np.ones((100, 200)))
+        # make assertions
+        assert elevationmask._input_flag == 'elevation'
+
+
+class TestFlowMask:
+    """Tests associated with the mask.LandMask class."""
+
+    def test_default_vals_array(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        flowmask = mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=0.3)
+        # make assertions
+        assert flowmask._input_flag == 'array'
+        assert flowmask.mask_type == 'flow'
+        assert flowmask.flow_threshold == 0.3
+        assert flowmask._mask.dtype == np.bool
+
+        # note that, the mask will take any array though...
+        # define the mask
+        flowmask_any = mask.FlowMask(
+            golfcube['eta'][-1, :, :],
+            flow_threshold=0)
+
+        assert flowmask_any._input_flag == 'array'
+        assert flowmask_any.mask_type == 'flow'
+        assert flowmask_any.flow_threshold == 0
+
+    def test_all_below_threshold(self):
+        flowmask = mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=20)
+        # make assertions
+        assert flowmask._input_flag == 'array'
+        assert flowmask.mask_type == 'flow'
+        assert flowmask.flow_threshold == 20
+        assert flowmask._mask.dtype == np.bool
+        assert np.all(flowmask.mask == 0)
+
+    def test_all_above_threshold(self):
+        flowmask = mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=-5)
+        # make assertions
+        assert flowmask._input_flag == 'array'
+        assert flowmask.mask_type == 'flow'
+        assert flowmask.flow_threshold == -5
+        assert flowmask._mask.dtype == np.bool
+        assert np.all(flowmask.mask == 1)
+
+    def test_default_vals_array_needs_flow_threshold(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        with pytest.raises(TypeError, match=r'.* missing'):
+            _ = mask.FlowMask(rcm8cube['velocity'][-1, :, :])
+
+    def test_default_vals_cube(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        flowmask = mask.FlowMask(
+            rcm8cube, t=-1,
+            flow_threshold=0.3)
+        # make assertions
+        assert flowmask._input_flag == 'cube'
+        assert flowmask.mask_type == 'flow'
+        assert flowmask._mask.dtype == np.bool
+
+    def test_vals_cube_different_fields(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        velmask = mask.FlowMask(
+            rcm8cube, t=-1,
+            cube_key='velocity',
+            flow_threshold=0.3)
+        # make assertions
+        assert velmask._input_flag == 'cube'
+        assert velmask.mask_type == 'flow'
+        assert velmask._mask.dtype == np.bool
+
+        dismask = mask.FlowMask(
+            rcm8cube, t=-1,
+            cube_key='discharge',
+            flow_threshold=0.3)
+        # make assertions
+        assert dismask._input_flag == 'cube'
+        assert dismask.mask_type == 'flow'
+        assert dismask._mask.dtype == np.bool
+
+        assert not np.all(velmask.mask == dismask.mask)
+
+    def test_default_vals_cubewithmeta(self):
+        """Test that instantiation works
+        For a cube with metadata.
+        """
+        # define the mask
+        flowmask = mask.FlowMask(
+            golfcube, t=-1,
+            flow_threshold=0.3)
+        # make assertions
+        assert flowmask._input_flag == 'cube'
+        assert flowmask.mask_type == 'flow'
+        assert flowmask._mask.dtype == np.bool
+
+        # compare with another instantiated from array
+        flowmask_comp = mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=0.3)
+
+        assert np.all(flowmask_comp.mask == flowmask.mask)
+
+    def test_flowthresh_vals_cubewithmeta(self):
+        # make default
+        flowmask = mask.FlowMask(
+            golfcube, t=-1,
+            flow_threshold=0.3)
+
+        # try with a different flow_threshold (higher)
+        flowmask_higher = mask.FlowMask(
+            golfcube, t=-1,
+            flow_threshold=0.5)
+
+        assert (np.sum(flowmask_higher.integer_mask) <
+                np.sum(flowmask.integer_mask))
+
+    def test_default_vals_cube_needs_flow_threshold(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        with pytest.raises(TypeError, match=r'.* missing'):
+            _ = mask.FlowMask(
+                rcm8cube, t=-1)
+
+        with pytest.raises(TypeError, match=r'.* missing'):
+            _ = mask.FlowMask(
+                golfcube, t=-1)
+
+    def test_default_vals_mask_notimplemented(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        _ElevationMask = mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        with pytest.raises(NotImplementedError,
+                           match=r'Cannot instantiate .*'):
+            _ = mask.FlowMask(
+                _ElevationMask,
+                flow_threshold=0.3)
+
+    def test_submergedLand(self):
+        """Check what happens when there is no land above water."""
+        # define the mask
+        flowmask = mask.FlowMask(
+            rcm8cube['velocity'][0, :, :],
+            flow_threshold=0.3)
+        # assert - expect doesnt care about land
+        assert flowmask.mask_type == 'flow'
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_static_from_array(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        flowmask = mask.FlowMask.from_array(np.ones((100, 200)))
+        # make assertions
+        assert flowmask._input_flag == 'flow'
 
 
 class TestLandMask:
@@ -326,8 +621,12 @@ class TestLandMask:
         landmask = mask.LandMask(
             rcm8cube['eta'][0, :, :],
             elevation_threshold=0)
-        # assert - expect all values to be False
-        assert np.all(landmask._mask == 0)
+        # assert - expect all True values should be in one row
+        _whr_land = np.where(landmask._mask[:, 0])
+        assert _whr_land[0].size > 0  # if fails, no land found!
+        _row = int(_whr_land[0][-1]) + 1  # last index
+        assert np.all(landmask._mask[:_row, :] == 1)
+        assert np.all(landmask._mask[_row:, :] == 0)
 
     def test_static_from_OAP(self):
         landmask = mask.LandMask(
@@ -447,8 +746,12 @@ class TestWetMask:
         wetmask = mask.WetMask(
             rcm8cube['eta'][0, :, :],
             elevation_threshold=0)
-        # assert - expect all values to be False
-        assert np.all(wetmask._mask == 0)
+        # assert - expect all True values should be in one row
+        _whr_edge = np.where(wetmask._mask[:, 0])
+        assert _whr_edge[0].size > 0  # if fails, no shoreline found!
+        _row = int(_whr_edge[0][0])
+        assert np.all(wetmask._mask[_row, :] == 1)
+        assert np.all(wetmask._mask[_row+1:, :] == 0)
 
     def test_static_from_OAP(self):
         # create two with sea level = 0
@@ -590,8 +893,9 @@ class TestChannelMask:
             rcm8cube['velocity'][-1, :, :],
             elevation_threshold=0,
             flow_threshold=0.5)
-        # assert - expect all values to be False
-        assert np.all(channelmask._mask == 0)
+        # assert - expect all True values should be in center and first rows
+        _cntr_frst = channelmask.mask[:3, rcm8cube.shape[2]//2]
+        assert np.all(_cntr_frst == 1)
 
     def test_static_from_OAP_not_implemented(self):
         with pytest.raises(NotImplementedError,
@@ -747,8 +1051,10 @@ class TestEdgeMask:
         edgemask = mask.EdgeMask(
             rcm8cube['eta'][0, :, :],
             elevation_threshold=0)
-        # assert - expect all values to be False
-        assert np.all(edgemask._mask == 0)
+        # assert - expect some values to be true and most false
+        assert np.any(edgemask._mask == 1)
+        assert np.any(edgemask._mask == 0)
+        assert np.median(edgemask.integer_mask) == 0
 
     def test_static_from_OAP(self):
         edgemask_0 = mask.EdgeMask(
@@ -888,8 +1194,10 @@ class TestCenterlineMask:
             rcm8cube['velocity'][-1, :, :],
             elevation_threshold=0,
             flow_threshold=0.5)
-        # assert - expect all values to be False
-        assert np.all(centerlinemask._mask == 0)
+        # assert - expect some values to be true and most false
+        assert np.any(centerlinemask._mask == 1)
+        assert np.any(centerlinemask._mask == 0)
+        assert np.median(centerlinemask.integer_mask) == 0
 
     def test_static_from_OAP_not_implemented(self):
         with pytest.raises(NotImplementedError,
