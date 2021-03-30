@@ -1,8 +1,8 @@
 matplotlib>3.0.2
 numpy>=1.16
-scipy>=1.1
+scipy>=1.5
 netCDF4
-pyyaml
+pyyaml>=5.1
 Shapely
 scikit-image
 xarray

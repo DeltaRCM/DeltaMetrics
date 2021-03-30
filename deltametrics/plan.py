@@ -3,11 +3,7 @@ from scipy import stats
 import matplotlib.pyplot as plt
 
 from scipy.spatial import ConvexHull
-from shapely.geometry import Point
 from shapely.geometry.polygon import Polygon
-from skimage import feature
-from skimage import morphology
-from skimage import measure
 
 from numba import jit, njit
 
