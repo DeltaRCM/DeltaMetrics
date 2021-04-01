@@ -42,7 +42,10 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
     # check binary map types - pull out ndarray from mask or xarray if needed
     if isinstance(chmap, np.ndarray) is True:
         pass
-    elif isinstance(chmap, mask.BaseMask) is True:
+    elif issubclass(type(chmap), mask.BaseMask) is True:
+        raise TypeError(
+            'Cannot input a Mask directly to mobility metrics. '
+            'Use a list-of-masks instead.')
         chmap = chmap.mask
     elif isinstance(chmap, xr.core.dataarray.DataArray) is True:
         chmap = chmap.values

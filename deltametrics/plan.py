@@ -26,21 +26,32 @@ class BasePlanform(abc.ABC):
     """
 
     def __init__(self, planform_type, *args, name=None):
-        """
-        Identify coordinates defining the planform.
+        """Instantiate for subsclasses of BasePlanform.
+
+        The base class instantiation handles setting of the cooridnates of a
+        Planform from the instantiating cube or xarray.
 
         Parameters
         ----------
-        CubeInstance : :obj:`~deltametrics.cube.Cube` subclass instance, optional
+        planform_type : :obj`str`
+            The identifier for the *type* of Planform.
+
+        CubeInstance : :obj:`~deltametrics.cube.Cube` subclass, optional
             Connect to this cube. No connection is made if cube is not
             provided.
 
-        Notes
-        -----
+        name : :obj:`str`, optional
+            An optional name for the planform, helpful for maintaining and
+            keeping track of multiple `Planform` objects of the same type.
+            This is disctinct from the :obj:`planform_type`. The name is used
+            internally if you use the `register_plan` method of a `Cube`.
 
-        If no arguments are passed, an empty planform not connected to any cube
-        is returned. This cube will will need to be manually connected to have
-        any functionality (via the :meth:`connect` method).
+        .. note::
+
+            If no arguments are passed, an empty `Planform` not connected to
+            any cube is returned. This cube may need to be manually connected
+            to have any functionality (via the :meth:`connect` method); this
+            need will depend on the type of `Planform`.
         """
         # begin unconnected
         self._x = None
@@ -111,8 +122,7 @@ class OpeningAnglePlanform(BasePlanform):
 
     This `Planform` (called `OAP` for short) is a wrapper/handler for the
     input and output from the :func:`shaw_opening_angle_method`. The `OAP` is a
-    conventient way to manage the extraction of a shoreline or a delta topset
-    area.
+    convenient way to manage extraction of a shoreline or a delta topset area.
 
     Moreover, the `OAP` can be used as the input for :doc:`many types of
     Mask </reference/mask/index>` objects, so it is often computationally
