@@ -1,310 +1,529 @@
 """Classes and methods to create masks of planform features and attributes."""
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.spatial import ConvexHull
-from shapely.geometry import Point
-from shapely.geometry.polygon import Polygon
 from skimage import feature
 from skimage import morphology
 from skimage import measure
 
+import abc
+import warnings
+
 from . import utils
+from . import cube
+from . import plan
+from . import plot
 
 
-class BaseMask(object):
+class BaseMask(abc.ABC):
     """Low-level base class to be inherited by all mask objects."""
 
-    def __init__(self, mask_type, data):
-        """Initialize the base mask attributes and methods."""
-        self.mask_type = mask_type
-        # try to convert to np.ndarray if data not provided in that form
-        if type(data) is not np.ndarray:
-            try:
-                self.data = data.__array__()
-            except Exception:
-                raise TypeError('Input data type must be numpy.ndarray,'
-                                'but was ' + str(type(data)))
-        else:
-            self.data = data
+    def __init__(self, mask_type, *args, **kwargs):
+        """Initialize the base mask attributes and methods.
 
-        # set data to be 3D even if it is not (assuming t-x-y)
-        if len(np.shape(self.data)) == 3:
-            pass
-        elif len(np.shape(self.data)) == 2:
-            self.data = np.reshape(self.data, [1,
-                                               np.shape(self.data)[0],
-                                               np.shape(self.data)[1]])
-        else:
-            raise ValueError('Input data shape was not 2-D nor 3-D')
+        This intialization tries to determine the types of intputs given to
+        the initializer and proceeds from there.
 
-        self._mask = np.zeros(self.data.shape)
+        Parameters
+        ----------
+        mask_type : :obj:`str`
+            Descriptor of the mask type.
+
+        *args
+        """
+        # add mask type as attribute
+        self._mask_type = mask_type
+        self._shape = None
+        self._mask = None
+
+        # pop is_mask, check if any value was supplied
+        is_mask = kwargs.pop('is_mask', None)
+        self._check_deprecated_is_mask(is_mask)
+
+        # determine the types of inputs given
+        if len(args) == 0:
+            self._input_flag = None
+            _allow_empty = kwargs.pop('allow_empty', False)
+            if _allow_empty:
+                # do nothing and return partially instantiated object
+                return
+            else:
+                raise ValueError('Expected 1 input, got 0.')
+        elif (len(args) == 1) and issubclass(type(args[0]), cube.BaseCube):
+            self._input_flag = 'cube'
+            self._set_shape_mask(args[0].shape[1:])
+        elif (len(args) >= 1) and issubclass(type(args[0]), BaseMask):
+            self._input_flag = 'mask'
+            self._set_shape_mask(args[0].shape)
+        elif utils.is_ndarray_or_xarray(args[0]):
+            # check that all arguments are xarray or numpy arrays
+            self._input_flag = 'array'
+            for i in range(len(args)):
+                if not utils.is_ndarray_or_xarray(args[i]):
+                    raise TypeError(
+                        'First input to mask instantiation was an array '
+                        'but then a later argument was not an array. '
+                        'This is not supported. Type was {}'.format(
+                            type(args[i])))
+            self._set_shape_mask(args[0].shape)
+        else:
+            raise TypeError(
+                'Unexpected type was input: {0}'.format(type(args[0])))
+
+        self._check_deprecated_3d_input(args[0].shape)
+
+    def _set_shape_mask(self, _shape):
+        """Set the mask shape.
+
+        This is called during instantiation in most standard use-cases and
+        pathways, however, if you are implementing your own mask or your own
+        static method to create a mask, you may need to manually call this
+        method to set the fields of the mask correctly before doing any mask
+        computation.
+
+        Parameters
+        ----------
+        shape : :obj:`tuple`
+            Shape of the mask.
+        """
+        self._shape = _shape
+        self._mask = np.zeros(self._shape, dtype=np.bool)
+
+    def trim_mask(self, *args, value=False, axis=1, length=None):
+        """Replace a part of the mask with a new value.
+
+        This is sometimes necessary before using a mask in certain
+        computations. Most often, this method is used to manually correct
+        domain edge effects.
+
+        Parameters
+        ----------
+        *args : :obj:`BaseCube` subclass, optional
+            Optionally pass a `Cube` object to the mask, and the dimensions to
+            trim/replace the mask by will be inferred from the cube. In this
+            case, :obj:`axis` and :obj:`length` have no effect.
+
+        value
+            Value to replace in the trim region with. Default is ``False``.
+
+        axis
+            Which edge to apply the trim of :obj:`length` to. Default is 1,
+            the top domain edge.
+
+        length
+            The length of the trim. Note that this is **not the array index**.
+
+        Examples
+        --------
+
+        """
+        # if any argument supplied, it is a cube
+        if len(args) == 1:
+            raise NotImplementedError('Passing a Cube is not yet implemented.')
+
+        # if no args, look at keyword args
+        elif len(args) == 0:
+            if length is None:
+                # try to infer it from something?
+                raise NotImplementedError
+
+            if axis == 1:
+                self._mask[:length, :] = bool(value)
+            elif axis == 0:
+                self._mask[:, :length] = bool(value)
+            else:
+                raise ValueError('`edge` must be 0 or 1.')
+
+        else:
+            raise ValueError(
+                'Too many arguments.')
+
+    @abc.abstractmethod
+    def _compute_mask(self):
+        ...
 
     @property
-    def data(self):
-        """ndarray : Values of the mask object.
-
-        In setter, we should sanitize the inputs (enforce range 0-1) and
-        convert everything to uints for speed and size.
+    def mask_type(self):
+        """Type of the mask (string)
         """
-        return self._data
+        return self._mask_type
 
-    @data.setter
-    def data(self, var):
-        self._data = var
+    @property
+    def shape(self):
+        return self._shape
 
     @property
     def mask(self):
         """ndarray : Binary mask values.
 
+        .. important::
+
+            `mask` is a boolean array (**not integer**). See also
+            :obj:`integer_mask`.
+
         Read-only mask attribute.
         """
         return self._mask
 
-    def show(self, t=-1, ax=None, **kwargs):
+    @property
+    def integer_mask(self):
+        """ndarray : Binary mask values as integer
+
+        .. important::
+
+            `integer_mask` is a boolean array as ``0`` and ``1`` (integers).
+            It is **not suitible** for multidimensional array indexing; see
+            also :obj:`mask`.
+
+        Read-only mask attribute.
+        """
+        return self._mask.astype(np.int)
+
+    def show(self, ax=None, title=None, ticks=False,
+             colorbar=False, **kwargs):
         """Show the mask.
+
+        The `Mask` is shown in a `matplotlib` axis with `imshow`. The `mask`
+        values are accessed from :obj:`integer_mask`, so the display will show
+        as ``0`` for ``False`` and ``1`` for ``True``. Default colormap is
+        black and white.
+
+        .. hint::
+
+            Passes `**kwargs` to ``matplotlib.imshow``.
 
         Parameters
         ----------
-        t : int, optional
-            Value of time slice or integer from first dimension in 3D (t-x-y)
-            convention to display the mask from. Default is -1 so the 'final'
-            mask in time is displayed if this argument is not supplied.
+        ax : :obj:`matplotlib.pyplot.Axes`
+            Which axes object to plot into.
 
-        Passes `**kwargs` to ``matplotlib.imshow``.
         """
         if not ax:
             ax = plt.gca()
+
         cmap = kwargs.pop('cmap', 'gray')
-        if hasattr(self, 'mask') and np.sum(self.mask) > 0:
-            ax.imshow(self.mask[t, :, :], cmap=cmap, **kwargs)
-            ax.set_title('A ' + self.mask_type + ' mask')
-        else:
-            raise AttributeError('No mask computed and/or mask is all 0s.')
+        if self._mask is None:
+            raise RuntimeError(
+                '`mask` field has not been intialized yet. '
+                'If this is unexpected, please report error.')
+
+        im = ax.imshow(
+            self.integer_mask, origin='lower',
+            cmap=cmap, **kwargs)
+        if colorbar:
+            _ = plot.append_colorbar(im, ax)
+
+        if not ticks:
+            ax.set_xticks([], minor=[])
+            ax.set_yticks([], minor=[])
+        if title:
+            ax.set_title(str(title))
+
         plt.draw()
 
+    def _check_deprecated_is_mask(self, is_mask):
+        if not (is_mask is None):
+            warnings.warn(DeprecationWarning(
+                'The `is_mask` argument is deprecated. '
+                'It does not have any functionality.'))
 
-class OAM(object):
-    """Class for methods related to the Opening Angle Method [1]_."""
+    def _check_deprecated_3d_input(self, args_0_shape):
+        if self._input_flag == 'array':
+            if len(args_0_shape) > 2:
+                raise ValueError(
+                    'Creating a `Mask` with a time dimension is deprecated. '
+                    'Please manage multiple masks manually (e.g., '
+                    'append the masks into a `list`).')
 
-    def __init__(self, mask_type, data):
-        """Require the same inputs as the :obj:`BaseMask` class."""
-        self.mask_type = mask_type
-        self.data = data
 
-    def compute_shoremask(self, angle_threshold=75, **kwargs):
-        """Compute the shoreline mask.
+class ThresholdValueMask(BaseMask, abc.ABC):
+    """Threshold value mask.
 
-        Applies the opening angle method [1]_ to compute the shoreline mask.
-        Particular method has been translated from [2]_.
+    This mask implements a binarization of a raster based on a threshold
+    values.
+    """
+    @staticmethod
+    def from_array(_arr):
+        """Create an `ElevationMask` from an array.
 
-        .. [1] Shaw, John B., et al. "An image‐based method for
-           shoreline mapping on complex coasts." Geophysical Research Letters
-           35.12 (2008).
+        .. note::
 
-        .. [2] Liang, Man, Corey Van Dyk, and Paola Passalacqua.
-           "Quantifying the patterns and dynamics of river deltas under
-           conditions of steady forcing and relative sea level rise." Journal
-           of Geophysical Research: Earth Surface 121.2 (2016): 465-496.
-
-        Parameters
-        ----------
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
-
-        Other Parameters
-        ----------------
-        topo_threshold : float, optional
-            Threshold depth to use for the OAM. Default is -0.5.
-
-        numviews : int, optional
-            Defines the number of times to 'look' for the OAM. Default is 3.
-
-        """
-        # pop the kwargs
-        self.topo_threshold = kwargs.pop('topo_threshold', -0.5)
-        self.numviews = kwargs.pop('numviews', 3)
-
-        # write the parameters to self
-        self.angle_threshold = angle_threshold
-
-        # initialize arrays
-        self.oceanmap = np.zeros_like(self.data)
-        self.shore_image = np.zeros_like(self.data)
-
-        # loop through the time dimension
-        for tval in range(0, self.data.shape[0]):
-            trim_idx = utils.guess_land_width_from_land(self.data[tval, :, 0])
-            data_trim = self.data[tval, trim_idx:, :]
-            # use topo_threshold to identify oceanmap
-            omap = (data_trim < self.topo_threshold) * 1.
-            # if all ocean, there is no shore to be found - do next t-slice
-            if (omap == 1).all():
-                pass
-            else:
-                # apply seaangles function
-                _, seaangles = self.Seaangles_mod(self.numviews, omap)
-                # translate flat seaangles values to the shoreline image
-                shore_image = np.zeros_like(data_trim)
-                flat_inds = list(map(lambda x: np.ravel_multi_index(x,
-                                                            shore_image.shape),
-                                     seaangles[:2, :].T.astype(int)))
-                shore_image.flat[flat_inds] = seaangles[-1, :]
-                # grab contour from seaangles corresponding to angle threshold
-                cs = measure.find_contours(shore_image,
-                                           np.float(self.angle_threshold))
-                C = cs[0]
-                # convert this extracted contour to the shoreline mask
-                shoremap = np.zeros_like(data_trim)
-                flat_inds = list(map(lambda x: np.ravel_multi_index(x,
-                                                            shoremap.shape),
-                                     np.round(C).astype(int)))
-                shoremap.flat[flat_inds] = 1
-                # write shoreline map out to data.mask
-                self._mask[tval, trim_idx:, :] = shoremap
-                # assign shore_image to the mask object with proper size
-                self.shore_image[tval, trim_idx:, :] = shore_image
-                # properly assign the oceanmap to the self.oceanmap
-                self.oceanmap[tval, trim_idx:, :] = omap
-
-    def Seaangles_mod(self, numviews, thresholdimg):
-        """Extract the opening angle map from an image.
-
-        Adapted from the Matlab implementation in [2]_. Takes an image
-        and extracts its opening angle map.
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
 
         Parameters
         ----------
-        numviews : int
-            Defines the number of times to 'look' for the opening angle map.
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        # set directly
+        raise NotImplementedError
 
-        thresholdimg : ndarray
-            Binary image that has been thresholded to split deep water/land.
+    def __init__(self, *args, threshold, cube_key=None, **kwargs):
 
-        Returns
-        -------
-        shoreangles : ndarray
-            Flattened values corresponding to the shoreangle detected for each
-            'look' of the opening angle method
+        self._threshold = threshold
 
-        seaangles : ndarray
-            Flattened values corresponding to the 'sea' angle detected for each
-            'look' of the opening angle method. The 'sea' region is the convex
-            hull which envelops the shoreline as well as the delta interior.
+        # temporary storage of args as needed for processing
+        if self._input_flag is None:
+            # do nothing, will need to call ._compute_mask later
+            return
+        elif self._input_flag == 'cube':
+            _tval = kwargs.pop('t', -1)
+            _field = args[0][cube_key][_tval, :, :]
+        elif self._input_flag == 'mask':
+            raise NotImplementedError(
+                'Cannot instantiate `ThresholdValueMask` or '
+                'andy subclasses from another mask.')
+        elif self._input_flag == 'array':
+            _field = args[0]
+        else:
+            raise ValueError(
+                'Invalid _input_flag. Did you modify this attribute?')
+
+        self._compute_mask(_field, **kwargs)
+
+    @property
+    def threshold(self):
+        """Generic property for ThresholdValueMask threshold.
+        """
+        return self._threshold
+
+
+class ElevationMask(ThresholdValueMask):
+    """Elevation mask.
+
+    This mask implements a binarization of a raster based on elevation
+    values.
+
+    Examples
+    --------
+    Initialize the `ElevationMask` from elevation data:
+
+    .. plot::
+        :include-source:
+
+        golfcube = dm.sample_data.golf()
+        emsk = dm.mask.ElevationMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        emsk.show(ax=ax[1])
+        plt.show()
+    """
+
+    def __init__(self, *args, elevation_threshold, elevation_offset=0,
+                 cube_key='eta', **kwargs):
+        """Initialize the ElevationMask.
+
+        .. note:: Needs docstring!
 
         """
-        Sx, Sy = np.gradient(thresholdimg)
-        G = (Sx**2 + Sy**2)**.5
 
-        # threshold the gradient to produce edges
-        edges = (G > 0) & (thresholdimg > 0)
+        self._input_elevation_threshold = elevation_threshold
+        self._elevation_offset = elevation_offset
+        _threshold = elevation_threshold + elevation_offset
 
-        # extract coordinates of the edge pixels and define convex hull
-        bordermap = np.pad(np.zeros_like(edges), 1, 'edge')
-        bordermap[:-2, 1:-1] = edges
-        bordermap[0, :] = 1
-        points = np.fliplr(np.array(np.where(edges > 0)).T)
-        hull = ConvexHull(points, qhull_options='Qc')
-        polygon = Polygon(points[hull.vertices]).buffer(0.01)
+        BaseMask.__init__(self, 'elevation', *args, **kwargs)
+        ThresholdValueMask.__init__(self, *args, threshold=_threshold,
+                                    cube_key=cube_key)
 
-        # identify set of points to evaluate
-        sea = np.fliplr(np.array(np.where(thresholdimg > 0.5)).T)
-        points_to_test = [Point(i[0], i[1]) for i in sea]
+    def _compute_mask(self, _eta, **kwargs):
 
-        # identify set of points in both the convex hull polygon and
-        # defined as points_to_test and put these binary points into seamap
-        In = np.array(list(map(lambda pt: polygon.contains(pt),
-                               points_to_test)))
-        Shallowsea_ = sea[In]
-        seamap = np.zeros(bordermap.shape)
-        flat_inds = list(map(lambda x: np.ravel_multi_index(x, seamap.shape),
-                             np.fliplr(Shallowsea_)))
-        seamap.flat[flat_inds] = 1
-        seamap[:3, :] = 0
+        # use elevation_threshold to identify field
+        emap = (_eta > self._threshold)
 
-        # define other points as these 'Deepsea' points
-        Deepsea_ = sea[~In]
-        Deepsea = np.zeros((numviews+2, len(Deepsea_)))
-        Deepsea[:2, :] = np.flipud(Deepsea_.T)
-        Deepsea[-1, :] = 200.  # 200 is a background value for waves1s later
+        # set the data into the mask
+        self._mask[:, :] = emap
 
-        # define points for the shallow sea and the shoreborder
-        Shallowsea = np.array(np.where(seamap > 0.5))
-        shoreandborder = np.array(np.where(bordermap > 0.5))
-        c1 = len(Shallowsea[0])
-        maxtheta = np.zeros((numviews, c1))
+    @property
+    def elevation_threshold(self):
+        """Elevation value used to threshold the elevation data.
 
-        # compute angle between each shallowsea and shoreborder point
-        for i in range(c1):
+        Determined during instantiation as the sum of input arguments to
+        :obj:`__init__` `elevation_threshold` and `elevation_offset`.
+        """
+        return self._threshold
 
-            diff = shoreandborder - Shallowsea[:, i, np.newaxis]
-            x = diff[0]
-            y = diff[1]
-
-            angles = np.arctan2(x, y)
-            angles = np.sort(angles) * 180. / np.pi
-
-            dangles = angles[1:] - angles[:-1]
-            dangles = np.concatenate((dangles,
-                                      [360 - (angles.max() - angles.min())]))
-            dangles = np.sort(dangles)
-
-            maxtheta[:, i] = dangles[-numviews:]
-
-        # set up arrays for tracking the shore points and  their angles
-        allshore = np.array(np.where(edges > 0))
-        c3 = len(allshore[0])
-        maxthetashore = np.zeros((numviews, c3))
-
-        # get angles between the shore points and shoreborder points
-        for i in range(c3):
-
-            diff = shoreandborder - allshore[:, i, np.newaxis]
-            x = diff[0]
-            y = diff[1]
-
-            angles = np.arctan2(x, y)
-            angles = np.sort(angles) * 180. / np.pi
-
-            dangles = angles[1:] - angles[:-1]
-            dangles = np.concatenate((dangles,
-                                      [360 - (angles.max() - angles.min())]))
-            dangles = np.sort(dangles)
-
-            maxthetashore[:, i] = dangles[-numviews:]
-
-        # define the shoreangles and seaangles identified
-        shoreangles = np.vstack([allshore, maxthetashore])
-        seaangles = np.hstack([np.vstack([Shallowsea, maxtheta]), Deepsea])
-
-        return shoreangles, seaangles
+    @property
+    def elevation_offset(self):
+        """An optional offset to apply to input threshold.
+        """
+        return self._elevation_offset
 
 
-class ChannelMask(BaseMask, OAM):
+class FlowMask(ThresholdValueMask):
+    """Flow field mask.
+
+    This mask implements a binarization of a raster based on flow field
+    values, and can work for velocity, depth, discharge, etc.
+
+    If you pass a cube, we will try the 'velocity' field. To use a different
+    field from the cube, specify the :obj:`cube_key` argument.
+
+    Examples
+    --------
+    Initialize one `FlowMask` from velocity data and one from discharge data:
+
+    .. plot::
+        :include-source:
+
+        golfcube = dm.sample_data.golf()
+        fvmsk = dm.mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=0.3)
+        fdmsk = dm.mask.FlowMask(
+            golfcube['discharge'][-1, :, :],
+            flow_threshold=4)
+
+        fig, ax = plt.subplots(1, 2)
+        fvmsk.show(ax=ax[0])
+        fdmsk.show(ax=ax[1])
+        plt.show()
+    """
+
+    def __init__(self, *args, flow_threshold, cube_key='velocity', **kwargs):
+        """Initialize the FlowMask.
+
+        .. note:: Needs docstring!
+
+        """
+
+        BaseMask.__init__(self, 'flow', *args, **kwargs)
+        ThresholdValueMask.__init__(self, *args, threshold=flow_threshold,
+                                    cube_key=cube_key)
+
+    def _compute_mask(self, _flow, **kwargs):
+
+        # use flow_threshold to identify field
+        fmap = (_flow > self._threshold)
+
+        # set the data into the mask
+        self._mask = fmap
+
+    @property
+    def flow_threshold(self):
+        return self._threshold
+
+
+class ChannelMask(BaseMask):
     """Identify a binary channel mask.
 
     A channel mask object, helps enforce valid masking of channels.
 
     Examples
     --------
-    Initialize the channel mask
-        >>> velocity = rcm8cube['velocity'][-1, :, :]
-        >>> topo = rcm8cube['eta'][-1, :, :]
-        >>> cmsk = dm.mask.ChannelMask(velocity, topo)
+    Initialize the `ChannelMask` from elevation and flow data:
 
-    And visualize the mask:
-        >>> cmsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/channelmask.py
+        golfcube = dm.sample_data.golf()
+        cmsk = dm.mask.ChannelMask(
+            golfcube['eta'][-1, :, :],
+            golfcube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.3)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        cmsk.show(ax=ax[1])
+        plt.show()
 
     """
 
-    def __init__(self,
-                 velocity,
-                 topo,
-                 velocity_threshold=0.3,
-                 angle_threshold=75,
-                 is_mask=False,
-                 **kwargs):
+    @staticmethod
+    def from_OAP_and_FlowMask(_OAP, _FlowMask, **kwargs):
+        """Create from an OAP and a FlowMask.
+        """
+        # set up the empty shoreline mask
+        _CM = ChannelMask(allow_empty=True, **kwargs)
+        _CM._set_shape_mask(_OAP.shape)
+
+        # set up the needed flow mask and landmask
+        _LM = LandMask.from_OAP(_OAP, **kwargs)
+        _FM = _FlowMask
+
+        # compute the mask
+
+        _CM._compute_mask(_LM, _FM, **kwargs)
+        return _CM
+
+    @staticmethod
+    def from_OAP(*args, **kwargs):
+        # undocumented, hopefully helpful error
+        #   Note, an alternative here is to implement this method and take an
+        #   OAP and information to create a flow mask, raising an error if the
+        #   flow information is missing.
+        raise NotImplementedError(
+            '`from_OAP` is not defined for `ChannelMask` instantiation '
+            'because the process additionally requires flow field '
+            'information. Consider alternative methods '
+            '`from_OAP_and_FlowMask()')
+
+    @staticmethod
+    def from_masks(*args, **kwargs):
+        # undocumented, for convenience
+        return ChannelMask.from_mask(*args, **kwargs)
+
+    @staticmethod
+    def from_mask(*args, **kwargs):
+        """Create a `ChannelMask` directly from another mask.
+
+        Can take either an ElevationMask or LandMask, and a
+        FlowMask as input.
+
+        Examples
+        --------
+
+        """
+        if len(args) == 2:
+            for UnknownMask in args:
+                if isinstance(UnknownMask, ElevationMask):
+                    # make intermediate shoreline mask
+                    _LM = LandMask.from_mask(UnknownMask, **kwargs)
+                elif isinstance(UnknownMask, LandMask):
+                    _LM = UnknownMask
+                elif isinstance(UnknownMask, FlowMask):
+                    _FM = UnknownMask
+                else:
+                    raise TypeError('type was %s' % type(UnknownMask))
+        else:
+            raise ValueError(
+                'Must pass two Masks to static `from_mask` for ChannelMask')
+
+        # set up the empty shoreline mask
+        _CM = ChannelMask(allow_empty=True)
+        _CM._set_shape_mask(_LM.shape)
+
+        # compute the mask
+        _CM._compute_mask(_LM, _FM, **kwargs)
+        return _CM
+
+    @staticmethod
+    def from_array(_arr):
+        """Create a ChannelMask from an array.
+
+        .. note::
+
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
+
+        Parameters
+        ----------
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        # set directly
+        raise NotImplementedError
+
+    def __init__(self, *args, is_mask=None, **kwargs):
         """Initialize the ChannelMask.
 
         Intializing the channel mask requires a flow velocity field and an
@@ -347,73 +566,64 @@ class ChannelMask(BaseMask, OAM):
             Keyword arguments for :obj:`compute_shoremask`.
 
         """
-        super().__init__(mask_type='channel', data=topo)
-        if type(velocity) is np.ndarray:
-            self.velocity = velocity
+        super().__init__('channel', *args, **kwargs)
+
+        # temporary storage of args as needed for processing
+        if self._input_flag is None:
+            # do nothing, will need to call ._compute_mask later
+            return
+
+        elif self._input_flag == 'cube':
+            raise NotImplementedError
+            # _tval = kwargs.pop('t', -1)
+            # _eta = args[0]['eta'][_tval, :, :]
+            # _flow = args[0]['velocity'][_tval, :, :]
+            # need to convert these fields to proper masks
+
+        elif self._input_flag == 'mask':
+            # this pathway should allow someone to specify a combination of
+            # elevation mask, landmask, and velocity mask to make the new mask.
+            raise NotImplementedError
+
+        elif self._input_flag == 'array':
+            # first make a landmas
+            _eta = args[0]
+            _lm = LandMask(_eta, **kwargs)._mask
+            _flow = args[1]
+            _fm = FlowMask(_flow, **kwargs)._mask
+
         else:
-            try:
-                self.velocity = velocity.__array__()
-            except Exception:
-                raise TypeError('Input velocity parameter is invalid. Must be'
-                                'a np.ndarray or a'
-                                'deltametrics.cube.CubeVariable object but it'
-                                'was a: ' + str(type(velocity)))
+            raise ValueError('Invalid _input_flag. Did you modify this attribute?')
 
-        # assign **kwargs to self incase there are masks
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+        # process to make the mask
+        self._compute_mask(_lm, _fm, **kwargs)
 
-        # write parameter values to self so they don't get lost
-        self.velocity_threshold = velocity_threshold
-        self.angle_threshold = angle_threshold
-
-        if is_mask is False:
-            self.compute_channelmask(**kwargs)
-        elif is_mask is True:
-            self._mask = self.data
-        else:
-            raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + str(type(is_mask)))
-
-    def compute_channelmask(self, **kwargs):
+    def _compute_mask(self, *args, **kwargs):
         """Compute the ChannelMask.
 
-        Either uses an existing landmask, or recomputes it to use with the flow
-        velocity threshold to calculate a binary channelmask.
+        Note that this method in implementation should rely only on *array*
+        masks, not on the dm.mask objects.
 
-        Other Parameters
-        ----------------
-        kwargs : optional
-            Keyword arguments for :obj:`compute_shoremask`.
-
+        For this Mask, we require a landmask array and a flowmask array.
         """
-        # check if a 'landmask' is available
-        if hasattr(self, 'landmask'):
-            try:
-                self.oceanmap = self.landmask.oceanmap
-                self.landmask = self.landmask.mask
-            except Exception:
-                self.compute_shoremask(self.angle_threshold, **kwargs)
-                self.landmask = (self.shore_image < self.angle_threshold) * 1
-        elif hasattr(self, 'wetmask'):
-            try:
-                self.landmask = self.wetmask.landmask
-            except Exception:
-                self.compute_shoremask(self.angle_threshold, **kwargs)
-                self.landmask = (self.shore_image < self.angle_threshold) * 1
-        else:
-            self.compute_shoremask(self.angle_threshold, **kwargs)
-            self.landmask = (self.shore_image < self.angle_threshold) * 1
+        if len(args) != 2:
+            raise ValueError
 
-        # compute a flowmap of cells where flow exceeds the velocity threshold
-        self.flowmap = (self.velocity > self.velocity_threshold) * 1.
+        if isinstance(args[0], LandMask):
+            lm_array = args[0]._mask
+            fm_array = args[1]._mask
+        elif utils.is_ndarray_or_xarray(args[0]):
+            lm_array = args[0]
+            fm_array = args[1]
+        else:
+            raise TypeError
 
         # calculate the channelmask as the cells exceeding the threshold
-        # within the topset of the delta (ignoring flow in ocean)
-        self._mask = np.minimum(self.landmask, self.flowmap)
+        #   within the topset of the delta (ignoring flow in ocean)
+        self._mask = np.logical_and(lm_array, fm_array)
 
 
-class WetMask(BaseMask, OAM):
+class WetMask(BaseMask):
     """Compute the wet mask.
 
     A wet mask object, identifies all wet pixels on the delta topset. Starts
@@ -425,26 +635,124 @@ class WetMask(BaseMask, OAM):
 
     Examples
     --------
-    Initialize the wet mask
-        >>> arr = rcm8cube['eta'][-1, :, :]
-        >>> wmsk = dm.mask.WetMask(arr)
+    Initialize the `WetMask` from elevation data:
 
-    And visualize the mask:
-        >>> wmsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/wetmask.py
+        golfcube = dm.sample_data.golf()
+        wmsk = dm.mask.WetMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        wmsk.show(ax=ax[1])
+        plt.show()
 
     """
 
-    def __init__(self,
-                 arr,
-                 angle_threshold=75,
-                 is_mask=False,
-                 **kwargs):
+    @staticmethod
+    def from_OAP(_OAP, **kwargs):
+        """Create from an OAP.
+        """
+        # set up the empty shoreline mask
+        _CM = WetMask(allow_empty=True, **kwargs)
+        _CM._set_shape_mask(_OAP.shape)
+
+        # set up the needed flow mask and landmask
+        _LM = LandMask.from_OAP(_OAP)
+        _below_mask = _OAP.below_mask
+
+        # compute the mask (pass as arrays!)
+        _CM._compute_mask(_LM._mask, _below_mask)
+        return _CM
+
+    @staticmethod
+    def from_masks(*args, **kwargs):
+        # undocumented, for convenience
+        return WetMask.from_mask(*args, **kwargs)
+
+    @staticmethod
+    def from_mask(*args, **kwargs):
+        """Create a WetMask directly from another mask.
+
+        Needs both an ElevationMask and a LandMask, or just an ElevationMask
+        and will make a LandMask internally (creates a
+        `~dm.plan.OpeningAnglePlanform`); consider alternative static method
+        :obj:`from_OAP_and_ElevationMask` if you are computing many masks.
+
+        Examples
+        --------
+
+        """
+        if len(args) == 2:
+            # one must be ElevationMask and one LandMask
+            for UnknownMask in args:
+                if isinstance(UnknownMask, ElevationMask):
+                    _EM = UnknownMask
+                elif isinstance(UnknownMask, LandMask):
+                    _LM = UnknownMask
+                else:
+                    raise TypeError(
+                        'Double `Mask` input types must be `ElevationMask` '
+                        'and `LandMask`, but received argument of type '
+                        '`{0}`.'.format(type(UnknownMask)))
+        elif len(args) == 1:
+            UnknownMask = args[0]
+            # must be ElevationMask, will create LandMask
+            if isinstance(UnknownMask, ElevationMask):
+                _EM = UnknownMask
+                _LM = LandMask.from_mask(UnknownMask)
+            else:
+                raise TypeError(
+                    'Single `Mask` input was expected to be type '
+                    '`ElevationMask`, but was `{0}`'.format(
+                        type(UnknownMask)))
+        else:
+            raise ValueError(
+                'Must pass either one or two Masks to static method '
+                '`from_mask` for `WetMask`, but received {0} args'.format(
+                    len(args)))
+
+        # set up the empty shoreline mask
+        _WM = WetMask(allow_empty=True)
+        _WM._set_shape_mask(_LM.shape)
+
+        # compute the mask
+        _WM._compute_mask(_LM, _EM, **kwargs)
+        return _WM
+
+    @staticmethod
+    def from_array(_arr):
+        """Create a WetMask from an array.
+
+        .. note::
+
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
+
+        Parameters
+        ----------
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        # set directly
+        raise NotImplementedError
+
+    def __init__(self, *args, **kwargs):
         """Initialize the WetMask.
 
         Intializing the wet mask requires either a 2-D array of data, or it
         can be computed if a :obj:`LandMask` has been previously computed.
+
+        .. hint::
+
+            Pass keyword arguments to control the behavior of creating
+            intermediate `Mask` or `OpeningAnglePlanform` objects.
 
         Parameters
         ----------
@@ -465,52 +773,75 @@ class WetMask(BaseMask, OAM):
         landmask : :obj:`LandMask`, optional
             A :obj:`LandMask` object with a defined binary shoreline mask.
             If given, the :obj:`LandMask` object will be checked for the
-            `shore_image` and `angle_threshold` attributes.
+            `sea_angles` and `angle_threshold` attributes.
 
         kwargs : optional
-            Keyword arguments for :obj:`compute_shoremask`.
+            Keyword arguments are passed to `LandMask` and `ElevationMask`, as
+            appropriate.
 
         """
-        super().__init__(mask_type='wet', data=arr)
+        super().__init__('wet', *args, **kwargs)
 
-        # assign **kwargs to self in case the landmask was passed
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-        # put angle_threshold in self
-        self.angle_threshold = angle_threshold
-
-        if is_mask is False:
-            self.compute_wetmask(**kwargs)
-        elif is_mask is True:
-            self._mask = self.data
+        # temporary storage of args as needed for processing
+        if self._input_flag is None:
+            # do nothing, will need to call ._compute_mask later
+            return
+        elif self._input_flag == 'cube':
+            raise NotImplementedError
+            # _tval = kwargs.pop('t', -1)
+            # _eta = args[0]['eta'][_tval, :, :]
+        elif self._input_flag == 'mask':
+            # this pathway should allow someone to specify a combination of
+            #    landmask, and ocean/elevation mask
+            raise NotImplementedError
+        elif self._input_flag == 'array':
+            _eta = args[0]
+            # first make a landmask
+            _lm = LandMask(_eta, **kwargs)._mask
+            # requires elevation_threshold to be in kwargs
+            if 'elevation_threshold' in kwargs:
+                _em = ElevationMask(_eta, **kwargs)
+            else:
+                raise ValueError(
+                    'You must supply the keyword argument '
+                    '`elevation_threshold` if instantiating a `WetMask` '
+                    'directly from arrays (it is used to create an '
+                    '`ElevationMask` internally).')
+            # pull the wet area as the area below the elevation threshold
+            _below_mask = ~_em._mask
         else:
-            raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + str(type(is_mask)))
+            raise ValueError(
+                'Invalid _input_flag. Did you modify this attribute?')
 
-    def compute_wetmask(self, **kwargs):
+        # process to make the mask
+        self._compute_mask(_lm, _below_mask, **kwargs)
+
+    def _compute_mask(self, *args, **kwargs):
         """Compute the WetMask.
 
-        Either recomputes the landmask, or uses precomputed information from
-        the landmask to create the wetmask.
-
+        Requires arrays of area below the "sea level" and landmask. There are
+        multiple ways these can be supplied. For example, a LandMask object
+        and an ElevationMask object, or two arrays *already corrected* for
+        ocean pixels.
         """
-        # check if a 'landmask' was passed in
-        if hasattr(self, 'landmask'):
-            try:
-                self.oceanmap = self.landmask.oceanmap
-                self.landmask = self.landmask.mask
-            except Exception:
-                self.compute_shoremask(self.angle_threshold, **kwargs)
-                self.landmask = (self.shore_image < self.angle_threshold) * 1
+        if len(args) == 2:
+            if isinstance(args[0], LandMask):
+                lm_array = args[0]._mask
+                below_array = 1 - args[1]._mask  # go from elevation mask
+            elif utils.is_ndarray_or_xarray(args[0]):
+                lm_array = args[0]
+                below_array = args[1]
+            else:
+                raise TypeError(
+                    'Type must be array but was %s' % type(args[0]))
         else:
-            self.compute_shoremask(self.angle_threshold, **kwargs)
-            self.landmask = (self.shore_image < self.angle_threshold) * 1
-        # set wet mask as data.mask
-        self._mask = self.oceanmap * self.landmask
+            raise ValueError
+
+        # calculate the WetMask
+        self._mask = np.logical_and(below_array, lm_array)
 
 
-class LandMask(BaseMask, OAM):
+class LandMask(BaseMask):
     """Identify a binary mask of the delta topset.
 
     A land mask object, helps enforce valid masking of delta topset.
@@ -520,28 +851,117 @@ class LandMask(BaseMask, OAM):
 
     Examples
     --------
-    Initialize the mask.
-        >>> arr = rcm8cube['eta'][-1, :, :]
-        >>> lmsk = dm.mask.LandMask(arr)
+    Initialize the `LandMask` from elevation data:
 
-    And visualize the mask:
-        >>> lmsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/landmask.py
+        golfcube = dm.sample_data.golf()
+        lmsk = dm.mask.LandMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        lmsk.show(ax=ax[1])
+        plt.show()
 
     """
 
-    def __init__(self,
-                 arr,
-                 angle_threshold=75,
-                 is_mask=False,
-                 **kwargs):
+    @staticmethod
+    def from_OAP(_OAP, **kwargs):
+        """Compute LandMask from OpeningAnglePlanform.
+
+        Parameters
+        ----------
+        OAP
+
+        """
+        # set up the empty shoreline mask
+        _LM = LandMask(allow_empty=True, **kwargs)
+        _LM._set_shape_mask(_OAP.shape)
+
+        # compute the mask
+        _LM._compute_mask(_OAP)
+        return _LM
+
+    @staticmethod
+    def from_masks(UnknownMask):
+        # undocumented, for convenience
+        return LandMask.from_mask(UnknownMask)
+
+    @staticmethod
+    def from_mask(UnknownMask, **kwargs):
+        """Create a LandMask directly from another mask.
+
+        Takes an :obj:`ElevationMask` as input and returns a :obj:`LandMask`;
+        note that this method computes an :obj:`OpeningAnglePlanform`
+        internally.
+
+        Parameters
+        ----------
+        ElevationMask : :obj:`ElevationMask`
+            Input `ElevationMask` to compute from.
+
+        **kwargs
+            Keyword arguments are passed to instantiation of all intermediate
+            object; use these to control behavior of instantiation of other
+            masks or planforms.
+
+        Returns
+        -------
+        LandMask : :obj:`LandMask`
+        """
+        if isinstance(UnknownMask, ElevationMask):
+            # make intermediate shoreline mask
+            _OAP = plan.OpeningAnglePlanform.from_mask(
+                UnknownMask, **kwargs)
+        else:
+            raise TypeError
+
+        # set up the empty shoreline mask
+        _LM = LandMask(allow_empty=True)
+        _LM._set_shape_mask(_OAP.shape)
+
+        # compute the mask
+        _sea_angles = _OAP.sea_angles
+        _LM._compute_mask(_sea_angles, **kwargs)
+        return _LM
+
+    @staticmethod
+    def from_array(_arr):
+        """Create a LandMask from an array.
+
+        .. note::
+
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
+
+        Parameters
+        ----------
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        # set directly
+        raise NotImplementedError
+
+    def __init__(self, *args, angle_threshold=75, **kwargs):
         """Initialize the LandMask.
 
         Intializing the land mask requires an array of data, should be
-        two-dimensional. If a shoreline mask (:obj:`ShoreMask`) has been
-        computed, then this can be used to define the land mask. Otherwise the
-        necessary computations will occur from scratch.
+        two-dimensional.
+
+        .. note::
+
+            This class currently computes the mask via the Shaw opening
+            angle method (:obj:`~dm.plan.shaw_opening_angle_method`). However,
+            it could/should be generalized to support multiple implementations
+            via a `method` argument. Then, the `angle_threshold` might not be
+            a property any longer, and should be treated just as any keyword
+            passed to the method for instantiation.
 
         Parameters
         ----------
@@ -562,51 +982,84 @@ class LandMask(BaseMask, OAM):
         shoremask : :obj:`ShoreMask`, optional
             A :obj:`ShoreMask` object with a defined binary shoreline mask.
             If given, the :obj:`ShoreMask` object will be checked for the
-            `shore_image` and `angle_threshold` attributes.
+            `sea_angles` and `angle_threshold` attributes.
 
         kwargs : optional
             Keyword arguments for :obj:`compute_shoremask`.
 
         """
-        super().__init__(mask_type='land', data=arr)
+        super().__init__('land', *args, **kwargs)
 
-        # assign **kwargs to self in event a mask was passed
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+        self._angle_threshold = angle_threshold
 
-        # set parameter value to self so it is kept
-        self.angle_threshold = angle_threshold
+        # temporary storage of args as needed for processing
+        if self._input_flag is None:
+            # do nothing, will need to call ._compute_mask later
+            return
 
-        if not is_mask:
-            self.compute_landmask(**kwargs)
-        elif is_mask is True:
-            self._mask = self.data
+        elif self._input_flag == 'cube':
+            raise NotImplementedError
+            # _tval = kwargs.pop('t', -1)
+            # _eta = args[0]['eta'][_tval, :, :]
+
+        elif self._input_flag == 'mask':
+            raise NotImplementedError
+
+        elif self._input_flag == 'array':
+            _eta = args[0]
+
         else:
-            raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + str(type(is_mask)))
+            raise ValueError(
+                'Invalid _input_flag. Did you modify this attribute?')
 
-    def compute_landmask(self, **kwargs):
+        # create an OAP to determine the sea_angles
+        _OAP = plan.OpeningAnglePlanform.from_elevation_data(
+            _eta,
+            **kwargs)
+
+        # get fields out of the OAP
+        _sea_angles = _OAP._sea_angles
+
+        # make the mask, all we need is the sea angles.
+        #   See not above about how this method could be better generalized.
+        self._compute_mask(_sea_angles, **kwargs)
+
+    def _compute_mask(self, *args, **kwargs):
         """Compute the LandMask.
 
-        Uses data from the shoreline computation or recomputes the shoreline
-        using the opening angle method, then an angle threshold is used to
-        identify the land.
+        This method (as implemented, see note in __init__) requires the
+        `sea_angles` field from the Shaw opening angle method.  This
+        information can come from multiple data sources though.
+
+        Thus, the argument to this method should be one of:
+            * an opening angle planform object
+            * an ndarray with the sea_angles data directly (matching shape of
+              mask)
 
         """
-        # check if a `shoremask' was passed in
-        if hasattr(self, 'shoremask'):
-            try:
-                self.shore_image = self.shoremask.shore_image
-                self.angle_threshold = self.shoremask.angle_threshold
-            except Exception:
-                self.compute_shoremask(self.angle_threshold, **kwargs)
+        # for landmask, we need the shore image field of the OAP
+        if len(args) == 1:
+            if isinstance(args[0], plan.OpeningAnglePlanform):
+                sea_angles = args[0]._sea_angles
+            elif utils.is_ndarray_or_xarray(args[0]):
+                sea_angles = args[0]
+            else:
+                raise TypeError
         else:
-            self.compute_shoremask(self.angle_threshold, **kwargs)
-        # set the land mask to data.mask
-        self._mask = (self.shore_image < self.angle_threshold) * 1
+            raise ValueError('Specify only 1 argument.')
+
+        if np.all(sea_angles == 0):
+            self._mask = np.zeros(self._shape, dtype=np.bool)
+        else:
+            self._mask = (sea_angles < self._angle_threshold)
+
+    @property
+    def angle_threshold(self):
+        """Threshold view angle used for picking land area."""
+        return self._angle_threshold
 
 
-class ShorelineMask(BaseMask, OAM):
+class ShorelineMask(BaseMask):
     """Identify the shoreline as a binary mask.
 
     A shoreline mask object, provides a binary identification of shoreline
@@ -614,83 +1067,335 @@ class ShorelineMask(BaseMask, OAM):
 
     Examples
     --------
-    Initialize the mask.
-        >>> arr = rcm8cube['eta'][-1, :, :]
-        >>> shrmsk = dm.mask.ShorelineMask(arr)
+    Initialize the `ShorelineMask` from elevation data:
 
-    Visualize the mask:
-        >>> shrmsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/shoremask.py
+        golfcube = dm.sample_data.golf()
+        smsk = dm.mask.ShorelineMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        smsk.show(ax=ax[1])
+        plt.show()
 
     """
 
-    def __init__(self,
-                 arr,
-                 angle_threshold=75,
-                 is_mask=False,
-                 **kwargs):
+    @staticmethod
+    def from_OAP(_OAP, **kwargs):
+        # set up the empty shoreline mask
+        _SM = ShorelineMask(allow_empty=True, **kwargs)
+        _SM._set_shape_mask(_OAP.shape)
+
+        # compute the mask
+        _SM._compute_mask(_OAP)
+        return _SM
+
+    @staticmethod
+    def from_mask(UnknownMask, **kwargs):
+        """Create a ShorelineMask directly from an ElevationMask.
+        """
+        if not isinstance(UnknownMask, ElevationMask):
+            # make intermediate shoreline mask
+            raise TypeError('Input must be ElevationMask')
+
+        _OAP = plan.OpeningAnglePlanform.from_ElevationMask(
+            UnknownMask)
+        return ShorelineMask.from_OAP(_OAP, **kwargs)
+
+    @staticmethod
+    def from_masks(UnknownMask, **kwargs):
+        # undocumented but for convenience
+        return ShorelineMask.from_mask(UnknownMask, **kwargs)
+
+    @staticmethod
+    def from_array(_arr):
+        """Create a ShorelineMask from an array.
+
+        .. note::
+
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
+
+        Parameters
+        ----------
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        _SM = ShorelineMask(allow_empty=True)
+        _SM._angle_threshold = None
+        _SM._input_flag = None
+        _SM._mask = _arr.astype(np.bool)  # set the array as mask
+        return _SM
+
+    def __init__(self, *args, angle_threshold=75, **kwargs):
         """Initialize the ShorelineMask.
 
-        Initializing the shoreline mask requires a 2-D array of data. The
-        shoreline mask is computed using the opening angle method (OAM)
-        described in [1]_. The default parameters are designed for
-        DeltaRCM and follow the implementation described in [2]_.
+        .. note::
+
+            This class currently computes the mask via the Shaw opening
+            angle method (:obj:`~dm.plan.shaw_opening_angle_method`). However,
+            it could/should be generalized to support multiple implementations
+            via a `method` argument. For example, a sobel edge detection and
+            morpholigcal thinning on a LandMask (already made from the OAM, or
+            not) may also return a good approximation of the shoreline.
 
         Parameters
         ----------
         arr : ndarray
             2-D topographic array to make the mask from.
 
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
-
-        is_mask : bool, optional
-            Whether the data in :obj:`arr` is already a binary mask. Default
-            value is False. This should be set to True, if you have already
-            binarized the data yourself, using custom routines, and want to
-            just store the data in the ShorelineMask object.
+        angle_threshold : float, optional
+            Threshold opening angle used to determine shoreline contour based
+            on the sea_angles from the :obj:`OpeningAnglePlanform`.
 
         Other Parameters
         ----------------
+        elevation_threshold
+            Passed to the initialization of an ElevationMask to discern the
+            ocean area binary mask input to the opening angle method.
+
         kwargs : optional
-            Keyword arguments for :obj:`compute_shoremask`.
+            Keyword arguments for
+            :obj:`~deltametrics.plan.shaw_opening_angle_method`.
 
         """
-        super().__init__(mask_type='shore', data=arr)
+        super().__init__('shoreline', *args, **kwargs)
 
-        if is_mask is False:
-            self.compute_shoremask(angle_threshold, **kwargs)
-        elif is_mask is True:
-            self._mask = self.data
+        # begin processing the arguments and making the mask
+        self._angle_threshold = angle_threshold
+
+        # temporary storage of args as needed for processing
+        if self._input_flag is None:
+            # do nothing, will need to call
+            #    self._compute_mask() directly later
+            return
+
+        elif self._input_flag == 'cube':
+            raise NotImplementedError
+            # _tval = kwargs.pop('t', -1)
+            # _eta = args[0]['eta'][_tval, :, 0]
+
+        elif self._input_flag == 'array':
+            # input assumed to be array, with *elevation*
+            _eta = args[0]
+
+        elif self._input_flag == 'mask':
+            raise NotImplementedError
+            # must be type ElevationMask
+            if not isinstance(args[0], ElevationMask):
+                raise TypeError('Input `mask` must be type ElevationMask.')
+
         else:
-            raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + str(type(is_mask)))
+            raise ValueError(
+                'Invalid _input_flag. Did you modify this attribute?')
+
+        # use an OAP to get the ocean mask and sea angles fields
+        _OAP = plan.OpeningAnglePlanform.from_elevation_data(
+            _eta,
+            **kwargs)
+
+        # get fields out of the OAP
+        _below_mask = _OAP._below_mask
+        _sea_angles = _OAP._sea_angles
+
+        # compute the mask
+        self._compute_mask(_below_mask, _sea_angles)
+
+    def _compute_mask(self, *args, **kwargs):
+        """Compute the shoreline mask.
+
+        Applies the opening angle method [1]_ to compute the shoreline mask.
+        Implementation of the OAM is in
+        :obj:`~deltametrics.plan.shaw_opening_angle_method`.
+
+        Parameters
+        ----------
+
+        Other Parameters
+        ----------------
+        topo_threshold : float, optional
+            Threshold depth to use for the OAM. Default is -0.5.
+
+        numviews : int, optional
+            Defines the number of times to 'look' for the OAM. Default is 3.
+
+        """
+        if len(args) == 1:
+            if not isinstance(args[0], plan.OpeningAnglePlanform):
+                raise TypeError('Must be type OAP.')
+            _below_mask = args[0]._below_mask
+            _sea_angles = args[0]._sea_angles
+        elif len(args) == 2:
+            _below_mask = args[0]
+            _sea_angles = args[1]
+        else:
+            raise ValueError
+
+        # preallocate
+        shoremap = np.zeros(self._shape)
+
+        # if all ocean, there is no shore to be found
+        if (_below_mask == 1).all():
+            pass
+        else:
+            # grab contour from sea_angles corresponding to angle threshold
+            cs = measure.find_contours(_sea_angles,
+                                       self.angle_threshold)
+            C = cs[0]
+
+            # convert this extracted contour to the shoreline mask
+            flat_inds = list(map(
+                lambda x: np.ravel_multi_index(x, shoremap.shape),
+                np.round(C).astype(int)))
+            shoremap.flat[flat_inds] = 1
+
+        # write shoreline map out to data.mask
+        self._mask = np.copy(shoremap.astype(np.bool))
+
+    @property
+    def angle_threshold(self):
+        """Threshold angle used for picking shoreline contour.
+        """
+        return self._angle_threshold
 
 
-class EdgeMask(BaseMask, OAM):
+class EdgeMask(BaseMask):
     """Identify the land-water edges.
 
     An edge mask object, delineates the boundaries between land and water.
+    Edge identification is implemented via Canny edge detection from `skimage`
+    (``skimage.feature.canny``).
 
     Examples
     --------
-    Initialize the edge mask
-        >>> arr = rcm8cube['eta'][-1, :, :]
-        >>> emsk = dm.mask.EdgeMask(arr)
+    Initialize the edge mask from elevation data:
 
-    Visualize the mask:
-        >>> emsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/edgemask.py
+        golfcube = dm.sample_data.golf()
+        edgmsk = dm.mask.EdgeMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        edgmsk.show(ax=ax[1])
+        plt.show()
 
     """
 
-    def __init__(self,
-                 arr,
-                 angle_threshold=75,
-                 is_mask=False,
-                 **kwargs):
+    @staticmethod
+    def from_OAP_and_WetMask(_OAP, _WetMask, **kwargs):
+        """Create from an OAP and a WetMask.
+
+        .. important::
+
+            This instantiation pathway should only be used for custom WetMask
+            implementations, where the :obj:`below_mask` from the
+            :obj:`OpeningAnglePlanform` is not sufficient to capture the wet
+            area of the delta.
+
+        .. hint::
+
+            To create an EdgeMask from an existing `WetMask` *and* `LandMask`,
+            see the static method :obj:`from_mask`.
+
+        Examples
+        --------
+        """
+        # set up the empty edge mask mask
+        _EGM = EdgeMask(allow_empty=True, **kwargs)
+        _EGM._set_shape_mask(_OAP.shape)
+
+        # set up the needed flow mask and landmask
+        _LM = LandMask.from_OAP(_OAP, **kwargs)
+        if isinstance(_WetMask, WetMask):
+            _WM = _WetMask
+        else:
+            raise TypeError
+
+        # compute the mask
+        _EGM._compute_mask(_LM, _WM)
+        return _EGM
+
+    @staticmethod
+    def from_OAP(_OAP, **kwargs):
+        """Create EdgeMask from an OAP.
+        """
+        _EGM = EdgeMask(allow_empty=True, **kwargs)
+        _EGM._set_shape_mask(_OAP.shape)
+
+        # set up the needed flow mask and landmask
+        _LM = LandMask.from_OAP(_OAP, **kwargs)
+        _WM = WetMask.from_OAP(_OAP, **kwargs)
+
+        # compute the mask
+        _EGM._compute_mask(_LM, _WM)
+        return _EGM
+
+    @staticmethod
+    def from_mask(*args, **kwargs):
+        """Create a EdgeMask directly from a LandMask and a WetMask.
+        """
+        if len(args) == 2:
+            # one must be ElevationMask and one LandMask
+            for UnknownMask in args:
+                if isinstance(UnknownMask, WetMask):
+                    _WM = UnknownMask
+                elif isinstance(UnknownMask, LandMask):
+                    _LM = UnknownMask
+                else:
+                    raise TypeError(
+                        'Double `Mask` input types must be `WetMask` '
+                        'and `LandMask`, but received argument of type '
+                        '`{0}`.'.format(type(UnknownMask)))
+        else:
+            raise ValueError(
+                'Must pass either one or two Masks to static method '
+                '`from_mask` for `WetMask`, but received {0} args'.format(
+                    len(args)))
+
+        # set up the empty shoreline mask
+        _EGM = EdgeMask(allow_empty=True)
+        _EGM._set_shape_mask(_LM.shape)
+
+        # compute the mask
+        _EGM._compute_mask(_LM, _WM, **kwargs)
+        return _EGM
+
+    @staticmethod
+    def from_masks(*args, **kwargs):
+        # undocumented but for convenience
+        return EdgeMask.from_mask(*args, **kwargs)
+
+    @staticmethod
+    def from_array(_arr):
+        """Create an EdgeMask from an array.
+
+        .. note::
+
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
+
+        Parameters
+        ----------
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        raise NotImplementedError
+
+    def __init__(self, *args, **kwargs):
         """Initialize the EdgeMask.
 
         Initializing the edge mask requires either a 2-D array of topographic
@@ -723,60 +1428,69 @@ class EdgeMask(BaseMask, OAM):
             Keyword arguments for :obj:`compute_shoremask`.
 
         """
-        super().__init__(mask_type='edge', data=arr)
+        super().__init__('edge', *args, **kwargs)
 
-        # assign **kwargs to self incase there are masks
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+        # temporary storage of args as needed for processing
+        if self._input_flag is None:
+            # do nothing, will need to call
+            #    self._compute_mask() directly later
+            return
 
-        # write parameter to self so it is not lost
-        self.angle_threshold = angle_threshold
+        elif self._input_flag == 'cube':
+            raise NotImplementedError
+            # _tval = kwargs.pop('t', -1)
+            # _eta = args[0]['eta'][_tval, :, 0]
 
-        if is_mask is False:
-            self.compute_edgemask(**kwargs)
-        elif is_mask is True:
-            self._mask = self.data
+        elif self._input_flag == 'array':
+            # input assumed to be array
+            _eta = args[0]
+
+        elif self._input_flag == 'mask':
+            # must be one of LandMask and WetMask
+            raise NotImplementedError()
+
         else:
-            raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + str(type(is_mask)))
+            raise ValueError(
+                'Invalid _input_flag. Did you modify this attribute?')
 
-    def compute_edgemask(self, **kwargs):
+        # make the required Masks. Both need OAP
+        _OAP = plan.OpeningAnglePlanform.from_elevation_data(
+                _eta,
+                **kwargs)
+
+        # get Masks from the OAP
+        _LM = LandMask.from_OAP(_OAP, **kwargs)
+        _WM = WetMask.from_OAP(_OAP, **kwargs)
+
+        # compute the mask
+        self._compute_mask(_LM, _WM)
+
+    def _compute_mask(self, *args, **kwargs):
         """Compute the EdgeMask.
 
-        Either computes it from just the topographic array, or uses information
-        from :obj:`LandMask` and :obj:`WetMask` to create the edge mask.
+        This method requires arrays of LandMask and EdgeMask. These can be
+        passed as either Mask objects, or as arrays.
 
         """
-        # if landmask and edgemask exist it is quick
-        if hasattr(self, 'landmask') and hasattr(self, 'wetmask'):
-            try:
-                self.landmask = self.landmask.mask
-                self.wetmask = self.wetmask.mask
-            except Exception:
-                self.compute_shoremask(self.angle_threshold, **kwargs)
-                self.landmask = (self.shore_image < self.angle_threshold) * 1
-                self.wetmask = self.oceanmap * self.landmask
-        elif hasattr(self, 'wetmask'):
-            try:
-                self.wetmask = self.wetmask.mask
-                self.landmask = self.wetmask.landmask
-            except Exception:
-                self.compute_shoremask(self.angle_threshold, **kwargs)
-                self.landmask = (self.shore_image < self.angle_threshold) * 1
-                self.wetmask = self.oceanmap * self.landmask
+        if len(args) == 2:
+            if isinstance(args[0], LandMask):
+                lm_array = args[0]._mask.astype(np.float)
+                wm_array = args[1]._mask.astype(np.float)
+            elif utils.is_ndarray_or_xarray(args[0]):
+                lm_array = args[0].astype(np.float)
+                wm_array = args[1].astype(np.float)
+            else:
+                raise TypeError(
+                    'Type must be array but was %s' % type(args[0]))
         else:
-            self.compute_shoremask(self.angle_threshold, **kwargs)
-            self.landmask = (self.shore_image < self.angle_threshold) * 1
-            self.wetmask = self.oceanmap * self.landmask
-        # compute the edge mask
-        for i in range(0, np.shape(self._mask)[0]):
-            self._mask[i, :, :] = np.maximum(0,
-                                             feature.canny(self.wetmask[i,
-                                                                        :,
-                                                                        :])*1 -
-                                             feature.canny(self.landmask[i,
-                                                                         :,
-                                                                         :])*1)
+            raise ValueError(
+                'Must supply `LandMask` and `WetMask` information.')
+
+        # compute the mask with canny edge detection
+        #   the arrays must be type float for this to work!
+        self._mask = np.maximum(
+                0, (feature.canny(wm_array) * 1 -
+                    feature.canny(lm_array) * 1)).astype(np.bool)
 
 
 class CenterlineMask(BaseMask):
@@ -786,23 +1500,123 @@ class CenterlineMask(BaseMask):
 
     Examples
     --------
-    Initialize the centerline mask
-        >>> channelmask = dm.mask.ChannelMask(rcm8cube['velocity'][-1, :, :],
-                                              rcm8cube['eta'][-1, :, :])
-        >>> clmsk = dm.mask.CenterlineMask(channelmask)
+    Initialize the `CenterlineMask` from elevation and flow data:
 
-    Visualize the mask
-        >>> clmsk.show()
+    .. plot::
+        :include-source:
 
-    .. plot:: mask/centerlinemask.py
+        golfcube = dm.sample_data.golf()
+        cntmsk = dm.mask.CenterlineMask(
+            golfcube['eta'][-1, :, :],
+            golfcube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.3)
+
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        cntmsk.show(ax=ax[1])
+        plt.show()
 
     """
+    @staticmethod
+    def from_OAP_and_FlowMask(_OAP, _FlowMask, **kwargs):
+        """Create from an OAP and a FlowMask.
+        """
+        # set up the empty shoreline mask
+        _CntM = CenterlineMask(allow_empty=True, **kwargs)
+        _CntM._set_shape_mask(_OAP.shape)
 
-    def __init__(self,
-                 channelmask,
-                 is_mask=False,
-                 method='skeletonize',
-                 **kwargs):
+        # set up the needed flow mask and channelmask
+        _FM = _FlowMask
+        _CM = ChannelMask.from_OAP_and_FlowMask(_OAP, _FM, **kwargs)
+
+        # compute the mask
+
+        _CntM._compute_mask(_CM, **kwargs)
+        return _CntM
+
+    @staticmethod
+    def from_OAP(*args, **kwargs):
+        # undocumented, hopefully helpful error
+        #   Note, an alternative here is to implement this method and take an
+        #   OAP and information to create a flow mask, raising an error if the
+        #   flow information is missing.
+        raise NotImplementedError(
+            '`from_OAP` is not defined for `CenterlineMask` instantiation '
+            'because the process additionally requires flow field '
+            'information. Consider alternative methods '
+            '`from_OAP_and_FlowMask()')
+
+    @staticmethod
+    def from_masks(*args, **kwargs):
+        # undocumented, for convenience
+        return CenterlineMask.from_mask(*args, **kwargs)
+
+    @staticmethod
+    def from_mask(*args, **kwargs):
+        """Create a `CenterlineMask` directly from another mask.
+
+        Can take either an ElevationMask or LandMask and a
+        FlowMask, OR just a ChannelMask, as input.
+
+        .. note:: finish docstring
+
+        Examples
+        --------
+
+        """
+        if len(args) == 1:
+            if isinstance(args[0], ChannelMask):
+                _CM = args[0]
+            else:
+                raise TypeError(
+                    'Expected ChannelMask.')
+        elif len(args) == 2:
+            for UnknownMask in args:
+                if isinstance(UnknownMask, ElevationMask):
+                    # make intermediate shoreline mask
+                    _LM = LandMask.from_mask(UnknownMask, **kwargs)
+                elif isinstance(UnknownMask, LandMask):
+                    _LM = UnknownMask
+                elif isinstance(UnknownMask, FlowMask):
+                    _FM = UnknownMask
+                else:
+                    raise TypeError('type was %s' % type(UnknownMask))
+            _CM = ChannelMask.from_mask(_LM, _FM)
+        else:
+            raise ValueError(
+                'Must pass single ChannelMask, or two Masks to static '
+                '`from_mask` for CenterlineMask.')
+
+        # set up the empty shoreline mask
+        _CntM = CenterlineMask(allow_empty=True)
+        _CntM._set_shape_mask(_CM.shape)
+
+        # compute the mask
+        _CntM._compute_mask(_CM, **kwargs)
+        return _CntM
+
+    @staticmethod
+    def from_array(_arr):
+        """Create a CenterlineMask from an array.
+
+        .. note::
+
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
+
+        Parameters
+        ----------
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        # set directly
+        raise NotImplementedError
+
+    def __init__(self, *args, method='skeletonize', **kwargs):
         """Initialize the CenterlineMask.
 
         Initialization of the centerline mask object requires a 2-D channel
@@ -830,28 +1644,47 @@ class CenterlineMask(BaseMask):
             Keyword arguments for the 'rivamap' functionality.
 
         """
-        if isinstance(channelmask, np.ndarray):
-            super().__init__(mask_type='centerline', data=channelmask)
-        elif isinstance(channelmask, ChannelMask):
-            super().__init__(mask_type='centerline',
-                             data=channelmask.mask)
+        super().__init__('centerline', *args, **kwargs)
+
+        self._method = method
+
+        # temporary storage of args as needed for processing
+        if self._input_flag is None:
+            # do nothing, will need to call ._compute_mask later
+            return
+
+        elif self._input_flag == 'cube':
+            raise NotImplementedError
+            # _tval = kwargs.pop('t', -1)
+            # _eta = args[0]['eta'][_tval, :, :]
+            # _flow = args[0]['velocity'][_tval, :, :]
+            # need to convert these fields to proper masks
+
+        elif self._input_flag == 'mask':
+            # this pathway should allow someone to specify a combination of
+            # elevation mask, landmask, and velocity mask or channelmask
+            # directly, to make the new mask. This is basically an ambiguous
+            # definition of the static methods.
+            raise NotImplementedError
+
+        elif self._input_flag == 'array':
+            # first make a landmas
+            _eta = args[0]
+            _lm = LandMask(_eta, **kwargs)
+            _flow = args[1]
+            _fm = FlowMask(_flow, **kwargs)
+            _CM = ChannelMask.from_mask(_lm, _fm)
+
         else:
-            raise TypeError('Input channelmask parameter is invalid. Must be'
-                            'a np.ndarray or ChannelMask object but it was'
-                            'a: ' + str(type(channelmask)))
+            raise ValueError('Invalid _input_flag. Did you modify this attribute?')
 
         # save method type value to self
-        self.method = method
+        self._method = method
 
-        if is_mask is False:
-            self.compute_centerlinemask(**kwargs)
-        elif is_mask is True:
-            self._mask = self.data
-        else:
-            raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + str(type(is_mask)))
+        # compute the mask
+        self._compute_mask(_CM)
 
-    def compute_centerlinemask(self, **kwargs):
+    def _compute_mask(self, *args, **kwargs):
         """Compute the centerline mask.
 
         Function for computing the centerline mask. The default implementation
@@ -883,21 +1716,37 @@ class CenterlineMask(BaseMask):
             centerline mask.
 
         """
+        if len(args) != 1:
+            raise ValueError
+
+        if isinstance(args[0], ChannelMask):
+            cm_array = np.array(args[0]._mask, dtype=np.float)
+        else:
+            raise TypeError
+
+        # check whether method was specified as a keyword arg to this method
+        #    directly (this allows keyword spec for static methods)
+        if 'method' in kwargs:
+            self._method = kwargs.pop('method')
+
         # skimage.morphology.skeletonize() method
         if self.method == 'skeletonize':
-            for i in range(0, np.shape(self._mask)[0]):
-                self._mask[i, :, :] = morphology.skeletonize(self.data[i, :, :])
+            # for i in range(0, np.shape(self._mask)[0]):
+            self._mask = morphology.skeletonize(cm_array)
 
+        # rivamap based method
         if self.method == 'rivamap':
-            # rivamap based method - first check for import error
+            # first check for import error
             try:
                 from rivamap.singularity_index import applyMMSI as MMSI
                 from rivamap.singularity_index import SingularityIndexFilters as SF
                 from rivamap.delineate import extractCenterlines as eCL
-            except Exception:
-                raise ImportError('You must install the optional dependency:'
-                                  ' rivamap, to use this centerline extraction'
-                                  ' method')
+            except ImportError:
+                raise ImportError(
+                    'You must install the optional dependency: rivamap, to '
+                    'use the centerline extraction method.')
+            except Exception as e:
+                raise e
 
             # pop the kwargs
             self.minScale = kwargs.pop('minScale', 1.5)
@@ -915,7 +1764,18 @@ class CenterlineMask(BaseMask):
             self.nms = eCL(orient, self.psi)
             nms_norm = self.nms/self.nms.max()
             # compute mask
-            self._mask = (nms_norm > self.nms_threshold) * 1
+            self._mask = (nms_norm > self.nms_threshold)
+
+    @property
+    def method(self):
+        """Method used to compute the mask.
+
+        Returns
+        -------
+        method : :obj:`str`
+            Method name as string.
+        """
+        return self._method
 
 
 class GeometricMask(BaseMask):
@@ -947,57 +1807,91 @@ class GeometricMask(BaseMask):
     .. plot:: mask/geomask.py
 
     """
+    @staticmethod
+    def from_array(_arr):
+        """Create a `GeometricMask` from an array.
 
-    def __init__(self, arr, is_mask=False):
-        """Initialize the GeometricMask.
+        .. note::
 
-        Initializing the geometric mask object requires a 2-D array of the
-        region you wish to apply the mask to.
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
 
         Parameters
         ----------
-        arr : ndarray
-            2-D array to be masked.
-
-        is_mask : bool, optional
-            Whether the data in :obj:`arr` is already a binary mask. Default
-            value is False. This should be set to True, if you have already
-            binarized the data yourself, using custom routines, or want to
-            further mask a pre-existing mask using geometric boundaries, this
-            should be set to True.
-
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
         """
-        super().__init__(mask_type='geometric', data=arr)
+        # set directly
+        raise NotImplementedError
 
-        if is_mask is False:
-            self._mask = np.ones_like(self.data)
-        elif is_mask is True:
-            self._mask = self.data
+    def __init__(self, *args, origin=None, **kwargs):
+        """Initialize the GeometricMask.
+
+        Initializing the geometric mask object requires information regarding
+        the shape of the 2-D array of the region you wish to apply the mask
+        to.
+
+        .. important::
+
+            The `GeometricMask` is initializes with all values set to
+            ``True``; this is the opposite of all other `Mask` types, which
+            are set to ``False`` during initialization.
+
+        Parameters
+        ----------
+        *args :
+            Various input arguments can be used to initialize the
+            `GeometricMask`. Input may be a two-element `tuple`, specifying
+            the array dimensions, or an `ndarray`, `Mask`, or `Cube` from
+            which the shape is inferred.
+
+        origin : `tuple`
+            The "origin" of the domain. Usually this is the water/sediment
+            inlet location. The `origin` is used as the mathematical origin
+            point for computation setting the mask within the `GeometricMask`
+            methods. If unspecified, it is inferred, based on the default
+            configuration of a pyDeltaRCM model inlet.
+
+        Examples
+        --------
+        """
+        super().__init__('geometric', *args, **kwargs)
+
+        # FOR GEOMETRIC, NEED START FROM ALL TRUE
+        #   replace values from init immediately
+        self._mask = np.ones(self.shape, dtype=np.bool)
+
+        # pull the shape into components for convenience
+        self._L, self._W = self.shape
+
+        # set the origin from argument
+        if origin is None:
+            # try to infer it from the input type
+            if self._input_flag == 'cube':
+                raise NotImplementedError
+                # get the value from CTR and L0 if meta present
+            else:
+                self._xc = 0
+                self._yc = int(self._W / 2)
+        elif isinstance(origin, tuple):
+            # use the values in the tuple
+            self._xc = origin[0]
+            self._yc = origin[1]
         else:
-            raise TypeError('is_mask must be a `bool`,'
-                            'but was: ' + str(type(is_mask)))
-
-        _, self.L, self.W = np.shape(self._mask)
-        self.xc = 0
-        self.yc = int(self.W/2)
+            raise ValueError
 
     @property
     def xc(self):
         """x-coordinate of origin point."""
         return self._xc
 
-    @xc.setter
-    def xc(self, var):
-        self._xc = var
-
     @property
     def yc(self):
         """y-coordinate of origin point."""
         return self._yc
-
-    @yc.setter
-    def yc(self, var):
-        self._yc = var
 
     def angular(self, theta1, theta2):
         """Make a mask based on two angles.
@@ -1005,10 +1899,12 @@ class GeometricMask(BaseMask):
         Computes a mask that is bounded by 2 angles input by the user.
 
         .. note::
+
            Requires a domain with a width greater than 2x its length right now.
            Function should be re-factored to be more flexible.
 
         .. note::
+
            Currently origin point is fixed, function should be extended to
            allow for an input origin point from which the angular bounds are
            determined.
@@ -1021,15 +1917,22 @@ class GeometricMask(BaseMask):
         theta2 : float
             Radian value controlling the right bound of the mask
 
+        Examples
+        --------
+
+        .. todo:: write examples.
+
         """
-        if self.L/self.W > 0.5:
+        if (self._L / self._W) > 0.5:
             raise ValueError('Width of input array must exceed 2x length.')
-        y, x = np.ogrid[0:self.W, -self.L:self.L]
+
+        w = self._L if (self._L % 2 == 0) else self._L+1
+        y, x = np.ogrid[0:self._W, -self._L:w]
         theta = np.arctan2(x, y) - theta1 + np.pi/2
         theta %= (2*np.pi)
         anglemask = theta <= (theta2-theta1)
         _, B = np.shape(anglemask)
-        anglemap = anglemask[:self.L, int(B/2-self.W/2):int(B/2+self.W/2)]
+        anglemap = anglemask[:self._L, int(B/2-self._W/2):int(B/2+self._W/2)]
 
         self._mask = self._mask * anglemap
 
@@ -1048,28 +1951,37 @@ class GeometricMask(BaseMask):
             Index value to set the outer radius. If unspecified, this bound
             is set to extend as the larger dimension of the domain.
 
-        origin : tuple, optional
-            Tuple containing the (x, y) coordinate of the origin point.
-            If unspecified, it is assumed to be at the center of a boundary
-            where pyDeltaRCM places the inlet.
+        origin : :obj:`tuple`, optional
+            Optionally specify an origin to use for computing the circle. Will
+            use the `GeometricMask` origin, if not supplied.
+
+        Examples
+        --------
+
+        .. todo:: write examples.
 
         """
-        if origin is not None:
-            self.xc = origin[0]
-            self.yc = origin[1]
+        if origin is None:
+            _xc = self._xc
+            _yc = self._yc
+        elif isinstance(origin, tuple):
+            _xc = origin[0]
+            _yc = origin[1]
+        else:
+            raise ValueError
 
         if rad2 is None:
-            rad2 = np.max((self.L, self.W))
+            rad2 = np.max((self._L, self._W))
 
-        yy, xx = np.meshgrid(range(self.W), range(self.L))
+        yy, xx = np.meshgrid(range(self._W), range(self._L))
         # calculate array of distances from inlet
-        raddist = np.sqrt((yy-self._yc)**2 + (xx-self._xc)**2)
+        raddist = np.sqrt((yy-_yc)**2 + (xx-_xc)**2)
         # identify points within radial bounds
         raddist = np.where(raddist >= rad1, raddist, 0)
         raddist = np.where(raddist <= rad2, raddist, 0)
         raddist = np.where(raddist == 0, raddist, 1)
         # make 3D to be consistent with mask
-        raddist = np.reshape(raddist, [1, self.L, self.W])
+        raddist = np.reshape(raddist, [self._L, self._W])
         # combine with current mask via multiplication
         self._mask = self._mask * raddist
 
@@ -1088,12 +2000,17 @@ class GeometricMask(BaseMask):
             Index value to set second boundary (farther from inlet). This is
             optional, if unspecified, this is set to the length of the domain.
 
+        Examples
+        --------
+
+        .. todo:: write examples.
+
         """
         if ind2 is None:
-            ind2 = self.L
+            ind2 = self._L
 
         temp_mask = np.zeros_like(self._mask)
-        temp_mask[:, ind1:ind2, :] = 1
+        temp_mask[ind1:ind2, :] = 1
 
         self._mask = self._mask * temp_mask
 
@@ -1115,12 +2032,21 @@ class GeometricMask(BaseMask):
             Right bound of the mask if specified. If not specified, then
             ind1 sets the width of a mask centered on the inlet.
 
+        Examples
+        --------
+
+        .. todo:: write examples.
+
         """
         temp_mask = np.zeros_like(self._mask)
         if ind2 is None:
             w_ind = int(ind1/2)
-            temp_mask[:, :, self._yc-w_ind:self._yc+w_ind+1] = 1
+            temp_mask[:, self._yc-w_ind:self._yc+w_ind+1] = 1
         else:
-            temp_mask[:, :, ind1:ind2] = 1
+            temp_mask[:, ind1:ind2] = 1
 
         self._mask = self._mask * temp_mask
+
+    def _compute_mask(self):
+        """Does Nothing!"""
+        pass

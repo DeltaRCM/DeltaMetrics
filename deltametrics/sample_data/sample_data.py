@@ -57,13 +57,13 @@ def golf():
 
         fig, ax = plt.subplots(1, nt, figsize=(12, 2))
         for i, t in enumerate(ts):
-            ax[i].imshow(golf['eta'][t, :, :], vmin=-2, vmax=0.5) 
-            ax[i].set_title('t = ' + str(t)) 
-            ax[i].axes.get_xaxis().set_ticks([]) 
-            ax[i].axes.get_yaxis().set_ticks([]) 
-        ax[0].set_ylabel('y-direction') 
-        ax[0].set_xlabel('x-direction') 
-        plt.show() 
+            ax[i].imshow(golf['eta'][t, :, :], vmin=-2, vmax=0.5)
+            ax[i].set_title('t = ' + str(t))
+            ax[i].axes.get_xaxis().set_ticks([])
+            ax[i].axes.get_yaxis().set_ticks([])
+        ax[0].set_ylabel('y-direction')
+        ax[0].set_xlabel('x-direction')
+        plt.show()
     """
     golf_path = _get_golf_path()
     return cube.DataCube(golf_path)
@@ -86,10 +86,10 @@ def rcm8():
     the model run was executed with. Moreover, many new coupling features have
     been added to pyDeltaRCM and DeltaMetrics since this run. As a result,
     this dataset is slated to be deprecated at some point, in favor of the
-    :obj:`golf` dataset. 
+    :obj:`golf` dataset.
 
     If you are learning to use DeltaMetrics or developing new codes or
-    documentation, please use the :obj:`golf` delta dataset. 
+    documentation, please use the :obj:`golf` delta dataset.
 
     .. plot::
 
@@ -99,12 +99,12 @@ def rcm8():
 
         fig, ax = plt.subplots(1, nt, figsize=(12, 2))
         for i, t in enumerate(ts):
-            ax[i].imshow(rcm8['eta'][t, :, :], vmin=-2, vmax=0.5) 
-            ax[i].set_title('t = ' + str(t)) 
-            ax[i].axes.get_xaxis().set_ticks([]) 
-            ax[i].axes.get_yaxis().set_ticks([]) 
-        ax[0].set_ylabel('y-direction') 
-        ax[0].set_xlabel('x-direction') 
+            ax[i].imshow(rcm8['eta'][t, :, :], vmin=-2, vmax=0.5)
+            ax[i].set_title('t = ' + str(t))
+            ax[i].axes.get_xaxis().set_ticks([])
+            ax[i].axes.get_yaxis().set_ticks([])
+        ax[0].set_ylabel('y-direction')
+        ax[0].set_xlabel('x-direction')
         plt.show()
     """
     rcm8_path = _get_rcm8_path()

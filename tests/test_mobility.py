@@ -7,7 +7,7 @@ import numpy as np
 import deltametrics as dm
 from deltametrics import cube
 from deltametrics import mobility as mob
-from deltametrics.sample_data import _get_rcm8_path, _get_landsat_path
+from deltametrics.sample_data import _get_rcm8_path
 
 
 rcm8_path = _get_rcm8_path()
@@ -15,14 +15,23 @@ rcm8cube = cube.DataCube(rcm8_path)
 
 
 # define some masks once up top
-chmask = dm.mask.ChannelMask(rcm8cube['velocity'][20:23, :, :],
-                             rcm8cube['eta'][20:23, :, :])
-landmask = dm.mask.LandMask(rcm8cube['eta'][20:23, :, :])
+chmask = []
+landmask = []
+for i in range(20, 23):
+    chmask.append(
+        dm.mask.ChannelMask(rcm8cube['eta'][i, :, :],
+                            rcm8cube['velocity'][i, :, :],
+                            elevation_threshold=0,
+                            flow_threshold=0.3))
+    landmask.append(
+        dm.mask.LandMask(rcm8cube['eta'][i, :, :],
+                         elevation_threshold=0))
 
 
-def test_check_input_mask():
+def test_check_input_list_of_mask():
     """Test that a deltametrics.mask.BaseMask type can be used."""
     # call checker function
+    assert isinstance(chmask, list)
     chmap, landmap, basevalues, time_window = mob.check_inputs(chmask,
                                                                [0], 1,
                                                                landmask)
@@ -31,6 +40,14 @@ def test_check_input_mask():
     assert isinstance(landmap, np.ndarray) is True
     assert isinstance(basevalues, list) is True
     assert isinstance(time_window, int) is True
+
+
+def test_check_input_single_mask_error():
+    """Test that a deltametrics.mask.BaseMask type can be used."""
+    # call checker function
+    with pytest.raises(TypeError, match=r'Cannot input a Mask .*'):
+        chmap, landmap, basevalues, time_window = mob.check_inputs(
+            chmask[0], [0], 1, landmask[0])
 
 
 @pytest.mark.xfail()
@@ -129,7 +146,7 @@ def test_check_input_exceedmaxvals():
 def test_check_input_castlandmap():
     """Test ability to case a 2D landmask to match 3D channelmap."""
     chmap, landmap, bv, tw = mob.check_inputs(chmask, [0], 1,
-                                              landmask.mask[0, :, :])
+                                              landmask[0].mask[:, :])
     assert np.shape(chmap) == np.shape(landmap)
 
 

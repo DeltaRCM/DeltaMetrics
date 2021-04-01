@@ -2,10 +2,13 @@ import os
 import sys
 
 import numpy as np
+import xarray as xr
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import matplotlib.colors as colors
 from scipy import optimize
+
+from numba import njit
 
 from . import io
 
@@ -137,6 +140,14 @@ class AttributeChecker(object):
         return att_dict
 
 
+def is_ndarray_or_xarray(data):
+    """Check that data is numpy array or xarray data.
+    """
+    truth = (isinstance(data, xr.core.dataarray.DataArray) or
+             isinstance(data, np.ndarray))
+    return truth
+
+
 def curve_fit(data, fit='harmonic'):
     """Calculate curve fit given some data.
 
@@ -205,6 +216,17 @@ def curve_fit(data, fit='harmonic'):
     perror = np.sqrt(np.diag(pcov))
 
     return yfit, popt, pcov, perror
+
+
+def determine_land_width(data, land_width_input=None):
+    """Determine the land width from a dataset.
+    """
+    if (land_width_input is None):
+        # determine the land width if not supplied explicitly
+        trim_idx = guess_land_width_from_land(data)
+    else:
+        trim_idx = land_width_input
+    return trim_idx
 
 
 def guess_land_width_from_land(land_col_0):
@@ -482,3 +504,45 @@ def circle_to_cells(origin, radius, remove_duplicates=True):
     yc = yc[_and]
 
     return xc, yc
+
+
+@njit()
+def _point_in_polygon(x, y, polygon):
+    """Perform ray tracing.
+
+    Used internally in methods to determine whether point is inside a polygon.
+
+    Examples
+    --------
+
+    TODO
+    """
+    n = len(polygon)
+    inside = False
+    p2x = 0.0
+    p2y = 0.0
+    xints = 0.0
+    p1x,p1y = polygon[0]
+    for i in range(n+1):
+        p2x,p2y = polygon[i % n]
+        if y > min(p1y,p2y):
+            if y <= max(p1y,p2y):
+                if x <= max(p1x,p2x):
+                    if p1y != p2y:
+                        xints = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
+                    if p1x == p2x or x <= xints:
+                        inside = not inside
+        p1x,p1y = p2x,p2y
+
+    return inside
+
+
+@njit()
+def _points_in_polygon(points, polygon):
+    npts = points.shape[0]
+    inside = np.zeros((npts,))
+
+    for i in np.arange(npts):
+        inside[i] = _point_in_polygon(points[i, 0], points[i, 1], polygon)
+
+    return inside
