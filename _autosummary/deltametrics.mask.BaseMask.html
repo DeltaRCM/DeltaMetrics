@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
@@ -16,8 +17,8 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="deltametrics.mask.ChannelMask" href="deltametrics.mask.ChannelMask.html" />
-    <link rel="prev" title="Masking operations" href="../reference/mask/index.html" /> 
+    <link rel="next" title="deltametrics.mask.ThresholdValueMask" href="deltametrics.mask.ThresholdValueMask.html" />
+    <link rel="prev" title="deltametrics.mask.CenterlineMask" href="deltametrics.mask.CenterlineMask.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -26,10 +27,10 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="deltametrics.mask.ChannelMask.html" title="deltametrics.mask.ChannelMask"
+          <a href="deltametrics.mask.ThresholdValueMask.html" title="deltametrics.mask.ThresholdValueMask"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../reference/mask/index.html" title="Masking operations"
+          <a href="deltametrics.mask.CenterlineMask.html" title="deltametrics.mask.CenterlineMask"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
@@ -39,11 +40,11 @@
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../reference/mask/index.html"
-                        title="previous chapter">Masking operations</a></p>
+  <p class="topless"><a href="deltametrics.mask.CenterlineMask.html"
+                        title="previous chapter">deltametrics.mask.CenterlineMask</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="deltametrics.mask.ChannelMask.html"
-                        title="next chapter">deltametrics.mask.ChannelMask</a></p>
+  <p class="topless"><a href="deltametrics.mask.ThresholdValueMask.html"
+                        title="next chapter">deltametrics.mask.ThresholdValueMask</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -73,12 +74,22 @@
 <h1>deltametrics.mask.BaseMask<a class="headerlink" href="#deltametrics-mask-basemask" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="deltametrics.mask.BaseMask">
-<em class="property">class </em><code class="descclassname">deltametrics.mask.</code><code class="descname">BaseMask</code><span class="sig-paren">(</span><em>mask_type</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">deltametrics.mask.</code><code class="descname">BaseMask</code><span class="sig-paren">(</span><em>mask_type</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Low-level base class to be inherited by all mask objects.</p>
 <dl class="method">
 <dt id="deltametrics.mask.BaseMask.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>mask_type</em>, <em>data</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>mask_type</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the base mask attributes and methods.</p>
+<p>This intialization tries to determine the types of intputs given to
+the initializer and proceeds from there.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask_type</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Descriptor of the mask type.</p></li>
+<li><p><strong>*args</strong> – </p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -88,11 +99,14 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.__init__" title="deltametrics.mask.BaseMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(mask_type, data)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.__init__" title="deltametrics.mask.BaseMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(mask_type, *args, **kwargs)</p></td>
 <td><p>Initialize the base mask attributes and methods.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.show" title="deltametrics.mask.BaseMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>([t, ax])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.show" title="deltametrics.mask.BaseMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>([ax, title, ticks, colorbar])</p></td>
 <td><p>Show the mask.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.trim_mask" title="deltametrics.mask.BaseMask.trim_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_mask</span></code></a>(*args[, value, axis, length])</p></td>
+<td><p>Replace a part of the mask with a new value.</p></td>
 </tr>
 </tbody>
 </table>
@@ -103,20 +117,47 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.data" title="deltametrics.mask.BaseMask.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
-<td><p>Values of the mask object.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.integer_mask" title="deltametrics.mask.BaseMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a></p></td>
+<td><p>Binary mask values as integer</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.mask" title="deltametrics.mask.BaseMask.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
 <td><p>Binary mask values.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.BaseMask.mask_type" title="deltametrics.mask.BaseMask.mask_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_type</span></code></a></p></td>
+<td><p>Type of the mask (string)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
+<dl class="method">
+<dt id="deltametrics.mask.BaseMask._set_shape_mask">
+<code class="descname">_set_shape_mask</code><span class="sig-paren">(</span><em>_shape</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask._set_shape_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the mask shape.</p>
+<p>This is called during instantiation in most standard use-cases and
+pathways, however, if you are implementing your own mask or your own
+static method to create a mask, you may need to manually call this
+method to set the fields of the mask correctly before doing any mask
+computation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shape</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>) – Shape of the mask.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="attribute">
-<dt id="deltametrics.mask.BaseMask.data">
-<code class="descname">data</code><a class="headerlink" href="#deltametrics.mask.BaseMask.data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Values of the mask object.</p>
-<p>In setter, we should sanitize the inputs (enforce range 0-1) and
-convert everything to uints for speed and size.</p>
+<dt id="deltametrics.mask.BaseMask.integer_mask">
+<code class="descname">integer_mask</code><a class="headerlink" href="#deltametrics.mask.BaseMask.integer_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binary mask values as integer</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><cite>integer_mask</cite> is a boolean array as <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> (integers).
+It is <strong>not suitible</strong> for multidimensional array indexing; see
+also <a class="reference internal" href="#deltametrics.mask.BaseMask.mask" title="deltametrics.mask.BaseMask.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a>.</p>
+</div>
+<p>Read-only mask attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p>ndarray</p>
@@ -128,6 +169,11 @@ convert everything to uints for speed and size.</p>
 <dt id="deltametrics.mask.BaseMask.mask">
 <code class="descname">mask</code><a class="headerlink" href="#deltametrics.mask.BaseMask.mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Binary mask values.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><cite>mask</cite> is a boolean array (<strong>not integer</strong>). See also
+<a class="reference internal" href="#deltametrics.mask.BaseMask.integer_mask" title="deltametrics.mask.BaseMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a>.</p>
+</div>
 <p>Read-only mask attribute.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -136,20 +182,52 @@ convert everything to uints for speed and size.</p>
 </dl>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="deltametrics.mask.BaseMask.mask_type">
+<code class="descname">mask_type</code><a class="headerlink" href="#deltametrics.mask.BaseMask.mask_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type of the mask (string)</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="deltametrics.mask.BaseMask.show">
-<code class="descname">show</code><span class="sig-paren">(</span><em>t=-1</em>, <em>ax=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask.show" title="Permalink to this definition">¶</a></dt>
+<code class="descname">show</code><span class="sig-paren">(</span><em>ax=None</em>, <em>title=None</em>, <em>ticks=False</em>, <em>colorbar=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the mask.</p>
+<p>The <cite>Mask</cite> is shown in a <cite>matplotlib</cite> axis with <cite>imshow</cite>. The <cite>mask</cite>
+values are accessed from <a class="reference internal" href="#deltametrics.mask.BaseMask.integer_mask" title="deltametrics.mask.BaseMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a>, so the display will show
+as <code class="docutils literal notranslate"><span class="pre">0</span></code> for <code class="docutils literal notranslate"><span class="pre">False</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> for <code class="docutils literal notranslate"><span class="pre">True</span></code>. Default colormap is
+black and white.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Passes <cite>**kwargs</cite> to <code class="docutils literal notranslate"><span class="pre">matplotlib.imshow</span></code>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.pyplot.Axes</span></code>) – Which axes object to plot into.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.BaseMask.trim_mask">
+<code class="descname">trim_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>value=False</em>, <em>axis=1</em>, <em>length=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.BaseMask.trim_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace a part of the mask with a new value.</p>
+<p>This is sometimes necessary before using a mask in certain
+computations. Most often, this method is used to manually correct
+domain edge effects.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>t</strong> (<em>int</em><em>, </em><em>optional</em>) – Value of time slice or integer from first dimension in 3D (t-x-y)
-convention to display the mask from. Default is -1 so the ‘final’
-mask in time is displayed if this argument is not supplied.</p></li>
-<li><p><strong>**kwargs to matplotlib.imshow.</strong> (<em>Passes</em>) – </p></li>
+<li><p><strong>*args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseCube</span></code> subclass, optional) – Optionally pass a <cite>Cube</cite> object to the mask, and the dimensions to
+trim/replace the mask by will be inferred from the cube. In this
+case, <code class="xref py py-obj docutils literal notranslate"><span class="pre">axis</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">length</span></code> have no effect.</p></li>
+<li><p><strong>value</strong> – Value to replace in the trim region with. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>axis</strong> – Which edge to apply the trim of <code class="xref py py-obj docutils literal notranslate"><span class="pre">length</span></code> to. Default is 1,
+the top domain edge.</p></li>
+<li><p><strong>length</strong> – The length of the trim. Note that this is <strong>not the array index</strong>.</p></li>
 </ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
 </dd></dl>
 
 </dd></dl>
@@ -169,10 +247,10 @@ mask in time is displayed if this argument is not supplied.</p></li>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="deltametrics.mask.ChannelMask.html" title="deltametrics.mask.ChannelMask"
+          <a href="deltametrics.mask.ThresholdValueMask.html" title="deltametrics.mask.ThresholdValueMask"
              >next</a> |</li>
         <li class="right" >
-          <a href="../reference/mask/index.html" title="Masking operations"
+          <a href="deltametrics.mask.CenterlineMask.html" title="deltametrics.mask.CenterlineMask"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>

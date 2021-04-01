@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
@@ -167,6 +168,28 @@ variable <code class="docutils literal notranslate"><span class="pre">var</span>
 </dd></dl>
 
 <dl class="method">
+<dt id="deltametrics.section.DipSection._compute_section_attrs">
+<code class="descname">_compute_section_attrs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DipSection._compute_section_attrs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute attrs</p>
+<p>Compute the along-section coordinate array from x-y pts pairs
+definining the section.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.section.DipSection._compute_section_coords">
+<code class="descname">_compute_section_coords</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DipSection._compute_section_coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Should calculate x-y coordinates of the section.</p>
+<p>Sets the value <code class="docutils literal notranslate"><span class="pre">self._x</span></code> and <code class="docutils literal notranslate"><span class="pre">self._y</span></code> according to the algorithm
+of each section initialization.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>When implementing new section types, be sure that <code class="docutils literal notranslate"><span class="pre">self._x</span></code> and
+<code class="docutils literal notranslate"><span class="pre">self._y</span></code> are <em>one-dimensional arrays</em>, or you will get an
+improperly shaped Section array in return.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
 <dt id="deltametrics.section.DipSection.connect">
 <code class="descname">connect</code><span class="sig-paren">(</span><em>CubeInstance</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DipSection.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connect this Section instance to a Cube instance.</p>
@@ -234,7 +257,7 @@ create a new) <cite>Axes</cite> object.</p></li>
 </div>
 <p>(<a class="reference external" href="../pyplots/section/section_demo_spacetime.png">png</a>, <a class="reference external" href="../pyplots/section/section_demo_spacetime.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/section_demo_spacetime.png" src="../_images/section_demo_spacetime.png" />
+<img alt="../_images/section_demo_spacetime.png" class="plot-directive" src="../_images/section_demo_spacetime.png" />
 </div>
 <p>Note that the last line above is functionally equivalent to
 <code class="docutils literal notranslate"><span class="pre">rcm8cube.show_section('demo',</span> <span class="pre">'velocity')</span></code>.</p>
@@ -257,7 +280,7 @@ create a new) <cite>Axes</cite> object.</p></li>
 </div>
 <p>(<a class="reference external" href="../pyplots/section/section_demo_quick_strat.png">png</a>, <a class="reference external" href="../pyplots/section/section_demo_quick_strat.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/section_demo_quick_strat.png" src="../_images/section_demo_quick_strat.png" />
+<img alt="../_images/section_demo_quick_strat.png" class="plot-directive" src="../_images/section_demo_quick_strat.png" />
 </div>
 </dd></dl>
 

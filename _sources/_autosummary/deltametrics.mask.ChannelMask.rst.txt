@@ -13,11 +13,14 @@ deltametrics.mask.ChannelMask
 
    .. autosummary::
    
-      ~ChannelMask.Seaangles_mod
       ~ChannelMask.__init__
-      ~ChannelMask.compute_channelmask
-      ~ChannelMask.compute_shoremask
+      ~ChannelMask.from_OAP
+      ~ChannelMask.from_OAP_and_FlowMask
+      ~ChannelMask.from_array
+      ~ChannelMask.from_mask
+      ~ChannelMask.from_masks
       ~ChannelMask.show
+      ~ChannelMask.trim_mask
    
    
 
@@ -27,7 +30,9 @@ deltametrics.mask.ChannelMask
 
    .. autosummary::
    
-      ~ChannelMask.data
+      ~ChannelMask.integer_mask
       ~ChannelMask.mask
+      ~ChannelMask.mask_type
+      ~ChannelMask.shape
    
    

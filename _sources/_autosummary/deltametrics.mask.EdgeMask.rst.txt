@@ -13,11 +13,14 @@ deltametrics.mask.EdgeMask
 
    .. autosummary::
    
-      ~EdgeMask.Seaangles_mod
       ~EdgeMask.__init__
-      ~EdgeMask.compute_edgemask
-      ~EdgeMask.compute_shoremask
+      ~EdgeMask.from_OAP
+      ~EdgeMask.from_OAP_and_WetMask
+      ~EdgeMask.from_array
+      ~EdgeMask.from_mask
+      ~EdgeMask.from_masks
       ~EdgeMask.show
+      ~EdgeMask.trim_mask
    
    
 
@@ -27,7 +30,9 @@ deltametrics.mask.EdgeMask
 
    .. autosummary::
    
-      ~EdgeMask.data
+      ~EdgeMask.integer_mask
       ~EdgeMask.mask
+      ~EdgeMask.mask_type
+      ~EdgeMask.shape
    
    

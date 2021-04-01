@@ -13,11 +13,13 @@ deltametrics.mask.WetMask
 
    .. autosummary::
    
-      ~WetMask.Seaangles_mod
       ~WetMask.__init__
-      ~WetMask.compute_shoremask
-      ~WetMask.compute_wetmask
+      ~WetMask.from_OAP
+      ~WetMask.from_array
+      ~WetMask.from_mask
+      ~WetMask.from_masks
       ~WetMask.show
+      ~WetMask.trim_mask
    
    
 
@@ -27,7 +29,9 @@ deltametrics.mask.WetMask
 
    .. autosummary::
    
-      ~WetMask.data
+      ~WetMask.integer_mask
       ~WetMask.mask
+      ~WetMask.mask_type
+      ~WetMask.shape
    
    

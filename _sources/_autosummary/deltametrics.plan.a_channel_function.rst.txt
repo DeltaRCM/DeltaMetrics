@@ -1,6 +1,0 @@
-deltametrics.plan.a\_channel\_function
-======================================
-
-.. currentmodule:: deltametrics.plan
-
-.. autofunction:: a_channel_function

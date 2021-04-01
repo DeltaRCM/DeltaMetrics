@@ -1,0 +1,327 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>deltametrics.plan.OpeningAnglePlanform &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="deltametrics.plan.compute_shoreline_roughness" href="deltametrics.plan.compute_shoreline_roughness.html" />
+    <link rel="prev" title="Planview operations" href="../reference/plan/index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="deltametrics.plan.compute_shoreline_roughness.html" title="deltametrics.plan.compute_shoreline_roughness"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../reference/plan/index.html" title="Planview operations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/plan/index.html" accesskey="U">Planview operations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../reference/plan/index.html"
+                        title="previous chapter">Planview operations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.plan.compute_shoreline_roughness.html"
+                        title="next chapter">deltametrics.plan.compute_shoreline_roughness</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.plan.OpeningAnglePlanform.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="deltametrics-plan-openingangleplanform">
+<h1>deltametrics.plan.OpeningAnglePlanform<a class="headerlink" href="#deltametrics-plan-openingangleplanform" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="deltametrics.plan.OpeningAnglePlanform">
+<em class="property">class </em><code class="descclassname">deltametrics.plan.</code><code class="descname">OpeningAnglePlanform</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planform for handling the Shaw Opening Angle Method.</p>
+<p>This <cite>Planform</cite> (called <cite>OAP</cite> for short) is a wrapper/handler for the
+input and output from the <a class="reference internal" href="deltametrics.plan.shaw_opening_angle_method.html#deltametrics.plan.shaw_opening_angle_method" title="deltametrics.plan.shaw_opening_angle_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">shaw_opening_angle_method()</span></code></a>. The <cite>OAP</cite> is a
+convenient way to manage extraction of a shoreline or a delta topset area.</p>
+<p>Moreover, the <cite>OAP</cite> can be used as the input for <a class="reference internal" href="../reference/mask/index.html"><span class="doc">many types of
+Mask</span></a> objects, so it is often computationally
+advantageous to compute this <cite>Planform</cite> once, and then use it to create
+many different types of masks.</p>
+<p class="rubric">Examples</p>
+<p>Instantiate the <cite>OpeningAnglePlanform</cite> from an <strong>inverted</strong> binary mask of
+elevation data (i.e., from an <a class="reference internal" href="deltametrics.mask.ElevationMask.html#deltametrics.mask.ElevationMask" title="deltametrics.mask.ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElevationMask</span></code></a>).</p>
+<p>Note that the below example is the most verbose method for creating the
+<cite>OAP</cite>. Consider available static methods.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_EM</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ElevationMask</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p># extract a mask of area below sea level as the
+#   inverse of the ElevationMask
+&gt;&gt;&gt; _below_mask = ~(_EM.mask)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">OAP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">OpeningAnglePlanform</span><span class="p">(</span><span class="n">_below_mask</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The OAP stores information computed from the
+<a class="reference internal" href="deltametrics.plan.shaw_opening_angle_method.html#deltametrics.plan.shaw_opening_angle_method" title="deltametrics.plan.shaw_opening_angle_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">shaw_opening_angle_method()</span></code></a>. See the two properties of the OAP
+<a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.below_mask" title="deltametrics.plan.OpeningAnglePlanform.below_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">below_mask</span></code></a> and <a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.sea_angles" title="deltametrics.plan.OpeningAnglePlanform.sea_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sea_angles</span></code></a>.</p>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-plan-OpeningAnglePlanform-2.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-plan-OpeningAnglePlanform-2.hires.png">hires.png</a>)</p>
+<div class="figure align-center">
+<img alt="../_images/deltametrics-plan-OpeningAnglePlanform-2.png" class="plot-directive" src="../_images/deltametrics-plan-OpeningAnglePlanform-2.png" />
+</div>
+<dl class="method">
+<dt id="deltametrics.plan.OpeningAnglePlanform.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Init.</p>
+<p>EXPECTS A BINARY OCEAN MASK AS THE INPUT!</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>needs docstring.</p>
+</div>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.__init__" title="deltametrics.plan.OpeningAnglePlanform.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Init.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.connect" title="deltametrics.plan.OpeningAnglePlanform.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(CubeInstance[, name])</p></td>
+<td><p>Connect this Planform instance to a Cube instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask" title="deltametrics.plan.OpeningAnglePlanform.from_ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_ElevationMask</span></code></a>(ElevationMask, **kwargs)</p></td>
+<td><p>Create an <cite>OpeningAnglePlanform</cite> from an <cite>ElevationMask</cite>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_arrays" title="deltametrics.plan.OpeningAnglePlanform.from_arrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_arrays</span></code></a>(*args)</p></td>
+<td><p>Create directly from arrays.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_elevation_data" title="deltametrics.plan.OpeningAnglePlanform.from_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_elevation_data</span></code></a>(elevation_data, **kwargs)</p></td>
+<td><p>Create an <cite>OpeningAnglePlanform</cite> from elevation data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_mask" title="deltametrics.plan.OpeningAnglePlanform.from_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_mask</span></code></a>(UnknownMask, **kwargs)</p></td>
+<td><p>Wraps <a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask" title="deltametrics.plan.OpeningAnglePlanform.from_ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_ElevationMask</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.below_mask" title="deltametrics.plan.OpeningAnglePlanform.below_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">below_mask</span></code></a></p></td>
+<td><p>Mask for below sea level pixels.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.name" title="deltametrics.plan.OpeningAnglePlanform.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Planform name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.sea_angles" title="deltametrics.plan.OpeningAnglePlanform.sea_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sea_angles</span></code></a></p></td>
+<td><p>Maximum opening angle view of the sea from a pixel.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.shape" title="deltametrics.plan.OpeningAnglePlanform.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>Planform shape.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="deltametrics.plan.OpeningAnglePlanform._compute_from_below_mask">
+<code class="descname">_compute_from_below_mask</code><span class="sig-paren">(</span><em>below_mask</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform._compute_from_below_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method for actual computation of the arrays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>below_mask</strong> – The binarized array of values that should be considered as the
+ocean pixels.</p></li>
+<li><p><strong>**kwargs</strong> – Passed to <a class="reference internal" href="deltametrics.plan.shaw_opening_angle_method.html#deltametrics.plan.shaw_opening_angle_method" title="deltametrics.plan.shaw_opening_angle_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">shaw_opening_angle_method()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plan.OpeningAnglePlanform.below_mask">
+<code class="descname">below_mask</code><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.below_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask for below sea level pixels.</p>
+<p>This is the starting point for the Opening Angle Method solution.</p>
+<p>See figure in main docstring for visual example.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.plan.OpeningAnglePlanform.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>CubeInstance</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect this Planform instance to a Cube instance.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="deltametrics.plan.OpeningAnglePlanform.from_ElevationMask">
+<em class="property">static </em><code class="descname">from_ElevationMask</code><span class="sig-paren">(</span><em>ElevationMask</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an <cite>OpeningAnglePlanform</cite> from an <cite>ElevationMask</cite>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Keyword arguments are passed to the <cite>OpeningAnglePlanform</cite>, and
+thus passed to <a class="reference internal" href="deltametrics.plan.shaw_opening_angle_method.html#deltametrics.plan.shaw_opening_angle_method" title="deltametrics.plan.shaw_opening_angle_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">shaw_opening_angle_method()</span></code></a>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ElevationMask</strong> (<a class="reference internal" href="deltametrics.mask.ElevationMask.html#deltametrics.mask.ElevationMask" title="deltametrics.mask.ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElevationMask</span></code></a>) – The <code class="xref py py-obj docutils literal notranslate"><span class="pre">ElevationMask</span></code> to be used to create the
+<cite>OpeningAnglePlanform</cite>.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_EM</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ElevationMask</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">OAP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">OpeningAnglePlanform</span><span class="o">.</span><span class="n">from_ElevationMask</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">_EM</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="deltametrics.plan.OpeningAnglePlanform.from_arrays">
+<em class="property">static </em><code class="descname">from_arrays</code><span class="sig-paren">(</span><em>*args</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_arrays" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create directly from arrays.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>not implemented.</p>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="deltametrics.plan.OpeningAnglePlanform.from_elevation_data">
+<em class="property">static </em><code class="descname">from_elevation_data</code><span class="sig-paren">(</span><em>elevation_data</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_elevation_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an <cite>OpeningAnglePlanform</cite> from elevation data.</p>
+<p>This process creates an ElevationMask from the input elevation array,
+and proceeds to make the OAP from the below sea level mask.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Keyword arguments are passed to the <cite>ElevationMask</cite> <em>and</em> to the
+<cite>OpeningAnglePlanform</cite>, and thus passed to
+<a class="reference internal" href="deltametrics.plan.shaw_opening_angle_method.html#deltametrics.plan.shaw_opening_angle_method" title="deltametrics.plan.shaw_opening_angle_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">shaw_opening_angle_method()</span></code></a>.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The <cite>elevation_threshold</cite> argument is implicitly required in this
+method, because it is required to instantiate an
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">ElevationMask</span></code> from elevation data.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>elevation_data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The elevation data to create the <cite>ElevationMask</cite> that is in
+turn used to create the <cite>OpeningAnglePlanform</cite>.</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">OAP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">OpeningAnglePlanform</span><span class="o">.</span><span class="n">from_elevation_data</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="deltametrics.plan.OpeningAnglePlanform.from_mask">
+<em class="property">static </em><code class="descname">from_mask</code><span class="sig-paren">(</span><em>UnknownMask</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wraps <a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask" title="deltametrics.plan.OpeningAnglePlanform.from_ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_ElevationMask</span></code></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plan.OpeningAnglePlanform.name">
+<code class="descname">name</code><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planform name.</p>
+<p>Helpful to differentiate multiple Planforms.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plan.OpeningAnglePlanform.sea_angles">
+<code class="descname">sea_angles</code><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.sea_angles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximum opening angle view of the sea from a pixel.</p>
+<p>See figure in main docstring for visual example.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plan.OpeningAnglePlanform.shape">
+<code class="descname">shape</code><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planform shape.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="deltametrics.plan.compute_shoreline_roughness.html" title="deltametrics.plan.compute_shoreline_roughness"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../reference/plan/index.html" title="Planview operations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/plan/index.html" >Planview operations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

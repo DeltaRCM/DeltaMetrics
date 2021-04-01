@@ -13,10 +13,13 @@ deltametrics.mask.ShorelineMask
 
    .. autosummary::
    
-      ~ShorelineMask.Seaangles_mod
       ~ShorelineMask.__init__
-      ~ShorelineMask.compute_shoremask
+      ~ShorelineMask.from_OAP
+      ~ShorelineMask.from_array
+      ~ShorelineMask.from_mask
+      ~ShorelineMask.from_masks
       ~ShorelineMask.show
+      ~ShorelineMask.trim_mask
    
    
 
@@ -26,7 +29,10 @@ deltametrics.mask.ShorelineMask
 
    .. autosummary::
    
-      ~ShorelineMask.data
+      ~ShorelineMask.angle_threshold
+      ~ShorelineMask.integer_mask
       ~ShorelineMask.mask
+      ~ShorelineMask.mask_type
+      ~ShorelineMask.shape
    
    

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
@@ -159,7 +160,7 @@ For example, access variables as:</p>
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_bed_timeseries.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_bed_timeseries.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_bed_timeseries.png" src="../_images/userguide_bed_timeseries.png" />
+<img alt="../_images/userguide_bed_timeseries.png" class="plot-directive" src="../_images/userguide_bed_timeseries.png" />
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -178,7 +179,7 @@ For example:</p>
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_bed_elevation_change.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_bed_elevation_change.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_bed_elevation_change.png" src="../_images/userguide_bed_elevation_change.png" />
+<img alt="../_images/userguide_bed_elevation_change.png" class="plot-directive" src="../_images/userguide_bed_elevation_change.png" />
 </div>
 </div>
 <div class="section" id="manipulating-planform-data">
@@ -220,7 +221,7 @@ We can plot the trace on top the the final bed elevation to see where the sectio
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_strikesection_location.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_strikesection_location.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_strikesection_location.png" src="../_images/userguide_strikesection_location.png" />
+<img alt="../_images/userguide_strikesection_location.png" class="plot-directive" src="../_images/userguide_strikesection_location.png" />
 </div>
 <p>Any registered section can then be accessed via the <code class="xref py py-obj docutils literal notranslate"><span class="pre">sections</span></code> attribute of the Cube (returns a <cite>dict</cite>).</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span>
@@ -252,7 +253,7 @@ are sliced themselves, similarly to the cube.</p>
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_three_spacetime_sections.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_three_spacetime_sections.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_three_spacetime_sections.png" src="../_images/userguide_three_spacetime_sections.png" />
+<img alt="../_images/userguide_three_spacetime_sections.png" class="plot-directive" src="../_images/userguide_three_spacetime_sections.png" />
 </div>
 <p>You can also create a standalone section, which is not registered to the cube, but still supports slicing from the underlying dataset.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sass</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
@@ -300,7 +301,7 @@ Compute the quick stratigraphy as:</p>
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_quick_stratigraphy_sections.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_quick_stratigraphy_sections.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_quick_stratigraphy_sections.png" src="../_images/userguide_quick_stratigraphy_sections.png" />
+<img alt="../_images/userguide_quick_stratigraphy_sections.png" class="plot-directive" src="../_images/userguide_quick_stratigraphy_sections.png" />
 </div>
 <p>Quick stratigraphy makes it easy to visualize the behavior of the model across each of the variables:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
@@ -313,7 +314,7 @@ Compute the quick stratigraphy as:</p>
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_quick_stratigraphy_all_variables.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_quick_stratigraphy_all_variables.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_quick_stratigraphy_all_variables.png" src="../_images/userguide_quick_stratigraphy_all_variables.png" />
+<img alt="../_images/userguide_quick_stratigraphy_all_variables.png" class="plot-directive" src="../_images/userguide_quick_stratigraphy_all_variables.png" />
 </div>
 </div>
 <div class="section" id="all-section-types">
@@ -344,7 +345,7 @@ Each has unique instantiation arguments, though, which must be properly specifie
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_section_type_demos.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_section_type_demos.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_section_type_demos.png" src="../_images/userguide_section_type_demos.png" />
+<img alt="../_images/userguide_section_type_demos.png" class="plot-directive" src="../_images/userguide_section_type_demos.png" />
 </div>
 </div>
 </div>
@@ -366,7 +367,7 @@ the precomputed sparse indicies.</p>
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_1d_example.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_1d_example.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_1d_example2.png" src="../_images/userguide_1d_example2.png" />
+<img alt="../_images/userguide_1d_example2.png" class="plot-directive" src="../_images/userguide_1d_example2.png" />
 </div>
 <p>Begin by creating a <code class="docutils literal notranslate"><span class="pre">StratigraphyCube</span></code>:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">StratigraphyCube</span><span class="o">.</span><span class="n">from_DataCube</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
@@ -384,7 +385,7 @@ Compare the slice from the <cite>rcm8cube</cite> (left) to the <cite>sc8cube</ci
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_compare_slices.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_compare_slices.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_compare_slices.png" src="../_images/userguide_compare_slices.png" />
+<img alt="../_images/userguide_compare_slices.png" class="plot-directive" src="../_images/userguide_compare_slices.png" />
 </div>
 <p>Validation of the stratigraphy is easily seen by looking at the <code class="docutils literal notranslate"><span class="pre">time</span></code> attribute.
 Note that sections are <em>not</em> inherited from the <code class="docutils literal notranslate"><span class="pre">DataCube</span></code> by default (we’re working on this and related features).</p>
@@ -404,7 +405,7 @@ Note that sections are <em>not</em> inherited from the <code class="docutils lit
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_three_stratigraphy.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_three_stratigraphy.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_three_stratigraphy.png" src="../_images/userguide_three_stratigraphy.png" />
+<img alt="../_images/userguide_three_stratigraphy.png" class="plot-directive" src="../_images/userguide_three_stratigraphy.png" />
 </div>
 <p>Similar to the demonstration above, each variable (property) of the underlying cube can be displayed. These displays utilize the same <em>precomputed</em> locations in the stratigraphy and simply filled the synthesized matrix with the different variable values.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
@@ -417,7 +418,7 @@ Note that sections are <em>not</em> inherited from the <code class="docutils lit
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_all_vars_stratigraphy.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_all_vars_stratigraphy.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_all_vars_stratigraphy.png" src="../_images/userguide_all_vars_stratigraphy.png" />
+<img alt="../_images/userguide_all_vars_stratigraphy.png" class="plot-directive" src="../_images/userguide_all_vars_stratigraphy.png" />
 </div>
 <p>The stratigraphy cube allows us to slice planform slabs of stratigraphy
 too. We are working on a method to more easily slice by elevation
@@ -432,7 +433,7 @@ values. This might be done by subclassing <code class="docutils literal notransl
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_stratigraphy_planform_slice.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_stratigraphy_planform_slice.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_stratigraphy_planform_slice.png" src="../_images/userguide_stratigraphy_planform_slice.png" />
+<img alt="../_images/userguide_stratigraphy_planform_slice.png" class="plot-directive" src="../_images/userguide_stratigraphy_planform_slice.png" />
 </div>
 <div class="section" id="frozen-stratigraphy-volumes">
 <h3>Frozen stratigraphy volumes<a class="headerlink" href="#frozen-stratigraphy-volumes" title="Permalink to this headline">¶</a></h3>
@@ -472,48 +473,62 @@ See a <a class="reference internal" href="examples/computations/comparing_speeds
 </div>
 <div class="section" id="masks">
 <h2>Masks<a class="headerlink" href="#masks" title="Permalink to this headline">¶</a></h2>
-<p>We have implemented operations to compute masks of several types. These
-operations will be wrapped into the <code class="docutils literal notranslate"><span class="pre">Plan</span></code> API, and we will have
-methods to create new “variables” in the data cube which hold the binary
-values of the masks.</p>
+<p>We have implemented operations to compute masks of several types.</p>
+<p>By design, masks can be instantiated directly from the most basic “raw data” components (e.g., a channel <code class="xref py py-obj docutils literal notranslate"><span class="pre">CenterlineMask</span></code> from <cite>eta</cite> and  <cite>velocity</cite>).
+This is convenient, and can be a great way to quickly explore data and prototype algorithms; however, it is often more computationally efficient to reuse a precomputed mask (and <cite>Planform</cite> objects) to compute a new mask.
+We describe the relationships between various <cite>Mask</cite> types, and best practices for creating each on the <a class="reference internal" href="../reference/mask/index.html"><span class="doc">reference page for masks</span></a>.</p>
 <dl class="simple">
 <dt>Currently implemented <cite>Masks</cite>:</dt><dd><ul class="simple">
-<li><p>ChannelMask</p></li>
-<li><p>EdgeMask</p></li>
+<li><p>ElevationMask</p></li>
+<li><p>FlowMask</p></li>
 <li><p>LandMask</p></li>
 <li><p>ShorelineMask</p></li>
 <li><p>WetMask</p></li>
+<li><p>EdgeMask</p></li>
+<li><p>ChannelMask</p></li>
 <li><p>CenterlineMask</p></li>
 </ul>
 </dd>
 </dl>
+<p>Below, we demonstrate how some of the masks can be instantiated from the most basic data components.
+Instantiating <em>most</em> masks requires a keyword parameter <cite>elevation_threshold</cite>; the exact context of this parameter may depend on the mask type, but it is often the sea-level elevation.
+See the <a class="reference internal" href="../reference/mask/index.html"><span class="doc">reference page for each mask type</span></a> if you are unsure.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># use a new cube</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">maskcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># create the masks from variables in the cube</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">land_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">LandMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wet_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">WetMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">channel_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ChannelMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">centerline_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">CenterlineMask</span><span class="p">(</span><span class="n">channel_mask</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">edge_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">EdgeMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">shore_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ShorelineMask</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
-</pre></div>
-</div>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">spec</span> <span class="o">=</span> <span class="n">gs</span><span class="o">.</span><span class="n">GridSpec</span><span class="p">(</span><span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nrows</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">figure</span><span class="o">=</span><span class="n">fig</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax0</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">axs</span> <span class="o">=</span> <span class="p">[</span><span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,)))]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">land_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">LandMask</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax0</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="n">land_mask</span><span class="p">,</span> <span class="n">wet_mask</span><span class="p">,</span> <span class="n">channel_mask</span><span class="p">,</span> <span class="n">centerline_mask</span><span class="p">,</span> <span class="n">edge_mask</span><span class="p">,</span> <span class="n">shore_mask</span><span class="p">]):</span>
-<span class="gp">... </span>    <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">mask</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">)</span> 
-<span class="gp">... </span>    <span class="n">axs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">mask_type</span><span class="p">)</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">wet_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">WetMask</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">channel_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ChannelMask</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">flow_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">centerline_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">CenterlineMask</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">flow_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">edge_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">EdgeMask</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">shore_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ShorelineMask</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/userguide_masks_all_demo.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_masks_all_demo.hires.png">hires.png</a>)</p>
 <div class="figure align-center">
-<img alt="../_images/userguide_masks_all_demo.png" src="../_images/userguide_masks_all_demo.png" />
+<img alt="../_images/userguide_masks_all_demo.png" class="plot-directive" src="../_images/userguide_masks_all_demo.png" />
 </div>
 </div>
 </div>

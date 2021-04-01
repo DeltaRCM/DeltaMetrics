@@ -1,6 +1,0 @@
-deltametrics.plan.compute\_delta\_radius
-========================================
-
-.. currentmodule:: deltametrics.plan
-
-.. autofunction:: compute_delta_radius

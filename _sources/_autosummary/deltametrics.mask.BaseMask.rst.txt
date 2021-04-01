@@ -15,6 +15,7 @@ deltametrics.mask.BaseMask
    
       ~BaseMask.__init__
       ~BaseMask.show
+      ~BaseMask.trim_mask
    
    
 
@@ -24,7 +25,9 @@ deltametrics.mask.BaseMask
 
    .. autosummary::
    
-      ~BaseMask.data
+      ~BaseMask.integer_mask
       ~BaseMask.mask
+      ~BaseMask.mask_type
+      ~BaseMask.shape
    
    

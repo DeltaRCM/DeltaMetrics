@@ -1,0 +1,6 @@
+deltametrics.plan.shaw\_opening\_angle\_method
+==============================================
+
+.. currentmodule:: deltametrics.plan
+
+.. autofunction:: shaw_opening_angle_method

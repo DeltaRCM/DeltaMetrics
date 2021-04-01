@@ -1,0 +1,37 @@
+deltametrics.mask.ElevationMask
+===============================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: ElevationMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ElevationMask.__init__
+      ~ElevationMask.from_array
+      ~ElevationMask.show
+      ~ElevationMask.trim_mask
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ElevationMask.elevation_offset
+      ~ElevationMask.elevation_threshold
+      ~ElevationMask.integer_mask
+      ~ElevationMask.mask
+      ~ElevationMask.mask_type
+      ~ElevationMask.shape
+      ~ElevationMask.threshold
+   
+   

@@ -1,6 +1,0 @@
-deltametrics.plan.a\_land\_function
-===================================
-
-.. currentmodule:: deltametrics.plan
-
-.. autofunction:: a_land_function

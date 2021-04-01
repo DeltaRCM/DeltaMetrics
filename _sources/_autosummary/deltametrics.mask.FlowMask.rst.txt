@@ -1,0 +1,36 @@
+deltametrics.mask.FlowMask
+==========================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: FlowMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FlowMask.__init__
+      ~FlowMask.from_array
+      ~FlowMask.show
+      ~FlowMask.trim_mask
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~FlowMask.flow_threshold
+      ~FlowMask.integer_mask
+      ~FlowMask.mask
+      ~FlowMask.mask_type
+      ~FlowMask.shape
+      ~FlowMask.threshold
+   
+   

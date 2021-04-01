@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>deltametrics.plan.shaw_opening_angle_method &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Masking operations" href="../reference/mask/index.html" />
+    <link rel="prev" title="deltametrics.plan.compute_shoreline_length" href="deltametrics.plan.compute_shoreline_length.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../reference/mask/index.html" title="Masking operations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.plan.compute_shoreline_length.html" title="deltametrics.plan.compute_shoreline_length"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/plan/index.html" accesskey="U">Planview operations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.plan.compute_shoreline_length.html"
+                        title="previous chapter">deltametrics.plan.compute_shoreline_length</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../reference/mask/index.html"
+                        title="next chapter">Masking operations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.plan.shaw_opening_angle_method.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="deltametrics-plan-shaw-opening-angle-method">
+<h1>deltametrics.plan.shaw_opening_angle_method<a class="headerlink" href="#deltametrics-plan-shaw-opening-angle-method" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="deltametrics.plan.shaw_opening_angle_method">
+<code class="descclassname">deltametrics.plan.</code><code class="descname">shaw_opening_angle_method</code><span class="sig-paren">(</span><em>below_mask</em>, <em>numviews=3</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.shaw_opening_angle_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the opening angle map from an image.</p>
+<p>Applies the opening angle method <a class="footnote-reference brackets" href="#id3" id="id1">1</a> to compute the shoreline mask.
+Adapted from the Matlab implementation in <a class="footnote-reference brackets" href="#id4" id="id2">2</a>.</p>
+<p>This <em>function</em> takes an image and extracts its opening angle map.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id3"><span class="brackets">1</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id5">2</a>)</span></dt>
+<dd><p>Shaw, John B., et al. “An image‐based method for
+shoreline mapping on complex coasts.” Geophysical Research Letters
+35.12 (2008).</p>
+</dd>
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p>Liang, Man, Corey Van Dyk, and Paola Passalacqua.
+“Quantifying the patterns and dynamics of river deltas under
+conditions of steady forcing and relative sea level rise.” Journal
+of Geophysical Research: Earth Surface 121.2 (2016): 465-496.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>below_mask</strong> (<em>ndarray</em>) – Binary image that has been thresholded to split water/land. At
+minimum, this should be a thresholded elevation matrix, or some
+classification of land/water based on pixel color or reflectance
+intensity. This is the startin point (i.e., guess) for the opening
+angle method.</p></li>
+<li><p><strong>numviews</strong> (<em>int</em>) – Defines the number of largest angles to consider for the opening angle
+map for each pixel. Default is 3, based on <a class="footnote-reference brackets" href="#id3" id="id5">1</a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>shoreangles</strong> (<em>ndarray</em>) – Flattened values corresponding to the shoreangle detected for each
+‘look’ of the opening angle method</p></li>
+<li><p><strong>seaangles</strong> (<em>ndarray</em>) – Flattened values corresponding to the ‘sea’ angle detected for each
+‘look’ of the opening angle method. The ‘sea’ region is the convex
+hull which envelops the shoreline as well as the delta interior.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../reference/mask/index.html" title="Masking operations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.plan.compute_shoreline_length.html" title="deltametrics.plan.compute_shoreline_length"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/plan/index.html" >Planview operations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

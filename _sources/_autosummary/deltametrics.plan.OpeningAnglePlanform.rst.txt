@@ -1,0 +1,36 @@
+deltametrics.plan.OpeningAnglePlanform
+======================================
+
+.. currentmodule:: deltametrics.plan
+
+.. autoclass:: OpeningAnglePlanform
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~OpeningAnglePlanform.__init__
+      ~OpeningAnglePlanform.connect
+      ~OpeningAnglePlanform.from_ElevationMask
+      ~OpeningAnglePlanform.from_arrays
+      ~OpeningAnglePlanform.from_elevation_data
+      ~OpeningAnglePlanform.from_mask
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~OpeningAnglePlanform.below_mask
+      ~OpeningAnglePlanform.name
+      ~OpeningAnglePlanform.sea_angles
+      ~OpeningAnglePlanform.shape
+   
+   

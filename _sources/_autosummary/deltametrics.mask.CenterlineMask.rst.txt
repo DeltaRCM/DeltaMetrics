@@ -14,8 +14,13 @@ deltametrics.mask.CenterlineMask
    .. autosummary::
    
       ~CenterlineMask.__init__
-      ~CenterlineMask.compute_centerlinemask
+      ~CenterlineMask.from_OAP
+      ~CenterlineMask.from_OAP_and_FlowMask
+      ~CenterlineMask.from_array
+      ~CenterlineMask.from_mask
+      ~CenterlineMask.from_masks
       ~CenterlineMask.show
+      ~CenterlineMask.trim_mask
    
    
 
@@ -25,7 +30,10 @@ deltametrics.mask.CenterlineMask
 
    .. autosummary::
    
-      ~CenterlineMask.data
+      ~CenterlineMask.integer_mask
       ~CenterlineMask.mask
+      ~CenterlineMask.mask_type
+      ~CenterlineMask.method
+      ~CenterlineMask.shape
    
    

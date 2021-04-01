@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../../_static/jquery.js"></script>
@@ -16,7 +17,7 @@
     <script type="text/javascript" src="../../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="deltametrics.plan.compute_shoreline_roughness" href="../../_autosummary/deltametrics.plan.compute_shoreline_roughness.html" />
+    <link rel="next" title="deltametrics.plan.OpeningAnglePlanform" href="../../_autosummary/deltametrics.plan.OpeningAnglePlanform.html" />
     <link rel="prev" title="deltametrics.cube.CubeVariable" href="../../_autosummary/deltametrics.cube.CubeVariable.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -26,7 +27,7 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../../_autosummary/deltametrics.plan.compute_shoreline_roughness.html" title="deltametrics.plan.compute_shoreline_roughness"
+          <a href="../../_autosummary/deltametrics.plan.OpeningAnglePlanform.html" title="deltametrics.plan.OpeningAnglePlanform"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../../_autosummary/deltametrics.cube.CubeVariable.html" title="deltametrics.cube.CubeVariable"
@@ -37,12 +38,21 @@
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <h3><a href="../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Planview operations</a><ul>
+<li><a class="reference internal" href="#planform-types">Planform types</a></li>
+<li><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+
   <h4>Previous topic</h4>
   <p class="topless"><a href="../../_autosummary/deltametrics.cube.CubeVariable.html"
                         title="previous chapter">deltametrics.cube.CubeVariable</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../../_autosummary/deltametrics.plan.compute_shoreline_roughness.html"
-                        title="next chapter">deltametrics.plan.compute_shoreline_roughness</a></p>
+  <p class="topless"><a href="../../_autosummary/deltametrics.plan.OpeningAnglePlanform.html"
+                        title="next chapter">deltametrics.plan.OpeningAnglePlanform</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -72,6 +82,22 @@
 <h1>Planview operations<a class="headerlink" href="#planview-operations" title="Permalink to this headline">¶</a></h1>
 <p>The package makes available functions relating to planview operations on data.</p>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.plan</span></code>.</p>
+<div class="section" id="planform-types">
+<h2>Planform types<a class="headerlink" href="#planform-types" title="Permalink to this headline">¶</a></h2>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plan.OpeningAnglePlanform.html#deltametrics.plan.OpeningAnglePlanform" title="deltametrics.plan.OpeningAnglePlanform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpeningAnglePlanform</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Planform for handling the Shaw Opening Angle Method.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-center">
 <colgroup>
 <col style="width: 10%" />
@@ -84,20 +110,12 @@
 <tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plan.compute_shoreline_length.html#deltametrics.plan.compute_shoreline_length" title="deltametrics.plan.compute_shoreline_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_shoreline_length</span></code></a>(shore_mask[, …])</p></td>
 <td><p>Compute the length of a shoreline from a mask of the shoreline.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plan.a_land_function.html#deltametrics.plan.a_land_function" title="deltametrics.plan.a_land_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">a_land_function</span></code></a>(mask)</p></td>
-<td><p>Compute a land-water function</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plan.compute_delta_radius.html#deltametrics.plan.compute_delta_radius" title="deltametrics.plan.compute_delta_radius"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_delta_radius</span></code></a>(mask)</p></td>
-<td><p>Compute the delta radius</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plan.a_channel_function.html#deltametrics.plan.a_channel_function" title="deltametrics.plan.a_channel_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">a_channel_function</span></code></a>(mask)</p></td>
-<td><p>Compute a channel function</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plan.compute_shoreline_angles.html#deltametrics.plan.compute_shoreline_angles" title="deltametrics.plan.compute_shoreline_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_shoreline_angles</span></code></a>(mask[, param2])</p></td>
-<td><p>Compute shoreline angle.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plan.shaw_opening_angle_method.html#deltametrics.plan.shaw_opening_angle_method" title="deltametrics.plan.shaw_opening_angle_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shaw_opening_angle_method</span></code></a>(below_mask[, numviews])</p></td>
+<td><p>Extract the opening angle map from an image.</p></td>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 
 
@@ -113,7 +131,7 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../../_autosummary/deltametrics.plan.compute_shoreline_roughness.html" title="deltametrics.plan.compute_shoreline_roughness"
+          <a href="../../_autosummary/deltametrics.plan.OpeningAnglePlanform.html" title="deltametrics.plan.OpeningAnglePlanform"
              >next</a> |</li>
         <li class="right" >
           <a href="../../_autosummary/deltametrics.cube.CubeVariable.html" title="deltametrics.cube.CubeVariable"

@@ -1,0 +1,35 @@
+deltametrics.mask.ThresholdValueMask
+====================================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: ThresholdValueMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ThresholdValueMask.__init__
+      ~ThresholdValueMask.from_array
+      ~ThresholdValueMask.show
+      ~ThresholdValueMask.trim_mask
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~ThresholdValueMask.integer_mask
+      ~ThresholdValueMask.mask
+      ~ThresholdValueMask.mask_type
+      ~ThresholdValueMask.shape
+      ~ThresholdValueMask.threshold
+   
+   
