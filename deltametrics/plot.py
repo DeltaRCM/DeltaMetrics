@@ -230,7 +230,8 @@ class VariableSet(object):
 
         _added_list = ['net_to_gross']
         self.known_list = ['eta', 'stage', 'depth', 'discharge',
-                           'velocity', 'sedflux', 'strata_sand_frac'] + \
+                           'velocity', 'sedflux', 'strata_sand_frac',
+                           'sandfrac'] + \
                           ['x', 'y', 'time'] + _added_list
 
         self._variables = []
@@ -433,6 +434,28 @@ class VariableSet(object):
             raise TypeError
 
     @property
+    def sandfrac(self):
+        """Sand fraction style.
+        """
+        return self._sandfrac
+
+    @sandfrac.setter
+    def sandfrac(self, var):
+        if not var:
+            sand_frac = colors.ListedColormap(
+                ['saddlebrown', 'sienna', 'goldenrod', 'gold'])
+            sand_frac.set_under('saddlebrown')
+            bn = colors.BoundaryNorm([1e-6, 1], sand_frac.N)
+            self._sandfrac = VariableInfo('sandfrac',
+                                          cmap=sand_frac,
+                                          norm=None, vmin=0,
+                                          label='sand fraction')
+        elif type(var) is VariableInfo:
+            self._sandfrac = var
+        else:
+            raise TypeError
+
+    @property
     def strata_depth(self):
         return self._strata_depth
 
@@ -509,7 +532,7 @@ def cartographic_colormap(H_SL=0.0, h=4.5, n=1.0):
         :include-source:
 
         rcm8cube = dm.sample_data.cube.rcm8()
-        
+
         cmap0, norm0 = dm.plot.cartographic_colormap(H_SL=0)
         cmap1, norm1 = dm.plot.cartographic_colormap(H_SL=0, h=5, n=0.5)
 
@@ -949,7 +972,7 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
 def _scale_lightness(rgb, scale_l):
     """Utility to scale the lightness of some color.
 
-    Make a color perceptually lighter or darker. Adapted from 
+    Make a color perceptually lighter or darker. Adapted from
     https://stackoverflow.com/a/60562502/4038393.
 
     Parameters
@@ -971,21 +994,21 @@ def _scale_lightness(rgb, scale_l):
     -------
 
     .. plot::
-        
+
         fig, ax = plt.subplots(figsize=(5, 2))
 
         # initial color red
         red = (1.0, 0.0, 0.0)
         ax.plot(-1, 1, 'o', color=red)
-        
+
         # scale from 1 to 0.05
         scales = np.arange(1, 0, -0.05)
-        
+
         # loop through scales and plot
         for s, scale in enumerate(scales):
             darker_red = dm.plot._scale_lightness(red, scale)
             ax.plot(s, scale, 'o', color=darker_red)
-        
+
         plt.show()
     """
     # https://stackoverflow.com/a/60562502/4038393
@@ -1032,7 +1055,7 @@ def show_histograms(*args, sets=None, ax=None, **kwargs):
         locs = [0.25, 1, 0.5, 4, 2]
         scales = [0.1, 0.25, 0.4, 0.5, 0.1]
         bins = np.linspace(0, 6, num=40)
-        
+
         hist_bin_sets = [np.histogram(np.random.normal(l, s, size=500), bins=bins, density=True) for l, s in zip(locs, scales)]
 
         fig, ax = plt.subplots()
@@ -1040,10 +1063,10 @@ def show_histograms(*args, sets=None, ax=None, **kwargs):
         ax.set_xlim((0, 6))
         ax.set_ylabel('density')
         plt.show()
-    """    
+    """
     if not ax:
         fig, ax = plt.subplots()
-    
+
     if (sets is None):
         n_sets = len(args)
         sets = np.arange(n_sets)
@@ -1063,5 +1086,5 @@ def show_histograms(*args, sets=None, ax=None, **kwargs):
             hist, bins = args[match[n]]
             bin_width = (bins[1:] - bins[:-1])
             bin_cent = bins[:-1] + (bin_width/2)
-            ax.bar(bin_cent, hist, width=bin_width, 
+            ax.bar(bin_cent, hist, width=bin_width,
                 edgecolor=CNs[n], facecolor=CNs[n], **kwargs)
