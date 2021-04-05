@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
     <title>10-minute tutorial &#8212; DeltaMetrics 0.1.0 documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -82,7 +83,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="minute-tutorial">
+  <section id="minute-tutorial">
 <h1>10-minute tutorial<a class="headerlink" href="#minute-tutorial" title="Permalink to this headline">¶</a></h1>
 <p>This documentation provides a guide to learn the most basic components of DeltaMetrics in just ten minutes!
 For a more in depth guide, be sure to check out the <a class="reference internal" href="userguide.html"><span class="doc">User Guide</span></a>.</p>
@@ -95,7 +96,7 @@ For a more in depth guide, be sure to check out the <a class="reference internal
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 </pre></div>
 </div>
-<div class="section" id="connect-to-data">
+<section id="connect-to-data">
 <h2>Connect to data<a class="headerlink" href="#connect-to-data" title="Permalink to this headline">¶</a></h2>
 <p>In your application, you will want to connect to a your own dataset, but more on that later.
 For now, let’s use a sample dataset that is distributed with DeltaMetrics.</p>
@@ -112,8 +113,8 @@ Creating the <code class="docutils literal notranslate"><span class="pre">rcm8cu
 <span class="go">[&#39;eta&#39;, &#39;stage&#39;, &#39;depth&#39;, &#39;discharge&#39;, &#39;velocity&#39;, &#39;strata_sand_frac&#39;]</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="accessing-data-from-a-datacube">
+</section>
+<section id="accessing-data-from-a-datacube">
 <h2>Accessing data from a DataCube<a class="headerlink" href="#accessing-data-from-a-datacube" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference internal" href="../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a> can be sliced directly by variable name.
 Slicing a cube returns an instance of <a class="reference internal" href="../_autosummary/deltametrics.cube.CubeVariable.html#deltametrics.cube.CubeVariable" title="deltametrics.cube.CubeVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CubeVariable</span></code></a>, which is an xarray “accessor”; this means that it contains an xarray object in addition to custom functions.</p>
@@ -136,7 +137,7 @@ Slicing a cube returns an instance of <a class="reference internal" href="../_au
 <p>The DataCube is often used by taking horizontal or vertical “cuts” of the cube.
 In this package, we refer to horizontal cuts as “plans” (<cite>Planform</cite> data) and vertical cuts as “sections” (<cite>Section</cite> data).</p>
 <p>The <a class="reference internal" href="../reference/plan/index.html"><span class="doc">Planform</span></a> and <a class="reference internal" href="../reference/section/index.html"><span class="doc">Section</span></a> data types have a series of helpful classes and functions, which are fully documented in their respective pages.</p>
-<div class="section" id="planform-data">
+<section id="planform-data">
 <h3>Planform data<a class="headerlink" href="#planform-data" title="Permalink to this headline">¶</a></h3>
 <p>We can visualize Planform data of the cube with a number of built-in
 functions. Let’s inspect the state of several variables
@@ -155,11 +156,11 @@ of the Cube at the fortieth (40th) timestep:</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/10min_three_plans.png">png</a>, <a class="reference external" href="../pyplots/guides/10min_three_plans.hires.png">hires.png</a>)</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="../_images/10min_three_plans.png" class="plot-directive" src="../_images/10min_three_plans.png" />
-</div>
-</div>
-<div class="section" id="section-data">
+</figure>
+</section>
+<section id="section-data">
 <h3>Section data<a class="headerlink" href="#section-data" title="Permalink to this headline">¶</a></h3>
 <p>We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
 In DeltaMetrics, we refer to this preserved history as the “stratigraphy”, and we provide a number of convenient routines for computing stratigraphy and analyzing the deposits.</p>
@@ -189,12 +190,12 @@ The stratigraphy computed via <cite>stratigraphy_from</cite> is often referred t
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../pyplots/guides/10min_all_sections_strat.png">png</a>, <a class="reference external" href="../pyplots/guides/10min_all_sections_strat.hires.png">hires.png</a>)</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="../_images/10min_all_sections_strat.png" class="plot-directive" src="../_images/10min_all_sections_strat.png" />
-</div>
-</div>
-</div>
-</div>
+</figure>
+</section>
+</section>
+</section>
 
 
           </div>

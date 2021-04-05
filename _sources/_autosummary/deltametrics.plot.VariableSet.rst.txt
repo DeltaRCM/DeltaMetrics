@@ -27,6 +27,7 @@ deltametrics.plot.VariableSet
       ~VariableSet.discharge
       ~VariableSet.eta
       ~VariableSet.net_to_gross
+      ~VariableSet.sandfrac
       ~VariableSet.sedflux
       ~VariableSet.stage
       ~VariableSet.strata_depth

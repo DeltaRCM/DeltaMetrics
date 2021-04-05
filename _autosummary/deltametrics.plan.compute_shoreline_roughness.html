@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
     <title>deltametrics.plan.compute_shoreline_roughness &#8212; DeltaMetrics 0.1.0 documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -70,7 +71,7 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="deltametrics-plan-compute-shoreline-roughness">
+  <section id="deltametrics-plan-compute-shoreline-roughness">
 <h1>deltametrics.plan.compute_shoreline_roughness<a class="headerlink" href="#deltametrics-plan-compute-shoreline-roughness" title="Permalink to this headline">¶</a></h1>
 <dl class="function">
 <dt id="deltametrics.plan.compute_shoreline_roughness">
@@ -135,17 +136,17 @@ topography of the <cite>pyDeltaRCM</cite> model results.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../_autosummary/deltametrics-plan-compute_shoreline_roughness-2.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-plan-compute_shoreline_roughness-2.hires.png">hires.png</a>)</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="../_images/deltametrics-plan-compute_shoreline_roughness-2.png" class="plot-directive" src="../_images/deltametrics-plan-compute_shoreline_roughness-2.png" />
-</div>
+</figure>
 <p>In order for these masks to work as expected in the shoreline roughness
 computation, we need to modify the mask values slightly, to remove the
 land-water boundary that is not really a part of the delta. We use the
 <a class="reference internal" href="deltametrics.mask.BaseMask.html#deltametrics.mask.BaseMask.trim_mask" title="deltametrics.mask.BaseMask.trim_mask"><code class="xref py py-meth docutils literal notranslate"><span class="pre">trim_mask()</span></code></a> method to trim a mask.</p>
 <p>(<a class="reference external" href="../_autosummary/deltametrics-plan-compute_shoreline_roughness-3.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-plan-compute_shoreline_roughness-3.hires.png">hires.png</a>)</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="../_images/deltametrics-plan-compute_shoreline_roughness-3.png" class="plot-directive" src="../_images/deltametrics-plan-compute_shoreline_roughness-3.png" />
-</div>
+</figure>
 <p>And now, we can proceed with the calculation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># compute roughnesses</span>
 <span class="n">rgh0</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">compute_shoreline_roughness</span><span class="p">(</span><span class="n">sm0</span><span class="p">,</span> <span class="n">lm0</span><span class="p">)</span>
@@ -161,12 +162,12 @@ land-water boundary that is not really a part of the delta. We use the
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../_autosummary/deltametrics-plan-compute_shoreline_roughness-4.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-plan-compute_shoreline_roughness-4.hires.png">hires.png</a>)</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="../_images/deltametrics-plan-compute_shoreline_roughness-4.png" class="plot-directive" src="../_images/deltametrics-plan-compute_shoreline_roughness-4.png" />
-</div>
+</figure>
 </dd></dl>
 
-</div>
+</section>
 
 
           </div>

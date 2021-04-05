@@ -3,7 +3,8 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
-    <meta charset="utf-8" />
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
     <title>Planning &#8212; DeltaMetrics 0.1.0 documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -77,14 +78,14 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <div class="section" id="planning">
+  <section id="planning">
 <h1>Planning<a class="headerlink" href="#planning" title="Permalink to this headline">¶</a></h1>
 <p>A working list of development goals will be useful when initially developing the package.</p>
-<div class="section" id="mission-statement">
+<section id="mission-statement">
 <h2>Mission statement<a class="headerlink" href="#mission-statement" title="Permalink to this headline">¶</a></h2>
 <p>The goal of the DeltaMetrics project is to provide convenient tools to analyze seidmentologic data cubes.</p>
-</div>
-<div class="section" id="objectives">
+</section>
+<section id="objectives">
 <h2>Objectives<a class="headerlink" href="#objectives" title="Permalink to this headline">¶</a></h2>
 <ol class="arabic simple">
 <li><p>Users should be able to instantiate the Cube object with a numpy array where dimensions are expected to be <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code>, and a value specifying the type of data stored in the array. Data could be, lidar scans, overhead photos, grain size maps (DeltaRCM), flow velocity (DeltaRCM), etc. An optional time array can be supplied, specifying time at each z; we can also accept a single value <code class="docutils literal notranslate"><span class="pre">T</span></code>, and time is linearly spaced wrt <code class="docutils literal notranslate"><span class="pre">T</span></code> and <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
@@ -94,8 +95,8 @@
 <li><p>Users should be able to compute statistics on these <code class="docutils literal notranslate"><span class="pre">Plan</span></code> s. For example, find shoreline, radially average delta size, extract channels, shoreline curvature, etc. These routines can live in <code class="docutils literal notranslate"><span class="pre">deltametrics.plan</span></code> (<a class="reference internal" href="../reference/plan/index.html"><span class="doc">Planview operations</span></a>) or in other modules, such as <code class="docutils literal notranslate"><span class="pre">.shoreline.py</span></code> etc, or even in separate sub-packages as we deem appropriate. It may be helpful to separate out the extraction of water-land masks to a new module (<code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code>).</p></li>
 </ol>
 <p>To this end, the <code class="docutils literal notranslate"><span class="pre">Cube</span></code>, <code class="docutils literal notranslate"><span class="pre">Section</span></code>, and <code class="docutils literal notranslate"><span class="pre">Plan</span></code> classes are the core classes of the package, and everything should be built around them.</p>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
