@@ -521,7 +521,11 @@ class ChannelMask(BaseMask):
             will be coerced to `boolean`.
         """
         # set directly
-        raise NotImplementedError
+        _CM = ChannelMask(allow_empty=True)
+        _CM._set_shape_mask(_arr.shape)
+        _CM._input_flag = None
+        _CM._mask = _arr.astype(np.bool)  # set the array as mask
+        return _CM
 
     def __init__(self, *args, is_mask=None, **kwargs):
         """Initialize the ChannelMask.
@@ -1129,6 +1133,7 @@ class ShorelineMask(BaseMask):
             will be coerced to `boolean`.
         """
         _SM = ShorelineMask(allow_empty=True)
+        _SM._set_shape_mask(_arr.shape)
         _SM._angle_threshold = None
         _SM._input_flag = None
         _SM._mask = _arr.astype(np.bool)  # set the array as mask
