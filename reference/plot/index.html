@@ -121,7 +121,7 @@ The default parameters of each styling variable are defined below:</p>
 <h2>Plotting utility functions<a class="headerlink" href="#plotting-utility-functions" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="deltametrics.plot.append_colorbar">
-<code class="descclassname">deltametrics.plot.</code><code class="descname">append_colorbar</code><span class="sig-paren">(</span><em>ci</em>, <em>ax</em>, <em>size=2</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">deltametrics.plot.</code><code class="descname">append_colorbar</code><span class="sig-paren">(</span><em>ci</em>, <em>ax</em>, <em>size=2</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append a colorbar, consistently placed.</p>
 <p>Adjusts some parameters of the parent axes as well.</p>
 <dl class="field-list simple">
@@ -132,6 +132,7 @@ be stolen from.</p></li>
 <li><p><strong>ax</strong> (<cite>matplotlib.Axes</cite>) – The instance of axes to place the colorbar next to.</p></li>
 <li><p><strong>adjust</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to adjust some minor attributes of the parent axis, for
 presentation.</p></li>
+<li><p><strong>**kwargs</strong> – Passed to <cite>matplotlib.pyplot.colorbar</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
