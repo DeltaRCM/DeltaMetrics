@@ -3,6 +3,8 @@ import pytest
 import sys
 import os
 
+import unittest.mock as mock
+
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
@@ -15,6 +17,7 @@ from deltametrics.sample_data import _get_rcm8_path
 
 
 rcm8_path = _get_rcm8_path()
+
 
 class TestVariableInfo:
 
@@ -93,7 +96,7 @@ class TestVariableSet:
         assert isinstance(vs.velocity, plot.VariableInfo)
         assert isinstance(vs.strata_sand_frac, plot.VariableInfo)
         assert isinstance(vs.sedflux, plot.VariableInfo)
-        
+
     def test_initialize_VariableSet_override_known_VariableInfo(self):
         vi = plot.VariableInfo('depth')
         od = {'depth': vi}
@@ -150,13 +153,37 @@ class TestVariableSet:
             vs.fakevariable = 'Yellow!'
 
 
-def test_append_colorbar():
-    _arr = np.random.randint(0, 100, size=(50, 50))
-    fig, ax = plt.subplots()
-    im = ax.imshow(_arr)
-    cb = plot.append_colorbar(im, ax)
-    assert isinstance(cb, matplotlib.colorbar.Colorbar)
-    assert ax.use_sticky_edges is False
+class TestAppendColorbar:
+
+    def test_append_colorbar_working(self):
+        """Test that the routine works.
+        Doesn't really make any meaningful assertions.
+        """
+        _arr = np.random.randint(0, 100, size=(50, 50))
+        fig, ax = plt.subplots()
+        im = ax.imshow(_arr)
+        cb = plot.append_colorbar(im, ax)
+        assert isinstance(cb, matplotlib.colorbar.Colorbar)
+        assert ax.use_sticky_edges is False
+
+    def test_size_argument_passed(self):
+        """Test that the routine works.
+        Doesn't really make any meaningful assertions.
+        """
+        _arr = np.random.randint(0, 100, size=(50, 50))
+        fig, ax = plt.subplots()
+        im = ax.imshow(_arr)
+        cb = plot.append_colorbar(im, ax, size=10)
+        assert isinstance(cb, matplotlib.colorbar.Colorbar)
+
+    def test_kwargs_argument_passed(self):
+        _arr = np.random.randint(0, 100, size=(50, 50))
+        fig, ax = plt.subplots()
+        im = ax.imshow(_arr)
+        _formatter = plt.FuncFormatter(lambda val, loc: np.round(val, 0))
+        cb = plot.append_colorbar(im, ax, size=10, format=_formatter)
+        assert isinstance(cb, matplotlib.colorbar.Colorbar)
+        assert cb.formatter is _formatter
 
 
 class TestFillSteps:
