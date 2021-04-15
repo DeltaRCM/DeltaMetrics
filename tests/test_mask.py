@@ -346,6 +346,7 @@ class TestShorelineMask:
 
         shoremask = mask.ShorelineMask.from_array(_arr)
         # make assertions
+        assert shoremask.mask_type == 'shoreline'
         assert shoremask._input_flag is None
         assert np.all(shoremask._mask == _arr)
 
@@ -356,6 +357,7 @@ class TestShorelineMask:
 
         shoremask2 = mask.ShorelineMask.from_array(_arr2)
         # make assertions
+        assert shoremask2.mask_type == 'shoreline'
         assert shoremask2._input_flag is None
         assert np.all(shoremask2._mask == _arr2_bool)
 
@@ -1101,14 +1103,30 @@ class TestChannelMask:
         assert np.all(channelmask_comp._mask == mfem2._mask)
         assert np.all(mfem._mask == mfem2._mask)
 
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-                       reason='Have not implemented pathway.')
+    # @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+    #                    reason='Have not implemented pathway.')
     def test_static_from_array(self):
         """Test that instantiation works for an array."""
         # define the mask
-        channelmask = mask.ChannelMask.from_array(np.ones((100, 200)))
+        _arr = np.ones((100, 200))
+        _arr[50:55, :] = 0
+
+        channelmask = mask.ChannelMask.from_array(_arr)
         # make assertions
-        assert channelmask._input_flag == 'channel'
+        assert channelmask.mask_type == 'channel'
+        assert channelmask._input_flag is None
+        assert np.all(channelmask._mask == _arr)
+
+        _arr2 = np.random.uniform(size=(100, 200))
+        _arr2_bool = _arr2.astype(np.bool)
+
+        assert _arr2.dtype == np.float
+
+        channelmask2 = mask.ChannelMask.from_array(_arr2)
+        # make assertions
+        assert channelmask2.mask_type == 'channel'
+        assert channelmask2._input_flag is None
+        assert np.all(channelmask2._mask == _arr2_bool)
 
 
 class TestEdgeMask:
