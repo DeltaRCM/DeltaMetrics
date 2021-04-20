@@ -353,7 +353,7 @@ class TestShorelineMask:
         _arr2 = np.random.uniform(size=(100, 200))
         _arr2_bool = _arr2.astype(bool)
 
-        assert _arr2.dtype == np.float
+        assert _arr2.dtype == float
 
         shoremask2 = mask.ShorelineMask.from_array(_arr2)
         # make assertions
@@ -1120,7 +1120,7 @@ class TestChannelMask:
         _arr2 = np.random.uniform(size=(100, 200))
         _arr2_bool = _arr2.astype(bool)
 
-        assert _arr2.dtype == np.float
+        assert _arr2.dtype == float
 
         channelmask2 = mask.ChannelMask.from_array(_arr2)
         # make assertions
