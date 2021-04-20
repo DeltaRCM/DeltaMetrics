@@ -141,8 +141,8 @@ class TestPathSection:
     def test_path_reduced_unique(self):
         # test a first case with a straight line
         rcm8cube = cube.DataCube(rcm8_path)
-        xy = np.column_stack((np.linspace(50, 150, num=4000, dtype=np.int),
-                              np.linspace(10, 90, num=4000, dtype=np.int)))
+        xy = np.column_stack((np.linspace(50, 150, num=4000, dtype=int),
+                              np.linspace(10, 90, num=4000, dtype=int)))
         saps1 = section.PathSection(rcm8cube, path=xy)
         assert saps1.path.shape != xy.shape
         assert np.all(saps1.path == np.unique(xy, axis=0))
@@ -888,7 +888,7 @@ class TestDataSectionVariableWithStratigraphy:
         _arr = np.random.rand(100, 200)
         _s = np.arange(200)
         _z = np.linspace(0, 10, num=100)
-        _mask = np.random.randint(0, 2, (100, 200), dtype=np.bool)
+        _mask = np.random.randint(0, 2, (100, 200), dtype=bool)
         _dsv = section.DataSectionVariable(_arr, _s, _z)
         assert isinstance(_dsv, section.DataSectionVariable)
         assert np.all(_dsv == _arr)
@@ -903,7 +903,7 @@ class TestDataSectionVariableWithStratigraphy:
         _arr = np.random.rand(100, 200)
         _s = np.arange(200)
         _z = np.linspace(0, 10, num=100)
-        _mask = np.random.randint(0, 2, (20, 200), dtype=np.bool)
+        _mask = np.random.randint(0, 2, (20, 200), dtype=bool)
         with pytest.raises(ValueError, match=r'Shape of "_psvd_mask"*.'):
             _dsv = section.DataSectionVariable(_arr, _s, _z, _mask)
 
@@ -911,7 +911,7 @@ class TestDataSectionVariableWithStratigraphy:
         _arr = np.random.rand(100, 200)
         _s = np.arange(500)
         _z = np.linspace(0, 10, num=100)
-        _mask = np.random.randint(0, 2, (100, 200), dtype=np.bool)
+        _mask = np.random.randint(0, 2, (100, 200), dtype=bool)
         with pytest.raises(ValueError, match=r'Shape of "_s"*.'):
             _dsv = section.DataSectionVariable(_arr, _s, _z, _mask)
 

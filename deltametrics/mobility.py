@@ -51,7 +51,7 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
         chmap = chmap.values
     elif isinstance(chmap, list):
         # assume it is a timeseries of masks set into a list
-        _arrs = [msk._mask.astype(np.int) for msk in chmap]
+        _arrs = [msk._mask.astype(int) for msk in chmap]
         chmap = np.array(_arrs)
     else:
         raise TypeError('chmap data type not understood.')
@@ -70,7 +70,7 @@ def check_inputs(chmap, basevalues, time_window, landmap=None):
             landmap = landmap.values
         elif isinstance(landmap, list):
             # assume it is a timeseries of masks set into a list
-            _arrs = [msk._mask.astype(np.int) for msk in landmap]
+            _arrs = [msk._mask.astype(int) for msk in landmap]
             landmap = np.array(_arrs)
         else:
             raise TypeError('landmap data type not understood.')

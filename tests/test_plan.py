@@ -29,22 +29,22 @@ class TestOpeningAnglePlanform:
 
     def test_defaults_array_int(self):
 
-        oap = plan.OpeningAnglePlanform(self.simple_ocean.astype(np.int))
+        oap = plan.OpeningAnglePlanform(self.simple_ocean.astype(int))
         assert isinstance(oap.sea_angles, np.ndarray)
         assert oap.sea_angles.shape == self.simple_ocean.shape
-        assert oap.below_mask.dtype == np.bool
+        assert oap.below_mask.dtype == bool
 
     def test_defaults_array_bool(self):
 
-        oap = plan.OpeningAnglePlanform(self.simple_ocean.astype(np.bool))
+        oap = plan.OpeningAnglePlanform(self.simple_ocean.astype(bool))
         assert isinstance(oap.sea_angles, np.ndarray)
         assert oap.sea_angles.shape == self.simple_ocean.shape
-        assert oap.below_mask.dtype == np.bool
+        assert oap.below_mask.dtype == bool
 
-    def test_defaults_array_float_erro(self):
+    def test_defaults_array_float_error(self):
 
         with pytest.raises(TypeError):
-            _ = plan.OpeningAnglePlanform(self.simple_ocean.astype(np.float))
+            _ = plan.OpeningAnglePlanform(self.simple_ocean.astype(float))
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -59,7 +59,7 @@ class TestOpeningAnglePlanform:
             elevation_threshold=0)
         assert isinstance(oap.sea_angles, np.ndarray)
         assert oap.sea_angles.shape == self.golfcube.shape[1:]
-        assert oap.below_mask.dtype == np.bool
+        assert oap.below_mask.dtype == bool
 
     def test_defaults_static_from_elevation_data_needs_threshold(self):
 
@@ -77,7 +77,7 @@ class TestOpeningAnglePlanform:
 
         assert isinstance(oap.sea_angles, np.ndarray)
         assert oap.sea_angles.shape == _em.shape
-        assert oap.below_mask.dtype == np.bool
+        assert oap.below_mask.dtype == bool
 
     def test_defaults_static_from_elevation_data_kwargs_passed(self):
 

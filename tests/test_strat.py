@@ -161,13 +161,13 @@ class TestComputeElevationToPreservation:
     def test_2d_all_zeros(self):
         s, p = strat._compute_elevation_to_preservation(np.zeros((6, 4)))
         assert np.all(s == np.zeros((6, 4)))
-        assert np.all(p == np.zeros((6, 4), dtype=np.bool))
+        assert np.all(p == np.zeros((6, 4), dtype=bool))
 
     def test_2d_all_aggrade(self):
         e = np.tile(np.arange(0, 3), (2, 1)).T
         s, p = strat._compute_elevation_to_preservation(e)
         assert np.all(s == np.array([[0, 0], [1, 1], [2, 2]]))
-        assert np.all(p == np.ones((3, 2), dtype=np.bool))
+        assert np.all(p == np.ones((3, 2), dtype=bool))
 
     def test_2d_different_walks(self):
         e = np.array([[0, 3,   4],
@@ -190,13 +190,13 @@ class TestComputeElevationToPreservation:
     def test_3d_all_zeros(self):
         s, p = strat._compute_elevation_to_preservation(np.zeros((6, 4, 4)))
         assert np.all(s == np.zeros((6, 4, 4)))
-        assert np.all(p == np.zeros((6, 4, 4), dtype=np.bool))
+        assert np.all(p == np.zeros((6, 4, 4), dtype=bool))
 
     def test_3d_all_aggrade(self):
         e = np.tile(np.arange(0, 3), (2, 2, 1)).T
         s, p = strat._compute_elevation_to_preservation(e)
         assert np.all(s == np.array([[[0, 0], [0, 0]], [[1, 1], [1, 1]], [[2, 2], [2, 2]]]))
-        assert np.all(p == np.ones((3, 2, 2), dtype=np.bool))
+        assert np.all(p == np.ones((3, 2, 2), dtype=bool))
 
     def test_3d_different_walks_return_valid_only_check(self):
         e = np.random.rand(51, 120, 240)

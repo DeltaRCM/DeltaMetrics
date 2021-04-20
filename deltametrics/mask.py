@@ -86,7 +86,7 @@ class BaseMask(abc.ABC):
             Shape of the mask.
         """
         self._shape = _shape
-        self._mask = np.zeros(self._shape, dtype=np.bool)
+        self._mask = np.zeros(self._shape, dtype=bool)
 
     def trim_mask(self, *args, value=False, axis=1, length=None):
         """Replace a part of the mask with a new value.
@@ -176,7 +176,7 @@ class BaseMask(abc.ABC):
 
         Read-only mask attribute.
         """
-        return self._mask.astype(np.int)
+        return self._mask.astype(int)
 
     def show(self, ax=None, title=None, ticks=False,
              colorbar=False, **kwargs):
@@ -524,7 +524,7 @@ class ChannelMask(BaseMask):
         _CM = ChannelMask(allow_empty=True)
         _CM._set_shape_mask(_arr.shape)
         _CM._input_flag = None
-        _CM._mask = _arr.astype(np.bool)  # set the array as mask
+        _CM._mask = _arr.astype(bool)  # set the array as mask
         return _CM
 
     def __init__(self, *args, is_mask=None, **kwargs):
@@ -1053,7 +1053,7 @@ class LandMask(BaseMask):
             raise ValueError('Specify only 1 argument.')
 
         if np.all(sea_angles == 0):
-            self._mask = np.zeros(self._shape, dtype=np.bool)
+            self._mask = np.zeros(self._shape, dtype=bool)
         else:
             self._mask = (sea_angles < self._angle_threshold)
 
@@ -1136,7 +1136,7 @@ class ShorelineMask(BaseMask):
         _SM._set_shape_mask(_arr.shape)
         _SM._angle_threshold = None
         _SM._input_flag = None
-        _SM._mask = _arr.astype(np.bool)  # set the array as mask
+        _SM._mask = _arr.astype(bool)  # set the array as mask
         return _SM
 
     def __init__(self, *args, angle_threshold=75, **kwargs):
@@ -1262,7 +1262,7 @@ class ShorelineMask(BaseMask):
             shoremap.flat[flat_inds] = 1
 
         # write shoreline map out to data.mask
-        self._mask = np.copy(shoremap.astype(np.bool))
+        self._mask = np.copy(shoremap.astype(bool))
 
     @property
     def angle_threshold(self):
@@ -1479,11 +1479,11 @@ class EdgeMask(BaseMask):
         """
         if len(args) == 2:
             if isinstance(args[0], LandMask):
-                lm_array = args[0]._mask.astype(np.float)
-                wm_array = args[1]._mask.astype(np.float)
+                lm_array = args[0]._mask.astype(float)
+                wm_array = args[1]._mask.astype(float)
             elif utils.is_ndarray_or_xarray(args[0]):
-                lm_array = args[0].astype(np.float)
-                wm_array = args[1].astype(np.float)
+                lm_array = args[0].astype(float)
+                wm_array = args[1].astype(float)
             else:
                 raise TypeError(
                     'Type must be array but was %s' % type(args[0]))
@@ -1495,7 +1495,7 @@ class EdgeMask(BaseMask):
         #   the arrays must be type float for this to work!
         self._mask = np.maximum(
                 0, (feature.canny(wm_array) * 1 -
-                    feature.canny(lm_array) * 1)).astype(np.bool)
+                    feature.canny(lm_array) * 1)).astype(bool)
 
 
 class CenterlineMask(BaseMask):
@@ -1725,7 +1725,7 @@ class CenterlineMask(BaseMask):
             raise ValueError
 
         if isinstance(args[0], ChannelMask):
-            cm_array = np.array(args[0]._mask, dtype=np.float)
+            cm_array = np.array(args[0]._mask, dtype=float)
         else:
             raise TypeError
 
@@ -1867,7 +1867,7 @@ class GeometricMask(BaseMask):
 
         # FOR GEOMETRIC, NEED START FROM ALL TRUE
         #   replace values from init immediately
-        self._mask = np.ones(self.shape, dtype=np.bool)
+        self._mask = np.ones(self.shape, dtype=bool)
 
         # pull the shape into components for convenience
         self._L, self._W = self.shape

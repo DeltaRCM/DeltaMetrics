@@ -220,7 +220,7 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
     -----
     Some descriptions regarding implementation.
 
-    _psvd_idx : :obj:`ndarray` of `np.bool`
+    _psvd_idx : :obj:`ndarray` of `bool`
         Preserved index into the section array.
 
     _psvd_flld : :obj:`ndarray`
@@ -260,10 +260,10 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
         _psvd[0, ...] = True
         self.strata = _strata
 
-        self.psvd_vxl_cnt = _psvd.sum(axis=0, dtype=np.int)
-        self.psvd_vxl_idx = _psvd.cumsum(axis=0, dtype=np.int)
+        self.psvd_vxl_cnt = _psvd.sum(axis=0, dtype=int)
+        self.psvd_vxl_idx = _psvd.cumsum(axis=0, dtype=int)
         self.psvd_vxl_cnt_max = int(self.psvd_vxl_cnt.max())
-        self.psvd_idx = _psvd.astype(np.bool)  # guarantee bool
+        self.psvd_idx = _psvd.astype(bool)  # guarantee bool
 
         # Determine the elevation of any voxel that is preserved.
         # These are matrices that are size n_preserved-x-y.
@@ -381,7 +381,7 @@ def _compute_elevation_to_preservation(elev):
         To determine whether time from a given *timestep* is preserved, use
         ``psvd.nonzero()[0] - 1``.
     """
-    psvd = np.zeros_like(elev.data, dtype=np.bool)  # bool, if retained
+    psvd = np.zeros_like(elev.data, dtype=bool)  # bool, if retained
     strata = np.zeros_like(elev.data)  # elev of surface at each t
 
     nt = strata.shape[0]
