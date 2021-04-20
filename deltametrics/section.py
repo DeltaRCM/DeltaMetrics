@@ -2,7 +2,7 @@ import abc
 import warnings
 
 import numpy as np
-from scipy import stats, sparse
+from scipy import sparse
 
 import matplotlib.pyplot as plt
 from matplotlib.collections import LineCollection
@@ -39,10 +39,12 @@ class BaseSectionVariable(np.ndarray):
         if (_psvd_mask is not None):
             _psvd_mask = np.asarray(_psvd_mask)
             if _psvd_mask.shape != obj.shape:
-                raise ValueError('Shape of "_psvd_mask" incompatible with "_data" array.')
+                raise ValueError(
+                    'Shape of "_psvd_mask" incompatible with "_data" array.')
         obj._psvd_mask = _psvd_mask
         if (len(_z) != obj.shape[0]) or (len(_s) != obj.shape[1]):
-            raise ValueError('Shape of "_s" or "_z" incompatible with "_data" array.')
+            raise ValueError(
+                'Shape of "_s" or "_z" incompatible with "_data" array.')
         obj._s = _s
         obj._z = _z
         obj._S, obj._Z = np.meshgrid(obj._s, obj._z)
@@ -273,8 +275,9 @@ class BaseSection(abc.ABC):
         Compute the along-section coordinate array from x-y pts pairs
         definining the section.
         """
-        self._s = np.cumsum(np.hstack((0, np.sqrt((self._x[1:] - self._x[:-1])**2
-                                                  + (self._y[1:] - self._y[:-1])**2))))
+        self._s = np.cumsum(np.hstack(
+            (0, np.sqrt((self._x[1:] - self._x[:-1])**2
+             + (self._y[1:] - self._y[:-1])**2))))
         self._z = self.cube.z
         self._shape = (len(self._z), len(self._s))
         self._trace = np.column_stack((self._x, self._y))
@@ -344,25 +347,23 @@ class BaseSection(abc.ABC):
         """
         if type(self.cube) is cube.DataCube:
             if self.cube._knows_stratigraphy:
-                return DataSectionVariable(_data=self.cube[var].data.values[:,
-                                                                     self._y,
-                                                                     self._x],
-                                           _s=self.s, _z=self.z,
-                                           _psvd_mask=self.cube.strat_attr.psvd_idx[:,
-                                                                                    self._y,
-                                                                                    self._x],
-                                           _strat_attr=self.cube.strat_attr(
-                                            'section', self._y, self._x))
+                return DataSectionVariable(
+                    _data=self.cube[var].data.values[:, self._y, self._x],
+                    _s=self.s, _z=self.z,
+                    _psvd_mask=self.cube.strat_attr.psvd_idx[:, self._y, self._x],  # noqa: E501
+                    _strat_attr=self.cube.strat_attr(
+                        'section', self._y, self._x)
+                    )
             else:
-                return DataSectionVariable(_data=self.cube[var].data.values[:,
-                                                                     self._y,
-                                                                     self._x],
-                                           _s=self.s, _z=self.z)
+                return DataSectionVariable(
+                    _data=self.cube[var].data.values[:, self._y, self._x],
+                    _s=self.s, _z=self.z
+                    )
         elif type(self.cube) is cube.StratigraphyCube:
-            return StratigraphySectionVariable(_data=self.cube[var].data.values[:,
-                                                                    self._y,
-                                                                    self._x],
-                                               _s=self.s, _z=self.z)
+            return StratigraphySectionVariable(
+                _data=self.cube[var].data.values[:, self._y, self._x],
+                _s=self.s, _z=self.z
+                )
         elif self.cube is None:
             raise AttributeError(
                 'No cube connected. Are you sure you ran `.connect()`?')
@@ -391,16 +392,18 @@ class BaseSection(abc.ABC):
             Which attribute to show.
 
         style : :obj:`str`, optional
-            What style to display the section with. Choices are 'mesh' or 'line'.
+            What style to display the section with. Choices are 'mesh' or
+            'line'.
 
         data : :obj:`str`, optional
             Argument passed to
             :obj:`~deltametrics.section.DataSectionVariable.get_display_arrays`
-            or :obj:`~deltametrics.section.DataSectionVariable.get_display_lines`.
+            or
+            :obj:`~deltametrics.section.DataSectionVariable.get_display_lines`.
             Supported options are `'spacetime'`, `'preserved'`, and
             `'stratigraphy'`. Default is to display full spacetime plot for
-            section generated from a `DataCube`, and stratigraphy for
-            a `StratigraphyCube` section.
+            section generated from a `DataCube`, and stratigraphy for a
+            `StratigraphyCube` section.
 
         label : :obj:`bool`, `str`, optional
             Display a label of the variable name on the plot. Default is
@@ -429,7 +432,8 @@ class BaseSection(abc.ABC):
         .. doctest::
 
             >>> rcm8cube = dm.sample_data.rcm8()
-            >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=5))
+            >>> rcm8cube.register_section(
+            ...     'demo', dm.section.StrikeSection(y=5))
             >>> rcm8cube.sections['demo'].show('velocity')
 
         .. plot:: section/section_demo_spacetime.py
@@ -444,7 +448,8 @@ class BaseSection(abc.ABC):
 
             >>> rcm8cube = dm.sample_data.rcm8()
             >>> rcm8cube.stratigraphy_from('eta')
-            >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=5))
+            >>> rcm8cube.register_section(
+            ...     'demo', dm.section.StrikeSection(y=5))
 
             >>> fig, ax = plt.subplots(4, 1, sharex=True, figsize=(6, 9))
             >>> rcm8cube.sections['demo'].show('depth', data='spacetime',
@@ -454,7 +459,7 @@ class BaseSection(abc.ABC):
             >>> rcm8cube.sections['demo'].show('depth', data='stratigraphy',
             ...                                ax=ax[2], label='quick stratigraphy')
             >>> rcm8cube.sections['demo'].show('depth', style='lines', data='stratigraphy',
-            ...                                ax=ax[3], label='quick stratigraphy')
+            ...                                ax=ax[3], label='quick stratigraphy')          # noqa: E501
 
         .. plot:: section/section_demo_quick_strat.py
         """
@@ -498,8 +503,8 @@ class BaseSection(abc.ABC):
             ax.text(0.99, 0.8, _label, fontsize=10,
                     horizontalalignment='right', verticalalignment='center',
                     transform=ax.transAxes)
-        xmin, xmax, ymin, ymax = plot.get_display_limits(SectionVariableInstance,
-                                                         data=data)
+        xmin, xmax, ymin, ymax = plot.get_display_limits(
+            SectionVariableInstance, data=data)
         ax.set_xlim(xmin, xmax)
         ax.set_ylim(ymin, ymax)
 
@@ -695,8 +700,9 @@ class StrikeSection(BaseSection):
 
         >>> rcm8cube = dm.sample_data.rcm8()
         >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube)
-        >>> sc8cube.register_section('strike_half', dm.section.StrikeSection(y=20, x=[0, 120]))
-        >>>
+        >>> sc8cube.register_section(
+        ...     'strike_half', dm.section.StrikeSection(y=20, x=[0, 120]))
+
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
         >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
@@ -798,8 +804,9 @@ class CircularSection(BaseSection):
         :include-source:
 
         >>> rcm8cube = dm.sample_data.rcm8()
-        >>> rcm8cube.register_section('circular', dm.section.CircularSection(radius=30))
-        >>>
+        >>> rcm8cube.register_section(
+        ...     'circular', dm.section.CircularSection(radius=30))
+
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
         >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
@@ -914,8 +921,9 @@ class RadialSection(BaseSection):
         :include-source:
 
         >>> rcm8cube = dm.sample_data.rcm8()
-        >>> rcm8cube.register_section('radial', dm.section.RadialSection(azimuth=45))
-        >>>
+        >>> rcm8cube.register_section(
+        ...     'radial', dm.section.RadialSection(azimuth=45))
+
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
         >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
@@ -964,10 +972,12 @@ class RadialSection(BaseSection):
                 dx = (self.cube.W - self.origin[0])
                 dy = (np.tan(theta * np.pi / 180) * dx)
                 if dy <= self.cube.L:
-                    end_y = int(np.minimum(m * (self.cube.W) + b, self.cube.L - 1))
+                    end_y = int(np.minimum(
+                        m * (self.cube.W) + b, self.cube.L - 1))
                     end_point = (self.cube.W - 1, end_y)
                 else:
-                    end_x = int(np.minimum((self.cube.L - b) / m, self.cube.W - 1))
+                    end_x = int(np.minimum(
+                        (self.cube.L - b) / m, self.cube.W - 1))
                     end_point = (end_x, self.cube.L - 1)
             elif self.azimuth > 90 and self.azimuth <= 180:
                 dx = (self.origin[0])

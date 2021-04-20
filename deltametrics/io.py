@@ -1,10 +1,8 @@
 
 import abc
 import os
-import sys
 from warnings import warn
 
-import numpy as np
 import xarray as xr
 import netCDF4
 

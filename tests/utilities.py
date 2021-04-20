@@ -1,7 +1,3 @@
-import sys
-import os
-
-import pytest
 import netCDF4
 
 

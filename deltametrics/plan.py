@@ -1,18 +1,13 @@
 import numpy as np
-from scipy import stats
-import matplotlib.pyplot as plt
 
 from scipy.spatial import ConvexHull
 from shapely.geometry.polygon import Polygon
-
-from numba import jit, njit
 
 import abc
 import warnings
 
 from . import mask
 from . import cube
-from . import plot
 from . import utils
 
 

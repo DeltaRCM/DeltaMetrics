@@ -1,9 +1,6 @@
 import pytest
 
-import sys
 import os
-
-import unittest.mock as mock
 
 import numpy as np
 import matplotlib
@@ -27,11 +24,11 @@ class TestVariableInfo:
 
     def test_initialize_default_VariableInfo_noname(self):
         with pytest.raises(TypeError):
-            vi = plot.VariableInfo()
+            _ = plot.VariableInfo()
 
     def test_initialize_default_VariableInfo_name_isstr(self):
         with pytest.raises(TypeError):
-            vi = plot.VariableInfo(None)
+            _ = plot.VariableInfo(None)
 
     def test_initialize_VariableInfo_cmap_str(self):
         vi = plot.VariableInfo('testinfo', cmap='Blues')
@@ -113,7 +110,7 @@ class TestVariableSet:
         vi = plot.VariableInfo('depth')
         od = ('depth', vi)
         with pytest.raises(TypeError):
-            vs = plot.VariableSet(override_dict=od)
+            _ = plot.VariableSet(override_dict=od)
 
     def test_VariableSet_add_known_VariableInfo(self):
         vs = plot.VariableSet()
@@ -234,7 +231,8 @@ class TestFillSteps:
     def test_kwargs_default(self):
         pc = plot._fill_steps(self.arr)
         assert self.num_patches(pc) == 7
-        _exp = pytest.approx(np.array([0.12156863, 0.46666667, 0.70588235, 1.]))
+        _exp = pytest.approx(np.array([0.12156863, 0.46666667,
+                                       0.70588235, 1.]))
         assert np.all(pc.get_facecolors()[0] == _exp)
 
     def test_kwargs_facecolor(self):
@@ -250,53 +248,63 @@ class TestSODTTST:
     def test_sodttst_makes_plot(self):
         _e = np.random.randint(0, 10, size=(50,))
         fig, ax = plt.subplots()
-        plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax)
+        plot.show_one_dimensional_trajectory_to_strata(
+            _e, ax=ax)
         plt.close()
 
     def test_sodttst_makes_labeled_strata(self):
         _e = np.random.randint(0, 10, size=(50,))
         fig, ax = plt.subplots()
-        plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax, label_strata=False)
+        plot.show_one_dimensional_trajectory_to_strata(
+            _e, ax=ax, label_strata=False)
         plt.close()
 
     def test_sodttst_makes_plot_lims_positives(self):
         _e = np.array([0, 1, 4, 5, 4, 10])
         fig, ax = plt.subplots()
-        plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax)
+        plot.show_one_dimensional_trajectory_to_strata(
+            _e, ax=ax)
         assert ax.get_ylim() == (0, 12)
         plt.close()
 
     def test_sodttst_makes_plot_lims_negative(self):
         _e = np.array([10, -1, -4, -5, -4, -10])
         fig, ax = plt.subplots()
-        plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax)
+        plot.show_one_dimensional_trajectory_to_strata(
+            _e, ax=ax)
         assert ax.get_ylim() == (-12, 12)
         plt.close()
 
     def test_sodttst_makes_plot_lims_negative_zero(self):
         _e = np.array([-1, -1, -4, -5, -4, -10])
         fig, ax = plt.subplots()
-        plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax)
+        plot.show_one_dimensional_trajectory_to_strata(
+            _e, ax=ax)
         assert ax.get_ylim() == (-12, 0)
         plt.close()
 
     def test_sodttst_makes_plot_lims_equal(self):
         _e = np.array([-1, -1, -1, -1, -1, -1])
         fig, ax = plt.subplots()
-        plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax)
+        plot.show_one_dimensional_trajectory_to_strata(
+            _e, ax=ax)
         assert ax.get_ylim() == (-1.2, 0)
         plt.close()
 
     def test_sodttst_makes_plot_sample_data(self):
-        rcm8_path = os.path.join(os.path.dirname(__file__), '..', 'deltametrics',
-                         'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
+        rcm8_path = os.path.join(
+            os.path.dirname(__file__), '..', 'deltametrics',
+            'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
         rcm8cube = cube.DataCube(rcm8_path)
-        locs = np.array([[48, 152], [8, 63], [14, 102], [92, 218], [102, 168],
-                         [26, 114], [62, 135], [61, 201], [65, 193], [23, 175]])
+        locs = np.array([[48, 152], [8, 63], [14, 102],
+                         [92, 218], [102, 168], [26, 114],
+                         [62, 135], [61, 201], [65, 193],
+                         [23, 175]])
         for i in range(10):
             _e = rcm8cube['eta'][:, locs[i, 0], locs[i, 1]]
             fig, ax = plt.subplots()
-            plot.show_one_dimensional_trajectory_to_strata(_e, ax=ax)
+            plot.show_one_dimensional_trajectory_to_strata(
+                _e, ax=ax)
             plt.close()
 
     def test_sodttst_makes_plot_no_ax(self):
@@ -305,15 +313,16 @@ class TestSODTTST:
         plt.close()
 
     def test_sodttst_makes_plot_3d_column(self):
-        _e = np.random.randint(0, 10, size=(50,1,1))
+        _e = np.random.randint(0, 10, size=(50, 1, 1))
         plot.show_one_dimensional_trajectory_to_strata(_e)
         plt.close()
 
     def test_sodttst_makes_plot_2d_column_error(self):
-        _e = np.random.randint(0, 10, size=(50,100,1))
+        _e = np.random.randint(0, 10, size=(50, 100, 1))
         with pytest.raises(ValueError, match=r'Elevation data "e" must *.'):
             plot.show_one_dimensional_trajectory_to_strata(_e)
         plt.close()
+
 
 class TestGetDisplayArrays:
 

@@ -2,10 +2,6 @@ import abc
 
 import numpy as np
 import xarray as xr
-from scipy import stats
-import matplotlib.pyplot as plt
-
-import multiprocessing
 
 
 def compute_trajectory():
@@ -104,7 +100,8 @@ def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
 
 
 def compute_boxy_stratigraphy_coordinates(elev, dz=None, z=None,
-                                          return_cube=False, return_strata=False):
+                                          return_cube=False,
+                                          return_strata=False):
     """Process t-x-y data volume to boxy stratigraphy coordinates.
 
     This function computes the corresponding preservation of `t-x-y`
@@ -241,11 +238,11 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
 
     def __init__(self, elev, **kwargs):
         """
-        We can precompute several attributes of the stratigraphy, including which
-        voxels are preserved, what their row indicies in the sparse stratigraphy
-        matrix are, and what the elevation of each elevation entry in the final
-        stratigraphy are. *This allows placing of any t-x-y stored variable into
-        the section.*
+        We can precompute several attributes of the stratigraphy, including
+        which voxels are preserved, what their row indicies in the sparse
+        stratigraphy matrix are, and what the elevation of each elevation
+        entry in the final stratigraphy are. *This allows placing of any t-x-y
+        stored variable into the section.*
 
         Parameters
         ---------
@@ -279,7 +276,7 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
                     self.psvd_idx[:, i, j], i, j].copy()
                 self.psvd_flld[0:self.psvd_vxl_cnt[i, j], i, j] = _eta.data[
                     self.psvd_idx[:, i, j], i, j].copy()
-                self.psvd_flld[self.psvd_vxl_cnt[i, j]:, i, j] = self.psvd_flld[
+                self.psvd_flld[self.psvd_vxl_cnt[i, j]:, i, j] = self.psvd_flld[  # noqa: E501
                     self.psvd_vxl_cnt[i, j] - 1, i, j]
 
     def __call__(self, _dir, _x0, _x1):

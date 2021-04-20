@@ -597,7 +597,8 @@ class ChannelMask(BaseMask):
             _fm = FlowMask(_flow, **kwargs)._mask
 
         else:
-            raise ValueError('Invalid _input_flag. Did you modify this attribute?')
+            raise ValueError(
+                'Invalid _input_flag. Did you modify this attribute?')
 
         # process to make the mask
         self._compute_mask(_lm, _fm, **kwargs)
@@ -1681,7 +1682,8 @@ class CenterlineMask(BaseMask):
             _CM = ChannelMask.from_mask(_lm, _fm)
 
         else:
-            raise ValueError('Invalid _input_flag. Did you modify this attribute?')
+            raise ValueError(
+                'Invalid _input_flag. Did you modify this attribute?')
 
         # save method type value to self
         self._method = method

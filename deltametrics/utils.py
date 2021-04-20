@@ -1,16 +1,8 @@
-import os
-import sys
-
 import numpy as np
 import xarray as xr
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import matplotlib.colors as colors
 from scipy import optimize
 
 from numba import njit
-
-from . import io
 
 
 def _get_version():
@@ -522,17 +514,17 @@ def _point_in_polygon(x, y, polygon):
     p2x = 0.0
     p2y = 0.0
     xints = 0.0
-    p1x,p1y = polygon[0]
+    p1x, p1y = polygon[0]
     for i in range(n+1):
-        p2x,p2y = polygon[i % n]
-        if y > min(p1y,p2y):
-            if y <= max(p1y,p2y):
-                if x <= max(p1x,p2x):
+        p2x, p2y = polygon[i % n]
+        if y > min(p1y, p2y):
+            if y <= max(p1y, p2y):
+                if x <= max(p1x, p2x):
                     if p1y != p2y:
                         xints = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
                     if p1x == p2x or x <= xints:
                         inside = not inside
-        p1x,p1y = p2x,p2y
+        p1x, p1y = p2x, p2y
 
     return inside
 

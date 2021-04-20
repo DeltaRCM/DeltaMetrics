@@ -1,8 +1,5 @@
 import pytest
 
-import sys
-import os
-
 import numpy as np
 import xarray as xr
 
@@ -35,19 +32,19 @@ class TestDataCubeNoStratigraphy:
 
     def test_error_init_empty_cube(self):
         with pytest.raises(TypeError):
-            nocube = cube.DataCube()
+            _ = cube.DataCube()
 
     def test_error_init_bad_path(self):
         with pytest.raises(FileNotFoundError):
-            nocube = cube.DataCube('./nonexistent/path.nc')
+            _ = cube.DataCube('./nonexistent/path.nc')
 
     def test_error_init_bad_extension(self):
         with pytest.raises(ValueError):
-            nocube = cube.DataCube('./nonexistent/path.doc')
+            _ = cube.DataCube('./nonexistent/path.doc')
 
     def test_warning_netcdf_no_metadata(self):
         with pytest.warns(UserWarning):
-            rcm8cube = cube.DataCube(rcm8_path)
+            _ = cube.DataCube(rcm8_path)
 
     def test_stratigraphy_from_eta(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -89,7 +86,7 @@ class TestDataCubeNoStratigraphy:
     def test_slice_op_invalid_name(self):
         rcm8cube = cube.DataCube(rcm8_path)
         with pytest.raises(AttributeError):
-            slc = rcm8cube['nonexistentattribute']
+            _ = rcm8cube['nonexistentattribute']
 
     def test_register_section(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -310,7 +307,7 @@ class TestFrozenStratigraphyCube:
                           xr.core.dataarray.DataArray)
 
     def test_matches_underlying_data(self):
-        assert not self.frozenstratigraphycube is self.fixedstratigraphycube
+        assert not (self.frozenstratigraphycube is self.fixedstratigraphycube)
         frzn_log = self.frozenstratigraphycube.values[
             ~np.isnan(self.frozenstratigraphycube.values)]
         fixd_log = self.fixedstratigraphycube['time'].data.values[
