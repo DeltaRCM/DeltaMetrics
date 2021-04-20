@@ -188,7 +188,9 @@ class NetCDFIO(BaseIO):
         These variables are pulled from the loaded dataset.
         """
         _vars = list(self.dataset.variables)
-        _coords = list(self.dataset.coords) + ['strata_age', 'strata_depth']
+        _coords = list(self.dataset.coords)
+        if ('strata_age' in _vars) or ('strata_depth' in _vars):
+            _coords += ['strata_age', 'strata_depth']
         self.known_variables = [item for item in _vars if item not in _coords]
 
     def get_known_coords(self):
