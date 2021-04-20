@@ -6,6 +6,8 @@ from shapely.geometry.polygon import Polygon
 import abc
 import warnings
 
+from numba import njit
+
 from . import mask
 from . import cube
 from . import utils
