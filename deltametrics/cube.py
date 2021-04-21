@@ -1,11 +1,8 @@
 import os
 import copy
-import warnings
-import time
 import abc
 
 import numpy as np
-import scipy as sp
 import xarray as xr
 
 import matplotlib.pyplot as plt
@@ -15,7 +12,6 @@ from . import io
 from . import plan
 from . import section
 from . import strat
-from . import utils
 from . import plot
 
 

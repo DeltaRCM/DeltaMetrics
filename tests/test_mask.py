@@ -60,14 +60,14 @@ class TestBaseMask:
     def test_trim_mask_length(self):
         basemask = mask.BaseMask('field', self.fake_input)
         # mock as though the mask were made
-        basemask._mask = self.fake_input.astype(np.bool)
+        basemask._mask = self.fake_input.astype(bool)
 
         assert np.all(basemask.integer_mask == 1)
 
         _l = 5
         basemask.trim_mask(length=_l)
 
-        assert basemask._mask.dtype == np.bool
+        assert basemask._mask.dtype == bool
         assert np.all(basemask.integer_mask[:_l, :] == 0)
         assert np.all(basemask.integer_mask[_l:, :] == 1)
 
@@ -76,7 +76,7 @@ class TestBaseMask:
     def test_trim_mask_cube(self):
         basemask = mask.BaseMask('field', self.fake_input)
         # mock as though the mask were made
-        basemask._mask = self.fake_input.astype(np.bool)
+        basemask._mask = self.fake_input.astype(bool)
 
         assert np.all(basemask.integer_mask == 1)
 
@@ -89,7 +89,7 @@ class TestBaseMask:
     def test_trim_mask_noargs(self):
         basemask = mask.BaseMask('field', self.fake_input)
         # mock as though the mask were made
-        basemask._mask = self.fake_input.astype(np.bool)
+        basemask._mask = self.fake_input.astype(bool)
 
         assert np.all(basemask.integer_mask == 1)
 
@@ -100,13 +100,13 @@ class TestBaseMask:
     def test_trim_mask_axis1_withlength(self):
         basemask = mask.BaseMask('field', self.fake_input)
         # mock as though the mask were made
-        basemask._mask = self.fake_input.astype(np.bool)
+        basemask._mask = self.fake_input.astype(bool)
 
         assert np.all(basemask.integer_mask == 1)
 
         _l = 5
         basemask.trim_mask(axis=0, length=_l)
-        assert basemask._mask.dtype == np.bool
+        assert basemask._mask.dtype == bool
         assert np.all(basemask.integer_mask[:, :_l] == 0)
         assert np.all(basemask.integer_mask[:, _l:] == 1)
 
@@ -119,7 +119,7 @@ class TestBaseMask:
         _l = 5
         basemask.trim_mask(value=True, length=_l)
 
-        assert basemask._mask.dtype == np.bool
+        assert basemask._mask.dtype == bool
         assert np.all(basemask.integer_mask[:_l, :] == 1)
         assert np.all(basemask.integer_mask[_l:, :] == 0)
 
@@ -131,19 +131,19 @@ class TestBaseMask:
 
         _l = 5
         basemask.trim_mask(value=1, length=_l)
-        assert basemask._mask.dtype == np.bool
+        assert basemask._mask.dtype == bool
         assert np.all(basemask.integer_mask[:_l, :] == 1)
 
         basemask.trim_mask(value=0, length=_l)
-        assert basemask._mask.dtype == np.bool
+        assert basemask._mask.dtype == bool
         assert np.all(basemask.integer_mask[:_l, :] == 0)
 
         basemask.trim_mask(value=5, length=_l)
-        assert basemask._mask.dtype == np.bool
+        assert basemask._mask.dtype == bool
         assert np.all(basemask.integer_mask[:_l, :] == 1)
 
         basemask.trim_mask(value=5.534, length=_l)
-        assert basemask._mask.dtype == np.bool
+        assert basemask._mask.dtype == bool
         assert np.all(basemask.integer_mask[:_l, :] == 1)
 
     def test_trim_mask_toomanyargs(self):
@@ -245,7 +245,7 @@ class TestShorelineMask:
         assert shoremask._input_flag == 'array'
         assert shoremask.mask_type == 'shoreline'
         assert shoremask.angle_threshold > 0
-        assert shoremask._mask.dtype == np.bool
+        assert shoremask._mask.dtype == bool
         assert isinstance(shoremask._mask, np.ndarray)
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
@@ -258,7 +258,7 @@ class TestShorelineMask:
         assert shoremask._input_flag == 'cube'
         assert shoremask.mask_type == 'shoreline'
         assert shoremask.angle_threshold > 0
-        assert shoremask._mask.dtype == np.bool
+        assert shoremask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -270,7 +270,7 @@ class TestShorelineMask:
         assert shoremask._input_flag == 'cube'
         assert shoremask.mask_type == 'shoreline'
         assert shoremask.angle_threshold > 0
-        assert shoremask._mask.dtype == np.bool
+        assert shoremask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -282,7 +282,7 @@ class TestShorelineMask:
         assert shoremask._input_flag == 'mask'
         assert shoremask.mask_type == 'shoreline'
         assert shoremask.angle_threshold > 0
-        assert shoremask._mask.dtype == np.bool
+        assert shoremask._mask.dtype == bool
 
     def test_angle_threshold(self):
         """Test that instantiation works for an array."""
@@ -351,9 +351,9 @@ class TestShorelineMask:
         assert np.all(shoremask._mask == _arr)
 
         _arr2 = np.random.uniform(size=(100, 200))
-        _arr2_bool = _arr2.astype(np.bool)
+        _arr2_bool = _arr2.astype(bool)
 
-        assert _arr2.dtype == np.float
+        assert _arr2.dtype == float
 
         shoremask2 = mask.ShorelineMask.from_array(_arr2)
         # make assertions
@@ -377,7 +377,7 @@ class TestElevationMask:
         assert elevationmask.elevation_threshold == 0
         assert elevationmask.threshold == 0
         assert elevationmask.elevation_threshold is elevationmask.threshold
-        assert elevationmask._mask.dtype == np.bool
+        assert elevationmask._mask.dtype == bool
 
     def test_all_below_threshold(self):
         elevationmask = mask.ElevationMask(
@@ -389,7 +389,7 @@ class TestElevationMask:
         assert elevationmask.elevation_threshold == 10
         assert elevationmask.threshold == 10
         assert elevationmask.elevation_threshold is elevationmask.threshold
-        assert elevationmask._mask.dtype == np.bool
+        assert elevationmask._mask.dtype == bool
         assert np.all(elevationmask.mask == 0)
 
     def test_all_above_threshold(self):
@@ -402,7 +402,7 @@ class TestElevationMask:
         assert elevationmask.elevation_threshold == -10
         assert elevationmask.threshold == -10
         assert elevationmask.elevation_threshold is elevationmask.threshold
-        assert elevationmask._mask.dtype == np.bool
+        assert elevationmask._mask.dtype == bool
         assert np.all(elevationmask.mask == 1)
 
     def test_default_vals_array_needs_elevation_threshold(self):
@@ -420,7 +420,7 @@ class TestElevationMask:
         # make assertions
         assert elevationmask._input_flag == 'cube'
         assert elevationmask.mask_type == 'elevation'
-        assert elevationmask._mask.dtype == np.bool
+        assert elevationmask._mask.dtype == bool
 
     def test_default_vals_cubewithmeta(self):
         """Test that instantiation works for an array."""
@@ -431,7 +431,7 @@ class TestElevationMask:
         # make assertions
         assert elevationmask._input_flag == 'cube'
         assert elevationmask.mask_type == 'elevation'
-        assert elevationmask._mask.dtype == np.bool
+        assert elevationmask._mask.dtype == bool
 
         # compare with another instantiated from array
         elevationmask_comp = mask.ElevationMask(
@@ -510,7 +510,7 @@ class TestFlowMask:
         assert flowmask.flow_threshold == 0.3
         assert flowmask.threshold == 0.3
         assert flowmask.flow_threshold is flowmask.threshold
-        assert flowmask._mask.dtype == np.bool
+        assert flowmask._mask.dtype == bool
 
         # note that, the mask will take any array though...
         # define the mask
@@ -534,7 +534,7 @@ class TestFlowMask:
         assert flowmask.flow_threshold == 20
         assert flowmask.threshold == 20
         assert flowmask.flow_threshold is flowmask.threshold
-        assert flowmask._mask.dtype == np.bool
+        assert flowmask._mask.dtype == bool
         assert np.all(flowmask.mask == 0)
 
     def test_all_above_threshold(self):
@@ -547,7 +547,7 @@ class TestFlowMask:
         assert flowmask.flow_threshold == -5
         assert flowmask.threshold == -5
         assert flowmask.flow_threshold is flowmask.threshold
-        assert flowmask._mask.dtype == np.bool
+        assert flowmask._mask.dtype == bool
         assert np.all(flowmask.mask == 1)
 
     def test_default_vals_array_needs_flow_threshold(self):
@@ -565,7 +565,7 @@ class TestFlowMask:
         # make assertions
         assert flowmask._input_flag == 'cube'
         assert flowmask.mask_type == 'flow'
-        assert flowmask._mask.dtype == np.bool
+        assert flowmask._mask.dtype == bool
 
     def test_vals_cube_different_fields(self):
         """Test that instantiation works for an array."""
@@ -577,7 +577,7 @@ class TestFlowMask:
         # make assertions
         assert velmask._input_flag == 'cube'
         assert velmask.mask_type == 'flow'
-        assert velmask._mask.dtype == np.bool
+        assert velmask._mask.dtype == bool
 
         dismask = mask.FlowMask(
             rcm8cube, t=-1,
@@ -586,7 +586,7 @@ class TestFlowMask:
         # make assertions
         assert dismask._input_flag == 'cube'
         assert dismask.mask_type == 'flow'
-        assert dismask._mask.dtype == np.bool
+        assert dismask._mask.dtype == bool
 
         assert not np.all(velmask.mask == dismask.mask)
 
@@ -601,7 +601,7 @@ class TestFlowMask:
         # make assertions
         assert flowmask._input_flag == 'cube'
         assert flowmask.mask_type == 'flow'
-        assert flowmask._mask.dtype == np.bool
+        assert flowmask._mask.dtype == bool
 
         # compare with another instantiated from array
         flowmask_comp = mask.FlowMask(
@@ -691,7 +691,7 @@ class TestLandMask:
         assert landmask._input_flag == 'array'
         assert landmask.mask_type == 'land'
         assert landmask.angle_threshold > 0
-        assert landmask._mask.dtype == np.bool
+        assert landmask._mask.dtype == bool
 
     def test_default_vals_array_needs_elevation_threshold(self):
         """Test that instantiation works for an array."""
@@ -709,7 +709,7 @@ class TestLandMask:
         assert landmask._input_flag == 'cube'
         assert landmask.mask_type == 'land'
         assert landmask.angle_threshold > 0
-        assert landmask._mask.dtype == np.bool
+        assert landmask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -721,7 +721,7 @@ class TestLandMask:
         assert landmask._input_flag == 'cube'
         assert landmask.mask_type == 'land'
         assert landmask.angle_threshold > 0
-        assert landmask._mask.dtype == np.bool
+        assert landmask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -733,7 +733,7 @@ class TestLandMask:
         assert landmask._input_flag == 'mask'
         assert landmask.mask_type == 'land'
         assert landmask.angle_threshold > 0
-        assert landmask._mask.dtype == np.bool
+        assert landmask._mask.dtype == bool
 
     def test_angle_threshold(self):
         """
@@ -819,7 +819,7 @@ class TestWetMask:
         # make assertions
         assert wetmask._input_flag == 'array'
         assert wetmask.mask_type == 'wet'
-        assert wetmask._mask.dtype == np.bool
+        assert wetmask._mask.dtype == bool
 
     def test_default_vals_array_needs_elevation_threshold(self):
         """Test that instantiation works for an array."""
@@ -836,7 +836,7 @@ class TestWetMask:
         # make assertions
         assert wetmask._input_flag == 'cube'
         assert wetmask.mask_type == 'wet'
-        assert wetmask._mask.dtype == np.bool
+        assert wetmask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -847,7 +847,7 @@ class TestWetMask:
         # make assertions
         assert wetmask._input_flag == 'cube'
         assert wetmask.mask_type == 'wet'
-        assert wetmask._mask.dtype == np.bool
+        assert wetmask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -858,7 +858,7 @@ class TestWetMask:
         # make assertions
         assert wetmask._input_flag == 'mask'
         assert wetmask.mask_type == 'wet'
-        assert wetmask._mask.dtype == np.bool
+        assert wetmask._mask.dtype == bool
 
     def test_angle_threshold(self):
         """
@@ -948,7 +948,7 @@ class TestChannelMask:
         # make assertions
         assert channelmask._input_flag == 'array'
         assert channelmask.mask_type == 'channel'
-        assert channelmask._mask.dtype == np.bool
+        assert channelmask._mask.dtype == bool
 
     def test_default_vals_array_needs_elevation_threshold(self):
         """Test that instantiation works for an array."""
@@ -977,7 +977,7 @@ class TestChannelMask:
         # make assertions
         assert channelmask._input_flag == 'cube'
         assert channelmask.mask_type == 'channel'
-        assert channelmask._mask.dtype == np.bool
+        assert channelmask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -988,7 +988,7 @@ class TestChannelMask:
         # make assertions
         assert channelmask._input_flag == 'cube'
         assert channelmask.mask_type == 'channel'
-        assert channelmask._mask.dtype == np.bool
+        assert channelmask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -999,7 +999,7 @@ class TestChannelMask:
         # make assertions
         assert channelmask._input_flag == 'mask'
         assert channelmask.mask_type == 'channel'
-        assert channelmask._mask.dtype == np.bool
+        assert channelmask._mask.dtype == bool
 
     def test_angle_threshold(self):
         """
@@ -1118,9 +1118,9 @@ class TestChannelMask:
         assert np.all(channelmask._mask == _arr)
 
         _arr2 = np.random.uniform(size=(100, 200))
-        _arr2_bool = _arr2.astype(np.bool)
+        _arr2_bool = _arr2.astype(bool)
 
-        assert _arr2.dtype == np.float
+        assert _arr2.dtype == float
 
         channelmask2 = mask.ChannelMask.from_array(_arr2)
         # make assertions
@@ -1146,7 +1146,7 @@ class TestEdgeMask:
         # make assertions
         assert edgemask._input_flag == 'array'
         assert edgemask.mask_type == 'edge'
-        assert edgemask._mask.dtype == np.bool
+        assert edgemask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -1157,7 +1157,7 @@ class TestEdgeMask:
         # make assertions
         assert edgemask._input_flag == 'cube'
         assert edgemask.mask_type == 'edge'
-        assert edgemask._mask.dtype == np.bool
+        assert edgemask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -1168,7 +1168,7 @@ class TestEdgeMask:
         # make assertions
         assert edgemask._input_flag == 'cube'
         assert edgemask.mask_type == 'edge'
-        assert edgemask._mask.dtype == np.bool
+        assert edgemask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -1179,7 +1179,7 @@ class TestEdgeMask:
         # make assertions
         assert edgemask._input_flag == 'mask'
         assert edgemask.mask_type == 'edge'
-        assert edgemask._mask.dtype == np.bool
+        assert edgemask._mask.dtype == bool
 
     def test_angle_threshold(self):
         """
@@ -1282,7 +1282,7 @@ class TestCenterlineMask:
         # make assertions
         assert centerlinemask._input_flag == 'array'
         assert centerlinemask.mask_type == 'centerline'
-        assert centerlinemask._mask.dtype == np.bool
+        assert centerlinemask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -1293,7 +1293,7 @@ class TestCenterlineMask:
         # make assertions
         assert centerlinemask._input_flag == 'cube'
         assert centerlinemask.mask_type == 'centerline'
-        assert centerlinemask._mask.dtype == np.bool
+        assert centerlinemask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -1304,7 +1304,7 @@ class TestCenterlineMask:
         # make assertions
         assert centerlinemask._input_flag == 'cube'
         assert centerlinemask.mask_type == 'centerline'
-        assert centerlinemask._mask.dtype == np.bool
+        assert centerlinemask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -1315,7 +1315,7 @@ class TestCenterlineMask:
         # make assertions
         assert centerlinemask._input_flag == 'mask'
         assert centerlinemask.mask_type == 'centerline'
-        assert centerlinemask._mask.dtype == np.bool
+        assert centerlinemask._mask.dtype == bool
 
     def test_angle_threshold(self):
         """

@@ -1,18 +1,15 @@
 import numpy as np
-from scipy import stats
-import matplotlib.pyplot as plt
 
 from scipy.spatial import ConvexHull
 from shapely.geometry.polygon import Polygon
 
-from numba import jit, njit
-
 import abc
 import warnings
 
+from numba import njit
+
 from . import mask
 from . import cube
-from . import plot
 from . import utils
 
 
@@ -302,9 +299,9 @@ class OpeningAnglePlanform(BasePlanform):
         if utils.is_ndarray_or_xarray(args[0]):
             _arr = args[0]
             # check that is boolean or integer binary
-            if (_arr.dtype == np.bool):
+            if (_arr.dtype == bool):
                 _below_mask = _arr
-            elif (_arr.dtype == np.int):
+            elif (_arr.dtype == int):
                 if np.all(np.logical_or(_arr == 0, _arr == 1)):
                     _below_mask = _arr
                 else:
@@ -347,7 +344,7 @@ class OpeningAnglePlanform(BasePlanform):
         if np.any(below_mask == 0):
 
             # need to convert type to integer
-            below_mask = below_mask.astype(np.int)
+            below_mask = below_mask.astype(int)
 
             # pull out the shaw oam keywords
             shaw_kwargs = {}
@@ -370,7 +367,7 @@ class OpeningAnglePlanform(BasePlanform):
 
         # properly assign the oceanmap to the self.below_mask
         #   set it to be bool regardless of input type
-        self._below_mask = below_mask.astype(np.bool)
+        self._below_mask = below_mask.astype(bool)
 
     @property
     def sea_angles(self):
@@ -626,7 +623,7 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     line_ys_0[0] = _y[_closest]
 
     # preallocate an array to track whether a point has been used
-    hit_pts = np.zeros(len(_x), dtype=np.bool)
+    hit_pts = np.zeros(len(_x), dtype=bool)
     hit_pts[_closest] = True
 
     # compute the distance to the next point
@@ -815,7 +812,7 @@ def shaw_opening_angle_method(below_mask, numviews=3):
     #   defined as points_to_test and put these binary points into seamap
     polygon = Polygon(points[hull.vertices]).buffer(0.01)
     In = utils._points_in_polygon(sea, np.array(polygon.exterior.coords))
-    In = In.astype(np.bool)
+    In = In.astype(bool)
 
     Shallowsea_ = sea[In]
     seamap = np.zeros(bordermap.shape)

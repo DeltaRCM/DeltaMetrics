@@ -153,7 +153,8 @@ def test_check_input_castlandmap():
 # Test actual mobility functions using a simple example
 # domain is a small 4x4 region with a single 4 cell channel
 # every timestep, a cell from the channel moves over a column
-# colab notebook: https://colab.research.google.com/drive/1-lkswSZSGRkhsArLm245WMSiKvj03YyU?usp=sharing
+# colab notebook:
+#   https://colab.research.google.com/drive/1-lkswSZSGRkhsArLm245WMSiKvj03YyU?usp=sharing
 
 # first define the domain and channel maps etc.
 chmap = np.zeros((5, 4, 4))

@@ -1,10 +1,6 @@
 import pytest
 
-import sys
-import os
-
 import numpy as np
-import matplotlib.pyplot as plt
 
 from deltametrics import utils
 from deltametrics import mobility as mob

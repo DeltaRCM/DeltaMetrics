@@ -1,8 +1,7 @@
-import os
-import sys
-
 import numpy as np
+
 import colorsys
+
 import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
@@ -11,7 +10,6 @@ import matplotlib.patches as ptch
 import matplotlib.collections as coll
 import mpl_toolkits.axes_grid1 as axtk
 
-from . import io
 from . import strat
 from . import section
 
@@ -405,7 +403,7 @@ class VariableSet(object):
         if not var:
             cmap = cm.get_cmap('magma', 64)
             self._sedflux = VariableInfo('sedflux', cmap=cmap,
-                                          label='sediment flux')
+                                         label='sediment flux')
         elif type(var) is VariableInfo:
             self._sedflux = var
         else:
@@ -423,7 +421,6 @@ class VariableSet(object):
             sandfrac = colors.ListedColormap(
                 ['saddlebrown', 'sienna', 'goldenrod', 'gold'])
             sandfrac.set_under('saddlebrown')
-            bn = colors.BoundaryNorm([1e-6, 1], sandfrac.N)
             self._strata_sand_frac = VariableInfo('strata_sand_frac',
                                                   cmap=sandfrac,
                                                   norm=None, vmin=0,
@@ -865,7 +862,8 @@ def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
 
 
 def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
-                                              show_strata=True, label_strata=False):
+                                              show_strata=True,
+                                              label_strata=False):
     """1d elevation to stratigraphy.
 
     This function creates and displays a one-dimensional elevation timeseries
@@ -934,14 +932,14 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
         strat._compute_preservation_to_time_intervals(p).nonzero()[0]))] = 1
     ax.add_collection(_fill_steps(p, x=1, y=np.max(e) - np.min(e),
                                   y0=np.min(e), facecolor='0.8'))
-    _ppc = ax.add_patch(ptch.Rectangle((0, 0), 0, 0, facecolor='0.8',
-                                       label='psvd timesteps'))  # add for lgnd
-    _ss = ax.hlines(s[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
-    _l = ax.axvline(lst, c='k')
-    _e = ax.step(t, e, where='post', label='elevation')
-    _s = ax.step(t, s, linestyle='--', where='post', label='stratigraphy')
-    _pd = ax.plot(t[p], s[p], color='0.5', marker='o',
-                  ls='none', label='psvd time')
+    ax.add_patch(ptch.Rectangle((0, 0), 0, 0, facecolor='0.8',
+                                label='psvd timesteps'))  # add for lgnd
+    ax.hlines(s[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
+    ax.axvline(lst, c='k')
+    ax.step(t, e, where='post', label='elevation')
+    ax.step(t, s, linestyle='--', where='post', label='stratigraphy')
+    ax.plot(t[p], s[p], color='0.5', marker='o',
+            ls='none', label='psvd time')
     if len(t) < 100:
         ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
     ax.grid(which='both', axis='x')
@@ -954,9 +952,10 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
         ax_s.xaxis.set_visible(False)
         __x, __y = np.meshgrid(np.array([0, 1]), z)
         _colmap = plt.cm.get_cmap('viridis', e.shape[0])
-        _c = ax_s.pcolormesh(__x, __y, cp,
-                             cmap=_colmap, vmin=0, vmax=e.shape[0], shading='auto')
-        _ss2 = ax_s.hlines(e[p], 0, 1, linestyles='dashed', colors='gray')
+        ax_s.pcolormesh(__x, __y, cp,
+                        cmap=_colmap, vmin=0, vmax=e.shape[0],
+                        shading='auto')
+        ax_s.hlines(e[p], 0, 1, linestyles='dashed', colors='gray')
         _cstr = [str(int(cc)) if np.isfinite(cc) else 'nan' for cc in c.flatten()]
         ax_s.set_xlim(0, 1)
         if label_strata:
@@ -965,7 +964,6 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
 
     # adjust and add legend
     if np.any(e < 0):
-        yView = np.absolute(e).max() * 1.2
         ax.set_ylim(np.min(e) * 1.2, np.maximum(0, np.max(e) * 1.2))
     else:
         ax.set_ylim(np.min(e) * 0.8, np.max(e) * 1.2)
@@ -1078,7 +1076,8 @@ def show_histograms(*args, sets=None, ax=None, **kwargs):
         sets = np.array(sets)
 
     if len(sets) != len(args):
-        raise ValueError('Number of histogram tuples must match length of `sets` list.')
+        raise ValueError(
+            'Number of histogram tuples must match length of `sets` list.')
 
     for i in range(n_sets):
         CN = 'C%d' % (i)
@@ -1090,4 +1089,4 @@ def show_histograms(*args, sets=None, ax=None, **kwargs):
             bin_width = (bins[1:] - bins[:-1])
             bin_cent = bins[:-1] + (bin_width/2)
             ax.bar(bin_cent, hist, width=bin_width,
-                edgecolor=CNs[n], facecolor=CNs[n], **kwargs)
+                   edgecolor=CNs[n], facecolor=CNs[n], **kwargs)

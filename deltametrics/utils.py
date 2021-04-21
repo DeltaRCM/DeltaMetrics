@@ -1,16 +1,8 @@
-import os
-import sys
-
 import numpy as np
 import xarray as xr
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import matplotlib.colors as colors
 from scipy import optimize
 
 from numba import njit
-
-from . import io
 
 
 def _get_version():
@@ -392,8 +384,8 @@ def _walk_line(p0, p1):
         dy = -dy
 
     D = 2 * dy - dx
-    x = np.arange(x0, x1 + 1, dtype=np.int).T
-    y = np.zeros((len(x),), dtype=np.int)
+    x = np.arange(x0, x1 + 1, dtype=int).T
+    y = np.zeros((len(x),), dtype=int)
 
     yy = y0
     for i in np.arange(len(x)):
@@ -434,10 +426,10 @@ def circle_to_cells(origin, radius, remove_duplicates=True):
     x0, y0 = origin
 
     # Compute first the number of points
-    octant_size = np.int((np.sqrt(2) * (radius - 1) + 4) / 2)
+    octant_size = int((np.sqrt(2) * (radius - 1) + 4) / 2)
     n_points = 4 * octant_size
-    xc = np.zeros((n_points,), dtype=np.int)
-    yc = np.zeros((n_points,), dtype=np.int)
+    xc = np.zeros((n_points,), dtype=int)
+    yc = np.zeros((n_points,), dtype=int)
 
     x = 0
     y = radius
@@ -458,7 +450,7 @@ def circle_to_cells(origin, radius, remove_duplicates=True):
     xc[4 * octant_size - 1] = x0 + y
     yc[4 * octant_size - 1] = y0 + x
 
-    for i in np.arange(1, n_points / 4, dtype=np.int):
+    for i in np.arange(1, n_points / 4, dtype=int):
         # update x and y, follwing midpoint algo
         if f > 0:
             y = y - 1
@@ -488,7 +480,7 @@ def circle_to_cells(origin, radius, remove_duplicates=True):
     #     octants.
     if remove_duplicates:
         xyc = np.column_stack((xc, yc))
-        keep = np.ones((n_points,), dtype=np.bool)
+        keep = np.ones((n_points,), dtype=bool)
         for i in np.arange(1, 4):
             prv = xyc[(i-1)*octant_size:i*octant_size, :]
             nxt = xyc[i*octant_size:(i+1)*octant_size, :]
@@ -522,17 +514,17 @@ def _point_in_polygon(x, y, polygon):
     p2x = 0.0
     p2y = 0.0
     xints = 0.0
-    p1x,p1y = polygon[0]
+    p1x, p1y = polygon[0]
     for i in range(n+1):
-        p2x,p2y = polygon[i % n]
-        if y > min(p1y,p2y):
-            if y <= max(p1y,p2y):
-                if x <= max(p1x,p2x):
+        p2x, p2y = polygon[i % n]
+        if y > min(p1y, p2y):
+            if y <= max(p1y, p2y):
+                if x <= max(p1x, p2x):
                     if p1y != p2y:
                         xints = (y-p1y)*(p2x-p1x)/(p2y-p1y)+p1x
                     if p1x == p2x or x <= xints:
                         inside = not inside
-        p1x,p1y = p2x,p2y
+        p1x, p1y = p2x, p2y
 
     return inside
 

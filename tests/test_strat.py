@@ -1,7 +1,6 @@
 """Tests for the mask.py script."""
 import pytest
-import sys
-import os
+
 import numpy as np
 import xarray as xr
 
@@ -20,46 +19,52 @@ class TestComputeBoxyStratigraphyVolume:
     time = rcm8cube['time']
 
     def test_returns_volume_and_elevations(self):
-        s, e = strat.compute_boxy_stratigraphy_volume(self.elev,
-                                                      self.time,
-                                                      dz=0.05)
+        s, e = strat.compute_boxy_stratigraphy_volume(
+            self.elev, self.time, dz=0.05)
         assert s.ndim == 3
         assert s.shape == e.shape
-        assert e[1,0,0] - e[0,0,0] == pytest.approx(0.05)
+        assert e[1, 0, 0] - e[0, 0, 0] == pytest.approx(0.05)
 
     def test_returns_volume_and_elevations_given_z(self):
         z = np.linspace(-20, 500, 200)
-        s, e = strat.compute_boxy_stratigraphy_volume(self.elev,
-                                                      self.time,
-                                                      z=z)
+        s, e = strat.compute_boxy_stratigraphy_volume(
+            self.elev, self.time, z=z)
         assert s.ndim == 3
         assert s.shape == e.shape
-        assert np.all(e[:,0,0] == z)
+        assert np.all(e[:, 0, 0] == z)
 
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True, reason='Not yet developed.')
+    @pytest.mark.xfail(raises=NotImplementedError,
+                       strict=True, reason='Not yet developed.')
     def test_return_cube(self):
-        s, e = strat.compute_boxy_stratigraphy_volume(self.elev, self.time,
-                                                      dz=0.05,
-                                                      return_cube=True)
+        s, e = strat.compute_boxy_stratigraphy_volume(
+            self.elev, self.time,
+            dz=0.05, return_cube=True)
 
     def test_lessthan3d_error(self):
-        with pytest.raises(ValueError, match=r'Input arrays must be three-dimensional.'):
-            strat.compute_boxy_stratigraphy_volume(self.elev[:, 10, 120].squeeze(),
-                                                   self.time[:, 10, 120].squeeze(),
-                                                   dz=0.05)
-        with pytest.raises(ValueError, match=r'Input arrays must be three-dimensional.'):
-            strat.compute_boxy_stratigraphy_volume(self.elev[:, 10, :].squeeze(),
-                                                   self.time[:, 10, :].squeeze(),
-                                                   dz=0.05)
+        with pytest.raises(ValueError,
+                           match=r'Input arrays must be three-dimensional.'):
+            strat.compute_boxy_stratigraphy_volume(
+                self.elev[:, 10, 120].squeeze(),
+                self.time[:, 10, 120].squeeze(),
+                dz=0.05)
+        with pytest.raises(ValueError,
+                           match=r'Input arrays must be three-dimensional.'):
+            strat.compute_boxy_stratigraphy_volume(
+                self.elev[:, 10, :].squeeze(),
+                self.time[:, 10, :].squeeze(),
+                dz=0.05)
 
     def test_bad_shape_error(self):
-        with pytest.raises(ValueError, match=r'Input arrays must be three-dimensional.'):
-            strat.compute_boxy_stratigraphy_volume(self.elev[:, 10, 120].squeeze(),
-                                                   self.time[:, 10, 120].squeeze(),
-                                                   dz=0.05)
+        with pytest.raises(ValueError,
+                           match=r'Input arrays must be three-dimensional.'):
+            strat.compute_boxy_stratigraphy_volume(
+                self.elev[:, 10, 120].squeeze(),
+                self.time[:, 10, 120].squeeze(),
+                dz=0.05)
 
     def test_no_z_options(self):
-        with pytest.raises(ValueError, match=r'You must specify "z", "dz", or "nz.'):
+        with pytest.raises(ValueError,
+                           match=r'You must specify "z", "dz", or "nz.'):
             strat.compute_boxy_stratigraphy_volume(self.elev, self.time)
 
 
@@ -69,13 +74,14 @@ class TestComputeBoxyStratigraphyCoordinates:
     time = rcm8cube['time']
 
     def test_returns_sc_dc(self):
-        sc, dc = strat.compute_boxy_stratigraphy_coordinates(self.elev, dz=0.05)
+        sc, dc = strat.compute_boxy_stratigraphy_coordinates(
+            self.elev, dz=0.05)
         assert sc.shape == dc.shape
         assert sc.shape[1] == 3
 
     def test_returns_sc_dc_return_strata(self):
-        sc, dc, s = strat.compute_boxy_stratigraphy_coordinates(self.elev, dz=0.05,
-                                                                return_strata=True)
+        sc, dc, s = strat.compute_boxy_stratigraphy_coordinates(
+            self.elev, dz=0.05, return_strata=True)
         assert s.ndim == 3
         assert s.shape == self.elev.shape
         assert sc.shape == dc.shape
@@ -87,14 +93,17 @@ class TestComputeBoxyStratigraphyCoordinates:
         assert np.min(sc[:, 0]) == 0
         assert np.max(sc[:, 0]) == 6
 
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True, reason='Not yet developed.')
+    @pytest.mark.xfail(raises=NotImplementedError,
+                       strict=True, reason='Not yet developed.')
     def test_return_cube(self):
-        s, sc, dc = strat.compute_boxy_stratigraphy_coordinates(self.elev,
-                                                      dz=0.05, return_cube=True)
+        s, sc, dc = strat.compute_boxy_stratigraphy_coordinates(
+            self.elev, dz=0.05, return_cube=True)
 
     def test_no_z_options(self):
-        with pytest.raises(ValueError, match=r'You must specify "z", "dz", or "nz.'):
-            strat.compute_boxy_stratigraphy_coordinates(self.elev[:, 10, 120].squeeze())
+        with pytest.raises(ValueError,
+                           match=r'You must specify "z", "dz", or "nz.'):
+            strat.compute_boxy_stratigraphy_coordinates(
+                self.elev[:, 10, 120].squeeze())
 
 
 class TestComputeElevationToPreservation:
@@ -113,61 +122,72 @@ class TestComputeElevationToPreservation:
         assert np.all(p3 == np.array([True, True, True]))
 
     def test_1d_all_zeros(self):
-        s, p = strat._compute_elevation_to_preservation(np.array([0, 0, 0, 0]))
+        s, p = strat._compute_elevation_to_preservation(
+            np.array([0, 0, 0, 0]))
         assert np.all(s == np.array([0, 0, 0, 0]))
         assert np.all(p == np.array([False, False, False, False]))
 
     def test_1d_all_ones(self):
-        s, p = strat._compute_elevation_to_preservation(np.array([1, 1, 1, 1]))
+        s, p = strat._compute_elevation_to_preservation(
+            np.array([1, 1, 1, 1]))
         assert np.all(s == np.array([1, 1, 1, 1]))
         assert np.all(p == np.array([False, False, False, False]))
 
     def test_1d_all_aggrade(self):
-        s, p = strat._compute_elevation_to_preservation(np.array([0, 1, 2, 3]))
+        s, p = strat._compute_elevation_to_preservation(
+            np.array([0, 1, 2, 3]))
         assert np.all(s == np.array([0, 1, 2, 3]))
         assert np.all(p == np.array([True, True, True, True]))
         assert np.all(s[1:] - s[:-1] == 1)
 
     def test_1d_all_erode_positive(self):
-        s, p = strat._compute_elevation_to_preservation(np.array([3, 2, 1, 0]))
+        s, p = strat._compute_elevation_to_preservation(
+            np.array([3, 2, 1, 0]))
         assert np.all(s == np.array([0, 0, 0, 0]))
         assert np.all(p == np.array([False, False, False, False]))
 
     def test_1d_all_erode_negative(self):
-        s, p = strat._compute_elevation_to_preservation(np.array([0, -1, -2, -3]))
+        s, p = strat._compute_elevation_to_preservation(
+            np.array([0, -1, -2, -3]))
         assert np.all(s == np.array([-3, -3, -3, -3]))
         assert np.all(p == np.array([False, False, False, False]))
 
     def test_1d_up_down(self):
-        s, p = strat._compute_elevation_to_preservation(np.array([0, 1, 2, 1]))
+        s, p = strat._compute_elevation_to_preservation(
+            np.array([0, 1, 2, 1]))
         assert np.all(s == np.array([0, 1, 1, 1]))
         assert np.all(p == np.array([True, True, False, False]))
 
     def test_1d_up_down_flat(self):
-        s, p = strat._compute_elevation_to_preservation(np.array([0, 1, 2, 1, 1]))
+        s, p = strat._compute_elevation_to_preservation(
+            np.array([0, 1, 2, 1, 1]))
         assert np.all(s == np.array([0, 1, 1, 1, 1]))
         assert np.all(p == np.array([True, True, False, False, False]))
 
     def test_1d_up_down_up(self):
-        s, p = strat._compute_elevation_to_preservation(np.array([0, 1, 2, 1, 2]))
+        s, p = strat._compute_elevation_to_preservation(
+            np.array([0, 1, 2, 1, 2]))
         assert np.all(s == np.array([0, 1, 1, 1, 2]))
         assert np.all(p == np.array([True, True, False, False, True]))
 
     def test_1d_up_down_down(self):
-        s, p = strat._compute_elevation_to_preservation(np.array([0, 1, 2, 1, 0]))
+        s, p = strat._compute_elevation_to_preservation(
+            np.array([0, 1, 2, 1, 0]))
         assert np.all(s == np.array([0, 0, 0, 0, 0]))
         assert np.all(p == np.array([False, False, False, False, False]))
 
     def test_2d_all_zeros(self):
-        s, p = strat._compute_elevation_to_preservation(np.zeros((6, 4)))
+        s, p = strat._compute_elevation_to_preservation(
+            np.zeros((6, 4)))
         assert np.all(s == np.zeros((6, 4)))
-        assert np.all(p == np.zeros((6, 4), dtype=np.bool))
+        assert np.all(p == np.zeros((6, 4), dtype=bool))
 
     def test_2d_all_aggrade(self):
         e = np.tile(np.arange(0, 3), (2, 1)).T
-        s, p = strat._compute_elevation_to_preservation(e)
+        s, p = strat._compute_elevation_to_preservation(
+            e)
         assert np.all(s == np.array([[0, 0], [1, 1], [2, 2]]))
-        assert np.all(p == np.ones((3, 2), dtype=np.bool))
+        assert np.all(p == np.ones((3, 2), dtype=bool))
 
     def test_2d_different_walks(self):
         e = np.array([[0, 3,   4],
@@ -190,13 +210,15 @@ class TestComputeElevationToPreservation:
     def test_3d_all_zeros(self):
         s, p = strat._compute_elevation_to_preservation(np.zeros((6, 4, 4)))
         assert np.all(s == np.zeros((6, 4, 4)))
-        assert np.all(p == np.zeros((6, 4, 4), dtype=np.bool))
+        assert np.all(p == np.zeros((6, 4, 4), dtype=bool))
 
     def test_3d_all_aggrade(self):
         e = np.tile(np.arange(0, 3), (2, 2, 1)).T
         s, p = strat._compute_elevation_to_preservation(e)
-        assert np.all(s == np.array([[[0, 0], [0, 0]], [[1, 1], [1, 1]], [[2, 2], [2, 2]]]))
-        assert np.all(p == np.ones((3, 2, 2), dtype=np.bool))
+        assert np.all(s == np.array([[[0, 0], [0, 0]],
+                                     [[1, 1], [1, 1]],
+                                     [[2, 2], [2, 2]]]))
+        assert np.all(p == np.ones((3, 2, 2), dtype=bool))
 
     def test_3d_different_walks_return_valid_only_check(self):
         e = np.random.rand(51, 120, 240)
@@ -216,6 +238,7 @@ class TestComputePreservationToCube:
         sc3, dc3 = strat._compute_preservation_to_cube(np.array([1, 2, 3]), z)
         # assert np.all(sc1 == np.array([3, 2, 1, 0]))
 
+
 class TestOneDimStratigraphyExamples:
     """Tests for various cases of 1d stratigraphy."""
 
@@ -232,12 +255,11 @@ class TestOneDimStratigraphyExamples:
 
     def test_onedim_traj_drop_at_end(self):
         e = np.array([0, 1, 2, 3, 1])
-        # e = np.expand_dims(e, axis=(1,2))  # expand elevation to work with `strat` funcs
         z = strat._determine_strat_coordinates(e, dz=0.5)  # vert coordinates
         assert z[0] == 0
         assert z[-1] == 3
         assert len(z) == 7
-        s, p = strat._compute_elevation_to_preservation(e)  # strat and preservation
+        s, p = strat._compute_elevation_to_preservation(e)
         sc, dc = strat._compute_preservation_to_cube(s, z)
         lst = np.argmin(s[:, ...] < s[-1, ...], axis=0)  # last elevation idx
         c = self.take_var_time(s, z, sc, dc)
@@ -251,7 +273,7 @@ class TestOneDimStratigraphyExamples:
         e = np.array([0, 1, 1, 0])
         # e = np.expand_dims(e, axis=(1,2))
         z = strat._determine_strat_coordinates(e, dz=0.5)  # vert coordinates
-        s, p = strat._compute_elevation_to_preservation(e)  # strat and preservation
+        s, p = strat._compute_elevation_to_preservation(e)
         sc, dc = strat._compute_preservation_to_cube(s, z)
         c = self.take_var_time(s, z, sc, dc)
         assert len(z) == 3
@@ -262,7 +284,7 @@ class TestOneDimStratigraphyExamples:
         e = np.array([0, 0, 1, 4, 6, 5, 3.5, 5, 7, 5, 6])
         # e = np.expand_dims(e, axis=(1,2))
         z = strat._determine_strat_coordinates(e, dz=0.5)  # vert coordinates
-        s, p = strat._compute_elevation_to_preservation(e)  # strat and preservation
+        s, p = strat._compute_elevation_to_preservation(e)
         sc, dc = strat._compute_preservation_to_cube(s, z)
         c = self.take_var_time(s, z, sc, dc)
         assert z[-1] == 7
@@ -275,7 +297,7 @@ class TestOneDimStratigraphyExamples:
         e_xr = xr.DataArray([0, 0, -1, -4, -2, 3, 3.5, 3, 3, 4, 4])
         e = e_xr.cubevar
         z = strat._determine_strat_coordinates(e, dz=0.5)  # vert coordinates
-        s, p = strat._compute_elevation_to_preservation(e)  # strat and preservation
+        s, p = strat._compute_elevation_to_preservation(e)
         sc, dc = strat._compute_preservation_to_cube(s, z)
         c = self.take_var_time(s, z, sc, dc)
         assert np.all(p.nonzero()[0] == (4, 5, 9))
@@ -286,7 +308,7 @@ class TestDetermineStratCoordinates:
     def test_given_none(self):
         e = np.array([0, 1, 1, 2, 1])
         with pytest.raises(ValueError, match=r'You must *.'):
-            z = strat._determine_strat_coordinates(e)
+            _ = strat._determine_strat_coordinates(e)
 
     def test_given_z(self):
         e = np.array([0, 1, 1, 2, 1])
@@ -297,7 +319,7 @@ class TestDetermineStratCoordinates:
     def test_given_z_scalar(self):
         e = np.array([0, 1, 1, 2, 1])
         with pytest.raises(ValueError):
-            z = strat._determine_strat_coordinates(e, z=0.05)
+            _ = strat._determine_strat_coordinates(e, z=0.05)
 
     def test_given_dz(self):
         e = np.array([0, 1, 1, 2, 1])
@@ -317,12 +339,12 @@ class TestDetermineStratCoordinates:
     def test_given_dz_zero(self):
         e = np.array([0, 1, 1, 2, 1])
         with pytest.raises(ValueError, match=r'"dz" or "nz" cannot *.'):
-            z = strat._determine_strat_coordinates(e, dz=0)
+            _ = strat._determine_strat_coordinates(e, dz=0)
 
     def test_given_dz_negative(self):
         e = np.array([0, 1, 1, 2, 1])
         with pytest.raises(ValueError, match=r'"dz" or "nz" cannot *.'):
-            z = strat._determine_strat_coordinates(e, dz=-0.5)
+            _ = strat._determine_strat_coordinates(e, dz=-0.5)
 
     def test_given_nz(self):
         e = np.array([0, 1, 1, 2, 1])
@@ -343,12 +365,12 @@ class TestDetermineStratCoordinates:
     def test_given_nz_zero(self):
         e = np.array([0, 1, 1, 2, 1])
         with pytest.raises(ValueError, match=r'"dz" or "nz" cannot *.'):
-            z = strat._determine_strat_coordinates(e, nz=0)
+            _ = strat._determine_strat_coordinates(e, nz=0)
 
     def test_given_nz_negative(self):
         e = np.array([0, 1, 1, 2, 1])
         with pytest.raises(ValueError, match=r'"dz" or "nz" cannot *.'):
-            z = strat._determine_strat_coordinates(e, nz=-5)
+            _ = strat._determine_strat_coordinates(e, nz=-5)
 
     def test_given_z_and_dz(self):
         e = np.array([0, 1, 1, 2, 1])

@@ -1,14 +1,10 @@
 import pytest
 
-import sys
-import os
-
 import numpy as np
 import matplotlib.pyplot as plt
 
 from deltametrics import cube
 
-from deltametrics import plot
 from deltametrics import section
 from deltametrics import utils
 from deltametrics.sample_data import _get_rcm8_path, _get_golf_path
@@ -40,7 +36,7 @@ class TestStrikeSection:
     def test_StrikeSection_bad_cube(self):
         badcube = ['some', 'list']
         with pytest.raises(TypeError, match=r'Expected type is *.'):
-            sass = section.StrikeSection(badcube, y=12)
+            _ = section.StrikeSection(badcube, y=12)
 
     def test_StrikeSection_standalone_instantiation(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -101,7 +97,7 @@ class TestPathSection:
     def test_bad_cube(self):
         badcube = ['some', 'list']
         with pytest.raises(TypeError, match=r'Expected type is *.'):
-            saps = section.PathSection(badcube, path=self.test_path)
+            _ = section.PathSection(badcube, path=self.test_path)
 
     def test_standalone_instantiation(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -123,7 +119,8 @@ class TestPathSection:
         assert rcm8cube.sections['test'].shape[0] > 20
         with pytest.warns(UserWarning):
             rcm8cube.register_section(
-                'test2', section.PathSection(path=self.test_path, name='trial'))
+                'test2', section.PathSection(
+                    path=self.test_path, name='trial'))
             assert rcm8cube.sections['test2'].name == 'trial'
         _section = rcm8cube.register_section(
             'test', section.PathSection(path=self.test_path),
@@ -141,8 +138,8 @@ class TestPathSection:
     def test_path_reduced_unique(self):
         # test a first case with a straight line
         rcm8cube = cube.DataCube(rcm8_path)
-        xy = np.column_stack((np.linspace(50, 150, num=4000, dtype=np.int),
-                              np.linspace(10, 90, num=4000, dtype=np.int)))
+        xy = np.column_stack((np.linspace(50, 150, num=4000, dtype=int),
+                              np.linspace(10, 90, num=4000, dtype=int)))
         saps1 = section.PathSection(rcm8cube, path=xy)
         assert saps1.path.shape != xy.shape
         assert np.all(saps1.path == np.unique(xy, axis=0))
@@ -174,7 +171,7 @@ class TestCircularSection:
     def test_bad_cube(self):
         badcube = ['some', 'list']
         with pytest.raises(TypeError, match=r'Expected type is *.'):
-            sacs = section.CircularSection(badcube, radius=30)
+            _ = section.CircularSection(badcube, radius=30)
 
     def test_standalone_instantiation(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -271,7 +268,7 @@ class TestRadialSection:
     def test_bad_cube(self):
         badcube = ['some', 'list']
         with pytest.raises(TypeError, match=r'Expected type is *.'):
-            sars = section.RadialSection(badcube, azimuth=30)
+            _ = section.RadialSection(badcube, azimuth=30)
 
     def test_standalone_instantiation(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -333,7 +330,6 @@ class TestRadialSection:
         _section2 = rcm8cube.register_section(
             'test', section.RadialSection(azimuth=30))
         assert _section2 is None
-
 
     def test_autodetect_origin_range_aziumths(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -434,19 +430,21 @@ class TestCubesWithManySections:
         # create alias and verify differences
         t1, t2 = self.rcm8cube.sections[
             'test1'], self.rcm8cube.sections['test2']
-        assert not t1 is t2
+        assert not (t1 is t2)
 
     def test_show_trace_sections_multiple(self):
-        self.rcm8cube.register_section('show_test1', section.StrikeSection(y=5))
-        self.rcm8cube.register_section('show_test2', section.StrikeSection(y=50))
+        self.rcm8cube.register_section(
+            'show_test1', section.StrikeSection(y=5))
+        self.rcm8cube.register_section(
+            'show_test2', section.StrikeSection(y=50))
         fig, ax = plt.subplots(1, 2)
         self.rcm8cube.sections['show_test2'].show_trace('r--')
         self.rcm8cube.sections['show_test1'].show_trace('g--', ax=ax[0])
         plt.close()
 
+
 # test the core functionality common to all section types, for different
 # Cubes and strat
-
 class TestSectionFromDataCubeNoStratigraphy:
 
     rcm8cube_nostrat = cube.DataCube(rcm8_path)
@@ -474,7 +472,7 @@ class TestSectionFromDataCubeNoStratigraphy:
             'test', section.StrikeSection(y=5))
         temp_rcm8cube_nostrat.sections['test'].cube = 'badvalue!'
         with pytest.raises(TypeError):
-            a = temp_rcm8cube_nostrat.sections['test'].__getitem__('velocity')
+            _ = temp_rcm8cube_nostrat.sections['test'].__getitem__('velocity')
         with pytest.raises(TypeError):
             temp_rcm8cube_nostrat.sections['test']['velocity']
 
@@ -486,10 +484,10 @@ class TestSectionFromDataCubeNoStratigraphy:
 
     def test_nostrat_nostratigraphyinfo(self):
         with pytest.raises(utils.NoStratigraphyError):
-            st = self.rcm8cube_nostrat.sections[
+            _ = self.rcm8cube_nostrat.sections[
                 'test']['velocity'].as_stratigraphy()
         with pytest.raises(utils.NoStratigraphyError):
-            st = self.rcm8cube_nostrat.sections[
+            _ = self.rcm8cube_nostrat.sections[
                 'test']['velocity'].as_preserved()
 
     def test_nostrat_SectionVariable_basic_math_comparisons(self):
@@ -560,9 +558,11 @@ class TestSectionFromDataCubeNoStratigraphy:
                                                         data='stratigraphy')
 
     def test_nostrat_show_bad_style(self):
-        with pytest.raises(ValueError, match=r'Bad style argument: "somethinginvalid"'):
-            self.rcm8cube_nostrat.sections['test'].show('time', style='somethinginvalid',
-                                                        data='spacetime', label=True)
+        with pytest.raises(ValueError,
+                           match=r'Bad style argument: "somethinginvalid"'):
+            self.rcm8cube_nostrat.sections['test'].show(
+                'time', style='somethinginvalid',
+                data='spacetime', label=True)
 
     def test_nostrat_show_bad_variable(self):
         with pytest.raises(AttributeError):
@@ -604,7 +604,7 @@ class TestSectionFromDataCubeWithStratigraphy:
         temp_rcm8cube.register_section('test', section.StrikeSection(y=5))
         temp_rcm8cube.sections['test'].cube = 'badvalue!'
         with pytest.raises(TypeError):
-            a = temp_rcm8cube.sections['test'].__getitem__('velocity')
+            _ = temp_rcm8cube.sections['test'].__getitem__('velocity')
         with pytest.raises(TypeError):
             temp_rcm8cube.sections['test']['velocity']
 
@@ -696,9 +696,11 @@ class TestSectionFromDataCubeWithStratigraphy:
                                             data='stratigraphy')
 
     def test_withstrat_show_bad_style(self):
-        with pytest.raises(ValueError, match=r'Bad style argument: "somethinginvalid"'):
-            self.rcm8cube.sections['test'].show('time', style='somethinginvalid',
-                                                data='spacetime', label=True)
+        with pytest.raises(ValueError,
+                           match=r'Bad style argument: "somethinginvalid"'):
+            self.rcm8cube.sections['test'].show(
+                'time', style='somethinginvalid',
+                data='spacetime', label=True)
 
     def test_withstrat_show_bad_variable(self):
         with pytest.raises(AttributeError):
@@ -741,7 +743,7 @@ class TestSectionFromStratigraphyCube:
         temp_rcm8cube.register_section('test', section.StrikeSection(y=5))
         temp_rcm8cube.sections['test'].cube = 'badvalue!'
         with pytest.raises(TypeError):
-            a = temp_rcm8cube.sections['test'].__getitem__('velocity')
+            _ = temp_rcm8cube.sections['test'].__getitem__('velocity')
         with pytest.raises(TypeError):
             temp_rcm8cube.sections['test']['velocity']
 
@@ -769,7 +771,8 @@ class TestSectionFromStratigraphyCube:
         self.sc8cube.sections['test'].show('time')
 
     def test_strat_show_shaded_spacetime(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
             self.sc8cube.sections['test'].show('time', style='shaded',
                                                data='spacetime')
 
@@ -780,7 +783,8 @@ class TestSectionFromStratigraphyCube:
                       data='spacetime')
 
     def test_strat_show_shaded_aspreserved(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
             self.sc8cube.sections['test'].show('time', style='shaded',
                                                data='preserved')
 
@@ -794,12 +798,14 @@ class TestSectionFromStratigraphyCube:
                                            data='stratigraphy', ax=ax)
 
     def test_strat_show_lines_spacetime(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
             self.sc8cube.sections['test'].show('time', style='lines',
                                                data='spacetime')
 
     def test_strat_show_lines_aspreserved(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
             self.sc8cube.sections['test'].show('time', style='lines',
                                                data='preserved')
 
@@ -809,9 +815,11 @@ class TestSectionFromStratigraphyCube:
                                            data='stratigraphy')
 
     def test_strat_show_bad_style(self):
-        with pytest.raises(ValueError, match=r'Bad style argument: "somethinginvalid"'):
-            self.sc8cube.sections['test'].show('time', style='somethinginvalid',
-                                               data='spacetime', label=True)
+        with pytest.raises(ValueError,
+                           match=r'Bad style argument: "somethinginvalid"'):
+            self.sc8cube.sections['test'].show(
+                'time', style='somethinginvalid',
+                data='spacetime', label=True)
 
     def test_strat_show_bad_variable(self):
         with pytest.raises(AttributeError):
@@ -834,7 +842,7 @@ class TestDataSectionVariableNoStratigraphy:
 
     def test_dsv_view_from(self):
         _arr = self.dsv + 5  # takes a view from
-        assert not _arr is self.dsv
+        assert not (_arr is self.dsv)
         _arr2 = (_arr - 5)
         assert np.all(_arr2 == pytest.approx(self.dsv, abs=1e-6))
 
@@ -857,7 +865,7 @@ class TestDataSectionVariableNoStratigraphy:
         _s = np.arange(200)
         _z = np.linspace(0, 10, num=50)
         with pytest.raises(ValueError):
-            _dsv = section.DataSectionVariable(_arr, _s, _z)
+            _ = section.DataSectionVariable(_arr, _s, _z)
 
     def test_dsv_knows_stratigraphy(self):
         assert self.dsv._knows_stratigraphy is False
@@ -888,7 +896,6 @@ class TestDataSectionVariableWithStratigraphy:
         _arr = np.random.rand(100, 200)
         _s = np.arange(200)
         _z = np.linspace(0, 10, num=100)
-        _mask = np.random.randint(0, 2, (100, 200), dtype=np.bool)
         _dsv = section.DataSectionVariable(_arr, _s, _z)
         assert isinstance(_dsv, section.DataSectionVariable)
         assert np.all(_dsv == _arr)
@@ -903,17 +910,17 @@ class TestDataSectionVariableWithStratigraphy:
         _arr = np.random.rand(100, 200)
         _s = np.arange(200)
         _z = np.linspace(0, 10, num=100)
-        _mask = np.random.randint(0, 2, (20, 200), dtype=np.bool)
+        _mask = np.random.randint(0, 2, (20, 200), dtype=bool)
         with pytest.raises(ValueError, match=r'Shape of "_psvd_mask"*.'):
-            _dsv = section.DataSectionVariable(_arr, _s, _z, _mask)
+            _ = section.DataSectionVariable(_arr, _s, _z, _mask)
 
     def test_dsv_instantiate_directly_bad_shape_coord(self):
         _arr = np.random.rand(100, 200)
         _s = np.arange(500)
         _z = np.linspace(0, 10, num=100)
-        _mask = np.random.randint(0, 2, (100, 200), dtype=np.bool)
+        _mask = np.random.randint(0, 2, (100, 200), dtype=bool)
         with pytest.raises(ValueError, match=r'Shape of "_s"*.'):
-            _dsv = section.DataSectionVariable(_arr, _s, _z, _mask)
+            _ = section.DataSectionVariable(_arr, _s, _z, _mask)
 
     def test_dsv_knows_stratigraphy(self):
         assert self.dsv._knows_stratigraphy is True
@@ -943,7 +950,7 @@ class TestStratigraphySectionVariable:
 
     def test_ssv_view_from(self):
         _arr = self.ssv + 5  # takes a view from
-        assert not _arr is self.ssv
+        assert not (_arr is self.ssv)
         assert np.all(np.isnan(_arr) == np.isnan(self.ssv))
         _arr2 = (_arr - 5)
         assert np.all(_arr2[~np.isnan(_arr2)].flatten() == pytest.approx(
@@ -969,14 +976,14 @@ class TestStratigraphySectionVariable:
         _z = np.linspace(0, 10, num=100)
         _mask = np.copy(_arr)
         with pytest.raises(TypeError):
-            _ssv = section.StratigraphySectionVariable(_arr, _s, _z, _mask)
+            _ = section.StratigraphySectionVariable(_arr, _s, _z, _mask)
 
     def test_ssv_instantiate_directly_bad_shape_coord(self):
         _arr = np.random.rand(100, 200)
         _s = np.arange(200)
         _z = np.linspace(0, 10, num=50)
         with pytest.raises(ValueError, match=r'Shape of "_s"*.'):
-            _ssv = section.StratigraphySectionVariable(_arr, _s, _z)
+            _ = section.StratigraphySectionVariable(_arr, _s, _z)
 
     def test_ssv_knows_spacetime(self):
         assert self.ssv._knows_spacetime is False
@@ -984,5 +991,6 @@ class TestStratigraphySectionVariable:
         assert self.ssv.knows_spacetime == self.ssv._knows_spacetime
 
     def test_ssv__check_knows_spacetime(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
             self.ssv._check_knows_spacetime()
