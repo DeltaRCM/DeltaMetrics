@@ -83,7 +83,7 @@ this with Boxy stratigraphy.</p>
 <p class="rubric">Notes</p>
 <p>Some descriptions regarding implementation.</p>
 <dl>
-<dt>_psvd_idx<span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code> of <cite>np.bool</cite></span></dt><dd><p>Preserved index into the section array.</p>
+<dt>_psvd_idx<span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code> of <cite>bool</cite></span></dt><dd><p>Preserved index into the section array.</p>
 </dd>
 <dt>_psvd_flld<span class="classifier"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></span></dt><dd><p>Elevation of preserved voxels, filled to vertical extent with the
 final elevation of the bed (i.e., to make it displayable by
@@ -101,11 +101,11 @@ because the column cannot change with preservation.</p>
 <dl class="method">
 <dt id="deltametrics.strat.MeshStratigraphyAttributes.__init__">
 <code class="descname">__init__</code><span class="sig-paren">(</span><em>elev</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.MeshStratigraphyAttributes.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>We can precompute several attributes of the stratigraphy, including which
-voxels are preserved, what their row indicies in the sparse stratigraphy
-matrix are, and what the elevation of each elevation entry in the final
-stratigraphy are. <em>This allows placing of any t-x-y stored variable into
-the section.</em></p>
+<dd><p>We can precompute several attributes of the stratigraphy, including
+which voxels are preserved, what their row indicies in the sparse
+stratigraphy matrix are, and what the elevation of each elevation
+entry in the final stratigraphy are. <em>This allows placing of any t-x-y
+stored variable into the section.</em></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>elev</strong> – elevation t-x-y array to compute from</p>
