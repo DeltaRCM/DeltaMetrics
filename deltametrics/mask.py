@@ -670,7 +670,7 @@ class WetMask(BaseMask):
         _below_mask = _OAP.below_mask
 
         # compute the mask (pass as arrays!)
-        _CM._compute_mask(_LM._mask, _below_mask)
+        _CM._compute_mask(_LM._mask, _below_mask, **kwargs)
         return _CM
 
     @staticmethod
@@ -887,7 +887,7 @@ class LandMask(BaseMask):
         _LM._set_shape_mask(_OAP.shape)
 
         # compute the mask
-        _LM._compute_mask(_OAP)
+        _LM._compute_mask(_OAP, **kwargs)
         return _LM
 
     @staticmethod
@@ -1096,7 +1096,7 @@ class ShorelineMask(BaseMask):
         _SM._set_shape_mask(_OAP.shape)
 
         # compute the mask
-        _SM._compute_mask(_OAP)
+        _SM._compute_mask(_OAP, **kwargs)
         return _SM
 
     @staticmethod
@@ -1212,7 +1212,7 @@ class ShorelineMask(BaseMask):
         _sea_angles = _OAP._sea_angles
 
         # compute the mask
-        self._compute_mask(_below_mask, _sea_angles)
+        self._compute_mask(_below_mask, _sea_angles, **kwargs)
 
     def _compute_mask(self, *args, **kwargs):
         """Compute the shoreline mask.
@@ -1329,7 +1329,7 @@ class EdgeMask(BaseMask):
             raise TypeError
 
         # compute the mask
-        _EGM._compute_mask(_LM, _WM)
+        _EGM._compute_mask(_LM, _WM, **kwargs)
         return _EGM
 
     @staticmethod
@@ -1344,7 +1344,7 @@ class EdgeMask(BaseMask):
         _WM = WetMask.from_OAP(_OAP, **kwargs)
 
         # compute the mask
-        _EGM._compute_mask(_LM, _WM)
+        _EGM._compute_mask(_LM, _WM, **kwargs)
         return _EGM
 
     @staticmethod
@@ -1469,7 +1469,7 @@ class EdgeMask(BaseMask):
         _WM = WetMask.from_OAP(_OAP, **kwargs)
 
         # compute the mask
-        self._compute_mask(_LM, _WM)
+        self._compute_mask(_LM, _WM, **kwargs)
 
     def _compute_mask(self, *args, **kwargs):
         """Compute the EdgeMask.
@@ -1689,7 +1689,7 @@ class CenterlineMask(BaseMask):
         self._method = method
 
         # compute the mask
-        self._compute_mask(_CM)
+        self._compute_mask(_CM, **kwargs)
 
     def _compute_mask(self, *args, **kwargs):
         """Compute the centerline mask.
