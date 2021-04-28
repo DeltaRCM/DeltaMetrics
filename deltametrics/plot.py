@@ -564,7 +564,7 @@ def aerial_colormap():
     raise NotImplementedError
 
 
-def append_colorbar(ci, ax, size=2, **kwargs):
+def append_colorbar(ci, ax, size=2, labelsize=9, **kwargs):
     """Append a colorbar, consistently placed.
 
     Adjusts some parameters of the parent axes as well.
@@ -593,7 +593,7 @@ def append_colorbar(ci, ax, size=2, **kwargs):
     divider = axtk.axes_divider.make_axes_locatable(ax)
     cax = divider.append_axes("right", size=str(size)+"%", pad=0.05)
     cb = plt.colorbar(ci, cax=cax, **kwargs)
-    cb.ax.tick_params(labelsize=9)
+    cb.ax.tick_params(labelsize=labelsize)
     ax.use_sticky_edges = False
 
     return cb
@@ -1090,3 +1090,174 @@ def show_histograms(*args, sets=None, ax=None, **kwargs):
             bin_cent = bins[:-1] + (bin_width/2)
             ax.bar(bin_cent, hist, width=bin_width,
                    edgecolor=CNs[n], facecolor=CNs[n], **kwargs)
+
+
+def aerial_view(elevation_data, datum=0, ax=None, ticks=False, **kwargs):
+    """Show an aerial plot of an elevation dataset.
+
+    See also: implementation wrapper for a cube.
+
+    Parameters
+    ----------
+
+    elevation_data
+        2D array of elevations.
+
+    datum
+        Sea level reference, default value is 0.
+
+    ax : :obj:`~matplotlib.pyplot.Axes` object, optional
+        A `matplotlib` `Axes` object to plot the section. Optional; if not
+        provided, a call is made to ``plt.gca()`` to get the current (or
+        create a new) `Axes` object.
+
+    ticks
+        Whether to show ticks. Default is false, no tick labels.
+
+    **kwargs
+        Optionally, arguments accepted by :func:`cartographic_colormap`,
+        `imshow`, and/or :func:`append_colorbar`.
+
+    Returns
+    -------
+    colorbar
+        Colorbar instance appended to the axes.
+
+
+    Examples
+    --------
+    .. plot::
+        :include-source:
+
+        golfcube = dm.sample_data.golf()
+        elevation_data = golfcube['eta'][-1, :, :]
+
+        fig, ax = plt.subplots()
+        dm.plot.aerial_view( elevation_data, ax=ax)
+        plt.show()
+
+    """
+    if not ax:
+        fig, ax = plt.subplots()
+
+    # process to make a cmap
+    h = kwargs.pop('h', 3)
+    n = kwargs.pop('n', 1)
+    carto_cm, carto_norm = cartographic_colormap(H_SL=0, h=h, n=n)
+
+    # plot the data
+    im = ax.imshow(
+        elevation_data - datum,
+        origin='lower',
+        cmap=carto_cm, norm=carto_norm, **kwargs)
+
+    cb = append_colorbar(im, ax)
+    if not ticks:
+        ax.set_xticks([], minor=[])
+        ax.set_yticks([], minor=[])
+
+    return cb
+
+
+def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
+                         alpha_clip=(None, 90)):
+    """Convenient plotting method to overlay a sparse 2D array on an image.
+
+    Should only be used with data arrays that are sparse: i.e., where many
+    elements take the value 0 (or very near 0).
+
+    Original implementation was borrowed from the `dorado` project's
+    implementation of `show_nourishment_area`.
+
+    Parameters
+    ----------
+    sparse_array
+        2d array to plot.
+
+    ax : :obj:`~matplotlib.pyplot.Axes` object, optional
+        A `matplotlib` `Axes` object to plot the section. Optional; if not
+        provided, a call is made to ``plt.gca()`` to get the current (or
+        create a new) `Axes` object.
+
+    cmap
+        Maplotlib colormap to use. String or colormap object.
+
+    alpha_clip
+        Two element tuple, specifying the *percentiles* of the data in
+        `sparse_array` to clip for display. First element specifies the lower
+        bound to clip, second element is the upper bound. Either or both
+        elements can be `None` to indicate no clipping. Default is ``(None,
+        90)``.
+
+    Returns
+    -------
+    image
+        image object returned from `imshow`.
+
+    Examples
+    --------
+    Here, we use the normalized discharge field from the model as an example
+    of sparse data.
+
+    .. plot::
+        :include-source:
+
+        golfcube = dm.sample_data.golf()
+        elevation_data = golfcube['eta'][-1, :, :]
+        sparse_data = (golfcube['discharge'][-1, ...] /
+                      (golfcube.meta['h0'].data *
+                       golfcube.meta['u0'][-1].data))
+
+        fig, ax = plt.subplots(1, 3, figsize=(8, 3))
+        for axi in ax.ravel():
+            dm.plot.aerial_view( elevation_data, ax=axi)
+
+        dm.plot.overlay_sparse_array(
+            sparse_data, ax=ax[0])  # default clip is (None, 90)
+        dm.plot.overlay_sparse_array(
+            sparse_data, alpha_clip=(None, None), ax=ax[1])
+        dm.plot.overlay_sparse_array(
+            sparse_data, alpha_clip=(70, 90), ax=ax[2])
+
+        plt.tight_layout()
+        plt.show()
+
+    """
+    if not ax:
+        fig, ax = plt.subplots()
+
+    if len(alpha_clip) != 2:
+        raise ValueError(
+            '`alpha_clip` argument must be tuple or list of lenght 2.')
+
+    # pull the cmap out
+    if isinstance(cmap, str):
+        cmap = plt.cm.get_cmap(cmap)
+    else:
+        cmap = cmap
+
+    # process the clip fields
+    if alpha_clip[0]:
+        amin = np.nanpercentile(sparse_array, alpha_clip[0])
+    else:
+        amin = np.nanmin(sparse_array)
+    if alpha_clip[1]:
+        amax = np.nanpercentile(sparse_array, alpha_clip[1])
+    else:
+        amax = np.nanmax(sparse_array)
+
+    # normalize the alpha channel
+    alphas = matplotlib.colors.Normalize(
+        amin, amax, clip=True)(sparse_array)  # Normalize alphas
+
+    # normalize the colors
+    colors = matplotlib.colors.Normalize(
+        np.nanmin(sparse_array),
+        np.nanmax(sparse_array))(sparse_array)  # Normalize colors
+
+    colors = cmap(colors)
+    colors[..., -1] = alphas
+
+    im = ax.imshow(colors, origin='lower')
+
+    return im
