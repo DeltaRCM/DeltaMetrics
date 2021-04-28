@@ -27,4 +27,5 @@ Functions
 
 	compute_shoreline_roughness
 	compute_shoreline_length
+    compute_shoreline_distance
 	shaw_opening_angle_method
