@@ -1,13 +1,19 @@
-rcm8cube = dm.sample_data.cube.rcm8()
+golfcube = dm.sample_data.golf()
+elevation_data = golfcube['eta'][-1, :, :]
+sparse_data = (golfcube['discharge'][-1, ...] /
+              (golfcube.meta['h0'].data *
+               golfcube.meta['u0'][-1].data))
 
-cmap0, norm0 = dm.plot.cartographic_colormap(H_SL=0)
-cmap1, norm1 = dm.plot.cartographic_colormap(H_SL=0, h=5, n=0.5)
+fig, ax = plt.subplots(1, 3, figsize=(8, 3))
+for axi in ax.ravel():
+    dm.plot.aerial_view( elevation_data, ax=axi)
 
-fig, ax = plt.subplots(1, 2, figsize=(10, 4))
-im0 = ax[0].imshow(rcm8cube['eta'][-1, ...], origin='lower',
-               cmap=cmap0, norm=norm0)
-cb0 = dm.plot.append_colorbar(im0, ax[0])
-im1 = ax[1].imshow(rcm8cube['eta'][-1, ...], origin='lower',
-               cmap=cmap1, norm=norm1)
-cb1 = dm.plot.append_colorbar(im1, ax[1])
+dm.plot.overlay_sparse_array(
+    sparse_data, ax=ax[0])  # default clip is (None, 90)
+dm.plot.overlay_sparse_array(
+    sparse_data, alpha_clip=(None, None), ax=ax[1])
+dm.plot.overlay_sparse_array(
+    sparse_data, alpha_clip=(70, 90), ax=ax[2])
+
+plt.tight_layout()
 plt.show()
