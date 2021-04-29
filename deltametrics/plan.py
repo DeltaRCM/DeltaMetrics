@@ -757,6 +757,20 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
 
     Examples
     --------
+
+    .. doctest::
+
+        golf = dm.sample_data.golf()
+
+        sm = dm.mask.ShorelineMask(
+            golf['eta'][-1, :, :],
+            elevation_threshold=0,
+            elevation_offset=-0.5)
+
+        # compute mean and stddev distance
+        mean, stddev = dm.plan.compute_shoreline_distance(
+            sm, origin=[golf.meta['CTR'].data, golf.meta['L0'].data])
+
     """
     # check if mask or already array
     if isinstance(shore_mask, mask.ShorelineMask):
