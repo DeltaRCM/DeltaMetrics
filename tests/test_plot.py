@@ -377,28 +377,30 @@ class TestGetDisplayArrays:
 
     def test_dsv_get_display_arrays_badstring(self):
         with pytest.raises(ValueError, match=r'Bad data *.'):
-            _data, _X, _Y = plot.get_display_arrays(self.dsv,
-                                                data='badstring')
+            _data, _X, _Y = plot.get_display_arrays(
+                self.dsv, data='badstring')
 
     def test_ssv_get_display_arrays_spacetime(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _data, _X, _Y = plot.get_display_arrays(self.ssv,
-                                                    data='spacetime')
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
+            _data, _X, _Y = plot.get_display_arrays(
+                self.ssv, data='spacetime')
 
     def test_ssv_get_display_arrays_preserved(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
             _data, _X, _Y = plot.get_display_arrays(self.ssv,
                                                     data='preserved')
 
     def test_ssv_get_display_arrays_stratigraphy(self):
-        _data, _X, _Y = plot.get_display_arrays(self.ssv,
-                                                data='stratigraphy')
+        _data, _X, _Y = plot.get_display_arrays(
+            self.ssv, data='stratigraphy')
         assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
 
     def test_ssv_get_display_arrays_badstring(self):
         with pytest.raises(ValueError, match=r'Bad data *.'):
-            _data, _X, _Y = plot.get_display_arrays(self.ssv,
-                                                data='badstring')
+            _data, _X, _Y = plot.get_display_arrays(
+                self.ssv, data='badstring')
 
 
 class TestGetDisplayLines:
@@ -446,19 +448,20 @@ class TestGetDisplayLines:
                                                   data='stratigraphy')
         assert _segments.shape[1:] == (2, 2)
 
-
     def test_dsv_get_display_lines_badstring(self):
         with pytest.raises(ValueError, match=r'Bad data*.'):
             plot.get_display_lines(self.dsv,
                                    data='badstring')
 
     def test_ssv_get_display_lines_spacetime(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
             _data, _segments = plot.get_display_lines(self.ssv,
                                                       data='spacetime')
 
     def test_ssv_get_display_lines_preserved(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
             plot.get_display_lines(self.ssv,
                                    data='preserved')
 
@@ -516,15 +519,17 @@ class TestGetDisplayLimits:
     def test_dsv_get_display_limits_badstring(self):
         with pytest.raises(ValueError, match=r'Bad data*.'):
             plot.get_display_limits(self.dsv,
-                                   data='badstring')
+                                    data='badstring')
 
     def test_ssv_get_display_limits_spacetime(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _lims = plot.get_display_limits(self.ssv, data='spacetime')
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
+            _ = plot.get_display_limits(self.ssv, data='spacetime')
 
     def test_ssv_get_display_limits_preserved(self):
-        with pytest.raises(AttributeError, match=r'No "spacetime" or "preserved"*.'):
-            _lims = plot.get_display_limits(self.ssv, data='preserved')
+        with pytest.raises(AttributeError,
+                           match=r'No "spacetime" or "preserved"*.'):
+            _ = plot.get_display_limits(self.ssv, data='preserved')
 
     def test_ssv_get_display_limits_stratigraphy(self):
         _lims = plot.get_display_limits(self.ssv, data='stratigraphy')
@@ -533,7 +538,8 @@ class TestGetDisplayLimits:
     def test_ssv_get_display_limits_badstring(self):
         with pytest.raises(ValueError, match=r'Bad data*.'):
             plot.get_display_limits(self.ssv,
-                                   data='badstring')
+                                    data='badstring')
+
 
 class TestColorMapFunctions:
     # note, no plotting, just boundaries and values checking
@@ -632,28 +638,28 @@ class TestShowHistograms:
         plt.close()
 
     def test_multiple_no_sets(self):
-        sets = [np.histogram(np.random.normal(l, s, size=500),
-                bins=self.bins, density=True) for l, s in zip(self.locs, self.scales)]
+        sets = [np.histogram(np.random.normal(lc, s, size=500),
+                bins=self.bins, density=True) for lc, s in
+                zip(self.locs, self.scales)]
         fig, ax = plt.subplots()
         plot.show_histograms(*sets, ax=ax)
-        # plt.show()
         plt.close()
 
     def test_multiple_no_sets_alphakwarg(self):
-        sets = [np.histogram(np.random.normal(l, s, size=500),
-                bins=self.bins, density=True) for l, s in zip(self.locs, self.scales)]
+        sets = [np.histogram(np.random.normal(lc, s, size=500),
+                bins=self.bins, density=True) for lc, s in
+                zip(self.locs, self.scales)]
         fig, ax = plt.subplots()
         plot.show_histograms(*sets, ax=ax, alpha=0.4)
         plt.close()
 
     def test_multiple_with_sets(self):
-        sets = [np.histogram(np.random.normal(l, s, size=500),
-                bins=self.bins, density=True) for l, s in zip(self.locs, self.scales)]
-
+        sets = [np.histogram(np.random.normal(lc, s, size=500),
+                bins=self.bins, density=True) for lc, s in
+                zip(self.locs, self.scales)]
         fig, ax = plt.subplots()
         plot.show_histograms(*sets, sets=[0, 0, 1, 1, 2], ax=ax)
         plt.close()
-
         with pytest.raises(ValueError, match=r'Number of histogram tuples*.'):
             # input lengths must match
             plot.show_histograms(*sets, sets=[0, 1], ax=ax)
