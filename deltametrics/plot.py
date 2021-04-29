@@ -1092,7 +1092,8 @@ def show_histograms(*args, sets=None, ax=None, **kwargs):
                    edgecolor=CNs[n], facecolor=CNs[n], **kwargs)
 
 
-def aerial_view(elevation_data, datum=0, ax=None, ticks=False, **kwargs):
+def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
+                colorbar_kw={}, **kwargs):
     """Show an aerial plot of an elevation dataset.
 
     See also: implementation wrapper for a cube.
@@ -1114,9 +1115,12 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False, **kwargs):
     ticks
         Whether to show ticks. Default is false, no tick labels.
 
+    colorbar_kw
+        Dictionary of keyword args passed to :func:`append_colorbar`.
+
     **kwargs
-        Optionally, arguments accepted by :func:`cartographic_colormap`,
-        `imshow`, and/or :func:`append_colorbar`.
+        Optionally, arguments accepted by :func:`cartographic_colormap`, or
+        `imshow`.
 
     Returns
     -------
@@ -1151,7 +1155,7 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False, **kwargs):
         origin='lower',
         cmap=carto_cm, norm=carto_norm, **kwargs)
 
-    cb = append_colorbar(im, ax)
+    cb = append_colorbar(im, ax, **colorbar_kw)
     if not ticks:
         ax.set_xticks([], minor=[])
         ax.set_yticks([], minor=[])
