@@ -26,6 +26,9 @@ The default parameters of each styling variable are defined below:
 Plotting utility objects
 ========================
 
+These objects are mostly used internally to help make plots appear consistent across the library.
+You may want to examine these to change the style of plotting across the package.
+
 .. currentmodule:: deltametrics.plot
 
 .. autosummary:: 
@@ -35,19 +38,20 @@ Plotting utility objects
     VariableSet
 
 
-Plotting utility functions
-==========================
+Plotting convenience functions
+==============================
 
-.. autofunction:: append_colorbar
-.. autofunction:: get_display_arrays
-.. autofunction:: get_display_lines
-.. autofunction:: get_display_limits
-.. autofunction:: _fill_steps
-.. autofunction:: _scale_lightness
+These functions may be helpful in making figures and exploring during analyses.
+Mostly, these functions provide a component of a plot.
+
+.. autofunction:: aerial_view
+.. autofunction:: overlay_sparse_array
 
 
 DeltaMetrics plot routines
 ==========================
+
+These functions are similar to the convenience functions above, but mostly produce their own plots entirely, rather than adding a component of a plot.
 
 .. autosummary:: 
     :toctree: ../../_autosummary
@@ -61,3 +65,16 @@ DeltaMetrics colormaps
 
 .. autofunction:: cartographic_colormap
 .. autofunction:: aerial_colormap
+
+
+Plotting utility functions
+==========================
+
+These functions are mostly used internally.
+
+.. autofunction:: append_colorbar
+.. autofunction:: get_display_arrays
+.. autofunction:: get_display_lines
+.. autofunction:: get_display_limits
+.. autofunction:: _fill_steps
+.. autofunction:: _scale_lightness

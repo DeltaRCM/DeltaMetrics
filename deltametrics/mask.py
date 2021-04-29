@@ -1217,7 +1217,7 @@ class ShorelineMask(BaseMask):
     def _compute_mask(self, *args, **kwargs):
         """Compute the shoreline mask.
 
-        Applies the opening angle method [1]_ to compute the shoreline mask.
+        Applies the Opening Angle Method to compute the shoreline mask.
         Implementation of the OAM is in
         :obj:`~deltametrics.plan.shaw_opening_angle_method`.
 
