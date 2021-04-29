@@ -664,3 +664,86 @@ class TestShowHistograms:
             # input lengths must match
             plot.show_histograms(*sets, sets=[0, 1], ax=ax)
             plt.close()
+
+
+class TestAerialView:
+    """These are just "does it work" tests."""
+
+    def test_makes_plot(self):
+        _e = np.random.uniform(0, 1, size=(50, 50))
+        fig, ax = plt.subplots()
+        plot.aerial_view(
+            _e, ax=ax)
+        plt.close()
+
+    def test_makes_plot_diffdatum(self):
+        _e = np.random.uniform(0, 1, size=(50, 50))
+        fig, ax = plt.subplots()
+        plot.aerial_view(
+            _e, datum=10, ax=ax)
+        plt.close()
+
+    def test_makes_plot_ticks(self):
+        _e = np.random.uniform(0, 1, size=(50, 50))
+        fig, ax = plt.subplots()
+        plot.aerial_view(
+            _e, ax=ax, ticks=True)
+        plt.close()
+
+    def test_makes_plot_colorbar_kw(self):
+        _e = np.random.uniform(0, 1, size=(50, 50))
+        fig, ax = plt.subplots()
+        plot.aerial_view(
+            _e, ax=ax, colorbar_kw={'labelsize': 6})
+        plt.close()
+
+    def test_makes_plot_no_ax(self):
+        _e = np.random.uniform(0, 1, size=(50, 50))
+        plot.aerial_view(
+            _e)
+        plt.close()
+
+
+class TestOverlaySparseArray:
+    """These are just "does it work" tests."""
+
+    def test_makes_plot(self):
+        _e = np.random.uniform(0, 1, size=(50, 50))
+        fig, ax = plt.subplots()
+        plot.overlay_sparse_array(_e, ax=ax)
+        plt.close()
+
+    def test_makes_plot_cmap_str(self):
+        _e = np.random.uniform(0, 1, size=(50, 50))
+        fig, ax = plt.subplots()
+        plot.overlay_sparse_array(
+            _e, cmap='Blues', ax=ax)
+        plt.close()
+
+    def test_makes_plot_cmap_obj(self):
+        _e = np.random.uniform(0, 1, size=(50, 50))
+        _cmap = plt.cm.get_cmap('Oranges', 64)
+        fig, ax = plt.subplots()
+        plot.overlay_sparse_array(
+            _e, cmap=_cmap, ax=ax)
+        plt.close()
+
+    def test_makes_clips(self):
+        _e = np.random.uniform(0, 1, size=(50, 50))
+        fig, ax = plt.subplots()
+        plot.overlay_sparse_array(
+            _e, ax=ax,
+            alpha_clip=(None, None))
+        plot.overlay_sparse_array(
+            _e, ax=ax,
+            alpha_clip=(20, 30))
+        plot.overlay_sparse_array(
+            _e, ax=ax,
+            alpha_clip=(50, None))
+        plt.close()
+
+    def test_makes_plot_no_ax(self):
+        _e = np.random.uniform(0, 1, size=(50, 50))
+        plot.overlay_sparse_array(
+            _e)
+        plt.close()
