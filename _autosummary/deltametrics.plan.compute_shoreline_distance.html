@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>deltametrics.plan.compute_shoreline_distance &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.plan.compute_shoreline_distance.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="deltametrics-plan-compute-shoreline-distance">
+<h1>deltametrics.plan.compute_shoreline_distance<a class="headerlink" href="#deltametrics-plan-compute-shoreline-distance" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="deltametrics.plan.compute_shoreline_distance">
+<code class="descclassname">deltametrics.plan.</code><code class="descname">compute_shoreline_distance</code><span class="sig-paren">(</span><em>shore_mask, origin=[0, 0], return_distances=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.compute_shoreline_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute mean and stddev distance from the delta apex to the shoreline.</p>
+<p>Algorithm computes the mean distance from the delta apex/origin to all
+shoreline points.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This calculation is subtly different than the “mean delta radius”,
+because the measurements are not sampled evenly along the opening
+angle of the delta.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>uses <cite>np.nanmean</cite> and <cite>np.nanstd</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>shore_mask</strong> (<a class="reference internal" href="deltametrics.mask.ShorelineMask.html#deltametrics.mask.ShorelineMask" title="deltametrics.mask.ShorelineMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShorelineMask</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Shoreline mask. Can be a <a class="reference internal" href="deltametrics.mask.ShorelineMask.html#deltametrics.mask.ShorelineMask" title="deltametrics.mask.ShorelineMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ShorelineMask</span></code></a>
+object, or a binarized array.</p></li>
+<li><p><strong>origin</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>, optional) – Determines the location from where the distance to all shoreline
+points is computed.</p></li>
+<li><p><strong>return_distances</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to return the sorted line as a second argument. If True, a
+<code class="docutils literal notranslate"><span class="pre">Nx2</span></code> array of x-y points is returned. Default is <cite>False</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mean</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Mean shoreline distance.</p></li>
+<li><p><strong>stddev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Standard deviation of shoreline distance.</p></li>
+<li><p><strong>distances</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – If <code class="xref py py-obj docutils literal notranslate"><span class="pre">return_distances</span></code> is <cite>True</cite>, then distance to each point
+along the shoreline is <em>also</em> returned as an array (i.e., 3 arguments
+are returned).</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="go">golf = dm.sample_data.golf()</span>
+
+<span class="go">sm = dm.mask.ShorelineMask(</span>
+<span class="go">    golf[&#39;eta&#39;][-1, :, :],</span>
+<span class="go">    elevation_threshold=0,</span>
+<span class="go">    elevation_offset=-0.5)</span>
+
+<span class="go"># compute mean and stddev distance</span>
+<span class="go">mean, stddev = dm.plan.compute_shoreline_distance(</span>
+<span class="go">    sm, origin=[golf.meta[&#39;CTR&#39;].data, golf.meta[&#39;L0&#39;].data])</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>
