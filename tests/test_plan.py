@@ -293,10 +293,12 @@ class TestShorelineDistance:
         m, s = plan.compute_shoreline_distance(
             self.sm, origin=[self.golf.meta['CTR'].data,
                              self.golf.meta['L0'].data])
-        dists = plan.compute_shoreline_distance(
+        m2, s2, dists = plan.compute_shoreline_distance(
             self.sm, origin=[self.golf.meta['CTR'].data,
                              self.golf.meta['L0'].data],
             return_distances=True)
 
         assert len(dists) > 0
         assert np.mean(dists) == m
+        assert m2 == m
+        assert s2 == s

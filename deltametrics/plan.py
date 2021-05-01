@@ -748,12 +748,16 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
 
     Returns
     -------
-    length : :obj:`float`
-        Shoreline length, computed as described above.
+    mean : :obj:`float`
+        Mean shoreline distance.
 
-    line : :obj:`np.ndarray`
-        If :obj:`return_line` is `True`, the shoreline, as an ``Nx2`` array of
-        x-y points, is returned.
+    stddev : :obj:`float`
+        Standard deviation of shoreline distance.
+
+    distances : :obj:`np.ndarray`
+        If :obj:`return_distances` is `True`, then distance to each point
+        along the shoreline is *also* returned as an array (i.e., 3 arguments
+        are returned).
 
     Examples
     --------
@@ -791,7 +795,7 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
     _dists = np.sqrt((_x - origin[0])**2 + (_y - origin[1])**2)
 
     if return_distances:
-        return _dists
+        return np.nanmean(_dists), np.nanstd(_dists), _dists
     else:
         return np.nanmean(_dists), np.nanstd(_dists)
 
