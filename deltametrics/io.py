@@ -165,7 +165,7 @@ class NetCDFIO(BaseIO):
 
         try:
             _dataset = xr.open_dataset(self.data_path)
-            if 'time' and 'y' and 'x' in _dataset.variables:
+            if set(['time', 'x', 'y']).issubset(set(_dataset.variables)):
                 self.dataset = _dataset.set_coords(['time', 'y', 'x'])
             else:
                 self.dataset = _dataset.set_coords([])
