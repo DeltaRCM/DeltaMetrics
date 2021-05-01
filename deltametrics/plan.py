@@ -717,6 +717,89 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
         return length
 
 
+def compute_shoreline_distance(shore_mask, origin=[0, 0],
+                               return_distances=False):
+    """Compute mean and stddev distance from the delta apex to the shoreline.
+
+    Algorithm computes the mean distance from the delta apex/origin to all
+    shoreline points.
+
+    .. important::
+
+        This calculation is subtly different than the "mean delta radius",
+        because the measurements are not sampled evenly along the opening
+        angle of the delta.
+
+    .. note:: uses `np.nanmean` and `np.nanstd`.
+
+    Parameters
+    ----------
+    shore_mask : :obj:`~deltametrics.mask.ShorelineMask`, :obj:`ndarray`
+        Shoreline mask. Can be a :obj:`~deltametrics.mask.ShorelineMask`
+        object, or a binarized array.
+
+    origin : :obj:`list`, :obj:`np.ndarray`, optional
+        Determines the location from where the distance to all shoreline
+        points is computed.
+
+    return_distances : :obj:`bool`
+        Whether to return the sorted line as a second argument. If True, a
+        ``Nx2`` array of x-y points is returned. Default is `False`.
+
+    Returns
+    -------
+    mean : :obj:`float`
+        Mean shoreline distance.
+
+    stddev : :obj:`float`
+        Standard deviation of shoreline distance.
+
+    distances : :obj:`np.ndarray`
+        If :obj:`return_distances` is `True`, then distance to each point
+        along the shoreline is *also* returned as an array (i.e., 3 arguments
+        are returned).
+
+    Examples
+    --------
+
+    .. doctest::
+
+        golf = dm.sample_data.golf()
+
+        sm = dm.mask.ShorelineMask(
+            golf['eta'][-1, :, :],
+            elevation_threshold=0,
+            elevation_offset=-0.5)
+
+        # compute mean and stddev distance
+        mean, stddev = dm.plan.compute_shoreline_distance(
+            sm, origin=[golf.meta['CTR'].data, golf.meta['L0'].data])
+
+    """
+    # check if mask or already array
+    if isinstance(shore_mask, mask.ShorelineMask):
+        _sm = shore_mask.mask
+    else:
+        _sm = shore_mask
+
+    if not (np.sum(_sm) > 0):
+        raise ValueError('No pixels in shoreline mask.')
+
+    if _sm.ndim == 3:
+        _sm = _sm.squeeze()
+
+    # find where the mask is True (all x-y pairs along shore)
+    _y, _x = np.argwhere(_sm).T
+
+    # determine the distances
+    _dists = np.sqrt((_x - origin[0])**2 + (_y - origin[1])**2)
+
+    if return_distances:
+        return np.nanmean(_dists), np.nanstd(_dists), _dists
+    else:
+        return np.nanmean(_dists), np.nanstd(_dists)
+
+
 @njit
 def _compute_angles_between(c1, shoreandborder, Shallowsea, numviews):
     """Private helper for shaw_opening_angle_method.

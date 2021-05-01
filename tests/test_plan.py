@@ -252,3 +252,53 @@ class TestShorelineLength:
             plt.show()
             breakpoint()
         assert len_1 == pytest.approx(self.rcm8_expected, abs=5.0)
+
+
+class TestShorelineDistance:
+
+    golf_path = _get_golf_path()
+    golf = cube.DataCube(golf_path)
+
+    sm = mask.ShorelineMask(
+        golf['eta'][-1, :, :],
+        elevation_threshold=0,
+        elevation_offset=-0.5)
+
+    def test_empty(self):
+        _arr = np.zeros((10, 10))
+        with pytest.raises(ValueError):
+            _, _ = plan.compute_shoreline_distance(_arr)
+
+    def test_single_point(self):
+        _arr = np.zeros((10, 10))
+        _arr[7, 5] = 1
+        mean00, stddev00 = plan.compute_shoreline_distance(
+            _arr)
+        mean05, stddev05 = plan.compute_shoreline_distance(
+            _arr, origin=[5, 0])
+        assert mean00 == np.sqrt(49 + 25)
+        assert mean05 == 7
+        assert stddev00 == 0
+        assert stddev05 == 0
+
+    def test_simple_case(self):
+        mean, stddev = plan.compute_shoreline_distance(
+            self.sm, origin=[self.golf.meta['CTR'].data,
+                             self.golf.meta['L0'].data])
+
+        assert mean > stddev
+        assert stddev > 0
+
+    def test_simple_case_distances(self):
+        m, s = plan.compute_shoreline_distance(
+            self.sm, origin=[self.golf.meta['CTR'].data,
+                             self.golf.meta['L0'].data])
+        m2, s2, dists = plan.compute_shoreline_distance(
+            self.sm, origin=[self.golf.meta['CTR'].data,
+                             self.golf.meta['L0'].data],
+            return_distances=True)
+
+        assert len(dists) > 0
+        assert np.mean(dists) == m
+        assert m2 == m
+        assert s2 == s
