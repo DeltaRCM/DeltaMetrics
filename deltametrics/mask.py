@@ -385,7 +385,8 @@ class FlowMask(ThresholdValueMask):
         plt.show()
     """
 
-    def __init__(self, *args, flow_threshold, cube_key='velocity', **kwargs):
+    def __init__(self, *args, flow_threshold=0.3, cube_key='velocity',
+                 **kwargs):
         """Initialize the FlowMask.
 
         .. note:: Needs docstring!
@@ -535,11 +536,11 @@ class ChannelMask(BaseMask):
 
         Parameters
         ----------
-        velocity : ndarray
-            The velocity array to be used for mask creation.
-
         topo : ndarray
             The model topography to be used for mask creation.
+
+        velocity : ndarray
+            The velocity array to be used for mask creation.    
 
         velocity_threshold : float, optional
             Threshold velocity above which flow is considered 'channelized'.
@@ -590,7 +591,7 @@ class ChannelMask(BaseMask):
             raise NotImplementedError
 
         elif self._input_flag == 'array':
-            # first make a landmas
+            # first make a landmask
             _eta = args[0]
             _lm = LandMask(_eta, **kwargs)._mask
             _flow = args[1]
