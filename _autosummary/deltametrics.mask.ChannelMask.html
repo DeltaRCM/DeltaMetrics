@@ -106,11 +106,9 @@ array of the delta topography.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>velocity</strong> (<em>ndarray</em>) – The velocity array to be used for mask creation.</p></li>
 <li><p><strong>topo</strong> (<em>ndarray</em>) – The model topography to be used for mask creation.</p></li>
-<li><p><strong>velocity_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Threshold velocity above which flow is considered ‘channelized’.
-The default value is 0.3 m/s based on DeltaRCM default parameters
-for sediment transport.</p></li>
+<li><p><strong>velocity</strong> (<em>ndarray</em>) – The velocity array to be used for mask creation.</p></li>
+<li><p><strong>velocity_threshold</strong> (<em>float</em>) – Threshold velocity above which flow is considered ‘channelized’.</p></li>
 <li><p><strong>angle_threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – Threshold opening angle used in the OAM. Default is 75 degrees.</p></li>
 <li><p><strong>is_mask</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the data in <code class="xref py py-obj docutils literal notranslate"><span class="pre">arr</span></code> is already a binary mask. Default is
 False. This should be set to True, if you have already binarized

@@ -494,42 +494,42 @@ We describe the relationships between various <cite>Mask</cite> types, and best 
 <p>Below, we demonstrate how some of the masks can be instantiated from the most basic data components.
 Instantiating <em>most</em> masks requires a keyword parameter <cite>elevation_threshold</cite>; the exact context of this parameter may depend on the mask type, but it is often the sea-level elevation.
 See the <a class="reference internal" href="../reference/mask/index.html"><span class="doc">reference page for each mask type</span></a> if you are unsure.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># use a new cube</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">maskcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># use a new cube</span>
+<span class="n">maskcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># create the masks from variables in the cube</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">land_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">LandMask</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
-<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1"># create the masks from variables in the cube</span>
+<span class="n">land_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">LandMask</span><span class="p">(</span>
+    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">wet_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">WetMask</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
-<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">wet_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">WetMask</span><span class="p">(</span>
+    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">channel_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ChannelMask</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
-<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
-<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">flow_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">channel_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ChannelMask</span><span class="p">(</span>
+    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">flow_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">centerline_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">CenterlineMask</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
-<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
-<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">flow_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">centerline_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">CenterlineMask</span><span class="p">(</span>
+    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">flow_threshold</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">edge_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">EdgeMask</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
-<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">edge_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">EdgeMask</span><span class="p">(</span>
+    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">shore_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ShorelineMask</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
-<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">shore_mask</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ShorelineMask</span><span class="p">(</span>
+    <span class="n">maskcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../pyplots/guides/userguide_masks_all_demo.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_masks_all_demo.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../guides/userguide-3.png">png</a>, <a class="reference external" href="../guides/userguide-3.hires.png">hires.png</a>)</p>
 <figure class="align-center">
-<img alt="../_images/userguide_masks_all_demo.png" class="plot-directive" src="../_images/userguide_masks_all_demo.png" />
+<img alt="../_images/userguide-3.png" class="plot-directive" src="../_images/userguide-3.png" />
 </figure>
 </section>
 </section>
