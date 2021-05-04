@@ -385,8 +385,7 @@ class FlowMask(ThresholdValueMask):
         plt.show()
     """
 
-    def __init__(self, *args, flow_threshold=0.3, cube_key='velocity',
-                 **kwargs):
+    def __init__(self, *args, flow_threshold, cube_key='velocity', **kwargs):
         """Initialize the FlowMask.
 
         .. note:: Needs docstring!
@@ -540,12 +539,10 @@ class ChannelMask(BaseMask):
             The model topography to be used for mask creation.
 
         velocity : ndarray
-            The velocity array to be used for mask creation.    
+            The velocity array to be used for mask creation.
 
-        velocity_threshold : float, optional
+        velocity_threshold : float
             Threshold velocity above which flow is considered 'channelized'.
-            The default value is 0.3 m/s based on DeltaRCM default parameters
-            for sediment transport.
 
         angle_threshold : int, optional
             Threshold opening angle used in the OAM. Default is 75 degrees.
