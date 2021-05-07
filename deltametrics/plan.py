@@ -469,6 +469,7 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
     :meth:`~deltametrics.mask.BaseMask.trim_mask` method to trim a mask.
 
     .. plot::
+        :include-source:
         :context: close-figs
 
         lm0.trim_mask(length=golf.meta['L0'].data+1)
