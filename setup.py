@@ -13,6 +13,6 @@ setup(name='DeltaMetrics',
       package_data={"deltametrics.sample_data": ["registry.txt"]},
       include_package_data=True,
       url='https://github.com/DeltaRCM/DeltaMetrics',
-      install_requires=['matplotlib', 'netCDF4',
+      install_requires=['matplotlib', 'netCDF4', 'h5netcdf',
                         'scipy', 'numpy', 'pyyaml', 'xarray', 'pooch'],
       )

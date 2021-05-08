@@ -1003,7 +1003,7 @@ class TestChannelMask:
 
     def test_angle_threshold(self):
         """
-        Test that the angle threshold argument is passed along to the 
+        Test that the angle threshold argument is passed along to the
         when instantiated.
         """
         # define the mask
@@ -1183,7 +1183,7 @@ class TestEdgeMask:
 
     def test_angle_threshold(self):
         """
-        Test that the angle threshold argument is passed along to the 
+        Test that the angle threshold argument is passed along to the
         when instantiated.
         """
         # define the mask
@@ -1319,7 +1319,7 @@ class TestCenterlineMask:
 
     def test_angle_threshold(self):
         """
-        Test that the angle threshold argument is passed along to the 
+        Test that the angle threshold argument is passed along to the
         when instantiated.
         """
         # define the mask
@@ -1445,7 +1445,7 @@ class TestCenterlineMask:
         # make assertions
         assert channelmask._input_flag == 'channel'
 
-    @pytest.mark.xfail(raises=ImportError, strict=True,
+    @pytest.mark.xfail(raises=ImportError,
                        reason='rivamap is not installed.')
     def test_rivamap_array(self):
         """Test rivamap extraction of centerlines."""
@@ -1465,7 +1465,7 @@ class TestCenterlineMask:
         assert hasattr(centerlinemask, 'nms') is True
         assert hasattr(centerlinemask, 'mask') is True
 
-    @pytest.mark.xfail(raises=ImportError, strict=True,
+    @pytest.mark.xfail(raises=ImportError,
                        reason='rivamap is not installed.')
     def test_rivamap_from_mask(self):
         """Test rivamap extraction of centerlines."""
