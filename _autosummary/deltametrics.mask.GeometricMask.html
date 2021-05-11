@@ -1,0 +1,540 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>deltametrics.mask.GeometricMask &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Channel Mobility Functions" href="../reference/mobility/index.html" />
+    <link rel="prev" title="deltametrics.mask.ThresholdValueMask" href="deltametrics.mask.ThresholdValueMask.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../reference/mobility/index.html" title="Channel Mobility Functions"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.mask.ThresholdValueMask.html" title="deltametrics.mask.ThresholdValueMask"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" accesskey="U">Masking operations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.mask.ThresholdValueMask.html"
+                        title="previous chapter">deltametrics.mask.ThresholdValueMask</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../reference/mobility/index.html"
+                        title="next chapter">Channel Mobility Functions</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.mask.GeometricMask.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="deltametrics-mask-geometricmask">
+<h1>deltametrics.mask.GeometricMask<a class="headerlink" href="#deltametrics-mask-geometricmask" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="deltametrics.mask.GeometricMask">
+<em class="property">class </em><code class="descclassname">deltametrics.mask.</code><code class="descname">GeometricMask</code><span class="sig-paren">(</span><em>*args</em>, <em>origin=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create simple geometric masks.</p>
+<p>A geometric mask object, allows for creation of subdomains in multiple
+ways. Angular boundaries can define an area of interest in the shape
+of an arc. Radial boundaries can define a radial region to mask.
+Boundaries defined in the strike direction (perpendicular to inlet
+channel), can be supplied to define a region of interest. Similarly,
+boundaries can be defined in the dip direction (parallel to inlet channel
+orientation).</p>
+<p class="rubric">Examples</p>
+<p>Initialize the geometric mask using model topography as a base:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="n">arr</span> <span class="o">=</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="n">gmsk</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">GeometricMask</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+<span class="c1"># Define an angular mask to cover half the domain from 0 to pi/2.</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">angular</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="c1"># Further mask this region by defining bounds in the strike direction.</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">strike</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+
+<span class="c1"># Visualize the mask:</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">*</span><span class="n">gmsk</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([]);</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-1.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-1.hires.png">hires.png</a>)</p>
+<figure class="align-center">
+<img alt="../_images/deltametrics-mask-GeometricMask-1.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-1.png" />
+</figure>
+<dl class="method">
+<dt id="deltametrics.mask.GeometricMask.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>origin=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the GeometricMask.</p>
+<p>Initializing the geometric mask object requires information regarding
+the shape of the 2-D array of the region you wish to apply the mask
+to.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The <cite>GeometricMask</cite> is initializes with all values set to
+<code class="docutils literal notranslate"><span class="pre">True</span></code>; this is the opposite of all other <cite>Mask</cite> types, which
+are set to <code class="docutils literal notranslate"><span class="pre">False</span></code> during initialization.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – Various input arguments can be used to initialize the
+<cite>GeometricMask</cite>. Input may be a two-element <cite>tuple</cite>, specifying
+the array dimensions, or an <cite>ndarray</cite>, <cite>Mask</cite>, or <cite>Cube</cite> from
+which the shape is inferred.</p></li>
+<li><p><strong>origin</strong> (<cite>tuple</cite>) – The “origin” of the domain. Usually this is the water/sediment
+inlet location. The <cite>origin</cite> is used as the mathematical origin
+point for computation setting the mask within the <cite>GeometricMask</cite>
+methods. If unspecified, it is inferred, based on the default
+configuration of a pyDeltaRCM model inlet.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.__init__" title="deltametrics.mask.GeometricMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args[, origin])</p></td>
+<td><p>Initialize the GeometricMask.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.angular" title="deltametrics.mask.GeometricMask.angular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angular</span></code></a>(theta1, theta2)</p></td>
+<td><p>Make a mask based on two angles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.circular" title="deltametrics.mask.GeometricMask.circular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">circular</span></code></a>(rad1[, rad2, origin])</p></td>
+<td><p>Make a circular mask bounded by two radii.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.dip" title="deltametrics.mask.GeometricMask.dip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dip</span></code></a>(ind1[, ind2])</p></td>
+<td><p>Make a mask parallel to the inlet.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.from_array" title="deltametrics.mask.GeometricMask.from_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_array</span></code></a>(_arr)</p></td>
+<td><p>Create a <cite>GeometricMask</cite> from an array.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.show" title="deltametrics.mask.GeometricMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>([ax, title, ticks, colorbar])</p></td>
+<td><p>Show the mask.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.strike" title="deltametrics.mask.GeometricMask.strike"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strike</span></code></a>(ind1[, ind2])</p></td>
+<td><p>Make a mask based on two indices.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.trim_mask" title="deltametrics.mask.GeometricMask.trim_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_mask</span></code></a>(*args[, value, axis, length])</p></td>
+<td><p>Replace a part of the mask with a new value.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.integer_mask" title="deltametrics.mask.GeometricMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a></p></td>
+<td><p>Binary mask values as integer</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.mask" title="deltametrics.mask.GeometricMask.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a></p></td>
+<td><p>Binary mask values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.mask_type" title="deltametrics.mask.GeometricMask.mask_type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask_type</span></code></a></p></td>
+<td><p>Type of the mask (string)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.xc" title="deltametrics.mask.GeometricMask.xc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">xc</span></code></a></p></td>
+<td><p>x-coordinate of origin point.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.yc" title="deltametrics.mask.GeometricMask.yc"><code class="xref py py-obj docutils literal notranslate"><span class="pre">yc</span></code></a></p></td>
+<td><p>y-coordinate of origin point.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="deltametrics.mask.GeometricMask._compute_mask">
+<code class="descname">_compute_mask</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask._compute_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does Nothing!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.GeometricMask._set_shape_mask">
+<code class="descname">_set_shape_mask</code><span class="sig-paren">(</span><em>_shape</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask._set_shape_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the mask shape.</p>
+<p>This is called during instantiation in most standard use-cases and
+pathways, however, if you are implementing your own mask or your own
+static method to create a mask, you may need to manually call this
+method to set the fields of the mask correctly before doing any mask
+computation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>shape</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>) – Shape of the mask.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.GeometricMask.angular">
+<code class="descname">angular</code><span class="sig-paren">(</span><em>theta1</em>, <em>theta2</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.angular" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a mask based on two angles.</p>
+<p>Computes a mask that is bounded by 2 angles input by the user.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Requires a domain with a width greater than 2x its length right now.
+Function should be re-factored to be more flexible.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently origin point is fixed, function should be extended to
+allow for an input origin point from which the angular bounds are
+determined.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>theta1</strong> (<em>float</em>) – Radian value controlling the left bound of the mask</p></li>
+<li><p><strong>theta2</strong> (<em>float</em>) – Radian value controlling the right bound of the mask</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Initialize an angular mask from 0 to pi/3 radians and mask topography:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="n">arr</span> <span class="o">=</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">data</span>
+<span class="n">gmsk</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">GeometricMask</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+<span class="c1"># Define an angular mask to cover part of the domain from 0 to pi/3.</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">angular</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Visualize the mask:</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Binary Mask&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">*</span><span class="n">gmsk</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([]);</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Mask * Topography&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-2.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-2.hires.png">hires.png</a>)</p>
+<figure class="align-center">
+<img alt="../_images/deltametrics-mask-GeometricMask-2.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-2.png" />
+</figure>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.GeometricMask.circular">
+<code class="descname">circular</code><span class="sig-paren">(</span><em>rad1</em>, <em>rad2=None</em>, <em>origin=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.circular" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a circular mask bounded by two radii.</p>
+<p>Computes a mask that is bounded by 2 radial distances which are input
+by the user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rad1</strong> (<em>int</em>) – Index value to set the inner radius.</p></li>
+<li><p><strong>rad2</strong> (<em>int</em><em>, </em><em>optional</em>) – Index value to set the outer radius. If unspecified, this bound
+is set to extend as the larger dimension of the domain.</p></li>
+<li><p><strong>origin</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>, optional) – Optionally specify an origin to use for computing the circle. Will
+use the <cite>GeometricMask</cite> origin, if not supplied.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Initialize geometric mask which clips out a region near the inlet:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="n">arr</span> <span class="o">=</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">data</span>
+<span class="n">gmsk</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">GeometricMask</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+<span class="c1"># Define an circular mask to exclude region near the inlet</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">circular</span><span class="p">(</span><span class="mi">25</span><span class="p">)</span>
+
+<span class="c1"># Visualize the mask:</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Binary Mask&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">*</span><span class="n">gmsk</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([]);</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Mask * Topography&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-3.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-3.hires.png">hires.png</a>)</p>
+<figure class="align-center">
+<img alt="../_images/deltametrics-mask-GeometricMask-3.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-3.png" />
+</figure>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.GeometricMask.dip">
+<code class="descname">dip</code><span class="sig-paren">(</span><em>ind1</em>, <em>ind2=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.dip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a mask parallel to the inlet.</p>
+<p>Makes a mask that is parallel to the direction of flow in the inlet.
+If only one value is supplied, then this mask is centered on the
+inlet and has a width of ind1. If two values are supplied then they
+set the bounds for the mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ind1</strong> (<em>int</em>) – Width of the mask if ind2 is not specified. Otherwise, it sets
+the left bound of the mask.</p></li>
+<li><p><strong>ind2</strong> (<em>int</em><em>, </em><em>optional</em>) – Right bound of the mask if specified. If not specified, then
+ind1 sets the width of a mask centered on the inlet.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Initialize mask with a width of 50 pixels in-line with the inlet:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="n">arr</span> <span class="o">=</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">data</span>
+<span class="n">gmsk</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">GeometricMask</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+<span class="c1"># Define mask with width of 50 px. inline with the inlet</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">dip</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+
+<span class="c1"># Visualize the mask:</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Binary Mask&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">*</span><span class="n">gmsk</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([]);</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Mask * Topography&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-4.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-4.hires.png">hires.png</a>)</p>
+<figure class="align-center">
+<img alt="../_images/deltametrics-mask-GeometricMask-4.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-4.png" />
+</figure>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="deltametrics.mask.GeometricMask.from_array">
+<em class="property">static </em><code class="descname">from_array</code><span class="sig-paren">(</span><em>_arr</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.from_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <cite>GeometricMask</cite> from an array.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Instantiation with <cite>from_array</cite> will attempt to any data type
+(<cite>dtype</cite>) to boolean. This may have unexpected results. Convert
+your array to a boolean before using <cite>from_array</cite> to ensure the
+mask is created correctly.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>_arr</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The array with values to set as the mask. Can be any <cite>dtype</cite> but
+will be coerced to <cite>boolean</cite>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.mask.GeometricMask.integer_mask">
+<code class="descname">integer_mask</code><a class="headerlink" href="#deltametrics.mask.GeometricMask.integer_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binary mask values as integer</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><cite>integer_mask</cite> is a boolean array as <code class="docutils literal notranslate"><span class="pre">0</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> (integers).
+It is <strong>not suitible</strong> for multidimensional array indexing; see
+also <a class="reference internal" href="#deltametrics.mask.GeometricMask.mask" title="deltametrics.mask.GeometricMask.mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mask</span></code></a>.</p>
+</div>
+<p>Read-only mask attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.mask.GeometricMask.mask">
+<code class="descname">mask</code><a class="headerlink" href="#deltametrics.mask.GeometricMask.mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binary mask values.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p><cite>mask</cite> is a boolean array (<strong>not integer</strong>). See also
+<a class="reference internal" href="#deltametrics.mask.GeometricMask.integer_mask" title="deltametrics.mask.GeometricMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a>.</p>
+</div>
+<p>Read-only mask attribute.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.mask.GeometricMask.mask_type">
+<code class="descname">mask_type</code><a class="headerlink" href="#deltametrics.mask.GeometricMask.mask_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type of the mask (string)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.GeometricMask.show">
+<code class="descname">show</code><span class="sig-paren">(</span><em>ax=None</em>, <em>title=None</em>, <em>ticks=False</em>, <em>colorbar=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the mask.</p>
+<p>The <cite>Mask</cite> is shown in a <cite>matplotlib</cite> axis with <cite>imshow</cite>. The <cite>mask</cite>
+values are accessed from <a class="reference internal" href="#deltametrics.mask.GeometricMask.integer_mask" title="deltametrics.mask.GeometricMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a>, so the display will show
+as <code class="docutils literal notranslate"><span class="pre">0</span></code> for <code class="docutils literal notranslate"><span class="pre">False</span></code> and <code class="docutils literal notranslate"><span class="pre">1</span></code> for <code class="docutils literal notranslate"><span class="pre">True</span></code>. Default colormap is
+black and white.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Passes <cite>**kwargs</cite> to <code class="docutils literal notranslate"><span class="pre">matplotlib.imshow</span></code>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.pyplot.Axes</span></code>) – Which axes object to plot into.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.GeometricMask.strike">
+<code class="descname">strike</code><span class="sig-paren">(</span><em>ind1</em>, <em>ind2=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.strike" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a mask based on two indices.</p>
+<p>Makes a mask bounded by lines perpendicular to the direction of the
+flow in the inlet channel.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ind1</strong> (<em>int</em>) – Index value to set first boundary (closest to inlet)</p></li>
+<li><p><strong>ind2</strong> (<em>int</em><em>, </em><em>optional</em>) – Index value to set second boundary (farther from inlet). This is
+optional, if unspecified, this is set to the length of the domain.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Initialize a mask that isolates the region 20-50 pixels from the inlet:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="n">arr</span> <span class="o">=</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">data</span>
+<span class="n">gmsk</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">GeometricMask</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+
+<span class="c1"># Define a mask that isolates the region 20-50 pixels from the inlet</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">strike</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+
+<span class="c1"># Visualize the mask:</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Binary Mask&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">*</span><span class="n">gmsk</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([]);</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Mask * Topography&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-5.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-5.hires.png">hires.png</a>)</p>
+<figure class="align-center">
+<img alt="../_images/deltametrics-mask-GeometricMask-5.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-5.png" />
+</figure>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.GeometricMask.trim_mask">
+<code class="descname">trim_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>value=False</em>, <em>axis=1</em>, <em>length=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.trim_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Replace a part of the mask with a new value.</p>
+<p>This is sometimes necessary before using a mask in certain
+computations. Most often, this method is used to manually correct
+domain edge effects.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseCube</span></code> subclass, optional) – Optionally pass a <cite>Cube</cite> object to the mask, and the dimensions to
+trim/replace the mask by will be inferred from the cube. In this
+case, <code class="xref py py-obj docutils literal notranslate"><span class="pre">axis</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">length</span></code> have no effect.</p></li>
+<li><p><strong>value</strong> – Value to replace in the trim region with. Default is <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p></li>
+<li><p><strong>axis</strong> – Which edge to apply the trim of <code class="xref py py-obj docutils literal notranslate"><span class="pre">length</span></code> to. Default is 1,
+the top domain edge.</p></li>
+<li><p><strong>length</strong> – The length of the trim. Note that this is <strong>not the array index</strong>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.mask.GeometricMask.xc">
+<code class="descname">xc</code><a class="headerlink" href="#deltametrics.mask.GeometricMask.xc" title="Permalink to this definition">¶</a></dt>
+<dd><p>x-coordinate of origin point.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.mask.GeometricMask.yc">
+<code class="descname">yc</code><a class="headerlink" href="#deltametrics.mask.GeometricMask.yc" title="Permalink to this definition">¶</a></dt>
+<dd><p>y-coordinate of origin point.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../reference/mobility/index.html" title="Channel Mobility Functions"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.mask.ThresholdValueMask.html" title="deltametrics.mask.ThresholdValueMask"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" >Masking operations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+deltametrics.mask.GeometricMask
+===============================
+
+.. currentmodule:: deltametrics.mask
+
+.. autoclass:: GeometricMask
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GeometricMask.__init__
+      ~GeometricMask.angular
+      ~GeometricMask.circular
+      ~GeometricMask.dip
+      ~GeometricMask.from_array
+      ~GeometricMask.show
+      ~GeometricMask.strike
+      ~GeometricMask.trim_mask
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~GeometricMask.integer_mask
+      ~GeometricMask.mask
+      ~GeometricMask.mask_type
+      ~GeometricMask.shape
+      ~GeometricMask.xc
+      ~GeometricMask.yc
+   
+   
