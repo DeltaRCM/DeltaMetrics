@@ -478,6 +478,31 @@ class ChannelMask(BaseMask):
 
         Examples
         --------
+        Initialize the `ChannelMask` from an `ElevationMask` and a `FlowMask`:
+
+        .. plot::
+            :include-source:
+
+            golfcube = dm.sample_data.golf()
+
+            # Create the ElevationMask
+            emsk = dm.mask.ElevationMask(
+                golfcube['eta'][-1, :, :],
+                elevation_threshold=0)
+
+            # Create the FlowMask
+            fmsk = dm.mask.FlowMask(
+                golfcube['velocity'][-1, :, :],
+                flow_threshold=0.3)
+
+            # Make the ChannelMask from the ElevationMask and FlowMask
+            cmsk = dm.mask.ChannelMask.from_mask(
+                emsk, fmsk)
+
+            fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+            golfcube.show_plan('eta', t=-1, ax=ax[0])
+            cmsk.show(ax=ax[1])
+            plt.show()
 
         """
         if len(args) == 2:
@@ -1147,7 +1172,7 @@ class ShorelineMask(BaseMask):
             angle method (:obj:`~dm.plan.shaw_opening_angle_method`). However,
             it could/should be generalized to support multiple implementations
             via a `method` argument. For example, a sobel edge detection and
-            morpholigcal thinning on a LandMask (already made from the OAM, or
+            morphological thinning on a LandMask (already made from the OAM, or
             not) may also return a good approximation of the shoreline.
 
         Parameters
@@ -1759,9 +1784,9 @@ class CenterlineMask(BaseMask):
             self.nms_threshold = kwargs.pop('nms_threshold', 0.1)
 
             # now do the computation - first change type and do psi extraction
-            if self.data.dtype == 'int64':
-                self.data = self.data.astype('float')/(2**64 - 1)
-            self.psi, widths, orient = MMSI(self.data,
+            if cm_array.dtype == 'int64':
+                cm_array = cm_array.astype('float')/(2**64 - 1)
+            self.psi, widths, orient = MMSI(cm_array,
                                             filters=SF(minScale=self.minScale,
                                                        nrScales=self.nrScales))
             # compute non-maxima suppresion then normalize/threshold to
@@ -1796,20 +1821,27 @@ class GeometricMask(BaseMask):
 
     Examples
     --------
-    Initialize the geometric mask using model topography as a base.
-        >>> arr = rcm8cube['eta'][-1, :, :]
-        >>> gmsk = dm.mask.GeometricMask(arr)
+    Initialize the geometric mask using model topography as a base:
 
-    Define an angular mask to cover half the domain from 0 to pi/2.
-        >>> gmsk.angular(0, np.pi/2)
+    .. plot::
+        :include-source:
 
-    Further mask this region by defining some bounds in the strike direction.
-        >>> gmsk.strike(10, 50)
+        golfcube = dm.sample_data.golf()
+        arr = golfcube['eta'][-1, :, :]
+        gmsk = dm.mask.GeometricMask(arr)
 
-    Visualize the mask:
-        >>> gmsk.show()
+        # Define an angular mask to cover half the domain from 0 to pi/2.
+        gmsk.angular(0, np.pi/2)
 
-    .. plot:: mask/geomask.py
+        # Further mask this region by defining bounds in the strike direction.
+        gmsk.strike(10, 50)
+
+        # Visualize the mask:
+        fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+        gmsk.show(ax=ax[0])
+        ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask, origin='lower')
+        ax[1].set_xticks([]); ax[1].set_yticks([])
+        plt.show()
 
     """
     @staticmethod
@@ -1924,9 +1956,25 @@ class GeometricMask(BaseMask):
 
         Examples
         --------
+        Initialize an angular mask from 0 to pi/3 radians and mask topography:
 
-        .. todo:: write examples.
+        .. plot::
+            :include-source:
 
+            golfcube = dm.sample_data.golf()
+            arr = golfcube['eta'][-1, :, :].data
+            gmsk = dm.mask.GeometricMask(arr)
+
+            # Define an angular mask to cover part of the domain from 0 to pi/3.
+            gmsk.angular(0, np.pi/3)
+
+            # Visualize the mask:
+            fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+            gmsk.show(ax=ax[0], title='Binary Mask')
+            ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask, origin='lower')
+            ax[1].set_xticks([]); ax[1].set_yticks([])
+            ax[1].set_title('Mask * Topography')
+            plt.show()
         """
         if (self._L / self._W) > 0.5:
             raise ValueError('Width of input array must exceed 2x length.')
@@ -1962,9 +2010,25 @@ class GeometricMask(BaseMask):
 
         Examples
         --------
+        Initialize geometric mask which clips out a region near the inlet:
 
-        .. todo:: write examples.
+        .. plot::
+            :include-source:
 
+            golfcube = dm.sample_data.golf()
+            arr = golfcube['eta'][-1, :, :].data
+            gmsk = dm.mask.GeometricMask(arr)
+
+            # Define an circular mask to exclude region near the inlet
+            gmsk.circular(25)
+
+            # Visualize the mask:
+            fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+            gmsk.show(ax=ax[0], title='Binary Mask')
+            ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask, origin='lower')
+            ax[1].set_xticks([]); ax[1].set_yticks([])
+            ax[1].set_title('Mask * Topography')
+            plt.show()
         """
         if origin is None:
             _xc = self._xc
@@ -2007,9 +2071,25 @@ class GeometricMask(BaseMask):
 
         Examples
         --------
+        Initialize a mask that isolates the region 20-50 pixels from the inlet:
 
-        .. todo:: write examples.
+        .. plot::
+            :include-source:
 
+            golfcube = dm.sample_data.golf()
+            arr = golfcube['eta'][-1, :, :].data
+            gmsk = dm.mask.GeometricMask(arr)
+
+            # Define a mask that isolates the region 20-50 pixels from the inlet
+            gmsk.strike(20, 50)
+
+            # Visualize the mask:
+            fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+            gmsk.show(ax=ax[0], title='Binary Mask')
+            ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask, origin='lower')
+            ax[1].set_xticks([]); ax[1].set_yticks([])
+            ax[1].set_title('Mask * Topography')
+            plt.show()
         """
         if ind2 is None:
             ind2 = self._L
@@ -2039,9 +2119,25 @@ class GeometricMask(BaseMask):
 
         Examples
         --------
+        Initialize mask with a width of 50 pixels in-line with the inlet:
 
-        .. todo:: write examples.
+        .. plot::
+            :include-source:
 
+            golfcube = dm.sample_data.golf()
+            arr = golfcube['eta'][-1, :, :].data
+            gmsk = dm.mask.GeometricMask(arr)
+
+            # Define mask with width of 50 px. inline with the inlet
+            gmsk.dip(50)
+
+            # Visualize the mask:
+            fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+            gmsk.show(ax=ax[0], title='Binary Mask')
+            ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask, origin='lower')
+            ax[1].set_xticks([]); ax[1].set_yticks([])
+            ax[1].set_title('Mask * Topography')
+            plt.show()
         """
         temp_mask = np.zeros_like(self._mask)
         if ind2 is None:

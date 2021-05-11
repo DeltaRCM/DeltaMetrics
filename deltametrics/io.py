@@ -163,8 +163,15 @@ class NetCDFIO(BaseIO):
                 self.data_path, "w", format="NETCDF4")
             _tempdataset.close()
 
+        if os.path.splitext(self.data_path)[-1] == '.nc':
+            _engine = 'netcdf4'
+        elif os.path.splitext(self.data_path)[-1] == '.hdf5':
+            _engine = 'h5netcdf'
+        else:
+            TypeError('File format current unsupported by DeltaMetrics.')
+
         try:
-            _dataset = xr.open_dataset(self.data_path)
+            _dataset = xr.open_dataset(self.data_path, engine=_engine)
             if set(['time', 'x', 'y']).issubset(set(_dataset.variables)):
                 self.dataset = _dataset.set_coords(['time', 'y', 'x'])
             else:
@@ -175,7 +182,8 @@ class NetCDFIO(BaseIO):
             raise TypeError('File format out of scope for DeltaMetrics')
 
         try:
-            _meta = xr.open_dataset(self.data_path, group='meta')
+            _meta = xr.open_dataset(self.data_path, group='meta',
+                                    engine=_engine)
             self.meta = _meta
         except OSError:
             warn('No associated metadata was found in the given data file.',

@@ -8,3 +8,4 @@ scikit-image
 xarray
 pooch
 numba
+h5netcdf
