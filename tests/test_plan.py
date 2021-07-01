@@ -10,6 +10,7 @@ from deltametrics.sample_data import _get_rcm8_path, _get_golf_path
 from deltametrics import mask
 from deltametrics import cube
 from deltametrics import plan
+from deltametrics import section
 
 simple_land = np.zeros((10, 10))
 simple_shore = np.zeros((10, 10))
@@ -302,3 +303,134 @@ class TestShorelineDistance:
         assert np.mean(dists) == m
         assert m2 == m
         assert s2 == s
+
+
+class TestComputeChannelWidth:
+
+    simple_cm = np.array([[0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0]])
+    trace = np.column_stack((
+        np.arange(simple_cm.shape[1]),
+        np.zeros(simple_cm.shape[1]))
+        ).astype(int)
+
+    golf_path = _get_golf_path()
+    golf = cube.DataCube(golf_path)
+
+    cm = mask.ChannelMask(
+        golf['eta'][-1, :, :],
+        golf['velocity'][-1, :, :],
+        elevation_threshold=0,
+        flow_threshold=0.3)
+    sec = section.CircularSection(golf, radius=40)
+
+    def test_widths_simple(self):
+        """Get mean and std from simple."""
+        m, s = plan.compute_channel_width(
+            self.simple_cm, section=self.trace)
+        assert m == (1 + 2 + 4 + 1) / 4
+        assert s == pytest.approx(1.22474487)
+
+    def test_widths_simple_list_equal(self):
+        """Get mean, std, list from simple, check that same."""
+        m1, s1 = plan.compute_channel_width(
+            self.simple_cm, section=self.trace)
+        m2, s2, w = plan.compute_channel_width(
+            self.simple_cm, section=self.trace, return_widths=True)
+        assert m1 == (1 + 2 + 4 + 1) / 4
+        assert m1 == m2
+        assert s1 == s2
+        assert len(w) == 4
+
+    def test_widths_example(self):
+        """Get mean and std from example."""
+
+        m, s = plan.compute_channel_width(
+            self.cm, section=self.sec)
+        assert m == 2.6869408351003674
+        assert s == pytest.approx(0.9939869069392585)
+
+    def test_bad_masktype(self):
+        with pytest.raises(TypeError):
+            m, s = plan.compute_channel_width(
+                33, section=self.sec)
+        with pytest.raises(TypeError):
+            m, s = plan.compute_channel_width(
+                True, section=self.sec)
+
+    def test_no_section_make_default(self):
+        with pytest.raises(NotImplementedError):
+            m, s = plan.compute_channel_width(
+                self.cm)
+
+
+class TestComputeChannelDepth:
+
+    simple_cm = np.array([[0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0]])
+    simple_depth = np.array([[1.5, 0.5, 1.5, 0.2, 0.4, 1.5, 1.5, 1, 1, 1, 1, 1.5, 1.5, 9, 0]])
+    trace = np.column_stack((
+        np.arange(simple_cm.shape[1]),
+        np.zeros(simple_cm.shape[1]))
+        ).astype(int)
+
+    golf_path = _get_golf_path()
+    golf = cube.DataCube(golf_path)
+
+    cm = mask.ChannelMask(
+        golf['eta'][-1, :, :],
+        golf['velocity'][-1, :, :],
+        elevation_threshold=0,
+        flow_threshold=0.3)
+    sec = section.CircularSection(golf, radius=40)
+
+    def test_depths_simple_thalweg(self):
+        """Get mean and std from simple."""
+        m, s = plan.compute_channel_depth(
+            self.simple_cm, self.simple_depth,
+            section=self.trace)
+        assert m == (0.5 + 0.4 + 1 + 9) / 4
+        assert s == pytest.approx(3.6299965564)
+
+    def test_depths_simple_mean(self):
+        """Get mean and std from simple."""
+        m, s = plan.compute_channel_depth(
+            self.simple_cm, self.simple_depth,
+            section=self.trace, depth_type='mean')
+        assert m == (0.5 + 0.3 + 1 + 9) / 4
+        assert s == pytest.approx(3.6462309307009066)
+
+    def test_depths_simple_list_equal(self):
+        """Get mean, std, list from simple, check that same."""
+        m1, s1 = plan.compute_channel_depth(
+            self.simple_cm, self.simple_depth,
+            section=self.trace)
+        m2, s2, w = plan.compute_channel_depth(
+            self.simple_cm, self.simple_depth,
+            section=self.trace, return_depths=True)
+        assert m1 == (0.5 + 0.4 + 1 + 9) / 4
+        assert m1 == m2
+        assert s1 == s2
+        assert len(w) == 4
+
+    def test_depths_example(self):
+        """Get mean and std from example."""
+
+        m, s = plan.compute_channel_depth(
+            self.cm, self.golf['depth'][-1, :, :],
+            section=self.sec)
+        assert m == pytest.approx(1.273452647707)
+        assert s == pytest.approx(0.58321076096)
+
+    def test_bad_masktype(self):
+        with pytest.raises(TypeError):
+            m, s = plan.compute_channel_depth(
+                33, self.golf['depth'][-1, :, :],
+                section=self.sec)
+        with pytest.raises(TypeError):
+            m, s = plan.compute_channel_depth(
+                True, self.golf['depth'][-1, :, :],
+                section=self.sec)
+
+    def test_no_section_make_default(self):
+        with pytest.raises(NotImplementedError):
+            m, s = plan.compute_channel_depth(
+                self.cm, self.golf['depth'][-1, :, :])

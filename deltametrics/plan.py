@@ -10,6 +10,7 @@ from numba import njit
 
 from . import mask
 from . import cube
+from . import section as dm_section
 from . import utils
 
 
@@ -933,3 +934,240 @@ def shaw_opening_angle_method(below_mask, numviews=3):
     seaangles = np.hstack([np.vstack([Shallowsea, maxtheta]), Deepsea])
 
     return shoreangles, seaangles
+
+
+def compute_channel_width(channelmask, section=None, return_widths=False):
+    """Compute channel width from a mask and section.
+
+    Compute the width of channels identified in a ChannelMask along a section.
+    This function identifies the individual channels that are crossed by the
+    section and computes width of each channel as the along-section distance.
+    
+    In essence, this processing implicitly assumes that the section cuts each
+    channel perpendicularly. We therefore recommend using this function with
+    a `~dm.section.CircularSection` type, unless you know what you are doing.
+    By default, only the mean and standard deviation are returned, but the
+    list of widths can be returned with `return_widths=True`.
+
+    .. note::
+
+        If a `numpy` array is passed for :obj:`section`, then the distance
+        between points along the section is assumed to be `==1`. 
+    
+    Parameters
+    ----------
+    channelmask : :obj:`~deltametrics.mask.ChannelMask` or :obj:`ndarray`
+        The channel mask (i.e., should be binary) to compute channel widths
+        from.
+
+    section : :obj:`~deltametrics.section.BaseSection` subclass, or :obj:`ndarray`
+        The section along which to compute channel widths. If a `Section` type
+        is passed, the `.trace` attribute will be used to query the
+        `ChannelMask` and determine widths. Otherwise, an `Nx2` array can be
+        passed, which specified the x-y coordinate pairs to use as the
+        trace.
+
+    return_widths : bool, optional
+        Whether to return (as third argument) a list of channel widths.
+        Default is false (do not return list).
+
+    Returns
+    -------
+    mean : float
+        Mean of measured widths.
+
+    stddev : float
+        Standard deviation of measured widths.
+
+    widths : list
+        List of width measurements. Returned only if `return_widths=True`.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        # set up the cube, mask, and section
+        golf = dm.sample_data.golf()
+        cm = dm.mask.ChannelMask(
+            golf['eta'][-1, :, :],
+            golf['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.3)
+        sec = dm.section.CircularSection(golf, radius=40)
+
+        # compute the metric
+        m, s, w = dm.plan.compute_channel_width(
+            cm, section=sec, return_widths=True)
+
+        fig, ax = plt.subplots()
+        cm.show(ax=ax)
+        sec.show_trace('r-', ax=ax)
+        ax.set_title(f'mean: {m:.2f}; stddev: {s:.2f}')
+        plt.show()
+    """
+    if not (section is None):
+        if issubclass(type(section), dm_section.BaseSection):
+            section_trace = section.trace
+            section_coord = section._s
+        elif isinstance(section, np.ndarray):
+            section_trace = section
+            section_coord = np.arange(len(section))
+    else:
+        # create one by default based on the channelmask?
+        raise NotImplementedError()
+
+    # check that the section trace is a valid shape
+    #   todo...
+
+    if utils.is_ndarray_or_xarray(channelmask):
+        pass
+    elif isinstance(channelmask, mask.ChannelMask):
+        channelmask = np.array(channelmask.mask)
+    else:
+        raise TypeError(
+            'Input for `channelmask` was wrong type: {}.'.format(
+                type(channelmask)))
+
+    _channelseries = channelmask[section_trace[:, 1],
+                                 section_trace[:, 0]].astype(int)
+
+    # compute the metrics
+    _padchannelseries = np.pad(_channelseries, (1,), 'constant',
+                               constant_values=(False)).astype(int)
+    _channelseries_diff = _padchannelseries[1:] - _padchannelseries[:-1]
+    _channelstarts = np.where(_channelseries_diff == 1)[0]
+    _channelends = np.where(_channelseries_diff == -1)[0]
+
+    _channelwidths = section_coord[_channelends-1] - section_coord[_channelstarts-1]
+
+    _m, _s = np.nanmean(_channelwidths), np.nanstd(_channelwidths)
+    if return_widths:
+        return _m, _s, _channelwidths
+    else:
+        return _m, _s
+
+
+def compute_channel_depth(channelmask, depth, section=None,
+                          depth_type='thalweg', return_depths=False):
+    """Compute channel depth from a mask and section.
+
+    Compute the depth of channels identified in a ChannelMask along a section.
+    This function identifies the individual channels that are crossed by the
+    section and *computes depth of each*. The depths are then treated as individual samples for aggregating statistics in the return.
+
+    By default, only the mean and standard deviation are returned, but the
+    list of depths can be returned with `return_depths=True`.
+
+    .. note::
+
+        If a `numpy` array is passed for :obj:`section`, then the distance
+        between points along the section is assumed to be `==1`. 
+    
+    Parameters
+    ----------
+    channelmask : :obj:`~deltametrics.mask.ChannelMask` or :obj:`ndarray`
+        The channel mask (i.e., should be binary) to compute channel depths
+        from.
+
+    section : :obj:`~deltametrics.section.BaseSection` subclass, or :obj:`ndarray`
+        The section along which to compute channel depths. If a `Section` type
+        is passed, the `.trace` attribute will be used to query the
+        `ChannelMask` and determine depths. Otherwise, an `Nx2` array can be
+        passed, which specified the x-y coordinate pairs to use as the
+        trace.
+
+    return_depths : bool, optional
+        Whether to return (as third argument) a list of channel depths.
+        Default is false (do not return list).
+
+    Returns
+    -------
+    mean : float
+        Mean of measured depths.
+
+    stddev : float
+        Standard deviation of measured depths.
+
+    depths : list
+        List of depth measurements. Returned only if `return_depths=True`.
+    """
+    # if not (section is None):
+    #     if issubclass(type(section), dm_section.BaseSection):
+    #         section_trace = section.trace
+    #     elif isinstance(section, np.ndarray):
+    #         section_trace = section
+    # else:
+    #     # create one by default based on the channelmask?
+    #     raise NotImplementedError()
+
+    # channelmask = np.array(channelmask.mask)
+    if not (section is None):
+        if issubclass(type(section), dm_section.BaseSection):
+            section_trace = section.trace
+            section_coord = section._s
+        elif isinstance(section, np.ndarray):
+            section_trace = section
+            section_coord = np.arange(len(section))
+    else:
+        # create one by default based on the channelmask?
+        raise NotImplementedError()
+
+    # check that the section trace is a valid shape
+    #   todo...
+
+    if utils.is_ndarray_or_xarray(channelmask):
+        pass
+    elif isinstance(channelmask, mask.ChannelMask):
+        channelmask = np.array(channelmask.mask)
+    else:
+        raise TypeError(
+            'Input for `channelmask` was wrong type: {}.'.format(
+                type(channelmask)))
+
+    # need to get the channel starts and ends
+    _channelseries = channelmask[section_trace[:, 1],
+                                 section_trace[:, 0]].astype(int)
+    _padchannelseries = np.pad(_channelseries, (1,), 'constant',
+                               constant_values=(False)).astype(int)
+    _channelseries_diff = _padchannelseries[1:] - _padchannelseries[:-1]
+    _channelstarts = np.where(_channelseries_diff == 1)[0]
+    _channelends = np.where(_channelseries_diff == -1)[0]
+
+    _channelwidths = section_coord[_channelends-1] - section_coord[_channelstarts-1]
+
+    # get the depth array along the section
+    _depthslice = np.copy(depth)
+    _depthseries = _depthslice[section_trace[:, 1], section_trace[:, 0]]
+
+    # for depth and area of channels, we loop through each discrete channel
+    _channel_depth_means = np.full(len(_channelwidths), np.nan)
+    _channel_depth_thalweg = np.full(len(_channelwidths), np.nan)
+    # _channel_depth_area = np.full(len(_channelwidths), np.nan)
+    for k in np.arange(len(_channelwidths)):
+        # extract the depths for the kth channel
+        _kth_channel_depths = _depthseries[_channelstarts[k]:_channelends[k]]
+
+        # compute the mean depth of kth channel and the thalweg of this channel
+        _channel_depth_means[k] = np.nanmean(_kth_channel_depths)
+
+        # compute the max depth, aka the thalweg
+        _channel_depth_thalweg[k] = np.max(_kth_channel_depths)
+
+    if depth_type == 'thalweg':
+        _channel_depth_list = _channel_depth_thalweg
+    elif depth_type == 'mean':
+        _channel_depth_list = _channel_depth_means
+    else:
+        raise ValueError(
+            'Invalid argument to `depth_type` {}'.format(
+                str(depth_type)))
+
+    print(_channel_depth_list)
+
+    _m, _s = np.mean(_channel_depth_list), np.std(_channel_depth_list)
+    if return_depths:
+        return _m, _s, _channel_depth_list
+    else:
+        return _m, _s
