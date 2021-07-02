@@ -431,7 +431,7 @@ class TestComputeChannelDepth:
                 section=self.sec)
 
     def test_bad_depth_type_arg(self):
-        with pytest.raises(TypeError):
+        with pytest.raises(ValueError):
             m, s = plan.compute_channel_depth(
                 self.cm, self.golf['depth'][-1, :, :],
                 depth_type='nonsense', section=self.sec)
