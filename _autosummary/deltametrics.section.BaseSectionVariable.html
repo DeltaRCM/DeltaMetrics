@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>deltametrics.section.BaseSectionVariable &#8212; DeltaMetrics 0.1.0 documentation</title>
+    <title>deltametrics.section.BaseSectionVariable &#8212; DeltaMetrics 0.2.0 documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="deltametrics.section.StratigraphySectionVariable.html" title="deltametrics.section.StratigraphySectionVariable"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/section/index.html" accesskey="U">Section operations and classes</a> &#187;</li> 
       </ul>
@@ -664,14 +664,22 @@ One of max or min must be given.</p>
 ‘F’ means F-order, ‘A’ means ‘F’ if <cite>a</cite> is Fortran contiguous,
 ‘C’ otherwise. ‘K’ means match the layout of <cite>a</cite> as closely
 as possible. (Note that this function and <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.copy()</span></code> are very
-similar, but have different default values for their order=
-arguments.)</p>
+similar but have different default values for their order=
+arguments, and this function always passes sub-classes through.)</p>
 </dd>
 </dl>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">numpy.copy()</span></code>, <code class="xref py py-meth docutils literal notranslate"><span class="pre">numpy.copyto()</span></code></p>
+<dl class="simple">
+<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">numpy.copy()</span></code></dt><dd><p>Similar function with different default behavior</p>
+</dd>
+</dl>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">numpy.copyto()</span></code></p>
 </div>
+<p class="rubric">Notes</p>
+<p>This function is the preferred method for creating an array copy.  The
+function <code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.copy()</span></code> is similar, but it defaults to using order ‘K’,
+and will not pass sub-classes through by default.</p>
 <p class="rubric">Examples</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]],</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
 </pre></div>
@@ -1955,7 +1963,7 @@ and ‘mergesort’ use timsort under the covers and, in general, the
 actual implementation will vary with datatype. The ‘mergesort’ option
 is retained for backwards compatibility.</p>
 <div class="versionchanged">
-<p><span class="versionmodified changed">Changed in version 1.15.0.: </span>The ‘stable’ option was added.</p>
+<p><span class="versionmodified changed">Changed in version 1.15.0: </span>The ‘stable’ option was added.</p>
 </div>
 </p></li>
 <li><p><strong>order</strong> (<em>str</em><em> or </em><em>list of str</em><em>, </em><em>optional</em>) – When <cite>a</cite> is an array with fields defined, this argument specifies
@@ -2324,6 +2332,8 @@ intended simply as a “convenience” alternative to the tuple form)</p></li>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
+<dt><a class="reference internal" href="#deltametrics.section.BaseSectionVariable.transpose" title="deltametrics.section.BaseSectionVariable.transpose"><code class="xref py py-meth docutils literal notranslate"><span class="pre">transpose()</span></code></a></dt><dd><p>Equivalent function</p>
+</dd>
 <dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">ndarray.T()</span></code></dt><dd><p>Array property returning the array transposed.</p>
 </dd>
 <dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">ndarray.reshape()</span></code></dt><dd><p>Give a new shape to an array without changing its data.</p>
@@ -2483,7 +2493,7 @@ avoided on arrays defined by slices, transposes, fortran-ordering, etc.:</p>
         <li class="right" >
           <a href="deltametrics.section.StratigraphySectionVariable.html" title="deltametrics.section.StratigraphySectionVariable"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.1.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/section/index.html" >Section operations and classes</a> &#187;</li> 
       </ul>

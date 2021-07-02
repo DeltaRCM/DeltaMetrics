@@ -1,0 +1,6 @@
+deltametrics.plan.compute\_channel\_depth
+=========================================
+
+.. currentmodule:: deltametrics.plan
+
+.. autofunction:: compute_channel_depth

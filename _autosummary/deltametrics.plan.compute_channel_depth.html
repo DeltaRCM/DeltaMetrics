@@ -1,0 +1,126 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>deltametrics.plan.compute_channel_depth &#8212; DeltaMetrics 0.2.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.plan.compute_channel_depth.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="deltametrics-plan-compute-channel-depth">
+<h1>deltametrics.plan.compute_channel_depth<a class="headerlink" href="#deltametrics-plan-compute-channel-depth" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="deltametrics.plan.compute_channel_depth">
+<code class="descclassname">deltametrics.plan.</code><code class="descname">compute_channel_depth</code><span class="sig-paren">(</span><em>channelmask</em>, <em>depth</em>, <em>section=None</em>, <em>depth_type='thalweg'</em>, <em>return_depths=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.compute_channel_depth" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute channel depth from a mask and section.</p>
+<p>Compute the depth of channels identified in a ChannelMask along a section.
+This function identifies the individual channels that are crossed by the
+section and <em>computes depth of each</em>. The depths are then treated as
+samples for aggregating statistics in the return.</p>
+<p>By default, only the mean and standard deviation are returned, but the
+list of depths can be returned with <cite>return_depths=True</cite>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If a <cite>numpy</cite> array is passed for <code class="xref py py-obj docutils literal notranslate"><span class="pre">section</span></code>, then the distance
+between points along the section is assumed to be <cite>==1</cite>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channelmask</strong> (<a class="reference internal" href="deltametrics.mask.ChannelMask.html#deltametrics.mask.ChannelMask" title="deltametrics.mask.ChannelMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChannelMask</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The channel mask (i.e., should be binary) to compute channel depths
+from.</p></li>
+<li><p><strong>depth</strong> (<cite>xarray</cite> or <cite>ndarray</cite>) – The depth field corresponding to the channelmask array.</p></li>
+<li><p><strong>section</strong> (<a class="reference internal" href="deltametrics.section.BaseSection.html#deltametrics.section.BaseSection" title="deltametrics.section.BaseSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSection</span></code></a> subclass, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The section along which to compute channel depths. If a <cite>Section</cite> type
+is passed, the <cite>.trace</cite> attribute will be used to query the
+<cite>ChannelMask</cite> and determine depths. Otherwise, an <cite>Nx2</cite> array can be
+passed, which specified the x-y coordinate pairs to use as the
+trace.</p></li>
+<li><p><strong>depth_type</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Flag indicating how to compute the depth of <em>each</em> channel
+(i.e., before aggregating). Valid flags are <cite>‘thalweg’`(default) and
+`’mean’</cite>.</p></li>
+<li><p><strong>return_depths</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return (as third argument) a list of channel depths.
+Default is false (do not return list).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>mean</strong> (<em>float</em>) – Mean of measured depths.</p></li>
+<li><p><strong>stddev</strong> (<em>float</em>) – Standard deviation of measured depths.</p></li>
+<li><p><strong>depths</strong> (<em>list</em>) – List of depth measurements. Returned only if <cite>return_depths=True</cite>.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>
