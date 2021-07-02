@@ -9,3 +9,4 @@ xarray
 pooch
 numba
 h5netcdf
+h5py
