@@ -411,7 +411,7 @@ class TestComputeChannelDepth:
         assert s1 == s2
         assert len(w) == 4
 
-    def test_depths_example(self):
+    def test_depths_example_thalweg(self):
         """Get mean and std from example."""
 
         m, s = plan.compute_channel_depth(
@@ -429,6 +429,12 @@ class TestComputeChannelDepth:
             m, s = plan.compute_channel_depth(
                 True, self.golf['depth'][-1, :, :],
                 section=self.sec)
+
+    def test_bad_depth_type_arg(self):
+        with pytest.raises(TypeError):
+            m, s = plan.compute_channel_depth(
+                self.cm, self.golf['depth'][-1, :, :],
+                depth_type='nonsense', section=self.sec)
 
     def test_no_section_make_default(self):
         with pytest.raises(NotImplementedError):

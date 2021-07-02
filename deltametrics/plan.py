@@ -1055,7 +1055,8 @@ def compute_channel_depth(channelmask, depth, section=None,
 
     Compute the depth of channels identified in a ChannelMask along a section.
     This function identifies the individual channels that are crossed by the
-    section and *computes depth of each*. The depths are then treated as individual samples for aggregating statistics in the return.
+    section and *computes depth of each*. The depths are then treated as
+    samples for aggregating statistics in the return.
 
     By default, only the mean and standard deviation are returned, but the
     list of depths can be returned with `return_depths=True`.
@@ -1071,12 +1072,20 @@ def compute_channel_depth(channelmask, depth, section=None,
         The channel mask (i.e., should be binary) to compute channel depths
         from.
 
+    depth : `xarray` or `ndarray`
+        The depth field corresponding to the channelmask array.
+
     section : :obj:`~deltametrics.section.BaseSection` subclass, or :obj:`ndarray`
         The section along which to compute channel depths. If a `Section` type
         is passed, the `.trace` attribute will be used to query the
         `ChannelMask` and determine depths. Otherwise, an `Nx2` array can be
         passed, which specified the x-y coordinate pairs to use as the
         trace.
+
+    depth_type : :obj:`str` 
+        Flag indicating how to compute the depth of *each* channel
+        (i.e., before aggregating). Valid flags are `'thalweg'`(default) and
+        `'mean'`.
 
     return_depths : bool, optional
         Whether to return (as third argument) a list of channel depths.
@@ -1093,16 +1102,6 @@ def compute_channel_depth(channelmask, depth, section=None,
     depths : list
         List of depth measurements. Returned only if `return_depths=True`.
     """
-    # if not (section is None):
-    #     if issubclass(type(section), dm_section.BaseSection):
-    #         section_trace = section.trace
-    #     elif isinstance(section, np.ndarray):
-    #         section_trace = section
-    # else:
-    #     # create one by default based on the channelmask?
-    #     raise NotImplementedError()
-
-    # channelmask = np.array(channelmask.mask)
     if not (section is None):
         if issubclass(type(section), dm_section.BaseSection):
             section_trace = section.trace
@@ -1163,8 +1162,6 @@ def compute_channel_depth(channelmask, depth, section=None,
         raise ValueError(
             'Invalid argument to `depth_type` {}'.format(
                 str(depth_type)))
-
-    print(_channel_depth_list)
 
     _m, _s = np.mean(_channel_depth_list), np.std(_channel_depth_list)
     if return_depths:
