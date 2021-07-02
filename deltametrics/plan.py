@@ -2,6 +2,7 @@ import numpy as np
 
 from scipy.spatial import ConvexHull
 from shapely.geometry.polygon import Polygon
+from skimage import morphology
 
 import abc
 import warnings
@@ -387,6 +388,10 @@ class OpeningAnglePlanform(BasePlanform):
         See figure in main docstring for visual example.
         """
         return self._below_mask
+
+
+# class MorphologicalPlanform(BasePlanform):
+#     """Planform for handling the morphological method.
 
 
 def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
@@ -936,13 +941,82 @@ def shaw_opening_angle_method(below_mask, numviews=3):
     return shoreangles, seaangles
 
 
+def _custom_closing(img, disksize):
+    """Private function for the binary closing."""
+    _changed = np.infty
+    disk = morphology.disk(disksize)
+    while _changed != 0:
+        _newimg = morphology.binary_closing(img, selem=disk)
+        _changed = np.sum(_newimg.astype(float)-img.astype(float))
+        _closed = _newimg
+    return _closed
+
+
+def morphological_closing_method(elevationmask, biggestdisk=None):
+    """Compute an average morphological map from an image,
+
+    Applies a morphological closing to the input image in a manner
+    similar to / inspired by [1]_ for rapid identification of a shoreline.
+
+    This *function* takes an image, and performs a morphological closing for
+    a set of disk sizes up from 0 up to the parameter `biggestdisk`.
+
+    .. [1] Geleynse, N., et al. "Characterization of river delta shorelines."
+       Geophysical research letters 39.17 (2012).
+
+    Parameters
+    ----------
+    elevationmask : :obj:`~deltametrics.mask.ElevationMask` or
+                    :obj:`ndarray` or :obj:`xarray`
+        Binary image that the morpholigical closing is performed upon.
+        This is expected to be something like an elevation mask, although it
+        doesn't have to be.
+
+    biggestdisk : int, optional
+        Defines the largest disk size to use for the binary closing method.
+        The method starts 0 and iterates up to a disk size of biggestdisk.
+
+    Returns
+    -------
+    imageset : ndarray
+        3-D array of shape n-x-y where n is the number of different disk
+        kernels used in the method. n = biggestdisk + 1
+
+    meanimage : ndarray
+        2-D array of shape x-y of the mean of imageset taken over the first
+        axis. This approximates the `sea_angles` attribute of the OAM method.
+    """
+    # coerce input image into 2-d ndarray
+    if isinstance(elevationmask, mask.ChannelMask):
+        emsk = np.array(elevationmask.mask)
+    elif utils.is_ndarray_or_xarray(elevationmask):
+        emsk = np.array(elevationmask)
+    else:
+        raise TypeError(
+            'Input for `elevationmask` was unrecognized type: {}.'.format(
+                type(elevationmask)))
+
+    # check biggestdisk
+    if biggestdisk is None:
+        biggestdisk = 1
+    elif biggestdisk <= 0:
+        biggestdisk = 1
+
+    # loop through and do binary closing for each disk size up to biggestdisk
+    imageset = np.zeros((biggestdisk+1, emsk.shape[0], emsk.shape[1]))
+    for i in range(biggestdisk+1):
+        imageset[i, ...] = _custom_closing(emsk, i)
+
+    return imageset, imageset.mean(axis=0)
+
+
 def compute_channel_width(channelmask, section=None, return_widths=False):
     """Compute channel width from a mask and section.
 
     Compute the width of channels identified in a ChannelMask along a section.
     This function identifies the individual channels that are crossed by the
     section and computes width of each channel as the along-section distance.
-    
+
     In essence, this processing implicitly assumes that the section cuts each
     channel perpendicularly. We therefore recommend using this function with
     a `~dm.section.CircularSection` type, unless you know what you are doing.
@@ -952,8 +1026,8 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
     .. note::
 
         If a `numpy` array is passed for :obj:`section`, then the distance
-        between points along the section is assumed to be `==1`. 
-    
+        between points along the section is assumed to be `==1`.
+
     Parameters
     ----------
     channelmask : :obj:`~deltametrics.mask.ChannelMask` or :obj:`ndarray`
@@ -1064,8 +1138,8 @@ def compute_channel_depth(channelmask, depth, section=None,
     .. note::
 
         If a `numpy` array is passed for :obj:`section`, then the distance
-        between points along the section is assumed to be `==1`. 
-    
+        between points along the section is assumed to be `==1`.
+
     Parameters
     ----------
     channelmask : :obj:`~deltametrics.mask.ChannelMask` or :obj:`ndarray`
@@ -1082,7 +1156,7 @@ def compute_channel_depth(channelmask, depth, section=None,
         passed, which specified the x-y coordinate pairs to use as the
         trace.
 
-    depth_type : :obj:`str` 
+    depth_type : :obj:`str`
         Flag indicating how to compute the depth of *each* channel
         (i.e., before aggregating). Valid flags are `'thalweg'`(default) and
         `'mean'`.
