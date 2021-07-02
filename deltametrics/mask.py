@@ -1158,12 +1158,12 @@ class ShorelineMask(BaseMask):
         """
         _SM = ShorelineMask(allow_empty=True)
         _SM._set_shape_mask(_arr.shape)
-        _SM._angle_threshold = None
+        _SM._contour_threshold = None
         _SM._input_flag = None
         _SM._mask = _arr.astype(bool)  # set the array as mask
         return _SM
 
-    def __init__(self, *args, angle_threshold=75, **kwargs):
+    def __init__(self, *args, contour_threshold=75, method='OAM', **kwargs):
         """Initialize the ShorelineMask.
 
         .. note::
@@ -1180,9 +1180,18 @@ class ShorelineMask(BaseMask):
         arr : ndarray
             2-D topographic array to make the mask from.
 
-        angle_threshold : float, optional
-            Threshold opening angle used to determine shoreline contour based
-            on the sea_angles from the :obj:`OpeningAnglePlanform`.
+        contour_threshold : float, optional
+            Threshold value used when identifying the shoreline contour.
+            For the opening angle method, this is a threshold opening angle
+            value used to determine shoreline contour based on the sea_angles
+            from the :obj:`OpeningAnglePlanform`. For the morphological
+            method this is a threshold value between 0 and 1, for extracting
+            the contour from the mean_image array.
+
+        method : str, optional
+            Specifies the method to use for shoreline mask computation.
+            Currently supports 'OAM' for the opening angle method (default)
+            and 'MCM' for the morpholigcal closing method.
 
         Other Parameters
         ----------------
@@ -1198,7 +1207,7 @@ class ShorelineMask(BaseMask):
         super().__init__('shoreline', *args, **kwargs)
 
         # begin processing the arguments and making the mask
-        self._angle_threshold = angle_threshold
+        self.contour_threshold = contour_threshold
 
         # temporary storage of args as needed for processing
         if self._input_flag is None:
@@ -1226,19 +1235,31 @@ class ShorelineMask(BaseMask):
                 'Invalid _input_flag. Did you modify this attribute?')
 
         # use an OAP to get the ocean mask and sea angles fields
-        _OAP = plan.OpeningAnglePlanform.from_elevation_data(
-            _eta,
-            **kwargs)
+        if method == 'OAM':
+            _OAP = plan.OpeningAnglePlanform.from_elevation_data(
+                _eta,
+                **kwargs)
 
-        # get fields out of the OAP
-        _below_mask = _OAP._below_mask
-        _sea_angles = _OAP._sea_angles
+            # get fields out of the OAP
+            _below_mask = _OAP._below_mask
+            _sea_angles = _OAP._sea_angles
 
-        # compute the mask
-        self._compute_mask(_below_mask, _sea_angles, **kwargs)
+            # compute the mask
+            self._compute_OAM_mask(_below_mask, _sea_angles, **kwargs)
 
-    def _compute_mask(self, *args, **kwargs):
-        """Compute the shoreline mask.
+        elif method == 'MCM':
+            _MCM = plan.MorphologicalClosingPlanform.from_elevation_data(
+                _eta, **kwargs)
+
+            # get fields and compute the mask
+            _elevationmask = _MCM._elev_mask
+            _meanimage = _MCM._mean_image
+
+            # compute the mask
+            self._compute_MCM_mask(_elevationmask, _meanimage, **kwargs)
+
+    def _compute_OAM_mask(self, *args, **kwargs):
+        """Compute the shoreline mask using the OAM.
 
         Applies the Opening Angle Method to compute the shoreline mask.
         Implementation of the OAM is in
@@ -1274,25 +1295,43 @@ class ShorelineMask(BaseMask):
         if (_below_mask == 1).all():
             pass
         else:
-            # grab contour from sea_angles corresponding to angle threshold
-            cs = measure.find_contours(_sea_angles,
-                                       self.angle_threshold)
-            C = cs[0]
+            # # grab contour from sea_angles corresponding to angle threshold
+            # cs = measure.find_contours(_sea_angles,
+            #                            self.contour_threshold)
+            # C = cs[0]
+            #
+            # # convert this extracted contour to the shoreline mask
+            # flat_inds = list(map(
+            #     lambda x: np.ravel_multi_index(x, shoremap.shape),
+            #     np.round(C).astype(int)))
+            # shoremap.flat[flat_inds] = 1
 
-            # convert this extracted contour to the shoreline mask
-            flat_inds = list(map(
-                lambda x: np.ravel_multi_index(x, shoremap.shape),
-                np.round(C).astype(int)))
-            shoremap.flat[flat_inds] = 1
+            # use function
+            shoremap = self.grab_contour(_sea_angles, shoremap)
 
         # write shoreline map out to data.mask
         self._mask = np.copy(shoremap.astype(bool))
 
     @property
-    def angle_threshold(self):
-        """Threshold angle used for picking shoreline contour.
+    def contour_threshold(self):
+        """Threshold value used for picking shoreline contour.
         """
-        return self._angle_threshold
+        return self._contour_threshold
+
+    def grab_contour(self, arr, shoremap):
+        """Method to grab contour from some input array using a threshold."""
+        # grab contour from array using the threshold
+        cs = measure.find_contours(arr, self.contour_threshold)
+        C = cs[0]
+
+        # convert contour to the shoreline mask itself
+        flat_inds = list(map(
+            lambda x: np.ravel_multi_index(x, shoremap.shape),
+            np.round(C).astype(int)))
+        shoremap.flat[flat_inds] = 1
+
+        return shoremap
+
 
 
 class EdgeMask(BaseMask):
