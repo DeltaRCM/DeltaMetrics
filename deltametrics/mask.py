@@ -436,33 +436,32 @@ class ChannelMask(BaseMask):
     """
 
     @staticmethod
-    def from_OAP_and_FlowMask(_OAP, _FlowMask, **kwargs):
-        """Create from an OAP and a FlowMask.
+    def from_Planform_and_FlowMask(_Planform, _FlowMask, **kwargs):
+        """Create from a Planform object and a FlowMask.
         """
         # set up the empty shoreline mask
         _CM = ChannelMask(allow_empty=True, **kwargs)
-        _CM._set_shape_mask(_OAP.shape)
+        _CM._set_shape_mask(_Planform.shape)
 
         # set up the needed flow mask and landmask
-        _LM = LandMask.from_OAP(_OAP, **kwargs)
+        _LM = LandMask.from_Planform(_Planform, **kwargs)
         _FM = _FlowMask
 
         # compute the mask
-
         _CM._compute_mask(_LM, _FM, **kwargs)
         return _CM
 
     @staticmethod
-    def from_OAP(*args, **kwargs):
+    def from_Planform(*args, **kwargs):
         # undocumented, hopefully helpful error
         #   Note, an alternative here is to implement this method and take an
         #   OAP and information to create a flow mask, raising an error if the
         #   flow information is missing.
         raise NotImplementedError(
-            '`from_OAP` is not defined for `ChannelMask` instantiation '
+            '`from_Planform` is not defined for `ChannelMask` instantiation '
             'because the process additionally requires flow field '
             'information. Consider alternative methods '
-            '`from_OAP_and_FlowMask()')
+            '`from_Planform_and_FlowMask()')
 
     @staticmethod
     def from_masks(*args, **kwargs):
@@ -569,8 +568,11 @@ class ChannelMask(BaseMask):
         velocity_threshold : float
             Threshold velocity above which flow is considered 'channelized'.
 
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
+        contour_threshold : int, optional
+            Threshold value used for identfying the shoreline.
+
+            In the case of the OAM this threshold is a threshold opening angle.
+            Default is 75 degrees. Threshold could be between 0-1 for the MPM.
 
         is_mask : bool, optional
             Whether the data in :obj:`arr` is already a binary mask. Default is
@@ -681,16 +683,16 @@ class WetMask(BaseMask):
     """
 
     @staticmethod
-    def from_OAP(_OAP, **kwargs):
-        """Create from an OAP.
+    def from_Planform(_Planform, **kwargs):
+        """Create from a Planform.
         """
         # set up the empty shoreline mask
         _CM = WetMask(allow_empty=True, **kwargs)
-        _CM._set_shape_mask(_OAP.shape)
+        _CM._set_shape_mask(_Planform.shape)
 
         # set up the needed flow mask and landmask
-        _LM = LandMask.from_OAP(_OAP)
-        _below_mask = _OAP.below_mask
+        _LM = LandMask.from_Planform(_Planform)
+        _below_mask = _Planform.below_mask
 
         # compute the mask (pass as arrays!)
         _CM._compute_mask(_LM._mask, _below_mask, **kwargs)
@@ -787,8 +789,10 @@ class WetMask(BaseMask):
         arr : ndarray
             The data array to make the mask from.
 
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
+        contour_threshold : int, optional
+            Threshold value to use when identifying the contour which defines
+            the shoreline. For the OAM this is a threshold opening angle.
+            Default is 75 degrees.
 
         is_mask : bool, optional
             Whether the data in :obj:`arr` is already a binary mask. Default is
@@ -801,7 +805,7 @@ class WetMask(BaseMask):
         landmask : :obj:`LandMask`, optional
             A :obj:`LandMask` object with a defined binary shoreline mask.
             If given, the :obj:`LandMask` object will be checked for the
-            `sea_angles` and `angle_threshold` attributes.
+            `sea_angles` and `contour_threshold` attributes.
 
         kwargs : optional
             Keyword arguments are passed to `LandMask` and `ElevationMask`, as
@@ -897,20 +901,20 @@ class LandMask(BaseMask):
     """
 
     @staticmethod
-    def from_OAP(_OAP, **kwargs):
-        """Compute LandMask from OpeningAnglePlanform.
+    def from_Planform(_Planform, **kwargs):
+        """Compute LandMask from any BasePlanform.
 
         Parameters
         ----------
-        OAP
+        Planform
 
         """
         # set up the empty shoreline mask
         _LM = LandMask(allow_empty=True, **kwargs)
-        _LM._set_shape_mask(_OAP.shape)
+        _LM._set_shape_mask(_Planform.shape)
 
         # compute the mask
-        _LM._compute_mask(_OAP, **kwargs)
+        _LM._compute_mask(_Planform, **kwargs)
         return _LM
 
     @staticmethod
@@ -976,7 +980,8 @@ class LandMask(BaseMask):
         # set directly
         raise NotImplementedError
 
-    def __init__(self, *args, angle_threshold=75, **kwargs):
+    def __init__(self, *args, contour_threshold=75,
+                 method='OAM', **kwargs):
         """Initialize the LandMask.
 
         Intializing the land mask requires an array of data, should be
@@ -987,7 +992,7 @@ class LandMask(BaseMask):
             This class currently computes the mask via the Shaw opening
             angle method (:obj:`~dm.plan.shaw_opening_angle_method`). However,
             it could/should be generalized to support multiple implementations
-            via a `method` argument. Then, the `angle_threshold` might not be
+            via a `method` argument. Then, the `contour_threshold` might not be
             a property any longer, and should be treated just as any keyword
             passed to the method for instantiation.
 
@@ -996,8 +1001,14 @@ class LandMask(BaseMask):
         arr : ndarray
             2-D topographic array to make the mask from.
 
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
+        contour_threshold : int, float, optional
+            Threshold value used to pick shoreline contour. This is a threshold
+            opening angle used in the OAM. Default is 75 degrees.
+
+        method : str, optional
+            Defines the planform method used. Default is the opening angle
+            method (OAM) specified as 'OAM'. Alternatively the morphological
+            planform method (MPM) can be specified as 'MPM'.
 
         is_mask : bool, optional
             Whether the data in :obj:`arr` is already a binary mask. Default
@@ -1010,7 +1021,7 @@ class LandMask(BaseMask):
         shoremask : :obj:`ShoreMask`, optional
             A :obj:`ShoreMask` object with a defined binary shoreline mask.
             If given, the :obj:`ShoreMask` object will be checked for the
-            `sea_angles` and `angle_threshold` attributes.
+            `sea_angles` and `contour_threshold` attributes.
 
         kwargs : optional
             Keyword arguments for :obj:`compute_shoremask`.
@@ -1018,7 +1029,7 @@ class LandMask(BaseMask):
         """
         super().__init__('land', *args, **kwargs)
 
-        self._angle_threshold = angle_threshold
+        self._contour_threshold = contour_threshold
 
         # temporary storage of args as needed for processing
         if self._input_flag is None:
@@ -1040,17 +1051,22 @@ class LandMask(BaseMask):
             raise ValueError(
                 'Invalid _input_flag. Did you modify this attribute?')
 
-        # create an OAP to determine the sea_angles
-        _OAP = plan.OpeningAnglePlanform.from_elevation_data(
-            _eta,
-            **kwargs)
+        # create a planform
+        if method == 'OAM':
+            _Planform = plan.OpeningAnglePlanform.from_elevation_data(
+                _eta, **kwargs)
+        elif method == 'MPM':
+            _Planform = plan.MorphologicalPlanform.from_elevation_data(
+                _eta, **kwargs)
+        else:
+            raise TypeError('method argument is unrecognized.')
 
-        # get fields out of the OAP
-        _sea_angles = _OAP._sea_angles
+        # get fields out of the Planform
+        _composite_array = _Planform.composite_array
 
         # make the mask, all we need is the sea angles.
         #   See not above about how this method could be better generalized.
-        self._compute_mask(_sea_angles, **kwargs)
+        self._compute_mask(_composite_array, **kwargs)
 
     def _compute_mask(self, *args, **kwargs):
         """Compute the LandMask.
@@ -1060,31 +1076,31 @@ class LandMask(BaseMask):
         information can come from multiple data sources though.
 
         Thus, the argument to this method should be one of:
-            * an opening angle planform object
-            * an ndarray with the sea_angles data directly (matching shape of
-              mask)
+            * a BasePlanform object
+            * an ndarray with the composite_array data directly
+              (matching shape of mask)
 
         """
         # for landmask, we need the shore image field of the OAP
         if len(args) == 1:
-            if isinstance(args[0], plan.OpeningAnglePlanform):
-                sea_angles = args[0]._sea_angles
+            if isinstance(args[0], plan.BasePlanform):
+                composite_array = args[0].composite_array
             elif utils.is_ndarray_or_xarray(args[0]):
-                sea_angles = args[0]
+                composite_array = args[0]
             else:
                 raise TypeError
         else:
             raise ValueError('Specify only 1 argument.')
 
-        if np.all(sea_angles == 0):
+        if np.all(composite_array == 0):
             self._mask = np.zeros(self._shape, dtype=bool)
         else:
-            self._mask = (sea_angles < self._angle_threshold)
+            self._mask = (composite_array < self._contour_threshold)
 
     @property
-    def angle_threshold(self):
-        """Threshold view angle used for picking land area."""
-        return self._angle_threshold
+    def contour_threshold(self):
+        """Threshold value used for picking land area."""
+        return self._contour_threshold
 
 
 class ShorelineMask(BaseMask):
@@ -1113,13 +1129,13 @@ class ShorelineMask(BaseMask):
     """
 
     @staticmethod
-    def from_OAP(_OAP, **kwargs):
+    def from_Planform(_Planform, **kwargs):
         # set up the empty shoreline mask
         _SM = ShorelineMask(allow_empty=True, **kwargs)
-        _SM._set_shape_mask(_OAP.shape)
+        _SM._set_shape_mask(_Planform.shape)
 
         # compute the mask
-        _SM._compute_mask(_OAP, **kwargs)
+        _SM._compute_mask(_Planform, **kwargs)
         return _SM
 
     @staticmethod
@@ -1130,9 +1146,9 @@ class ShorelineMask(BaseMask):
             # make intermediate shoreline mask
             raise TypeError('Input must be ElevationMask')
 
-        _OAP = plan.OpeningAnglePlanform.from_ElevationMask(
+        _Planform = plan.OpeningAnglePlanform.from_ElevationMask(
             UnknownMask)
-        return ShorelineMask.from_OAP(_OAP, **kwargs)
+        return ShorelineMask.from_Planform(_Planform, **kwargs)
 
     @staticmethod
     def from_masks(UnknownMask, **kwargs):
@@ -1295,18 +1311,7 @@ class ShorelineMask(BaseMask):
         if (_below_mask == 1).all():
             pass
         else:
-            # # grab contour from sea_angles corresponding to angle threshold
-            # cs = measure.find_contours(_sea_angles,
-            #                            self.contour_threshold)
-            # C = cs[0]
-            #
-            # # convert this extracted contour to the shoreline mask
-            # flat_inds = list(map(
-            #     lambda x: np.ravel_multi_index(x, shoremap.shape),
-            #     np.round(C).astype(int)))
-            # shoremap.flat[flat_inds] = 1
-
-            # use function
+            # grab contour from sea_angles corresponding to angle threshold
             shoremap = self.grab_contour(_sea_angles, shoremap)
 
         # write shoreline map out to data.mask
@@ -1475,8 +1480,11 @@ class EdgeMask(BaseMask):
         arr : ndarray
             The data array to make the mask from.
 
-        angle_threshold : int, optional
-            Threshold opening angle used in the OAM. Default is 75 degrees.
+        contour_threshold : int, optional
+            Threshold value used for identifying the shoreline.
+
+            Default threshold opening angle used in the OAM. Default is 75
+            degrees. Could also be a value between 0-1 in the case of the MPM.
 
         is_mask : bool, optional
             Whether the data in :obj:`arr` is already a binary mask. Default

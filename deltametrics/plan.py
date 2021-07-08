@@ -58,6 +58,7 @@ class BasePlanform(abc.ABC):
         self._shape = None
         self._variables = None
         self.cube = None
+        self._composite_array = None
 
         self.planform_type = planform_type
         self._name = name
@@ -114,6 +115,17 @@ class BasePlanform(abc.ABC):
         """Planform shape.
         """
         return self._shape
+
+    @property
+    def composite_array(self):
+        """Array to extract a contour from when mask-making.
+
+        This is the array that a contour is extracted from using some threshold
+        value when making land and shoreline masks. This should just be an
+        alias for either the `sea_angles` or the `meanimage` arrays from the
+        OAM and MPM respectively.
+        """
+        return self._composite_array
 
 
 class OpeningAnglePlanform(BasePlanform):
@@ -389,10 +401,143 @@ class OpeningAnglePlanform(BasePlanform):
         """
         return self._below_mask
 
+    @property
+    def composite_array(self):
+        """Alias sea angles."""
+        return self._sea_angles
 
-# class MorphologicalPlanform(BasePlanform):
-#     """Planform for handling the morphological method.
 
+class MorphologicalPlanform(BasePlanform):
+    """Planform for handling the morphological method.
+
+    .. todo::
+
+        Expand docstring
+
+    """
+
+    @staticmethod
+    def from_elevation_data(elevation_data, **kwargs):
+        """Create a `MorphologicalPlanform` from elevation data.
+
+        Creates an ElevationMask from the input elevation array that is used
+        to create the MP.
+
+        .. note::
+
+            Information about keyword arguments
+
+        .. important::
+
+            The `elevation_threshold` argument is implicitly required in this
+            method, because it is required to instantiate an
+            :obj:`ElevationMask` from elevation data.
+
+        Parameters
+        ----------
+        elevation_data : :obj:`ndarray`
+            The elevation data to create the `ElevationMask` that is in
+            turn used to create the `MorphologicalPlanform`.
+
+        Examples
+        --------
+
+        .. doctest::
+
+            >>> golfcube = dm.sample_data.golf()
+
+            >>> MP = dm.plan.MorphologicalPlanform.from_elevation_data(
+            ...     golfcube['eta'][-1, :, :],
+            ...     elevation_threshold=0)
+        """
+        # make a temporary mask
+        _em = mask.ElevationMask(
+            elevation_data, **kwargs)
+
+        # compute from __init__ pathway
+        return MorphologicalPlanform(_em, **kwargs)
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the MP.
+
+        Expects first argument to be either an ElevationMask, or an array that
+        represents some sort of elevation mask or land area for the delta.
+
+        Second argument should be the inlet width (# pixels), if a cube is
+        connected then this will be pulled from the cube directly.
+
+        Method should work if a landmask is provided too, the morphological
+        operations may just do less.
+
+        .. todo::
+
+            Improve docstring.
+
+        """
+        super().__init__('morphological method', *args)
+        self._shape = None
+        self._elevation_mask = None
+        self._max_disk = None
+
+        # check for input or allowable emptiness
+        if (len(args) == 0):
+            _allow_empty = kwargs.pop('allow_empty', False)
+            if _allow_empty:
+                # do nothing and return partially instantiated object
+                return
+            else:
+                raise ValueError(
+                    'Expected at least 1 input, got 0.')
+        # assign first argument to attribute of self
+        if isinstance(args[0], mask.ChannelMask:
+            self._elevation_mask = args[0]
+        elif utils.is_ndarray_or_xarray(args[0]):
+            self._elevation_mask = args[0]
+        else:
+            raise TypeError(
+                'Type of first argument is unrecognized or unsupported'.)
+        # see if the inlet width is provided, if not see if cube is avail
+        if (len(args) > 1):
+            if isinstance(args[1], (int, float)):
+                self._max_disk = int(args[1])
+            else:
+                raise TypeError(
+                'Expected single number to set max inlet size, got something '
+                'else instead.')
+        elif isinstance(self.cube, cube.BaseCube):
+            try:
+                self._max_disk = self.cube.meta['N0'].data
+            except Exception:
+                raise TypeError(
+                'Data cube does not contain metadata, specify the inlet size')
+        else:
+            raise TypeError(
+            'Something went wrong. This error message should be better.')
+
+        self._shape = self._elevation_mask.shape
+
+        # run the computation
+        all_images, mean_image = morphological_closing_method(
+            self._elevation_mask, biggestdisk=self._max_disk)
+
+        # assign arrays to object
+        self._mean_image = mean_image
+        self._all_images = all_images
+
+    @property
+    def mean_image(self):
+        """Average of all binary closing arrays."""
+        return self._mean_image
+
+    @property
+    def all_images(self):
+        """3-D array of all binary closed arrays."""
+        return self._all_images
+
+    @property
+    def composite_array(self):
+        """Alias the mean image."""
+        return self._mean_image
 
 def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
     """Compute shoreline roughness.
