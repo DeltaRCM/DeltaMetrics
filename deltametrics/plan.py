@@ -457,6 +457,11 @@ class MorphologicalPlanform(BasePlanform):
         # compute from __init__ pathway
         return MorphologicalPlanform(_em, **kwargs)
 
+    @staticmethod
+    def from_mask(UnknownMask, **kwargs):
+        """Static method for creating a MorphologicalPlanform from a mask."""
+        return MorphologicalPlanform(UnknownMask, **kwargs)
+
     def __init__(self, *args, **kwargs):
         """Initialize the MP.
 
