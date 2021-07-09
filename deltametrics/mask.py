@@ -945,19 +945,29 @@ class LandMask(BaseMask):
         LandMask : :obj:`LandMask`
         """
         if isinstance(UnknownMask, ElevationMask):
-            # make intermediate shoreline mask
-            _OAP = plan.OpeningAnglePlanform.from_mask(
-                UnknownMask, **kwargs)
+            if 'method' in kwargs:
+                _method = kwargs.pop('method')
+                if _method == 'MPM':
+                    _Planform = plan.MorphologicalPlanform.from_mask(
+                        UnknownMask, **kwargs)
+                else:
+                    # make intermediate shoreline mask
+                    _Planform = plan.OpeningAnglePlanform.from_mask(
+                        UnknownMask, **kwargs)
+            else:
+                # make intermediate shoreline mask
+                _Planform = plan.OpeningAnglePlanform.from_mask(
+                    UnknownMask, **kwargs)
         else:
             raise TypeError
 
         # set up the empty shoreline mask
         _LM = LandMask(allow_empty=True)
-        _LM._set_shape_mask(_OAP.shape)
+        _LM._set_shape_mask(_Planform.shape)
 
         # compute the mask
-        _sea_angles = _OAP.sea_angles
-        _LM._compute_mask(_sea_angles, **kwargs)
+        _composite_array = _Planform.composite_array
+        _LM._compute_mask(_composite_array, **kwargs)
         return _LM
 
     @staticmethod
@@ -1146,8 +1156,17 @@ class ShorelineMask(BaseMask):
             # make intermediate shoreline mask
             raise TypeError('Input must be ElevationMask')
 
-        _Planform = plan.OpeningAnglePlanform.from_ElevationMask(
-            UnknownMask)
+        if 'method' in kwargs:
+            _method = kwargs.pop('method')
+            if _method == 'MPM':
+                _Planform = plan.MorphologicalPlanform(
+                    UnknownMask)
+            else:
+                _Planform = plan.OpeningAnglePlanform.from_ElevationMask(
+                    UnknownMask)
+        else:
+            _Planform = plan.OpeningAnglePlanform.from_ElevationMask(
+                UnknownMask)
         return ShorelineMask.from_Planform(_Planform, **kwargs)
 
     @staticmethod
@@ -1207,7 +1226,7 @@ class ShorelineMask(BaseMask):
         method : str, optional
             Specifies the method to use for shoreline mask computation.
             Currently supports 'OAM' for the opening angle method (default)
-            and 'MCM' for the morpholigcal closing method.
+            and 'MPM' for the morpholigcal planform method.
 
         Other Parameters
         ----------------
@@ -1253,8 +1272,7 @@ class ShorelineMask(BaseMask):
         # use an OAP to get the ocean mask and sea angles fields
         if method == 'OAM':
             _OAP = plan.OpeningAnglePlanform.from_elevation_data(
-                _eta,
-                **kwargs)
+                _eta, **kwargs)
 
             # get fields out of the OAP
             _below_mask = _OAP._below_mask
@@ -1263,16 +1281,16 @@ class ShorelineMask(BaseMask):
             # compute the mask
             self._compute_OAM_mask(_below_mask, _sea_angles, **kwargs)
 
-        elif method == 'MCM':
-            _MCM = plan.MorphologicalClosingPlanform.from_elevation_data(
+        elif method == 'MPM':
+            _MPM = plan.MorphologicalPlanform.from_elevation_data(
                 _eta, **kwargs)
 
             # get fields and compute the mask
-            _elevationmask = _MCM._elev_mask
-            _meanimage = _MCM._mean_image
+            _elevationmask = _MPM._elev_mask
+            _meanimage = _MPM._mean_image
 
             # compute the mask
-            self._compute_MCM_mask(_elevationmask, _meanimage, **kwargs)
+            self._compute_MPM_mask(_elevationmask, _meanimage, **kwargs)
 
     def _compute_OAM_mask(self, *args, **kwargs):
         """Compute the shoreline mask using the OAM.
@@ -1317,6 +1335,48 @@ class ShorelineMask(BaseMask):
         # write shoreline map out to data.mask
         self._mask = np.copy(shoremap.astype(bool))
 
+    def _compute_MPM_mask(self, *args, **kwargs):
+        """Compute the shoreline mask using the MPM.
+
+        Applies the Morphological Planform Method to compute the shoreline
+        mask. Implementation of the MPM is in
+        :obj:`~deltametrics.plan.morphological_closing_method`.
+
+        Parameters
+        ----------
+
+        Other Parameters
+        ----------------
+        topo_threshold : float, optional
+            Threshold depth to use. Default is -0.5.
+
+        maxdisk : int, optional
+            Defines the max disk size for the morphological element.
+            Default is 3.
+
+        """
+        if len(args) == 1:
+            if not isinstance(args[0], plan.MorphologicalPlanform):
+                raise TypeError('Must be type MPM.')
+            _mean_image = args[0]._mean_image
+        elif len(args) == 2:
+            _mean_image = args[0]
+        else:
+            raise ValueError
+
+        # preallocate
+        shoremap = np.zeros(self._shape)
+
+        # if all land, there is no shore to be found
+        if (_mean_image == 1).all():
+            pass
+        else:
+            # grab contour corresponding to angle threshold
+            shoremap = self.grab_contour(_mean_image, shoremap)
+
+        # write shoreline map out to data.mask
+        self._mask = np.copy(shoremap.astype(bool))
+
     @property
     def contour_threshold(self):
         """Threshold value used for picking shoreline contour.
@@ -1336,7 +1396,6 @@ class ShorelineMask(BaseMask):
         shoremap.flat[flat_inds] = 1
 
         return shoremap
-
 
 
 class EdgeMask(BaseMask):
@@ -1366,8 +1425,8 @@ class EdgeMask(BaseMask):
     """
 
     @staticmethod
-    def from_OAP_and_WetMask(_OAP, _WetMask, **kwargs):
-        """Create from an OAP and a WetMask.
+    def from_Planform_and_WetMask(_Planform, _WetMask, **kwargs):
+        """Create from a Planform and a WetMask.
 
         .. important::
 
@@ -1386,10 +1445,10 @@ class EdgeMask(BaseMask):
         """
         # set up the empty edge mask mask
         _EGM = EdgeMask(allow_empty=True, **kwargs)
-        _EGM._set_shape_mask(_OAP.shape)
+        _EGM._set_shape_mask(_Planform.shape)
 
         # set up the needed flow mask and landmask
-        _LM = LandMask.from_OAP(_OAP, **kwargs)
+        _LM = LandMask.from_Planform(_Planform, **kwargs)
         if isinstance(_WetMask, WetMask):
             _WM = _WetMask
         else:
@@ -1400,15 +1459,15 @@ class EdgeMask(BaseMask):
         return _EGM
 
     @staticmethod
-    def from_OAP(_OAP, **kwargs):
-        """Create EdgeMask from an OAP.
+    def from_Planform(_Planform, **kwargs):
+        """Create EdgeMask from a Planform.
         """
         _EGM = EdgeMask(allow_empty=True, **kwargs)
-        _EGM._set_shape_mask(_OAP.shape)
+        _EGM._set_shape_mask(_Planform.shape)
 
         # set up the needed flow mask and landmask
-        _LM = LandMask.from_OAP(_OAP, **kwargs)
-        _WM = WetMask.from_OAP(_OAP, **kwargs)
+        _LM = LandMask.from_Planform(_Planform, **kwargs)
+        _WM = WetMask.from_Planform(_Planform, **kwargs)
 
         # compute the mask
         _EGM._compute_mask(_LM, _WM, **kwargs)
@@ -1529,14 +1588,22 @@ class EdgeMask(BaseMask):
             raise ValueError(
                 'Invalid _input_flag. Did you modify this attribute?')
 
-        # make the required Masks. Both need OAP
-        _OAP = plan.OpeningAnglePlanform.from_elevation_data(
-                _eta,
-                **kwargs)
+        # make the required Masks from a planform
+        if 'method' in kwargs:
+            _method = kwargs.pop('method')
+            if 'method' == 'MPM':
+                _Planform = plan.MorphologicalPlanform.from_elevation_data(
+                    _eta, **kwargs)
+            else:
+                _Planform = plan.OpeningAnglePlanform.from_elevation_data(
+                    _eta, **kwargs)
+        else:
+            _Planform = plan.OpeningAnglePlanform.from_elevation_data(
+                _eta, **kwargs)
 
-        # get Masks from the OAP
-        _LM = LandMask.from_OAP(_OAP, **kwargs)
-        _WM = WetMask.from_OAP(_OAP, **kwargs)
+        # get Masks from the Planform object
+        _LM = LandMask.from_Planform(_Planform, **kwargs)
+        _WM = WetMask.from_Planform(_Planform, **kwargs)
 
         # compute the mask
         self._compute_mask(_LM, _WM, **kwargs)
@@ -1595,16 +1662,16 @@ class CenterlineMask(BaseMask):
 
     """
     @staticmethod
-    def from_OAP_and_FlowMask(_OAP, _FlowMask, **kwargs):
-        """Create from an OAP and a FlowMask.
+    def from_Planform_and_FlowMask(_Planform, _FlowMask, **kwargs):
+        """Create from a Planform and a FlowMask.
         """
         # set up the empty shoreline mask
         _CntM = CenterlineMask(allow_empty=True, **kwargs)
-        _CntM._set_shape_mask(_OAP.shape)
+        _CntM._set_shape_mask(_Planform.shape)
 
         # set up the needed flow mask and channelmask
         _FM = _FlowMask
-        _CM = ChannelMask.from_OAP_and_FlowMask(_OAP, _FM, **kwargs)
+        _CM = ChannelMask.from_Planform_and_FlowMask(_Planform, _FM, **kwargs)
 
         # compute the mask
 
@@ -1612,7 +1679,7 @@ class CenterlineMask(BaseMask):
         return _CntM
 
     @staticmethod
-    def from_OAP(*args, **kwargs):
+    def from_Planform(*args, **kwargs):
         # undocumented, hopefully helpful error
         #   Note, an alternative here is to implement this method and take an
         #   OAP and information to create a flow mask, raising an error if the
