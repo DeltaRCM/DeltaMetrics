@@ -494,13 +494,13 @@ class MorphologicalPlanform(BasePlanform):
                 raise ValueError(
                     'Expected at least 1 input, got 0.')
         # assign first argument to attribute of self
-        if isinstance(args[0], mask.ChannelMask:
+        if isinstance(args[0], mask.ChannelMask):
             self._elevation_mask = args[0]
         elif utils.is_ndarray_or_xarray(args[0]):
             self._elevation_mask = args[0]
         else:
             raise TypeError(
-                'Type of first argument is unrecognized or unsupported'.)
+                'Type of first argument is unrecognized or unsupported')
         # see if the inlet width is provided, if not see if cube is avail
         if (len(args) > 1):
             if isinstance(args[1], (int, float)):
