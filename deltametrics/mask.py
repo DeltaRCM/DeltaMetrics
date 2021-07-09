@@ -1242,7 +1242,7 @@ class ShorelineMask(BaseMask):
         super().__init__('shoreline', *args, **kwargs)
 
         # begin processing the arguments and making the mask
-        self.contour_threshold = contour_threshold
+        self._contour_threshold = contour_threshold
 
         # temporary storage of args as needed for processing
         if self._input_flag is None:
@@ -1279,7 +1279,7 @@ class ShorelineMask(BaseMask):
             _sea_angles = _OAP._sea_angles
 
             # compute the mask
-            self._compute_OAM_mask(_below_mask, _sea_angles, **kwargs)
+            self._compute_mask(_below_mask, _sea_angles, method, **kwargs)
 
         elif method == 'MPM':
             _MPM = plan.MorphologicalPlanform.from_elevation_data(
@@ -1290,7 +1290,38 @@ class ShorelineMask(BaseMask):
             _meanimage = _MPM._mean_image
 
             # compute the mask
-            self._compute_MPM_mask(_elevationmask, _meanimage, **kwargs)
+            self._compute_mask(_elevationmask, _meanimage, method, **kwargs)
+
+    def _compute_mask(self, *args, **kwargs):
+        """Internally call either the OAM or MPM method."""
+        # handle types / input arguments
+        if len(args) <= 2:
+            if len(args) == 1:
+                if isinstance(args[0], plan.OpeningAnglePlanform):
+                    _below_mask = args[0]._below_mask
+                    _sea_angles = args[0]._sea_angles
+                    _method = 'OAM'
+                elif isinstance(args[0], plan.MorphologicalPlanform):
+                    _elev_mask = args[0]._elev_mask
+                    _mean_image = args[0]._mean_image
+        if len(args) >= 3:
+            _method = args[2]
+            if _method == 'OAM':
+                _below_mask = args[0]
+                _sea_angles = args[1]
+            elif _method == 'MPM':
+                _elev_mask = args[0]
+                _mean_image = args[1]
+            else:
+                raise TypeError('Invalid arguments supplied.')
+
+        # compute mask
+        if _method == 'OAM':
+            self._compute_OAM_mask(_below_mask, _sea_angles, **kwargs)
+        elif _method == 'MPM':
+            self._compute_MPM_mask(_elev_mask, _mean_image, **kwargs)
+        else:
+            raise TypeError('Inputs invalid.')
 
     def _compute_OAM_mask(self, *args, **kwargs):
         """Compute the shoreline mask using the OAM.
@@ -1685,10 +1716,11 @@ class CenterlineMask(BaseMask):
         #   OAP and information to create a flow mask, raising an error if the
         #   flow information is missing.
         raise NotImplementedError(
-            '`from_OAP` is not defined for `CenterlineMask` instantiation '
+            '`from_Planform` is not defined for `CenterlineMask` '
+            'instantiation '
             'because the process additionally requires flow field '
             'information. Consider alternative methods '
-            '`from_OAP_and_FlowMask()')
+            '`from_Planform_and_FlowMask()')
 
     @staticmethod
     def from_masks(*args, **kwargs):

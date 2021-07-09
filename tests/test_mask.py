@@ -244,7 +244,7 @@ class TestShorelineMask:
         # make assertions
         assert shoremask._input_flag == 'array'
         assert shoremask.mask_type == 'shoreline'
-        assert shoremask.angle_threshold > 0
+        assert shoremask.contour_threshold > 0
         assert shoremask._mask.dtype == bool
         assert isinstance(shoremask._mask, np.ndarray)
 
@@ -257,7 +257,7 @@ class TestShorelineMask:
         # make assertions
         assert shoremask._input_flag == 'cube'
         assert shoremask.mask_type == 'shoreline'
-        assert shoremask.angle_threshold > 0
+        assert shoremask.contour_threshold > 0
         assert shoremask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
@@ -269,7 +269,7 @@ class TestShorelineMask:
         # make assertions
         assert shoremask._input_flag == 'cube'
         assert shoremask.mask_type == 'shoreline'
-        assert shoremask.angle_threshold > 0
+        assert shoremask.contour_threshold > 0
         assert shoremask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
@@ -281,7 +281,7 @@ class TestShorelineMask:
         # make assertions
         assert shoremask._input_flag == 'mask'
         assert shoremask.mask_type == 'shoreline'
-        assert shoremask.angle_threshold > 0
+        assert shoremask.contour_threshold > 0
         assert shoremask._mask.dtype == bool
 
     def test_angle_threshold(self):
@@ -293,9 +293,9 @@ class TestShorelineMask:
         shoremask = mask.ShorelineMask(
             rcm8cube['eta'][-1, :, :],
             elevation_threshold=0,
-            angle_threshold=45)
+            contour_threshold=45)
         # make assertions
-        assert shoremask.angle_threshold == 45
+        assert shoremask.contour_threshold == 45
         assert not np.all(shoremask_default == shoremask)
 
     def test_submergedLand(self):
@@ -315,12 +315,12 @@ class TestShorelineMask:
         shoremask = mask.ShorelineMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0)
-        mfOAP = mask.ShorelineMask.from_OAP(_OAP_0)
+        mfOAP = mask.ShorelineMask.from_Planform(_OAP_0)
 
         shoremask_05 = mask.ShorelineMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0.5)
-        mfOAP_05 = mask.ShorelineMask.from_OAP(_OAP_05)
+        mfOAP_05 = mask.ShorelineMask.from_Planform(_OAP_05)
 
         assert np.all(shoremask._mask == mfOAP._mask)
         assert np.all(shoremask_05._mask == mfOAP_05._mask)
@@ -690,7 +690,7 @@ class TestLandMask:
         # make assertions
         assert landmask._input_flag == 'array'
         assert landmask.mask_type == 'land'
-        assert landmask.angle_threshold > 0
+        assert landmask.contour_threshold > 0
         assert landmask._mask.dtype == bool
 
     def test_default_vals_array_needs_elevation_threshold(self):
@@ -708,7 +708,7 @@ class TestLandMask:
         # make assertions
         assert landmask._input_flag == 'cube'
         assert landmask.mask_type == 'land'
-        assert landmask.angle_threshold > 0
+        assert landmask.contour_threshold > 0
         assert landmask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
@@ -720,7 +720,7 @@ class TestLandMask:
         # make assertions
         assert landmask._input_flag == 'cube'
         assert landmask.mask_type == 'land'
-        assert landmask.angle_threshold > 0
+        assert landmask.contour_threshold > 0
         assert landmask._mask.dtype == bool
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
@@ -732,7 +732,7 @@ class TestLandMask:
         # make assertions
         assert landmask._input_flag == 'mask'
         assert landmask.mask_type == 'land'
-        assert landmask.angle_threshold > 0
+        assert landmask.contour_threshold > 0
         assert landmask._mask.dtype == bool
 
     def test_angle_threshold(self):
@@ -747,9 +747,9 @@ class TestLandMask:
         landmask = mask.LandMask(
             rcm8cube['eta'][-1, :, :],
             elevation_threshold=0,
-            angle_threshold=45)
+            contour_threshold=45)
         # make assertions
-        assert landmask.angle_threshold == 45
+        assert landmask.contour_threshold == 45
         assert not np.all(landmask_default == landmask)
 
     def test_submergedLand(self):
@@ -769,12 +769,12 @@ class TestLandMask:
         landmask = mask.LandMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0)
-        mfOAP = mask.LandMask.from_OAP(_OAP_0)
+        mfOAP = mask.LandMask.from_Planform(_OAP_0)
 
         landmask_05 = mask.LandMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0.5)
-        mfOAP_05 = mask.LandMask.from_OAP(_OAP_05)
+        mfOAP_05 = mask.LandMask.from_Planform(_OAP_05)
 
         assert np.all(landmask._mask == mfOAP._mask)
         assert np.all(landmask_05._mask == mfOAP_05._mask)
@@ -872,7 +872,7 @@ class TestWetMask:
         wetmask = mask.WetMask(
             rcm8cube['eta'][-1, :, :],
             elevation_threshold=0,
-            angle_threshold=45)
+            contour_threshold=45)
         # make assertions
         assert not np.all(wetmask_default == wetmask)
         assert np.sum(wetmask.integer_mask) < np.sum(wetmask_default.integer_mask)
@@ -895,13 +895,13 @@ class TestWetMask:
         landmask = mask.LandMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0)
-        mfOAP = mask.LandMask.from_OAP(_OAP_0)
+        mfOAP = mask.LandMask.from_Planform(_OAP_0)
 
         # create two with diff elevation threshold
         landmask_05 = mask.LandMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0.5)
-        mfOAP_05 = mask.LandMask.from_OAP(_OAP_05)
+        mfOAP_05 = mask.LandMask.from_Planform(_OAP_05)
 
         assert np.all(landmask._mask == mfOAP._mask)
         assert np.all(landmask_05._mask == mfOAP_05._mask)
@@ -1017,7 +1017,7 @@ class TestChannelMask:
             rcm8cube['velocity'][-1, :, :],
             elevation_threshold=0,
             flow_threshold=0.5,
-            angle_threshold=45)
+            contour_threshold=45)
         # make assertions
         assert not np.all(channelmask_default == channelmask)
         assert np.sum(channelmask.integer_mask) < np.sum(channelmask_default.integer_mask)
@@ -1036,8 +1036,8 @@ class TestChannelMask:
 
     def test_static_from_OAP_not_implemented(self):
         with pytest.raises(NotImplementedError,
-                           match=r'`from_OAP` is not defined .*'):
-            _ = mask.ChannelMask.from_OAP(_OAP_0)
+                           match=r'`from_Planform` is not defined .*'):
+            _ = mask.ChannelMask.from_Planform(_OAP_0)
 
     def test_static_from_OAP_and_FlowMask(self):
         """
@@ -1053,7 +1053,8 @@ class TestChannelMask:
         flowmask_03 = mask.FlowMask(
             golfcube['velocity'][-1, :, :],
             flow_threshold=0.3)
-        mfOAP_03 = mask.ChannelMask.from_OAP_and_FlowMask(_OAP_0, flowmask_03)
+        mfOAP_03 = mask.ChannelMask.from_Planform_and_FlowMask(
+            _OAP_0, flowmask_03)
 
         channelmask_06 = mask.ChannelMask(
             golfcube['eta'][-1, :, :],
@@ -1063,7 +1064,8 @@ class TestChannelMask:
         flowmask_06 = mask.FlowMask(
             golfcube['velocity'][-1, :, :],
             flow_threshold=0.6)
-        mfOAP_06 = mask.ChannelMask.from_OAP_and_FlowMask(_OAP_05, flowmask_06)
+        mfOAP_06 = mask.ChannelMask.from_Planform_and_FlowMask(
+            _OAP_05, flowmask_06)
 
         assert np.all(channelmask_03._mask == mfOAP_03._mask)
         assert np.all(channelmask_06._mask == mfOAP_06._mask)
@@ -1095,7 +1097,7 @@ class TestChannelMask:
         flowmask = mask.FlowMask(
             golfcube['velocity'][-1, :, :],
             flow_threshold=0.3)
-        landmask = mask.LandMask.from_OAP(_OAP_0)
+        landmask = mask.LandMask.from_Planform(_OAP_0)
 
         mfem = mask.ChannelMask.from_mask(landmask, flowmask)
         mfem2 = mask.ChannelMask.from_mask(flowmask, landmask)
@@ -1193,7 +1195,7 @@ class TestEdgeMask:
         edgemask = mask.EdgeMask(
             rcm8cube['eta'][-1, :, :],
             elevation_threshold=0,
-            angle_threshold=45)
+            contour_threshold=45)
         # make assertions
         assert not np.all(edgemask_default == edgemask)
         assert np.sum(edgemask.integer_mask) != np.sum(edgemask_default.integer_mask)
@@ -1213,12 +1215,12 @@ class TestEdgeMask:
         edgemask_0 = mask.EdgeMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0)
-        mfOAP_0 = mask.EdgeMask.from_OAP(_OAP_0)
+        mfOAP_0 = mask.EdgeMask.from_Planform(_OAP_0)
 
         edgemask_05 = mask.EdgeMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0.5)
-        mfOAP_05 = mask.EdgeMask.from_OAP(_OAP_05)
+        mfOAP_05 = mask.EdgeMask.from_Planform(_OAP_05)
 
         assert np.all(edgemask_0._mask == mfOAP_0._mask)
         assert np.all(edgemask_05._mask == mfOAP_05._mask)
@@ -1236,7 +1238,7 @@ class TestEdgeMask:
         wetmask_0 = mask.WetMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0)
-        mfOAP_0 = mask.EdgeMask.from_OAP_and_WetMask(_OAP_0, wetmask_0)
+        mfOAP_0 = mask.EdgeMask.from_Planform_and_WetMask(_OAP_0, wetmask_0)
 
         assert np.all(edgemask_0._mask == mfOAP_0._mask)
 
@@ -1244,8 +1246,8 @@ class TestEdgeMask:
         edgemask_comp = mask.EdgeMask(
             golfcube['eta'][-1, :, :],
             elevation_threshold=0)
-        landmask = mask.LandMask.from_OAP(_OAP_0)
-        wetmask = mask.WetMask.from_OAP(_OAP_0)
+        landmask = mask.LandMask.from_Planform(_OAP_0)
+        wetmask = mask.WetMask.from_Planform(_OAP_0)
 
         mfem = mask.EdgeMask.from_mask(landmask, wetmask)
         mfem2 = mask.EdgeMask.from_mask(wetmask, landmask)
@@ -1333,7 +1335,7 @@ class TestCenterlineMask:
             rcm8cube['velocity'][-1, :, :],
             elevation_threshold=0,
             flow_threshold=0.5,
-            angle_threshold=45)
+            contour_threshold=45)
         # make assertions
         assert not np.all(centerlinemask_default == centerlinemask)
         # should be fewer pixels since channels are shorter
@@ -1354,8 +1356,8 @@ class TestCenterlineMask:
 
     def test_static_from_OAP_not_implemented(self):
         with pytest.raises(NotImplementedError,
-                           match=r'`from_OAP` is not defined .*'):
-            _ = mask.CenterlineMask.from_OAP(_OAP_0)
+                           match=r'`from_Planform` is not defined .*'):
+            _ = mask.CenterlineMask.from_Planform(_OAP_0)
 
     def test_static_from_OAP_and_FlowMask(self):
         """
@@ -1371,7 +1373,8 @@ class TestCenterlineMask:
         flowmask_03 = mask.FlowMask(
             golfcube['velocity'][-1, :, :],
             flow_threshold=0.3)
-        mfOAP_03 = mask.CenterlineMask.from_OAP_and_FlowMask(_OAP_0, flowmask_03)
+        mfOAP_03 = mask.CenterlineMask.from_Planform_and_FlowMask(
+            _OAP_0, flowmask_03)
 
         centerlinemask_06 = mask.CenterlineMask(
             golfcube['eta'][-1, :, :],
@@ -1381,7 +1384,8 @@ class TestCenterlineMask:
         flowmask_06 = mask.FlowMask(
             golfcube['velocity'][-1, :, :],
             flow_threshold=0.6)
-        mfOAP_06 = mask.CenterlineMask.from_OAP_and_FlowMask(_OAP_05, flowmask_06)
+        mfOAP_06 = mask.CenterlineMask.from_Planform_and_FlowMask(
+            _OAP_05, flowmask_06)
 
         assert np.all(centerlinemask_03._mask == mfOAP_03._mask)
         assert np.all(centerlinemask_06._mask == mfOAP_06._mask)
@@ -1428,7 +1432,7 @@ class TestCenterlineMask:
         flowmask = mask.FlowMask(
             golfcube['velocity'][-1, :, :],
             flow_threshold=0.3)
-        landmask = mask.LandMask.from_OAP(_OAP_0)
+        landmask = mask.LandMask.from_Planform(_OAP_0)
 
         mfem = mask.CenterlineMask.from_mask(landmask, flowmask)
         mfem2 = mask.CenterlineMask.from_mask(flowmask, landmask)
