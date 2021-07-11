@@ -63,10 +63,10 @@ class BasePlanform(abc.ABC):
         self.planform_type = planform_type
         self._name = name
 
-        if len(args) != 1:
-            raise ValueError('Expected single positional argument to \
-                             %s instantiation.'
-                             % type(self))
+        # if len(args) != 1:
+        #     raise ValueError('Expected single positional argument to \
+        #                      %s instantiation.'
+        #                      % type(self))
 
         if issubclass(type(args[0]), cube.BaseCube):
             self.connect(args[0])
@@ -417,7 +417,7 @@ class MorphologicalPlanform(BasePlanform):
     """
 
     @staticmethod
-    def from_elevation_data(elevation_data, **kwargs):
+    def from_elevation_data(elevation_data, max_disk, **kwargs):
         """Create a `MorphologicalPlanform` from elevation data.
 
         Creates an ElevationMask from the input elevation array that is used
@@ -439,6 +439,9 @@ class MorphologicalPlanform(BasePlanform):
             The elevation data to create the `ElevationMask` that is in
             turn used to create the `MorphologicalPlanform`.
 
+        max_disk : int
+            Maximum disk size to use for the morphological operations.
+
         Examples
         --------
 
@@ -448,14 +451,15 @@ class MorphologicalPlanform(BasePlanform):
 
             >>> MP = dm.plan.MorphologicalPlanform.from_elevation_data(
             ...     golfcube['eta'][-1, :, :],
-            ...     elevation_threshold=0)
+            ...     elevation_threshold=0,
+                    max_disk=3)
         """
         # make a temporary mask
         _em = mask.ElevationMask(
             elevation_data, **kwargs)
 
         # compute from __init__ pathway
-        return MorphologicalPlanform(_em, **kwargs)
+        return MorphologicalPlanform(_em, max_disk, **kwargs)
 
     @staticmethod
     def from_mask(UnknownMask, **kwargs):
@@ -494,7 +498,7 @@ class MorphologicalPlanform(BasePlanform):
                 raise ValueError(
                     'Expected at least 1 input, got 0.')
         # assign first argument to attribute of self
-        if isinstance(args[0], mask.ChannelMask):
+        if isinstance(args[0], mask.BaseMask):
             self._elevation_mask = args[0]
         elif utils.is_ndarray_or_xarray(args[0]):
             self._elevation_mask = args[0]
@@ -1137,7 +1141,7 @@ def morphological_closing_method(elevationmask, biggestdisk=None):
         axis. This approximates the `sea_angles` attribute of the OAM method.
     """
     # coerce input image into 2-d ndarray
-    if isinstance(elevationmask, mask.ChannelMask):
+    if isinstance(elevationmask, mask.BaseMask):
         emsk = np.array(elevationmask.mask)
     elif utils.is_ndarray_or_xarray(elevationmask):
         emsk = np.array(elevationmask)
