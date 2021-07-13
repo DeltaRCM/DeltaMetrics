@@ -25,7 +25,7 @@ class BasePlanform(abc.ABC):
     """
 
     def __init__(self, planform_type, *args, name=None):
-        """Instantiate for subsclasses of BasePlanform.
+        """Instantiate for subclasses of BasePlanform.
 
         The base class instantiation handles setting of the cooridnates of a
         Planform from the instantiating cube or xarray.
@@ -68,11 +68,12 @@ class BasePlanform(abc.ABC):
         #                      %s instantiation.'
         #                      % type(self))
 
-        if issubclass(type(args[0]), cube.BaseCube):
-            self.connect(args[0])
-        else:
-            # use first argument as an array to get shape
-            self._shape = args[0].shape
+        if len(args) > 0:
+            if issubclass(type(args[0]), cube.BaseCube):
+                self.connect(args[0])
+            elif utils.is_ndarray_or_xarray(args[0]):
+                # use first argument as an array to get shape
+                self._shape = args[0].shape
 
     def connect(self, CubeInstance, name=None):
         """Connect this Planform instance to a Cube instance.
@@ -462,9 +463,9 @@ class MorphologicalPlanform(BasePlanform):
         return MorphologicalPlanform(_em, max_disk, **kwargs)
 
     @staticmethod
-    def from_mask(UnknownMask, **kwargs):
+    def from_mask(UnknownMask, maxdisk, **kwargs):
         """Static method for creating a MorphologicalPlanform from a mask."""
-        return MorphologicalPlanform(UnknownMask, **kwargs)
+        return MorphologicalPlanform(UnknownMask, maxdisk, **kwargs)
 
     def __init__(self, *args, **kwargs):
         """Initialize the MP.
@@ -1099,7 +1100,10 @@ def _custom_closing(img, disksize):
     """Private function for the binary closing."""
     _changed = np.infty
     disk = morphology.disk(disksize)
-    while _changed != 0:
+    _iter = 0  # count number of closings
+    while (_changed != 0) and (_iter < 1000):
+        _iter += 1
+        print(_iter)
         _newimg = morphology.binary_closing(img, selem=disk)
         _changed = np.sum(_newimg.astype(float)-img.astype(float))
         _closed = _newimg

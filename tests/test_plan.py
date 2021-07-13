@@ -138,9 +138,39 @@ class TestMorphologicalPlanform:
         mpm = plan.MorphologicalPlanform.from_elevation_data(
             self.golfcube['eta'][-1, :, :],
             elevation_threshold=0,
-            max_disk=2
-        )
-        import pdb; pdb.set_trace()
+            max_disk=2)
+        assert mpm.planform_type == 'morphological method'
+        assert mpm._mean_image.shape == (100, 200)
+        assert mpm._all_images.shape == (3, 100, 200)
+        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._all_images, np.ndarray)
+
+    def test_static_from_mask(self):
+        mpm = plan.MorphologicalPlanform.from_mask(
+            self.simple_land, 2)
+        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._all_images, np.ndarray)
+        assert mpm._mean_image.shape == self.simple_land.shape
+        assert len(mpm._all_images.shape) == 3
+        assert mpm._all_images.shape[0] == 3
+
+    def test_static_from_mask_negative_disk(self):
+        mpm = plan.MorphologicalPlanform.from_mask(
+            self.simple_land, -2)
+        assert isinstance(mpm.mean_image, np.ndarray)
+        assert isinstance(mpm.all_images, np.ndarray)
+        assert mpm.mean_image.shape == self.simple_land.shape
+        assert len(mpm.all_images.shape) == 3
+        assert mpm.all_images.shape[0] == 2
+        assert np.all(mpm.composite_array == mpm.mean_image)
+
+    def test_empty_error(self):
+        with pytest.raises(ValueError):
+            plan.MorphologicalPlanform()
+
+    def test_bad_type(self):
+        with pytest.raises(TypeError):
+            plan.MorphologicalPlanform('invalid string')
 
 
 class TestShawOpeningAngleMethod:
