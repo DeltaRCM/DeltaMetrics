@@ -275,7 +275,7 @@ class ThresholdValueMask(BaseMask, abc.ABC):
         elif self._input_flag == 'mask':
             raise NotImplementedError(
                 'Cannot instantiate `ThresholdValueMask` or '
-                'andy subclasses from another mask.')
+                'any subclasses from another mask.')
         elif self._input_flag == 'array':
             _field = args[0]
         else:
@@ -289,6 +289,10 @@ class ThresholdValueMask(BaseMask, abc.ABC):
         """Generic property for ThresholdValueMask threshold.
         """
         return self._threshold
+
+    def _compute_mask(self):
+        """Provide abstract method."""
+        pass
 
 
 class ElevationMask(ThresholdValueMask):
@@ -961,12 +965,18 @@ class LandMask(BaseMask):
         else:
             raise TypeError
 
+        if 'contour_threshold' in kwargs:
+            _contour_threshold = kwargs.pop('contour_threshold')
+        else:
+            _contour_threshold = 75
+
         # set up the empty shoreline mask
-        _LM = LandMask(allow_empty=True)
+        _LM = LandMask(allow_empty=True, contour_threshold=_contour_threshold)
         _LM._set_shape_mask(_Planform.shape)
 
         # compute the mask
         _composite_array = _Planform.composite_array
+
         _LM._compute_mask(_composite_array, **kwargs)
         return _LM
 

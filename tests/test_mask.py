@@ -792,6 +792,32 @@ class TestLandMask:
         assert np.all(landmask._mask == mfem._mask)
         assert np.sum(landmask_05.integer_mask) < np.sum(landmask.integer_mask)
 
+    def test_static_from_masks_ElevationMask(self):
+        landmask = mask.LandMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        mfem = mask.LandMask.from_masks(self._ElevationMask)
+
+        landmask_05 = mask.LandMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0.5)
+
+        assert np.all(landmask._mask == mfem._mask)
+        assert np.sum(landmask_05.integer_mask) < np.sum(landmask.integer_mask)
+
+    def test_static_from_mask_TypeError(self):
+        with pytest.raises(TypeError):
+            mask.LandMask.from_mask('invalid input')
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='MPM method seems to be buggy...')
+    def test_static_from_mask_MPM(self):
+        mfem = mask.LandMask.from_mask(
+            self._ElevationMask, method='MPM',
+            maxdisk=2, contour_threshold=0.5)
+
+        assert mfem.shape == self._ElevationMask.shape
+
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
     def test_static_from_array(self):
@@ -918,6 +944,19 @@ class TestWetMask:
 
         assert np.all(wetmask._mask == mfem._mask)
         assert np.sum(wetmask_05.integer_mask) < np.sum(wetmask.integer_mask)
+
+    def test_static_from_masks_ElevationMask_LandMask(self):
+        landmask = mask.LandMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        mfem = mask.WetMask.from_masks(self._ElevationMask, landmask)
+
+        wetmask_0 = mask.WetMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+
+        assert np.all(wetmask_0._mask == mfem._mask)
+        assert np.sum(wetmask_0.integer_mask) == np.sum(mfem.integer_mask)
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -1104,6 +1143,35 @@ class TestChannelMask:
 
         assert np.all(channelmask_comp._mask == mfem2._mask)
         assert np.all(mfem._mask == mfem2._mask)
+
+    def test_static_from_masks_LandMask_FlowMask(self):
+        channelmask_comp = mask.ChannelMask(
+            golfcube['eta'][-1, :, :],
+            golfcube['velocity'][-1, :, :],
+            elevation_threshold=0,
+            flow_threshold=0.3)
+        flowmask = mask.FlowMask(
+            golfcube['velocity'][-1, :, :],
+            flow_threshold=0.3)
+        landmask = mask.LandMask.from_Planform(_OAP_0)
+
+        mfem = mask.ChannelMask.from_masks(landmask, flowmask)
+        mfem2 = mask.ChannelMask.from_masks(flowmask, landmask)
+
+        assert np.all(channelmask_comp._mask == mfem2._mask)
+        assert np.all(mfem._mask == mfem2._mask)
+
+    def test_static_from_mask_ValueError(self):
+        with pytest.raises(ValueError):
+            mask.ChannelMask.from_mask('single arg')
+
+    def test_static_from_mask_TypeError(self):
+        wetmask = mask.WetMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0.0)
+        landmask = mask.LandMask.from_Planform(_OAP_0)
+        with pytest.raises(TypeError):
+            mask.ChannelMask.from_mask(wetmask, landmask)
 
     # @pytest.mark.xfail(raises=NotImplementedError, strict=True,
     #                    reason='Have not implemented pathway.')
