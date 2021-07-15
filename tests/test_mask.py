@@ -809,14 +809,14 @@ class TestLandMask:
         with pytest.raises(TypeError):
             mask.LandMask.from_mask('invalid input')
 
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-                       reason='MPM method seems to be buggy...')
-    def test_static_from_mask_MPM(self):
-        mfem = mask.LandMask.from_mask(
-            self._ElevationMask, method='MPM',
-            maxdisk=2, contour_threshold=0.5)
-
-        assert mfem.shape == self._ElevationMask.shape
+    # @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+    #                    reason='MPM method seems to be buggy...')
+    # def test_static_from_mask_MPM(self):
+    #     mfem = mask.LandMask.from_mask(
+    #         self._ElevationMask, method='MPM',
+    #         maxdisk=2, contour_threshold=0.5)
+    #
+    #     assert mfem.shape == self._ElevationMask.shape
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')

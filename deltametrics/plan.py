@@ -1103,7 +1103,6 @@ def _custom_closing(img, disksize):
     _iter = 0  # count number of closings
     while (_changed != 0) and (_iter < 1000):
         _iter += 1
-        print(_iter)
         _newimg = morphology.binary_closing(img, selem=disk)
         _changed = np.sum(_newimg.astype(float)-img.astype(float))
         _closed = _newimg
