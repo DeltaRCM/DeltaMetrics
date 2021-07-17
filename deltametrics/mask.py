@@ -1296,7 +1296,7 @@ class ShorelineMask(BaseMask):
                 _eta, **kwargs)
 
             # get fields and compute the mask
-            _elevationmask = _MPM._elev_mask
+            _elevationmask = _MPM._elevation_mask
             _meanimage = _MPM._mean_image
 
             # compute the mask
@@ -1312,8 +1312,9 @@ class ShorelineMask(BaseMask):
                     _sea_angles = args[0]._sea_angles
                     _method = 'OAM'
                 elif isinstance(args[0], plan.MorphologicalPlanform):
-                    _elev_mask = args[0]._elev_mask
+                    _elev_mask = args[0]._elevation_mask
                     _mean_image = args[0]._mean_image
+                    _method = 'MPM'
         if len(args) >= 3:
             _method = args[2]
             if _method == 'OAM':
@@ -1391,7 +1392,7 @@ class ShorelineMask(BaseMask):
         topo_threshold : float, optional
             Threshold depth to use. Default is -0.5.
 
-        maxdisk : int, optional
+        max_disk : int, optional
             Defines the max disk size for the morphological element.
             Default is 3.
 
@@ -1401,7 +1402,12 @@ class ShorelineMask(BaseMask):
                 raise TypeError('Must be type MPM.')
             _mean_image = args[0]._mean_image
         elif len(args) == 2:
-            _mean_image = args[0]
+            if isinstance(args[0], plan.MorphologicalPlanform):
+                _mean_image = args[0]._mean_image
+            elif utils.is_ndarray_or_xarray(args[1]):
+                _mean_image = args[1]
+            else:
+                raise ValueError
         else:
             raise ValueError
 
