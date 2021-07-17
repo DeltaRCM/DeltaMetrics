@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 from skimage import feature
 from skimage import morphology
 from skimage import measure
+from scipy.ndimage import binary_fill_holes
 
 import abc
 import warnings
@@ -1116,6 +1117,9 @@ class LandMask(BaseMask):
             self._mask = np.zeros(self._shape, dtype=bool)
         else:
             self._mask = (composite_array < self._contour_threshold)
+
+        # fill any holes in the mask
+        self._mask = binary_fill_holes(self._mask)
 
     @property
     def contour_threshold(self):
