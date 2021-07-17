@@ -1170,7 +1170,7 @@ class ShorelineMask(BaseMask):
             _method = kwargs.pop('method')
             if _method == 'MPM':
                 _Planform = plan.MorphologicalPlanform(
-                    UnknownMask)
+                    UnknownMask, kwargs['max_disk'])
             else:
                 _Planform = plan.OpeningAnglePlanform.from_ElevationMask(
                     UnknownMask)

@@ -351,6 +351,17 @@ class TestShorelineMask:
         assert np.all(shoremask._mask == mfem._mask)
         assert np.sum(shoremask_05.integer_mask) < np.sum(shoremask.integer_mask)
 
+    def test_static_from_masks_EM_MPM(self):
+        shoremask = mask.ShorelineMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0,
+            contour_threshold=0.5, method='MPM', max_disk=12)
+        mfem = mask.ShorelineMask.from_masks(
+            self._ElevationMask, method='MPM', contour_threshold=0.5,
+            max_disk=12)
+
+        assert np.all(shoremask._mask == mfem._mask)
+
     def test_static_from_array(self):
         """Test that instantiation works for an array."""
         # define the mask
