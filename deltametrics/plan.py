@@ -463,9 +463,9 @@ class MorphologicalPlanform(BasePlanform):
         return MorphologicalPlanform(_em, max_disk, **kwargs)
 
     @staticmethod
-    def from_mask(UnknownMask, maxdisk, **kwargs):
+    def from_mask(UnknownMask, max_disk, **kwargs):
         """Static method for creating a MorphologicalPlanform from a mask."""
-        return MorphologicalPlanform(UnknownMask, maxdisk, **kwargs)
+        return MorphologicalPlanform(UnknownMask, max_disk, **kwargs)
 
     def __init__(self, *args, **kwargs):
         """Initialize the MP.
@@ -531,7 +531,7 @@ class MorphologicalPlanform(BasePlanform):
             self._elevation_mask, biggestdisk=self._max_disk)
 
         # assign arrays to object
-        self._mean_image = mean_image
+        self._mean_image = np.ones_like(mean_image) - mean_image
         self._all_images = all_images
 
     @property
@@ -1100,8 +1100,8 @@ def _custom_closing(img, disksize):
     """Private function for the binary closing."""
     _changed = np.infty
     disk = morphology.disk(disksize)
-    _iter = 0  # count number of closings
-    while (_changed != 0) and (_iter < 1000):
+    _iter = 0  # count number of closings, cap at 100
+    while (_changed != 0) and (_iter < 100):
         _iter += 1
         _newimg = morphology.binary_closing(img, selem=disk)
         _changed = np.sum(_newimg.astype(float)-img.astype(float))

@@ -9,7 +9,7 @@ import unittest.mock as mock
 
 from deltametrics import cube
 from deltametrics import mask
-from deltametrics.plan import OpeningAnglePlanform
+from deltametrics.plan import OpeningAnglePlanform, MorphologicalPlanform
 from deltametrics.sample_data import _get_rcm8_path, _get_golf_path
 
 
@@ -26,6 +26,10 @@ _OAP_0 = OpeningAnglePlanform.from_elevation_data(
 _OAP_05 = OpeningAnglePlanform.from_elevation_data(
     golfcube['eta'][-1, :, :],
     elevation_threshold=0.5)
+_MPM_0 = MorphologicalPlanform.from_elevation_data(
+    golfcube['eta'][-1, :, :],
+    elevation_threshold=0,
+    max_disk=12)
 
 
 @mock.patch.multiple(mask.BaseMask,
@@ -324,6 +328,15 @@ class TestShorelineMask:
 
         assert np.all(shoremask._mask == mfOAP._mask)
         assert np.all(shoremask_05._mask == mfOAP_05._mask)
+
+    def test_static_from_MPM(self):
+        shoremask = mask.ShorelineMask(
+            golfcube['eta'][-1, :, :],
+            elevation_threshold=0,
+            method='MPM', max_disk=12, contour_threshold=0.5)
+        mfMPM = mask.ShorelineMask.from_Planform(_MPM_0, contour_threshold=0.5)
+
+        assert np.all(shoremask._mask == mfMPM._mask)
 
     def test_static_from_mask_ElevationMask(self):
         shoremask = mask.ShorelineMask(
@@ -809,14 +822,34 @@ class TestLandMask:
         with pytest.raises(TypeError):
             mask.LandMask.from_mask('invalid input')
 
-    # @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-    #                    reason='MPM method seems to be buggy...')
-    # def test_static_from_mask_MPM(self):
-    #     mfem = mask.LandMask.from_mask(
-    #         self._ElevationMask, method='MPM',
-    #         maxdisk=2, contour_threshold=0.5)
-    #
-    #     assert mfem.shape == self._ElevationMask.shape
+    def test_static_from_mask_MPM(self):
+        mfem = mask.LandMask.from_mask(
+            self._ElevationMask, method='MPM',
+            max_disk=12, contour_threshold=0.5)
+
+        landmask = mask.LandMask(golfcube['eta'][-1, :, :],
+                                 elevation_threshold=0.0)
+
+        assert mfem.shape == self._ElevationMask.shape
+        assert np.round(mfem._mask.sum(), -3) == \
+            np.round(landmask._mask.sum(), -3)
+        assert np.round(mfem._mask.sum()/mfem._mask.size, 2) == \
+            np.round(landmask._mask.sum()/landmask._mask.size, 2)
+        assert mfem._mask.sum() > self._ElevationMask._mask.sum()
+
+    def test_method_MPM(self):
+        mfem = mask.LandMask(golfcube['eta'][-1, :, :],
+                             elevation_threshold=0.0,
+                             contour_threshold=0.5,
+                             method='MPM', max_disk=12)
+        assert mfem.shape == self._ElevationMask.shape
+        assert mfem._mask.sum() > self._ElevationMask._mask.sum()
+
+    def test_invalid_method(self):
+        with pytest.raises(TypeError):
+            mask.LandMask(golfcube['eta'][-1, :, :],
+                          elevation_threshold=0.0,
+                          method='invalid')
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
