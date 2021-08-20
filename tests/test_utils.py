@@ -1,5 +1,6 @@
 import pytest
 
+import os
 import numpy as np
 
 from deltametrics import utils
@@ -129,7 +130,7 @@ def test_exponential_fit():
     assert pytest.approx(yfit == np.array([10.02900253, 4.85696353,
                                            2.22612537, 0.88790858]))
     assert pytest.approx(popts == np.array([10.02900253, -0.49751195,
-                                            0.67596451]))      
+                                            0.67596451]))
     assert pytest.approx(cov == np.array([[0.0841566, 0.04554967, 0.01139969],
                                           [0.04554967, 0.59895713, 0.08422946],
                                           [0.01139969, 0.08422946,
@@ -203,3 +204,17 @@ def test_format_table_float():
     _val = int(5.2)
     _fnum = utils.format_table(_val)
     assert _fnum == '5'
+
+
+@pytest.mark.xfail(raises=ImportError,
+                   reason='pyDeltaRCM is not a required dependency')
+def test_time_from_log(tmp_path):
+    """Generate run+logfile and then read runtime from it."""
+    from pyDeltaRCM.model import DeltaModel
+    delta = DeltaModel(out_dir=str(tmp_path))  # init delta to make log file
+    delta.finalize()  # finalize and end log file
+    log_path = os.path.join(tmp_path, os.listdir(tmp_path)[0])  # path to log
+    elapsed_time = utils.runtime_from_log(log_path)
+    # elapsed time should exceed 0, but exact time will vary
+    assert isinstance(elapsed_time, float)
+    assert elapsed_time > 0

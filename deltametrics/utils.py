@@ -1,6 +1,8 @@
 import numpy as np
 import xarray as xr
 from scipy import optimize
+import time
+import datetime
 
 from numba import njit
 
@@ -538,3 +540,30 @@ def _points_in_polygon(points, polygon):
         inside[i] = _point_in_polygon(points[i, 0], points[i, 1], polygon)
 
     return inside
+
+
+def runtime_from_log(logname):
+    """Calculate the model runtime from the logfile.
+
+    Uses the timestamps in the logfile to compute the model runtime.
+
+    Parameters
+    ----------
+    logname : :obj:`str:`
+        Path to the model logfile that you wish to get the runtime for
+
+    Returns
+    -------
+    runtime : :obj:`float`
+        Float of the model runtime in seconds.
+    """
+    with open(logname) as f:
+        lines = f.readlines()
+        start = lines[0][:19]
+        t_start = time.strptime(start, '%Y-%m-%d %H:%M:%S')
+        t1 = time.mktime(t_start)
+        fin = lines[-1][:19]
+        t_end = time.strptime(fin, '%Y-%m-%d %H:%M:%S')
+        t2 = time.mktime(t_end)
+        te = datetime.timedelta(seconds=t2-t1)
+    return te.total_seconds()
