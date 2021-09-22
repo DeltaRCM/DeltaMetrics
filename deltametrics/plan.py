@@ -1261,16 +1261,11 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
             'Input for `channelmask` was wrong type: {}.'.format(
                 type(channelmask)))
 
-    _channelseries = channelmask[section_trace[:, 1],
-                                 section_trace[:, 0]].astype(int)
+    # get channel stars and ends
+    _channelstarts, _channelends = \
+        _get_channel_starts_and_ends(channelmask, section_trace)
 
-    # compute the metrics
-    _padchannelseries = np.pad(_channelseries, (1,), 'constant',
-                               constant_values=(False)).astype(int)
-    _channelseries_diff = _padchannelseries[1:] - _padchannelseries[:-1]
-    _channelstarts = np.where(_channelseries_diff == 1)[0]
-    _channelends = np.where(_channelseries_diff == -1)[0]
-
+    # compute the metric
     _channelwidths = section_coord[_channelends-1] - section_coord[_channelstarts-1]
 
     _m, _s = np.nanmean(_channelwidths), np.nanstd(_channelwidths)
@@ -1278,6 +1273,19 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
         return _m, _s, _channelwidths
     else:
         return _m, _s
+
+
+def _get_channel_starts_and_ends(channelmask, section_trace):
+    """Get channel start and end coordinates (internal function)."""
+    _channelseries = channelmask[section_trace[:, 1],
+                                 section_trace[:, 0]].astype(int)
+    _padchannelseries = np.pad(_channelseries, (1,), 'constant',
+                               constant_values=(False)).astype(int)
+    _channelseries_diff = _padchannelseries[1:] - _padchannelseries[:-1]
+    _channelstarts = np.where(_channelseries_diff == 1)[0]
+    _channelstarts = np.where(_channelstarts == 0, 1, _channelstarts)
+    _channelends = np.where(_channelseries_diff == -1)[0]
+    return _channelstarts, _channelends
 
 
 def compute_channel_depth(channelmask, depth, section=None,
@@ -1356,15 +1364,11 @@ def compute_channel_depth(channelmask, depth, section=None,
             'Input for `channelmask` was wrong type: {}.'.format(
                 type(channelmask)))
 
-    # need to get the channel starts and ends
-    _channelseries = channelmask[section_trace[:, 1],
-                                 section_trace[:, 0]].astype(int)
-    _padchannelseries = np.pad(_channelseries, (1,), 'constant',
-                               constant_values=(False)).astype(int)
-    _channelseries_diff = _padchannelseries[1:] - _padchannelseries[:-1]
-    _channelstarts = np.where(_channelseries_diff == 1)[0]
-    _channelends = np.where(_channelseries_diff == -1)[0]
+    # get channel stars and ends
+    _channelstarts, _channelends = \
+        _get_channel_starts_and_ends(channelmask, section_trace)
 
+    # compute channel widths
     _channelwidths = section_coord[_channelends-1] - section_coord[_channelstarts-1]
 
     # get the depth array along the section
