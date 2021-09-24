@@ -428,7 +428,8 @@ class BaseCube(abc.ABC):
                        vmax=self.varset[var].vmax)
         cb = plot.append_colorbar(im, ax)
         if colorbar_label:
-            _colorbar_label = self.varset[var].label if (colorbar_label is True) \
+            _colorbar_label = \
+                self.varset[var].label if (colorbar_label is True) \
                 else str(colorbar_label)  # use custom if passed
             cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
 
@@ -709,9 +710,8 @@ class StratigraphyCube(BaseCube):
             self._L, self._W = _elev.shape[1:]
             self._Z = np.tile(self.z, (self.W, self.L, 1)).T
 
-            _out = strat.compute_boxy_stratigraphy_coordinates(_elev,
-                                                               z=self.z,
-                                                            return_strata=True)
+            _out = strat.compute_boxy_stratigraphy_coordinates(
+                _elev, z=self.z, return_strata=True)
             self.strata_coords, self.data_coords, self.strata = _out
         else:
             raise TypeError('No other input types implemented yet.')

@@ -6,7 +6,7 @@ Planview operations
 
 The package makes available functions relating to planview operations on data.
 
-The functions are defined in ``deltametrics.plan``. 
+The functions are defined in ``deltametrics.plan``.
 
 
 Planform types
@@ -14,20 +14,22 @@ Planform types
 
 .. currentmodule:: deltametrics.plan
 
-.. autosummary:: 
+.. autosummary::
     :toctree: ../../_autosummary
 
     OpeningAnglePlanform
+		MorphologicalPlanform
 
 Functions
 =========
 
-.. autosummary:: 
+.. autosummary::
 	:toctree: ../../_autosummary
 
 	compute_shoreline_roughness
 	compute_shoreline_length
-    compute_shoreline_distance
-    compute_channel_width
+  compute_shoreline_distance
+  compute_channel_width
 	compute_channel_depth
 	shaw_opening_angle_method
+	morphological_closing_method

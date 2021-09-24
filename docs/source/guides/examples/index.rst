@@ -13,3 +13,4 @@ Examples of how to do various tasks and visualizations in DeltaMetrics.
    plot/show_section
    computations/preserved_velocities
    computations/comparing_speeds_of_stratigraphy_access
+   planforms/planform_intro

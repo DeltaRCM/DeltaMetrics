@@ -95,6 +95,83 @@ class TestOpeningAnglePlanform:
         #   this example, but I did verify it is actually be passed to the
         #   function.
 
+    def test_notcube_error(self):
+        with pytest.raises(TypeError):
+            plan.OpeningAnglePlanform(self.golfcube['eta'][-1, :, :].data)
+
+
+class TestMorphologicalPlanform:
+
+    simple_land = simple_land
+    golf_path = _get_golf_path()
+    golfcube = cube.DataCube(golf_path)
+
+    def test_defaults_array_int(self):
+        mpm = plan.MorphologicalPlanform(self.simple_land.astype(int), 2)
+        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._all_images, np.ndarray)
+        assert mpm._mean_image.shape == self.simple_land.shape
+        assert len(mpm._all_images.shape) == 3
+        assert mpm._all_images.shape[0] == 3
+
+    def test_defaults_array_bool(self):
+        mpm = plan.MorphologicalPlanform(self.simple_land.astype(bool), 2)
+        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._all_images, np.ndarray)
+        assert mpm._mean_image.shape == self.simple_land.shape
+        assert len(mpm._all_images.shape) == 3
+        assert mpm._all_images.shape[0] == 3
+
+    def test_defaults_array_float(self):
+        mpm = plan.MorphologicalPlanform(self.simple_land.astype(float), 2.0)
+        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._all_images, np.ndarray)
+        assert mpm._mean_image.shape == self.simple_land.shape
+        assert len(mpm._all_images.shape) == 3
+        assert mpm._all_images.shape[0] == 3
+
+    def test_invalid_disk_arg(self):
+        with pytest.raises(TypeError):
+            plan.MorphologicalPlanform(self.simple_land.astype(int), 'bad')
+
+    def test_defaults_static_from_elevation_data(self):
+        mpm = plan.MorphologicalPlanform.from_elevation_data(
+            self.golfcube['eta'][-1, :, :],
+            elevation_threshold=0,
+            max_disk=2)
+        assert mpm.planform_type == 'morphological method'
+        assert mpm._mean_image.shape == (100, 200)
+        assert mpm._all_images.shape == (3, 100, 200)
+        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._all_images, np.ndarray)
+
+    def test_static_from_mask(self):
+        mpm = plan.MorphologicalPlanform.from_mask(
+            self.simple_land, 2)
+        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._all_images, np.ndarray)
+        assert mpm._mean_image.shape == self.simple_land.shape
+        assert len(mpm._all_images.shape) == 3
+        assert mpm._all_images.shape[0] == 3
+
+    def test_static_from_mask_negative_disk(self):
+        mpm = plan.MorphologicalPlanform.from_mask(
+            self.simple_land, -2)
+        assert isinstance(mpm.mean_image, np.ndarray)
+        assert isinstance(mpm.all_images, np.ndarray)
+        assert mpm.mean_image.shape == self.simple_land.shape
+        assert len(mpm.all_images.shape) == 3
+        assert mpm.all_images.shape[0] == 2
+        assert np.all(mpm.composite_array == mpm.mean_image)
+
+    def test_empty_error(self):
+        with pytest.raises(ValueError):
+            plan.MorphologicalPlanform()
+
+    def test_bad_type(self):
+        with pytest.raises(TypeError):
+            plan.MorphologicalPlanform('invalid string')
+
 
 class TestShawOpeningAngleMethod:
 
