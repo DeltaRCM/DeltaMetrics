@@ -14,8 +14,8 @@ deltametrics.mask.CenterlineMask
    .. autosummary::
    
       ~CenterlineMask.__init__
-      ~CenterlineMask.from_OAP
-      ~CenterlineMask.from_OAP_and_FlowMask
+      ~CenterlineMask.from_Planform
+      ~CenterlineMask.from_Planform_and_FlowMask
       ~CenterlineMask.from_array
       ~CenterlineMask.from_mask
       ~CenterlineMask.from_masks

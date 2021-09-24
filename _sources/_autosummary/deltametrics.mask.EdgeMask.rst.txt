@@ -14,8 +14,8 @@ deltametrics.mask.EdgeMask
    .. autosummary::
    
       ~EdgeMask.__init__
-      ~EdgeMask.from_OAP
-      ~EdgeMask.from_OAP_and_WetMask
+      ~EdgeMask.from_Planform
+      ~EdgeMask.from_Planform_and_WetMask
       ~EdgeMask.from_array
       ~EdgeMask.from_mask
       ~EdgeMask.from_masks

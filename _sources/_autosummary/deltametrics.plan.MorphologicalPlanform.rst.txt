@@ -1,0 +1,35 @@
+deltametrics.plan.MorphologicalPlanform
+=======================================
+
+.. currentmodule:: deltametrics.plan
+
+.. autoclass:: MorphologicalPlanform
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MorphologicalPlanform.__init__
+      ~MorphologicalPlanform.connect
+      ~MorphologicalPlanform.from_elevation_data
+      ~MorphologicalPlanform.from_mask
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MorphologicalPlanform.all_images
+      ~MorphologicalPlanform.composite_array
+      ~MorphologicalPlanform.mean_image
+      ~MorphologicalPlanform.name
+      ~MorphologicalPlanform.shape
+   
+   

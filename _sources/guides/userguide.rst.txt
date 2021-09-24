@@ -2,9 +2,7 @@
 User Guide
 **********
 
-This documentation provides a
-
-
+This documentation provides some "workflow" examples as well as some explanations and background about the various methods available in DeltaMetrics.
 
 
 Examples
@@ -16,8 +14,6 @@ We maintain a library of "workflow" examples, which show how to do common, inter
   :maxdepth: 2
 
   examples/index
-
-
 
 
 Setting up your coding environment
@@ -482,7 +478,7 @@ See the :doc:`reference page for each mask type </reference/mask/index>` if you 
 
 .. plot::
     :context: reset
-    
+
     import matplotlib.pyplot as plt
     import matplotlib.gridspec as gs
     import numpy as np

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>deltametrics.mask.ShorelineMask &#8212; DeltaMetrics 0.2.0 documentation</title>
+    <title>deltametrics.mask.ShorelineMask &#8212; DeltaMetrics 0.3.0 documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="deltametrics.mask.LandMask.html" title="deltametrics.mask.LandMask"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" accesskey="U">Masking operations</a> &#187;</li> 
       </ul>
@@ -75,7 +75,7 @@
 <h1>deltametrics.mask.ShorelineMask<a class="headerlink" href="#deltametrics-mask-shorelinemask" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="deltametrics.mask.ShorelineMask">
-<em class="property">class </em><code class="descclassname">deltametrics.mask.</code><code class="descname">ShorelineMask</code><span class="sig-paren">(</span><em>*args</em>, <em>angle_threshold=75</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">deltametrics.mask.</code><code class="descname">ShorelineMask</code><span class="sig-paren">(</span><em>*args</em>, <em>contour_threshold=75</em>, <em>method='OAM'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identify the shoreline as a binary mask.</p>
 <p>A shoreline mask object, provides a binary identification of shoreline
 pixels.</p>
@@ -98,7 +98,7 @@ pixels.</p>
 </figure>
 <dl class="method">
 <dt id="deltametrics.mask.ShorelineMask.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>angle_threshold=75</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>contour_threshold=75</em>, <em>method='OAM'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the ShorelineMask.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -113,8 +113,15 @@ not) may also return a good approximation of the shoreline.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arr</strong> (<em>ndarray</em>) – 2-D topographic array to make the mask from.</p></li>
-<li><p><strong>angle_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Threshold opening angle used to determine shoreline contour based
-on the sea_angles from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">OpeningAnglePlanform</span></code>.</p></li>
+<li><p><strong>contour_threshold</strong> (<em>float</em><em>, </em><em>optional</em>) – Threshold value used when identifying the shoreline contour.
+For the opening angle method, this is a threshold opening angle
+value used to determine shoreline contour based on the sea_angles
+from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">OpeningAnglePlanform</span></code>. For the morphological
+method this is a threshold value between 0 and 1, for extracting
+the contour from the mean_image array.</p></li>
+<li><p><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – Specifies the method to use for shoreline mask computation.
+Currently supports ‘OAM’ for the opening angle method (default)
+and ‘MPM’ for the morpholigcal planform method.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Other Parameters</dt>
@@ -135,10 +142,10 @@ ocean area binary mask input to the opening angle method.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.__init__" title="deltametrics.mask.ShorelineMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args[, angle_threshold])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.__init__" title="deltametrics.mask.ShorelineMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args[, contour_threshold, method])</p></td>
 <td><p>Initialize the ShorelineMask.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_OAP</span></code>(_OAP, **kwargs)</p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_Planform</span></code>(_Planform, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.from_array" title="deltametrics.mask.ShorelineMask.from_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_array</span></code></a>(_arr)</p></td>
@@ -150,10 +157,13 @@ ocean area binary mask input to the opening angle method.</p></li>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_masks</span></code>(UnknownMask, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.show" title="deltametrics.mask.ShorelineMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>([ax, title, ticks, colorbar])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.grab_contour" title="deltametrics.mask.ShorelineMask.grab_contour"><code class="xref py py-obj docutils literal notranslate"><span class="pre">grab_contour</span></code></a>(arr, shoremap)</p></td>
+<td><p>Method to grab contour from some input array using a threshold.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.show" title="deltametrics.mask.ShorelineMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>([ax, title, ticks, colorbar])</p></td>
 <td><p>Show the mask.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.trim_mask" title="deltametrics.mask.ShorelineMask.trim_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_mask</span></code></a>(*args[, value, axis, length])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.trim_mask" title="deltametrics.mask.ShorelineMask.trim_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_mask</span></code></a>(*args[, value, axis, length])</p></td>
 <td><p>Replace a part of the mask with a new value.</p></td>
 </tr>
 </tbody>
@@ -165,8 +175,8 @@ ocean area binary mask input to the opening angle method.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.angle_threshold" title="deltametrics.mask.ShorelineMask.angle_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angle_threshold</span></code></a></p></td>
-<td><p>Threshold angle used for picking shoreline contour.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.contour_threshold" title="deltametrics.mask.ShorelineMask.contour_threshold"><code class="xref py py-obj docutils literal notranslate"><span class="pre">contour_threshold</span></code></a></p></td>
+<td><p>Threshold value used for picking shoreline contour.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ShorelineMask.integer_mask" title="deltametrics.mask.ShorelineMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a></p></td>
 <td><p>Binary mask values as integer</p></td>
@@ -183,9 +193,27 @@ ocean area binary mask input to the opening angle method.</p></li>
 </tbody>
 </table>
 <dl class="method">
-<dt id="deltametrics.mask.ShorelineMask._compute_mask">
-<code class="descname">_compute_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask._compute_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the shoreline mask.</p>
+<dt id="deltametrics.mask.ShorelineMask._compute_MPM_mask">
+<code class="descname">_compute_MPM_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask._compute_MPM_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the shoreline mask using the MPM.</p>
+<p>Applies the Morphological Planform Method to compute the shoreline
+mask. Implementation of the MPM is in
+<a class="reference internal" href="deltametrics.plan.morphological_closing_method.html#deltametrics.plan.morphological_closing_method" title="deltametrics.plan.morphological_closing_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">morphological_closing_method</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Other Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>topo_threshold</strong> (<em>float, optional</em>) – Threshold depth to use. Default is -0.5.</p></li>
+<li><p><strong>max_disk</strong> (<em>int, optional</em>) – Defines the max disk size for the morphological element.
+Default is 3.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.ShorelineMask._compute_OAM_mask">
+<code class="descname">_compute_OAM_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask._compute_OAM_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the shoreline mask using the OAM.</p>
 <p>Applies the Opening Angle Method to compute the shoreline mask.
 Implementation of the OAM is in
 <a class="reference internal" href="deltametrics.plan.shaw_opening_angle_method.html#deltametrics.plan.shaw_opening_angle_method" title="deltametrics.plan.shaw_opening_angle_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shaw_opening_angle_method</span></code></a>.</p>
@@ -197,6 +225,12 @@ Implementation of the OAM is in
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.ShorelineMask._compute_mask">
+<code class="descname">_compute_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask._compute_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internally call either the OAM or MPM method.</p>
 </dd></dl>
 
 <dl class="method">
@@ -216,9 +250,9 @@ computation.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="deltametrics.mask.ShorelineMask.angle_threshold">
-<code class="descname">angle_threshold</code><a class="headerlink" href="#deltametrics.mask.ShorelineMask.angle_threshold" title="Permalink to this definition">¶</a></dt>
-<dd><p>Threshold angle used for picking shoreline contour.</p>
+<dt id="deltametrics.mask.ShorelineMask.contour_threshold">
+<code class="descname">contour_threshold</code><a class="headerlink" href="#deltametrics.mask.ShorelineMask.contour_threshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Threshold value used for picking shoreline contour.</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -244,6 +278,12 @@ will be coerced to <cite>boolean</cite>.</p>
 <dt id="deltametrics.mask.ShorelineMask.from_mask">
 <em class="property">static </em><code class="descname">from_mask</code><span class="sig-paren">(</span><em>UnknownMask</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.from_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ShorelineMask directly from an ElevationMask.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.mask.ShorelineMask.grab_contour">
+<code class="descname">grab_contour</code><span class="sig-paren">(</span><em>arr</em>, <em>shoremap</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.grab_contour" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method to grab contour from some input array using a threshold.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -351,7 +391,7 @@ the top domain edge.</p></li>
         <li class="right" >
           <a href="deltametrics.mask.LandMask.html" title="deltametrics.mask.LandMask"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" >Masking operations</a> &#187;</li> 
       </ul>

@@ -14,7 +14,7 @@ deltametrics.mask.LandMask
    .. autosummary::
    
       ~LandMask.__init__
-      ~LandMask.from_OAP
+      ~LandMask.from_Planform
       ~LandMask.from_array
       ~LandMask.from_mask
       ~LandMask.from_masks
@@ -29,7 +29,7 @@ deltametrics.mask.LandMask
 
    .. autosummary::
    
-      ~LandMask.angle_threshold
+      ~LandMask.contour_threshold
       ~LandMask.integer_mask
       ~LandMask.mask
       ~LandMask.mask_type

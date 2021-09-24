@@ -1,0 +1,6 @@
+deltametrics.plan.morphological\_closing\_method
+================================================
+
+.. currentmodule:: deltametrics.plan
+
+.. autofunction:: morphological_closing_method

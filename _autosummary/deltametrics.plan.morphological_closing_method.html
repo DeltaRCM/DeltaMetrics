@@ -1,0 +1,119 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>deltametrics.plan.morphological_closing_method &#8212; DeltaMetrics 0.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.plan.morphological_closing_method.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="deltametrics-plan-morphological-closing-method">
+<h1>deltametrics.plan.morphological_closing_method<a class="headerlink" href="#deltametrics-plan-morphological-closing-method" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="deltametrics.plan.morphological_closing_method">
+<code class="descclassname">deltametrics.plan.</code><code class="descname">morphological_closing_method</code><span class="sig-paren">(</span><em>elevationmask</em>, <em>biggestdisk=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.morphological_closing_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute an average morphological map from an image,</p>
+<p>Applies a morphological closing to the input image in a manner
+similar to / inspired by <a class="footnote-reference brackets" href="#id2" id="id1">1</a> for rapid identification of a shoreline.</p>
+<p>This <em>function</em> takes an image, and performs a morphological closing for
+a set of disk sizes up from 0 up to the parameter <cite>biggestdisk</cite>.</p>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>Geleynse, N., et al. “Characterization of river delta shorelines.”
+Geophysical research letters 39.17 (2012).</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elevationmask</strong> (<a class="reference internal" href="deltametrics.mask.ElevationMask.html#deltametrics.mask.ElevationMask" title="deltametrics.mask.ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElevationMask</span></code></a> or) – <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code>
+Binary image that the morpholigical closing is performed upon.
+This is expected to be something like an elevation mask, although it
+doesn’t have to be.</p></li>
+<li><p><strong>biggestdisk</strong> (<em>int</em><em>, </em><em>optional</em>) – Defines the largest disk size to use for the binary closing method.
+The method starts 0 and iterates up to a disk size of biggestdisk.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>imageset</strong> (<em>ndarray</em>) – 3-D array of shape n-x-y where n is the number of different disk
+kernels used in the method. n = biggestdisk + 1</p></li>
+<li><p><strong>meanimage</strong> (<em>ndarray</em>) – 2-D array of shape x-y of the mean of imageset taken over the first
+axis. This approximates the <cite>sea_angles</cite> attribute of the OAM method.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>

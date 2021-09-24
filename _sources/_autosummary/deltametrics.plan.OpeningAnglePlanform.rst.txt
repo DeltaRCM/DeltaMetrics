@@ -29,6 +29,7 @@ deltametrics.plan.OpeningAnglePlanform
    .. autosummary::
    
       ~OpeningAnglePlanform.below_mask
+      ~OpeningAnglePlanform.composite_array
       ~OpeningAnglePlanform.name
       ~OpeningAnglePlanform.sea_angles
       ~OpeningAnglePlanform.shape

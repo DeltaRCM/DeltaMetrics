@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>deltametrics.plan.OpeningAnglePlanform &#8212; DeltaMetrics 0.2.0 documentation</title>
+    <title>deltametrics.plan.OpeningAnglePlanform &#8212; DeltaMetrics 0.3.0 documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -18,7 +18,7 @@
     <script type="text/javascript" src="../_static/language_data.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Masking operations" href="../reference/mask/index.html" />
+    <link rel="next" title="deltametrics.plan.MorphologicalPlanform" href="deltametrics.plan.MorphologicalPlanform.html" />
     <link rel="prev" title="Planview operations" href="../reference/plan/index.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -28,12 +28,12 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../reference/mask/index.html" title="Masking operations"
+          <a href="deltametrics.plan.MorphologicalPlanform.html" title="deltametrics.plan.MorphologicalPlanform"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="../reference/plan/index.html" title="Planview operations"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/plan/index.html" accesskey="U">Planview operations</a> &#187;</li> 
       </ul>
@@ -44,8 +44,8 @@
   <p class="topless"><a href="../reference/plan/index.html"
                         title="previous chapter">Planview operations</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="../reference/mask/index.html"
-                        title="next chapter">Masking operations</a></p>
+  <p class="topless"><a href="deltametrics.plan.MorphologicalPlanform.html"
+                        title="next chapter">deltametrics.plan.MorphologicalPlanform</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -156,13 +156,16 @@ elevation data (i.e., from an <a class="reference internal" href="deltametrics.m
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.below_mask" title="deltametrics.plan.OpeningAnglePlanform.below_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">below_mask</span></code></a></p></td>
 <td><p>Mask for below sea level pixels.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.name" title="deltametrics.plan.OpeningAnglePlanform.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.composite_array" title="deltametrics.plan.OpeningAnglePlanform.composite_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">composite_array</span></code></a></p></td>
+<td><p>Alias sea angles.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.name" title="deltametrics.plan.OpeningAnglePlanform.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
 <td><p>Planform name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.sea_angles" title="deltametrics.plan.OpeningAnglePlanform.sea_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sea_angles</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.sea_angles" title="deltametrics.plan.OpeningAnglePlanform.sea_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sea_angles</span></code></a></p></td>
 <td><p>Maximum opening angle view of the sea from a pixel.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.shape" title="deltametrics.plan.OpeningAnglePlanform.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.shape" title="deltametrics.plan.OpeningAnglePlanform.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Planform shape.</p></td>
 </tr>
 </tbody>
@@ -188,6 +191,12 @@ ocean pixels.</p></li>
 <dd><p>Mask for below sea level pixels.</p>
 <p>This is the starting point for the Opening Angle Method solution.</p>
 <p>See figure in main docstring for visual example.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plan.OpeningAnglePlanform.composite_array">
+<code class="descname">composite_array</code><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.composite_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias sea angles.</p>
 </dd></dl>
 
 <dl class="method">
@@ -310,12 +319,12 @@ turn used to create the <cite>OpeningAnglePlanform</cite>.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../reference/mask/index.html" title="Masking operations"
+          <a href="deltametrics.plan.MorphologicalPlanform.html" title="deltametrics.plan.MorphologicalPlanform"
              >next</a> |</li>
         <li class="right" >
           <a href="../reference/plan/index.html" title="Planview operations"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/plan/index.html" >Planview operations</a> &#187;</li> 
       </ul>

@@ -14,8 +14,8 @@ deltametrics.mask.ChannelMask
    .. autosummary::
    
       ~ChannelMask.__init__
-      ~ChannelMask.from_OAP
-      ~ChannelMask.from_OAP_and_FlowMask
+      ~ChannelMask.from_Planform
+      ~ChannelMask.from_Planform_and_FlowMask
       ~ChannelMask.from_array
       ~ChannelMask.from_mask
       ~ChannelMask.from_masks

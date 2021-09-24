@@ -14,7 +14,7 @@ deltametrics.mask.WetMask
    .. autosummary::
    
       ~WetMask.__init__
-      ~WetMask.from_OAP
+      ~WetMask.from_Planform
       ~WetMask.from_array
       ~WetMask.from_mask
       ~WetMask.from_masks

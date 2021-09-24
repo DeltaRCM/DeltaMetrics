@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>deltametrics.mask.WetMask &#8212; DeltaMetrics 0.2.0 documentation</title>
+    <title>deltametrics.mask.WetMask &#8212; DeltaMetrics 0.3.0 documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="deltametrics.mask.ShorelineMask.html" title="deltametrics.mask.ShorelineMask"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" accesskey="U">Masking operations</a> &#187;</li> 
       </ul>
@@ -114,7 +114,9 @@ intermediate <cite>Mask</cite> or <cite>OpeningAnglePlanform</cite> objects.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arr</strong> (<em>ndarray</em>) – The data array to make the mask from.</p></li>
-<li><p><strong>angle_threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – Threshold opening angle used in the OAM. Default is 75 degrees.</p></li>
+<li><p><strong>contour_threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – Threshold value to use when identifying the contour which defines
+the shoreline. For the OAM this is a threshold opening angle.
+Default is 75 degrees.</p></li>
 <li><p><strong>is_mask</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the data in <code class="xref py py-obj docutils literal notranslate"><span class="pre">arr</span></code> is already a binary mask. Default is
 False. This should be set to True, if you have already binarized
 the data yourself, using custom routines, and want to just store
@@ -125,7 +127,7 @@ the data in the WetMask object.</p></li>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>landmask</strong> (<a class="reference internal" href="deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a>, optional) – A <a class="reference internal" href="deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a> object with a defined binary shoreline mask.
 If given, the <a class="reference internal" href="deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a> object will be checked for the
-<cite>sea_angles</cite> and <cite>angle_threshold</cite> attributes.</p></li>
+<cite>sea_angles</cite> and <cite>contour_threshold</cite> attributes.</p></li>
 <li><p><strong>kwargs</strong> (<em>optional</em>) – Keyword arguments are passed to <cite>LandMask</cite> and <cite>ElevationMask</cite>, as
 appropriate.</p></li>
 </ul>
@@ -143,8 +145,8 @@ appropriate.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.WetMask.__init__" title="deltametrics.mask.WetMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Initialize the WetMask.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.WetMask.from_OAP" title="deltametrics.mask.WetMask.from_OAP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_OAP</span></code></a>(_OAP, **kwargs)</p></td>
-<td><p>Create from an OAP.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.WetMask.from_Planform" title="deltametrics.mask.WetMask.from_Planform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_Planform</span></code></a>(_Planform, **kwargs)</p></td>
+<td><p>Create from a Planform.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.WetMask.from_array" title="deltametrics.mask.WetMask.from_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_array</span></code></a>(_arr)</p></td>
 <td><p>Create a WetMask from an array.</p></td>
@@ -211,9 +213,9 @@ computation.</p>
 </dd></dl>
 
 <dl class="staticmethod">
-<dt id="deltametrics.mask.WetMask.from_OAP">
-<em class="property">static </em><code class="descname">from_OAP</code><span class="sig-paren">(</span><em>_OAP</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.from_OAP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create from an OAP.</p>
+<dt id="deltametrics.mask.WetMask.from_Planform">
+<em class="property">static </em><code class="descname">from_Planform</code><span class="sig-paren">(</span><em>_Planform</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.from_Planform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create from a Planform.</p>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -351,7 +353,7 @@ the top domain edge.</p></li>
         <li class="right" >
           <a href="deltametrics.mask.ShorelineMask.html" title="deltametrics.mask.ShorelineMask"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" >Masking operations</a> &#187;</li> 
       </ul>

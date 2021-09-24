@@ -14,10 +14,11 @@ deltametrics.mask.ShorelineMask
    .. autosummary::
    
       ~ShorelineMask.__init__
-      ~ShorelineMask.from_OAP
+      ~ShorelineMask.from_Planform
       ~ShorelineMask.from_array
       ~ShorelineMask.from_mask
       ~ShorelineMask.from_masks
+      ~ShorelineMask.grab_contour
       ~ShorelineMask.show
       ~ShorelineMask.trim_mask
    
@@ -29,7 +30,7 @@ deltametrics.mask.ShorelineMask
 
    .. autosummary::
    
-      ~ShorelineMask.angle_threshold
+      ~ShorelineMask.contour_threshold
       ~ShorelineMask.integer_mask
       ~ShorelineMask.mask
       ~ShorelineMask.mask_type

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>deltametrics.mask.EdgeMask &#8212; DeltaMetrics 0.2.0 documentation</title>
+    <title>deltametrics.mask.EdgeMask &#8212; DeltaMetrics 0.3.0 documentation</title>
     <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -33,7 +33,7 @@
         <li class="right" >
           <a href="deltametrics.mask.ChannelMask.html" title="deltametrics.mask.ChannelMask"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" accesskey="U">Masking operations</a> &#187;</li> 
       </ul>
@@ -108,7 +108,10 @@ data, or it can be computed using the <a class="reference internal" href="deltam
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arr</strong> (<em>ndarray</em>) – The data array to make the mask from.</p></li>
-<li><p><strong>angle_threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – Threshold opening angle used in the OAM. Default is 75 degrees.</p></li>
+<li><p><strong>contour_threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – <p>Threshold value used for identifying the shoreline.</p>
+<p>Default threshold opening angle used in the OAM. Default is 75
+degrees. Could also be a value between 0-1 in the case of the MPM.</p>
+</p></li>
 <li><p><strong>is_mask</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether the data in <code class="xref py py-obj docutils literal notranslate"><span class="pre">arr</span></code> is already a binary mask. Default
 value is False. This should be set to True, if you have already
 binarized the data yourself, using custom routines, and want to
@@ -135,11 +138,11 @@ just store the data in the EdgeMask object.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.EdgeMask.__init__" title="deltametrics.mask.EdgeMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Initialize the EdgeMask.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.EdgeMask.from_OAP" title="deltametrics.mask.EdgeMask.from_OAP"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_OAP</span></code></a>(_OAP, **kwargs)</p></td>
-<td><p>Create EdgeMask from an OAP.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.EdgeMask.from_Planform" title="deltametrics.mask.EdgeMask.from_Planform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_Planform</span></code></a>(_Planform, **kwargs)</p></td>
+<td><p>Create EdgeMask from a Planform.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.EdgeMask.from_OAP_and_WetMask" title="deltametrics.mask.EdgeMask.from_OAP_and_WetMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_OAP_and_WetMask</span></code></a>(_OAP, _WetMask, **kwargs)</p></td>
-<td><p>Create from an OAP and a WetMask.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.EdgeMask.from_Planform_and_WetMask" title="deltametrics.mask.EdgeMask.from_Planform_and_WetMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_Planform_and_WetMask</span></code></a>(_Planform, …)</p></td>
+<td><p>Create from a Planform and a WetMask.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.EdgeMask.from_array" title="deltametrics.mask.EdgeMask.from_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_array</span></code></a>(_arr)</p></td>
 <td><p>Create an EdgeMask from an array.</p></td>
@@ -204,15 +207,15 @@ computation.</p>
 </dd></dl>
 
 <dl class="staticmethod">
-<dt id="deltametrics.mask.EdgeMask.from_OAP">
-<em class="property">static </em><code class="descname">from_OAP</code><span class="sig-paren">(</span><em>_OAP</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.EdgeMask.from_OAP" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create EdgeMask from an OAP.</p>
+<dt id="deltametrics.mask.EdgeMask.from_Planform">
+<em class="property">static </em><code class="descname">from_Planform</code><span class="sig-paren">(</span><em>_Planform</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.EdgeMask.from_Planform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create EdgeMask from a Planform.</p>
 </dd></dl>
 
 <dl class="staticmethod">
-<dt id="deltametrics.mask.EdgeMask.from_OAP_and_WetMask">
-<em class="property">static </em><code class="descname">from_OAP_and_WetMask</code><span class="sig-paren">(</span><em>_OAP</em>, <em>_WetMask</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.EdgeMask.from_OAP_and_WetMask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create from an OAP and a WetMask.</p>
+<dt id="deltametrics.mask.EdgeMask.from_Planform_and_WetMask">
+<em class="property">static </em><code class="descname">from_Planform_and_WetMask</code><span class="sig-paren">(</span><em>_Planform</em>, <em>_WetMask</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.EdgeMask.from_Planform_and_WetMask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create from a Planform and a WetMask.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>This instantiation pathway should only be used for custom WetMask
@@ -358,7 +361,7 @@ the top domain edge.</p></li>
         <li class="right" >
           <a href="deltametrics.mask.ChannelMask.html" title="deltametrics.mask.ChannelMask"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.2.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" >Masking operations</a> &#187;</li> 
       </ul>

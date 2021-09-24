@@ -1,0 +1,248 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>deltametrics.plan.MorphologicalPlanform &#8212; DeltaMetrics 0.3.0 documentation</title>
+    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Masking operations" href="../reference/mask/index.html" />
+    <link rel="prev" title="deltametrics.plan.OpeningAnglePlanform" href="deltametrics.plan.OpeningAnglePlanform.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../reference/mask/index.html" title="Masking operations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.plan.OpeningAnglePlanform.html" title="deltametrics.plan.OpeningAnglePlanform"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/plan/index.html" accesskey="U">Planview operations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.plan.OpeningAnglePlanform.html"
+                        title="previous chapter">deltametrics.plan.OpeningAnglePlanform</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../reference/mask/index.html"
+                        title="next chapter">Masking operations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.plan.MorphologicalPlanform.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="deltametrics-plan-morphologicalplanform">
+<h1>deltametrics.plan.MorphologicalPlanform<a class="headerlink" href="#deltametrics-plan-morphologicalplanform" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="deltametrics.plan.MorphologicalPlanform">
+<em class="property">class </em><code class="descclassname">deltametrics.plan.</code><code class="descname">MorphologicalPlanform</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planform for handling the morphological method.</p>
+<dl class="method">
+<dt id="deltametrics.plan.MorphologicalPlanform.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the MP.</p>
+<p>Expects first argument to be either an ElevationMask, or an array that
+represents some sort of elevation mask or land area for the delta.</p>
+<p>Second argument should be the inlet width (# pixels), if a cube is
+connected then this will be pulled from the cube directly.</p>
+<p>Method should work if a landmask is provided too, the morphological
+operations may just do less.</p>
+</dd></dl>
+
+<p class="rubric">Methods</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.__init__" title="deltametrics.plan.MorphologicalPlanform.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Initialize the MP.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.connect" title="deltametrics.plan.MorphologicalPlanform.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(CubeInstance[, name])</p></td>
+<td><p>Connect this Planform instance to a Cube instance.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.from_elevation_data" title="deltametrics.plan.MorphologicalPlanform.from_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_elevation_data</span></code></a>(elevation_data, …)</p></td>
+<td><p>Create a <cite>MorphologicalPlanform</cite> from elevation data.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.from_mask" title="deltametrics.plan.MorphologicalPlanform.from_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_mask</span></code></a>(UnknownMask, max_disk, **kwargs)</p></td>
+<td><p>Static method for creating a MorphologicalPlanform from a mask.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Attributes</p>
+<table class="longtable docutils align-center">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.all_images" title="deltametrics.plan.MorphologicalPlanform.all_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_images</span></code></a></p></td>
+<td><p>3-D array of all binary closed arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.composite_array" title="deltametrics.plan.MorphologicalPlanform.composite_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">composite_array</span></code></a></p></td>
+<td><p>Alias the mean image.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.mean_image" title="deltametrics.plan.MorphologicalPlanform.mean_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_image</span></code></a></p></td>
+<td><p>Average of all binary closing arrays.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.name" title="deltametrics.plan.MorphologicalPlanform.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Planform name.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.shape" title="deltametrics.plan.MorphologicalPlanform.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<td><p>Planform shape.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="attribute">
+<dt id="deltametrics.plan.MorphologicalPlanform.all_images">
+<code class="descname">all_images</code><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.all_images" title="Permalink to this definition">¶</a></dt>
+<dd><p>3-D array of all binary closed arrays.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plan.MorphologicalPlanform.composite_array">
+<code class="descname">composite_array</code><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.composite_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias the mean image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="deltametrics.plan.MorphologicalPlanform.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>CubeInstance</em>, <em>name=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connect this Planform instance to a Cube instance.</p>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="deltametrics.plan.MorphologicalPlanform.from_elevation_data">
+<em class="property">static </em><code class="descname">from_elevation_data</code><span class="sig-paren">(</span><em>elevation_data</em>, <em>max_disk</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.from_elevation_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <cite>MorphologicalPlanform</cite> from elevation data.</p>
+<p>Creates an ElevationMask from the input elevation array that is used
+to create the MP.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Information about keyword arguments</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The <cite>elevation_threshold</cite> argument is implicitly required in this
+method, because it is required to instantiate an
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">ElevationMask</span></code> from elevation data.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elevation_data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The elevation data to create the <cite>ElevationMask</cite> that is in
+turn used to create the <cite>MorphologicalPlanform</cite>.</p></li>
+<li><p><strong>max_disk</strong> (<em>int</em>) – Maximum disk size to use for the morphological operations.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">MP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">MorphologicalPlanform</span><span class="o">.</span><span class="n">from_elevation_data</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">max_disk</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="deltametrics.plan.MorphologicalPlanform.from_mask">
+<em class="property">static </em><code class="descname">from_mask</code><span class="sig-paren">(</span><em>UnknownMask</em>, <em>max_disk</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.from_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Static method for creating a MorphologicalPlanform from a mask.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plan.MorphologicalPlanform.mean_image">
+<code class="descname">mean_image</code><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.mean_image" title="Permalink to this definition">¶</a></dt>
+<dd><p>Average of all binary closing arrays.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plan.MorphologicalPlanform.name">
+<code class="descname">name</code><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planform name.</p>
+<p>Helpful to differentiate multiple Planforms.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="deltametrics.plan.MorphologicalPlanform.shape">
+<code class="descname">shape</code><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.shape" title="Permalink to this definition">¶</a></dt>
+<dd><p>Planform shape.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../reference/mask/index.html" title="Masking operations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.plan.OpeningAnglePlanform.html" title="deltametrics.plan.OpeningAnglePlanform"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/plan/index.html" >Planview operations</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+    </div>
+  </body>
+</html>
