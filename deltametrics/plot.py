@@ -1,7 +1,6 @@
 import numpy as np
 
 import colorsys
-import copy
 
 import matplotlib
 import matplotlib.pyplot as plt
