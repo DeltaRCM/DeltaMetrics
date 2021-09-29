@@ -1093,7 +1093,7 @@ def show_histograms(*args, sets=None, ax=None, **kwargs):
 
 
 def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
-                colorbar_kw={}, **kwargs):
+                colorbar_kw={}, return_im=False, **kwargs):
     """Show an aerial plot of an elevation dataset.
 
     See also: implementation wrapper for a cube.
@@ -1118,6 +1118,9 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
     colorbar_kw
         Dictionary of keyword args passed to :func:`append_colorbar`.
 
+    return_im : bool, optional
+        Returns the ``plt.imshow()`` image object if True. Default is False.
+
     **kwargs
         Optionally, arguments accepted by :func:`cartographic_colormap`, or
         `imshow`.
@@ -1126,6 +1129,9 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
     -------
     colorbar
         Colorbar instance appended to the axes.
+
+    im : :obj:`~matplotlib.image.AxesImage` object, optional
+        Optional return of the image object itself if ``return_im`` is True
 
 
     Examples
@@ -1160,7 +1166,10 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
         ax.set_xticks([], minor=[])
         ax.set_yticks([], minor=[])
 
-    return cb
+    if return_im is True:
+        return cb, im
+    else:
+        return cb
 
 
 def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
