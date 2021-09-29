@@ -126,7 +126,7 @@ You may want to examine these to change the style of plotting across the package
 Mostly, these functions provide a component of a plot.</p>
 <dl class="function">
 <dt id="deltametrics.plot.aerial_view">
-<code class="descclassname">deltametrics.plot.</code><code class="descname">aerial_view</code><span class="sig-paren">(</span><em>elevation_data</em>, <em>datum=0</em>, <em>ax=None</em>, <em>ticks=False</em>, <em>colorbar_kw={}</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.aerial_view" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">deltametrics.plot.</code><code class="descname">aerial_view</code><span class="sig-paren">(</span><em>elevation_data</em>, <em>datum=0</em>, <em>ax=None</em>, <em>ticks=False</em>, <em>colorbar_kw={}</em>, <em>return_im=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.aerial_view" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show an aerial plot of an elevation dataset.</p>
 <p>See also: implementation wrapper for a cube.</p>
 <dl class="field-list simple">
@@ -139,15 +139,17 @@ provided, a call is made to <code class="docutils literal notranslate"><span cla
 create a new) <cite>Axes</cite> object.</p></li>
 <li><p><strong>ticks</strong> – Whether to show ticks. Default is false, no tick labels.</p></li>
 <li><p><strong>colorbar_kw</strong> – Dictionary of keyword args passed to <a class="reference internal" href="#deltametrics.plot.append_colorbar" title="deltametrics.plot.append_colorbar"><code class="xref py py-func docutils literal notranslate"><span class="pre">append_colorbar()</span></code></a>.</p></li>
+<li><p><strong>return_im</strong> (<em>bool</em><em>, </em><em>optional</em>) – Returns the <code class="docutils literal notranslate"><span class="pre">plt.imshow()</span></code> image object if True. Default is False.</p></li>
 <li><p><strong>**kwargs</strong> – Optionally, arguments accepted by <a class="reference internal" href="#deltametrics.plot.cartographic_colormap" title="deltametrics.plot.cartographic_colormap"><code class="xref py py-func docutils literal notranslate"><span class="pre">cartographic_colormap()</span></code></a>, or
 <cite>imshow</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Colorbar instance appended to the axes.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>colorbar</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>colorbar</em> – Colorbar instance appended to the axes.</p></li>
+<li><p><strong>im</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">AxesImage</span></code> object, optional) – Optional return of the image object itself if <code class="docutils literal notranslate"><span class="pre">return_im</span></code> is True</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
