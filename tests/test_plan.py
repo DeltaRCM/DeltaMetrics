@@ -439,6 +439,18 @@ class TestComputeChannelWidth:
             m, s = plan.compute_channel_width(
                 self.cm)
 
+    def test_get_channel_starts_and_ends(self):
+        _cs, _ce = plan._get_channel_starts_and_ends(
+            self.simple_cm, self.trace)
+        assert _cs[0] == 1
+        assert _ce[0] == 2
+
+    def test_wraparound(self):
+        alt_cm = np.array([[1, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1]])
+        _cs, _ce = plan._get_channel_starts_and_ends(
+            alt_cm, self.trace)
+        assert _cs[0] == 1
+        assert _ce[0] == 2      
 
 class TestComputeChannelDepth:
 
