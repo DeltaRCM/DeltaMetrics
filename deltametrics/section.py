@@ -774,13 +774,13 @@ class DipSection(BaseSection):
     --------
 
     To create a `DipSection` that is registered to a `DataCube` at
-    specified `x` coordinate ``=60``, and spans the entire model domain:
+    specified `x` coordinate ``=130``, and spans the entire model domain:
 
     .. plot::
         :include-source:
 
         >>> rcm8cube = dm.sample_data.rcm8()
-        >>> rcm8cube.register_section('dip', dm.section.DipSection(x=60))
+        >>> rcm8cube.register_section('dip', dm.section.DipSection(x=130))
         >>>
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
@@ -790,8 +790,8 @@ class DipSection(BaseSection):
         >>> plt.show()
 
     Similarly, create a `DipSection` that is registered to a
-    `StratigraphyCube` at specified `x` coordinate ``=60``, and spans only the
-    first 20 cells of the model domain:
+    `StratigraphyCube` at the inlet, which spans only the
+    first 50 cells of the model domain:
 
     .. plot::
         :include-source:
@@ -799,7 +799,7 @@ class DipSection(BaseSection):
         >>> rcm8cube = dm.sample_data.rcm8()
         >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube)
         >>> sc8cube.register_section(
-        ...     'dip_short', dm.section.DipSection(x=60, y=[0, 20]))
+        ...     'dip_short', dm.section.DipSection(y=[0, 50]))
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
