@@ -994,3 +994,61 @@ class TestStratigraphySectionVariable:
         with pytest.raises(AttributeError,
                            match=r'No "spacetime" or "preserved"*.'):
             self.ssv._check_knows_spacetime()
+
+
+class TestDipSection:
+    """Test the basic of the DipSection."""
+
+    def test_DipSection_without_cube(self):
+        ss = section.DipSection(x=5)
+        assert ss.name is None
+        assert ss.x == 5
+        assert ss.shape is None
+        assert ss.cube is None
+        assert ss.s is None
+        assert np.all(ss.trace == np.array([[None, None]]))
+        assert ss._y is None
+        assert ss._x is None
+        assert ss.variables is None
+        with pytest.raises(AttributeError, match=r'No cube connected.*.'):
+            ss['velocity']
+
+    def test_DipSection_bad_cube(self):
+        badcube = ['some', 'list']
+        with pytest.raises(TypeError, match=r'Expected type is *.'):
+            _ = section.DipSection(badcube, x=12)
+
+    def test_DipSection_standalone_instantiation(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        sass = section.DipSection(rcm8cube, x=120)
+        assert sass.name == 'dip'
+        assert sass.x == 120
+        assert sass.cube == rcm8cube
+        assert sass.trace.shape == (120, 2)
+        assert len(sass.variables) > 0
+
+    def test_DipSection_register_section(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        rcm8cube.register_section('test', section.DipSection(x=150))
+        assert rcm8cube.sections['test'].name == 'test'
+        assert len(rcm8cube.sections['test'].variables) > 0
+        assert rcm8cube.sections['test'].cube is rcm8cube
+        with pytest.warns(UserWarning):
+            rcm8cube.register_section('testname', section.DipSection(
+                x=150, name='TESTING'))
+            assert rcm8cube.sections['testname'].name == 'TESTING'
+        _sect = rcm8cube.register_section('test', section.DipSection(x=150),
+                                          return_section=True)
+        assert isinstance(_sect, section.DipSection)
+
+    def test_DipSection_register_section_x_limits(self):
+        rcm8cube = cube.DataCube(rcm8_path)
+        rcm8cube.register_section('tuple', section.DipSection(x=150,
+                                                              y=(10, 50)))
+        rcm8cube.register_section('list', section.DipSection(x=150,
+                                                             y=(10, 40)))
+        assert len(rcm8cube.sections) == 2
+        assert rcm8cube.sections['tuple']._y.shape[0] == 40
+        assert rcm8cube.sections['list']._y.shape[0] == 30
+        assert np.all(rcm8cube.sections['list']._x == 150)
+        assert np.all(rcm8cube.sections['tuple']._x == 150)
