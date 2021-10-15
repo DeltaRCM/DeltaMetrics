@@ -457,6 +457,7 @@ class TestComputeChannelWidth:
         assert _cs[0] == 1
         assert _ce[0] == 2      
 
+
 class TestComputeChannelDepth:
 
     simple_cm = np.array([[0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0]])

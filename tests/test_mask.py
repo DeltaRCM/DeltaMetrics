@@ -834,18 +834,20 @@ class TestLandMask:
             mask.LandMask.from_mask('invalid input')
 
     def test_static_from_mask_MPM(self):
+        """Check that the two methods give similar results."""
+        # a landmask with MPM
         mfem = mask.LandMask.from_mask(
             self._ElevationMask, method='MPM',
             max_disk=12, contour_threshold=0.5)
-
+        # a landmask with OAM
         landmask = mask.LandMask(golfcube['eta'][-1, :, :],
                                  elevation_threshold=0.0)
 
+        # some comparisons to check that things are similar (loose checks!)
         assert mfem.shape == self._ElevationMask.shape
-        assert np.round(mfem._mask.sum(), -3) == \
-            np.round(landmask._mask.sum(), -3)
-        assert np.round(mfem._mask.sum()/mfem._mask.size, 2) == \
-            np.round(landmask._mask.sum()/landmask._mask.size, 2)
+        assert mfem._mask.sum() == pytest.approx(landmask._mask.sum(), rel=1)
+        assert (mfem._mask.sum()/mfem._mask.size == 
+                pytest.approx(landmask._mask.sum()/landmask._mask.size, abs=1))
         assert mfem._mask.sum() > self._ElevationMask._mask.sum()
 
     def test_method_MPM(self):
