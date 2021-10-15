@@ -6,17 +6,17 @@ import xarray as xr
 
 from deltametrics import cube
 from deltametrics import strat
-from deltametrics.sample_data import _get_rcm8_path
+from deltametrics.sample_data import _get_golf_path
 
 
-rcm8_path = _get_rcm8_path()
-rcm8cube = cube.DataCube(rcm8_path)
+golf_path = _get_golf_path()
+golfcube = cube.DataCube(golf_path)
 
 
 class TestComputeBoxyStratigraphyVolume:
 
-    elev = rcm8cube['eta']
-    time = rcm8cube['time']
+    elev = golfcube['eta']
+    time = golfcube['time']
 
     def test_returns_volume_and_elevations(self):
         s, e = strat.compute_boxy_stratigraphy_volume(
@@ -70,8 +70,8 @@ class TestComputeBoxyStratigraphyVolume:
 
 class TestComputeBoxyStratigraphyCoordinates:
 
-    elev = rcm8cube['eta']
-    time = rcm8cube['time']
+    elev = golfcube['eta']
+    time = golfcube['time']
 
     def test_returns_sc_dc(self):
         sc, dc = strat.compute_boxy_stratigraphy_coordinates(
