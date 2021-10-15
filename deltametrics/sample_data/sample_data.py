@@ -41,13 +41,17 @@ def golf():
     """Golf Delta dataset.
 
     This is a synthetic delta dataset generated from the pyDeltaRCM numerical
-    model. The data were generated as one job in an ensemble executed
-    2021-01-15 on the TACC supercomputer at the University of Texas at Austin.
+    model. This model run was created to generate sample data. Model was run
+    on 10/14/2021, at the University of Texas at Austin.
 
-    Run was computed with pyDeltaRCM v1.1.1, while at commit hash
-    58244313796273ca4eeb8ea8d724884dd51510a1.
+    Run was computed with pyDeltaRCM v2.1.0. See log file for complete
+    information on system and model configuration.
 
-    Data available as Zenodo doi 10.5281/zenodo.4456144
+    Data available at Zenodo, https://doi.org/10.5281/zenodo.4456143.
+
+    Version history:
+    v1.1: 10.5281/zenodo.5570962
+    v1.0: 10.5281/zenodo.4456144
 
     .. plot::
 
