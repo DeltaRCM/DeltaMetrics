@@ -635,7 +635,7 @@ class StrikeSection(BaseSection):
     """Strike section object.
 
     Section oriented along the delta strike (i.e., perpendicular to an inlet
-    channel). Specify the location of the strike section with :obj`y` and
+    channel). Specify the location of the strike section with :obj:`y` and
     :obj:`x` keyword parameter options.
 
     .. important::
@@ -732,11 +732,102 @@ class StrikeSection(BaseSection):
 class DipSection(BaseSection):
     """Dip section object.
 
+    Section oriented along the delta dip (i.e., parallel to inlet channel).
+    Specify the location of the dip section with :obj:`x` and :obj:`y`
+    keyword parameter options.
+
+    .. important::
+
+        The `y` and `x` parameters must be specified as cell indices (not
+        actual x and y coordinate values). This is a needed patch.
+
+    Parameters
+    ----------
+    *args : :obj:`DataCube` or `StratigraphyCube`
+        The `Cube` object to link for underlying data. This option should be
+        ommitted if using the :obj:`register_section` method of a `Cube`.
+
+    x : :obj:`int`, optional
+        The `x` location of the section. This is the distance to locate the
+        section from the domain edge with a channel inlet. Defaults to ``-1``
+        if no value is given, which centers the section along the domain.
+
+    y : :obj:`int`, optional
+        The `y` limits for the section. Defaults to the full domain width.
+        Specify as a two-element `tuple` or `list` of `int`, giving the lower
+        and upper bounds of `y` values to span the section.
+
+    **kwargs
+        Keyword arguments are passed to `BaseSection.__init__()`. Supported
+        options are `name`.
+
+    Returns
+    -------
+    section : :obj:`DipSection`
+        `DipSection` object with specified parameters. The section is
+        automatically connected to the underlying `Cube` data source if the
+        :obj:`register_section` method of a `Cube` is used to set up the
+        section, or the `Cube` is passed as the first positional argument
+        during instantiation.
+
+    Examples
+    --------
+
+    To create a `DipSection` that is registered to a `DataCube` at
+    specified `x` coordinate ``=60``, and spans the entire model domain:
+
+    .. plot::
+        :include-source:
+
+        >>> rcm8cube = dm.sample_data.rcm8()
+        >>> rcm8cube.register_section('dip', dm.section.DipSection(x=60))
+        >>>
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> rcm8cube.sections['dip'].show_trace('r--', ax=ax[0])
+        >>> rcm8cube.sections['dip'].show('velocity', ax=ax[1])
+        >>> plt.show()
+
+    Similarly, create a `DipSection` that is registered to a
+    `StratigraphyCube` at specified `x` coordinate ``=60``, and spans only the
+    first 20 cells of the model domain:
+
+    .. plot::
+        :include-source:
+
+        >>> rcm8cube = dm.sample_data.rcm8()
+        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube)
+        >>> sc8cube.register_section(
+        ...     'dip_short', dm.section.DipSection(x=60, y=[0, 20]))
+
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> sc8cube.sections['dip_short'].show_trace('r--', ax=ax[0])
+        >>> sc8cube.sections['dip_short'].show('velocity', ax=ax[1])
+        >>> plt.show()
     """
 
-    def __init__(self, x=-1):
-        raise NotImplementedError
-        # choose center point if x=-1
+    def __init__(self, *args, x=-1, y=None, **kwargs):
+
+        self.x = x  # dip coordinate scalar
+        self._input_ylim = y  # input y lims
+        super().__init__('dip', *args, **kwargs)
+
+    def _compute_section_coords(self):
+        """Calculate coordinates of the dip section."""
+        # if x is -1 pick center cell
+        if self.x == -1:
+            self.x = int(self.cube['eta'].shape[2] / 2)
+
+        if self._input_ylim is None:
+            _ny = self.cube['eta'].shape[1]
+            self._y = np.arange(_ny)
+        else:
+            self._y = np.arange(self._input_ylim[0], self._input_ylim[1])
+            _ny = len(self._y)
+        self._x = np.tile(self.x, (_ny))
 
 
 class CircularSection(BaseSection):
