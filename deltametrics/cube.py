@@ -439,8 +439,15 @@ class BaseCube(abc.ABC):
         if title:
             ax.set_title(str(title))
 
-        ax.set_xlim(self.x[0], self.x[-1])
-        ax.set_ylim(self.y[0], self.y[-1])
+        # read from metadata if available
+        if self.meta is not None:
+            ax.set_ylim(self.x[0] / self.meta['dx'],
+                        self.x[-1] / self.meta['dx'])
+            ax.set_xlim(self.y[0] / self.meta['dx'],
+                        self.y[-1] / self.meta['dx'])
+        else:
+            ax.set_xlim(self.x[0], self.x[-1])
+            ax.set_ylim(self.y[0], self.y[-1])
 
     def show_section(self, *args, **kwargs):
         """Show a section.
