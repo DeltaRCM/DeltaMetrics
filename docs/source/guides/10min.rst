@@ -32,20 +32,20 @@ For now, let's use a sample dataset that is distributed with DeltaMetrics.
 
 .. doctest::
 
-    >>> rcm8cube = dm.sample_data.rcm8()
-    >>> type(rcm8cube)
+    >>> golfcube = dm.sample_data.golf()
+    >>> type(golfcube)
     <class 'deltametrics.cube.DataCube'>
 
 This creates an instance of a :obj:`~deltametrics.cube.DataCube` object, which is the simplest and most commonly used type of cube.
 "Cubes" in DeltaMetrics language are the central office that connects all the different modules and workflows together.
-Creating the ``rcm8cube`` connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets.
+Creating the ``golfcube`` connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets.
 
-Inspect which variables are available in the ``rcm8cube``.
+Inspect which variables are available in the ``golfcube``.
 
 .. doctest::
 
-    >>> rcm8cube.variables
-    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_sand_frac']
+    >>> golfcube.variables
+    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'sandfrac']
 
 
 Accessing data from a DataCube
@@ -56,17 +56,17 @@ Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, wh
 
 .. doctest::
 
-    >>> type(rcm8cube['velocity'])
+    >>> type(golfcube['velocity'])
     <class 'deltametrics.cube.CubeVariable'>
 
-    >>> type(rcm8cube['velocity'].data)
+    >>> type(golfcube['velocity'].data)
     <class 'xarray.core.dataarray.DataArray'>
 
 The underlying xarray object can be directly accessed by using a ``.data`` attribute, however, this is not necessary, and you can slice the `CubeVariable` directly with any valid `numpy` slicing style. For example, we could determine how much the average bed elevation changed at a specific location in the model domain (43, 123), by slicing the ``eta`` variable, and differencing timesteps.
 
 .. doctest::
 
-    >>> np.mean( rcm8cube['eta'][1:,43,123] - rcm8cube['eta'][:-1,43,123] )
+    >>> np.mean( golfcube['eta'][1:,43,123] - golfcube['eta'][:-1,43,123] )
     <xarray.DataArray 'eta' ()>
     array(0.08364895, dtype=float32)
     Coordinates:
@@ -97,9 +97,9 @@ of the Cube at the fortieth (40th) timestep:
     >>> import matplotlib.pyplot as plt
 
     >>> fig, ax = plt.subplots(1, 3)
-    >>> rcm8cube.show_plan('eta', t=40, ax=ax[0])
-    >>> rcm8cube.show_plan('velocity', t=40, ax=ax[1], ticks=True)
-    >>> rcm8cube.show_plan('strata_sand_frac', t=40, ax=ax[2])
+    >>> golfcube.show_plan('eta', t=40, ax=ax[0])
+    >>> golfcube.show_plan('velocity', t=40, ax=ax[1], ticks=True)
+    >>> golfcube.show_plan('strata_sand_frac', t=40, ax=ax[2])
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/10min_three_plans.py
@@ -116,7 +116,7 @@ We must directly tell the Cube instance to compute stratigraphy by specifying wh
 
 .. doctest::
 
-    >>> rcm8cube.stratigraphy_from('eta')
+    >>> golfcube.stratigraphy_from('eta')
 
 For this example, the stratigraphic computation is relatively fast (< one second), but for large data domains covering a large amount of time, this computation may not be as fast.
 The stratigraphy computed via `stratigraphy_from` is often referred to as "quick" stratigraphy, and may be helpful for visualizing cross sections of the deposit, but we recommend creating a :obj:`~deltametrics.cube.StratigraphyCube` from a `DataCube` for thorough analysis of stratigraphy.
@@ -127,23 +127,23 @@ For a data cube, sections are most easily instantiated by the :obj:`~deltametric
 
 .. doctest::
 
-    >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=10))
+    >>> golfcube.register_section('demo', dm.section.StrikeSection(y=10))
 
 which can then be accessed via the :obj:`~deltametrics.cube.Cube.sections` attribute of the Cube.
 
 .. doctest::
 
-    >>> rcm8cube.sections['demo']
+    >>> golfcube.sections['demo']
     <deltametrics.section.StrikeSection object at 0x...>
 
-Using the "quick" stratigraphy, we can visualize all of the available data variables (and `'time'`) as stratigraphy:
+Using the "quick" stratigraphy, we can visualize a few of the available data variables as stratigraphy:
 
 .. doctest::
 
-    >>> fig, ax = plt.subplots(7, 1, sharex=True, figsize=(8,5))
+    >>> fig, ax = plt.subplots(5, 1, sharex=True, figsize=(8,5))
     >>> ax = ax.flatten()
-    >>> for i, var in enumerate(['time'] + rcm8cube.dataio.known_variables):
-    ...    rcm8cube.show_section('demo', var, data='stratigraphy', ax=ax[i])
+    >>> for i, var in enumerate(['time', 'eta', 'velocity', 'discharge', 'sandfrac']):
+    ...    golfcube.show_section('demo', var, data='stratigraphy', ax=ax[i], label=True)
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/10min_all_sections_strat.py
