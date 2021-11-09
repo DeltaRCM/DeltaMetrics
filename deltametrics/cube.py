@@ -189,6 +189,7 @@ class BaseCube(abc.ABC):
         """
         default_coordinates = {'x': 'x', 'y': 'y'}
         default_coordinates.update(coordinates)
+        self.coordinates = copy.deepcopy(default_coordinates)
         self._coords = self._dataio.known_coords
         self._variables = self._dataio.known_variables
         # if x is 2-D then we assume x and y are mesh grid values
@@ -436,9 +437,9 @@ class BaseCube(abc.ABC):
 
         _dx = self.x[1] - self.x[0]
         _extent = [self._x[0] - (_dx/2),
-                   self._x[-1] - (_dx/2),
-                   self._y[0] - (_dx/2),
-                   self._y[-1] - (_dx/2)]
+                   self._x[-1] + (_dx/2),
+                   self._y[-1] + (_dx/2),
+                   self._y[0] - (_dx/2)]
 
         if not ax:
             ax = plt.gca()
@@ -657,7 +658,7 @@ class StratigraphyCube(BaseCube):
     """
     @staticmethod
     def from_DataCube(DataCubeInstance, stratigraphy_from='eta',
-                      dz=None, z=None):
+                      dz=None, z=None, nz=None):
         """Create from a DataCube.
 
         Examples
@@ -690,11 +691,12 @@ class StratigraphyCube(BaseCube):
         """
         return StratigraphyCube(DataCubeInstance,
                                 stratigraphy_from=stratigraphy_from,
-                                dz=dz, z=z)
+                                coordinates=DataCubeInstance.coordinates,
+                                dz=dz, z=z, nz=nz)
 
     def __init__(self, data, read=[], varset=None,
                  stratigraphy_from=None, coordinates={},
-                 dz=None, z=None):
+                 dz=None, z=None, nz=None):
         """Initialize the StratigraphicCube.
 
         Any instantiation pathway must configure :obj:`z`, :obj:`H`, :obj:`L`,
@@ -729,7 +731,7 @@ class StratigraphyCube(BaseCube):
 
             # set up coordinates of the array
             self._z = strat._determine_strat_coordinates(
-                _elev.data, dz=dz, z=z)
+                _elev.data, dz=dz, z=z, nz=nz)
             self._H = len(self.z)
             self._L, self._W = _elev.shape[1:]
             self._Z = np.tile(self.z, (self.W, self.L, 1)).T

@@ -1,4 +1,5 @@
 import abc
+import warnings
 
 import numpy as np
 import xarray as xr
@@ -525,8 +526,12 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
 
     .. note::
 
-        At least one of the optional parameters must be supplied. Precedence
-        when multiple arguments are supplied is `z`, `dz`, `nz`.
+        If none of the optional parameters is supplied, then a default value
+        is used of `dz=0.1`.
+
+    .. important::
+        
+        Precedence when multiple arguments are supplied is `z`, `dz`, `nz`.
 
     Parameters
     ----------
@@ -545,10 +550,18 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
         Number of intervals in `z`. Z array is created as
         ``np.linspace(np.min(elev), np.max(elev), num=nz, endpoint=True)``.
     """
+    # if nothing is supplied
     if (dz is None) and (z is None) and (nz is None):
-        raise ValueError('You must specify "z", "dz", or "nz.')
+        warnings.warn(
+            UserWarning('No specification for stratigraphy spacing '
+                        'was supplied. Default is to use `dz=0.1`'))
+        # set the default option when nothing is supplied
+        dz = 0.1
 
+    # set up an error message to use in a few places
     _valerr = ValueError('"dz" or "nz" cannot be zero or negative.')
+    
+    # process to find the option to set up z
     if not (z is None):
         if np.isscalar(z):
             raise ValueError('"z" must be a numpy array.')
