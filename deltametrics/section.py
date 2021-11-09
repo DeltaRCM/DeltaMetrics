@@ -388,8 +388,9 @@ class BaseSection(abc.ABC):
         Parameters
         ----------
 
-        SectionAttribute : :obj:`str`
-            Which attribute to show.
+        SectionAttribute : :obj:`str`, :obj:`SectionVariableInstance`
+            Which attribute to show. Can be a string for a named `Cube`
+            attribute, or any arbitrary data.
 
         style : :obj:`str`, optional
             What style to display the section with. Choices are 'mesh' or
