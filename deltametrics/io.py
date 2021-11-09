@@ -178,8 +178,9 @@ class NetCDFIO(BaseIO):
                 self.dataset = _dataset.set_coords([])
                 warn('Dimensions "time", "y", and "x" not provided in the \
                       given data file.', UserWarning)
-        except Exception:
-            raise TypeError('File format out of scope for DeltaMetrics')
+        except Exception as e:
+            raise TypeError(
+                f'File format out of scope for DeltaMetrics: {e}')
 
         try:
             _meta = xr.open_dataset(self.data_path, group='meta',
