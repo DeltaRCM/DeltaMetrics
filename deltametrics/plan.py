@@ -1240,7 +1240,7 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
     """
     if not (section is None):
         if issubclass(type(section), dm_section.BaseSection):
-            section_trace = section.trace
+            section_trace = section._xytrace
             section_coord = section._s
         elif isinstance(section, np.ndarray):
             section_trace = section
@@ -1276,7 +1276,14 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
 
 
 def _get_channel_starts_and_ends(channelmask, section_trace):
-    """Get channel start and end coordinates (internal function)."""
+    """Get channel start and end coordinates (internal function).
+
+    .. important::
+
+        section_trace must be the index coordinates of the section trace, and
+        not the coordinate values that are returned from `section.trace`.
+
+    """
     _channelseries = channelmask[section_trace[:, 1],
                                  section_trace[:, 0]].astype(int)
     _padchannelseries = np.pad(_channelseries, (1,), 'constant',
@@ -1343,7 +1350,7 @@ def compute_channel_depth(channelmask, depth, section=None,
     """
     if not (section is None):
         if issubclass(type(section), dm_section.BaseSection):
-            section_trace = section.trace
+            section_trace = section._xytrace
             section_coord = section._s
         elif isinstance(section, np.ndarray):
             section_trace = section
