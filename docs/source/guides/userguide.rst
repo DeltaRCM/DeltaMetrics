@@ -59,7 +59,7 @@ Inspect which variables are available in the ``golfcube``.
 .. doctest::
 
     >>> golfcube.variables
-    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_sand_frac']
+    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'sedflux', 'sandfrac']
 
 We can access the underlying variables by name. The returned object are xarray-accessors with coordinates ``t-x-y``.
 For example, access variables as:
@@ -69,7 +69,7 @@ For example, access variables as:
     >>> type(golfcube['eta'])
     <class 'deltametrics.cube.CubeVariable'>
     >>> golfcube['eta'].shape
-    (51, 120, 240)
+    (101, 100, 200)
 
 Let’s examine the timeseries of bed elevations by taking slices out of the ``'eta'`` variable, at various indicies (``t``) along the 0th dimension.
 
@@ -180,13 +180,20 @@ are sliced themselves, similarly to the cube.
 
     >>> golfcube.register_section('demo', dm.section.StrikeSection(y=10))
     >>> golfcube.sections['demo']['velocity']
-    DataSectionVariable([[0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.],
+    DataSectionVariable([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   ,
+                          0.2   ],
+                         [0.    , 0.    , 0.    , ..., 0.    , 0.    ,
+                          0.    ],
+                         [0.    , 0.0025, 0.    , ..., 0.    , 0.    ,
+                          0.    ],
                          ...,
-                         [0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.]], dtype=float32)
+                         [0.    , 0.    , 0.    , ..., 0.0025, 0.    ,
+                          0.    ],
+                         [0.    , 0.    , 0.    , ..., 0.    , 0.    ,
+                          0.    ],
+                         [0.    , 0.    , 0.    , ..., 0.0025, 0.    ,
+                          0.    ]], dtype=float32)
+
 
 We can visualize sections:
 
@@ -195,7 +202,7 @@ We can visualize sections:
     >>> fig, ax = plt.subplots(3, 1, sharex=True, figsize=(12,6))
     >>> golfcube.show_section('demo', 'eta', ax=ax[0])
     >>> golfcube.show_section('demo', 'velocity', ax=ax[1])
-    >>> golfcube.show_section('demo', 'strata_sand_frac', ax=ax[2])
+    >>> golfcube.show_section('demo', 'sandfrac', ax=ax[2])
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_three_spacetime_sections.py
@@ -231,7 +238,9 @@ Now, the ``DataCube`` has knowledge of stratigraphy, which we can further use to
 
     >>> golfcube.sections['demo']['velocity'].as_preserved()
     masked_DataSectionVariable(
-      data=[[0.0, 0.0, 0.0, ..., 0.0, 0.0, 0.0],
+      data=[[0.20000000298023224, 0.20000000298023224, 0.20000000298023224,
+             ..., 0.20000000298023224, 0.20000000298023224,
+             0.20000000298023224],
             [--, --, --, ..., --, --, --],
             [--, --, --, ..., --, --, --],
             ...,
@@ -247,6 +256,7 @@ Now, the ``DataCube`` has knowledge of stratigraphy, which we can further use to
             [ True,  True,  True, ...,  True,  True,  True]],
       fill_value=1e+20,
       dtype=float32)
+
 
 .. doctest::
 
@@ -316,7 +326,7 @@ Computing and Manipulating Stratigraphy
 1) Does not consider volume of sediment filled by preserved-time indicies, 2) cannot be sliced by planform, 3) irregularity does not lend well to computation and other uses (hydrological studies).
 
 So, we want to be able to create what I refer to as "boxy" stratigraphy.
-This has been done in the past by "placing" values from, e.g., ``strata_sand_frac`` into stratigraphy.
+This has been done in the past by "placing" values from, e.g., ``sandfrac`` into stratigraphy.
 This requires full computation for any variable you want to examine though.
 Here, we use a method that computes boxy stratigraphy only once, then synthesizes the volume from
 the precomputed sparse indicies.
@@ -339,7 +349,7 @@ Begin by creating a ``StratigraphyCube``:
 
     >>> stratcube = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.05)
     >>> stratcube.variables
-    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'sandfrac']
+    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'sedflux', 'sandfrac']
 
 
 We can then slice this cube in the same way as the ``DataCube``, but what we get back is *stratigraphy* rather than *spacetime*.
@@ -382,9 +392,9 @@ Similar to the demonstration above, each variable (property) of the underlying c
 
 .. doctest::
 
-    >>> fig, ax = plt.subplots(7, 1, sharex=True, sharey=True, figsize=(12, 12))
+    >>> fig, ax = plt.subplots(5, 1, sharex=True, sharey=True, figsize=(12, 12))
     >>> ax = ax.flatten()
-    >>> for i, var in enumerate(['time'] + stratcube.dataio.known_variables):
+    >>> for i, var in enumerate(['time', 'eta', 'velocity', 'discharge', 'sandfrac']):
     ...     stratcube.show_section('demo', var, ax=ax[i], label=True,
     ...                          style='shaded', data='stratigraphy')
     >>> plt.show() #doctest: +SKIP
@@ -401,7 +411,7 @@ values. This might be done by subclassing ``xarray`` rather than
     >>> elev_idx = (np.abs(stratcube.z - -2)).argmin()  # find nearest idx to -2 m
 
     >>> fig, ax = plt.subplots(figsize=(5, 3))
-    >>> stratcube.show_plan('strata_sand_frac', elev_idx, ticks=True)
+    >>> stratcube.show_plan('sandfrac', elev_idx, ticks=True)
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_stratigraphy_planform_slice.py
@@ -415,15 +425,15 @@ speed up computations if an array is being accessed over and over.
 
 .. code::
 
-    fs = stratcube.export_frozen_variable('strata_sand_frac')
+    fs = stratcube.export_frozen_variable('sandfrac')
     fe = stratcube.Z  # exported volume does not have coordinate information!
 
     fig, ax = plt.subplots(figsize=(10, 2))
     pcm = ax.pcolormesh(np.tile(np.arange(fs.shape[2]), (fs.shape[0], 1)),
        fe[:,10,:], fs[:,10,:], shading='auto',
-       cmap=golfcube.varset['strata_sand_frac'].cmap,
-       vmin=golfcube.varset['strata_sand_frac'].vmin,
-       vmax=golfcube.varset['strata_sand_frac'].vmax)
+       cmap=golfcube.varset['sandfrac'].cmap,
+       vmin=golfcube.varset['sandfrac'].vmin,
+       vmax=golfcube.varset['sandfrac'].vmax)
     dm.plot.append_colorbar(pcm, ax)
     plt.show() #doctest: +SKIP
 
@@ -432,7 +442,7 @@ and just directly obtain a frozen volume with:
 
 .. doctest::
 
-   >>> fs, fe = dm.strat.compute_boxy_stratigraphy_volume(golfcube['eta'], golfcube['strata_sand_frac'], dz=0.05)
+   >>> fs, fe = dm.strat.compute_boxy_stratigraphy_volume(golfcube['eta'], golfcube['sandfrac'], dz=0.05)
 
 However, this will require recomputing the stratigraphy preservation to create another cube in the future, and because the ``StratigraphyCube`` stores data on disk, the memory footprint is relatively small, and so we recommend just computing the ``StratigraphyCube`` and using the ``export_frozen_variable)`` method.
 Finally, ``DataCubeVariable`` and ``StratigraphyCubeVariable`` support a ``.as_frozen()`` method themselves.
@@ -441,7 +451,7 @@ We should verify that the frozen cubes actually match the underlying data!
 
 .. doctest::
 
-    >>> np.all( fs[~np.isnan(fs)] == stratcube['strata_sand_frac'][~np.isnan(stratcube['strata_sand_frac'])] ) #doctest: +SKIP
+    >>> np.all( fs[~np.isnan(fs)] == stratcube['sandfrac'][~np.isnan(stratcube['sandfrac'])] ) #doctest: +SKIP
     True
 
 The access speed of a frozen volume is **much** faster than a live cube.

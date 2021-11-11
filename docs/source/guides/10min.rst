@@ -45,7 +45,7 @@ Inspect which variables are available in the ``golfcube``.
 .. doctest::
 
     >>> golfcube.variables
-    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'sandfrac']
+    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'sedflux', 'sandfrac']
 
 
 Accessing data from a DataCube
@@ -68,10 +68,11 @@ The underlying xarray object can be directly accessed by using a ``.data`` attri
 
     >>> np.mean( golfcube['eta'][1:,43,123] - golfcube['eta'][:-1,43,123] )
     <xarray.DataArray 'eta' ()>
-    array(0.08364895, dtype=float32)
+    array(0., dtype=float32)
     Coordinates:
-        x        float32 123.0
-        y        float32 43.0
+        x        float32 2.15e+03
+        y        float32 6.15e+03
+
 
 
 The DataCube is often used by taking horizontal or vertical "cuts" of the cube.
@@ -99,7 +100,7 @@ of the Cube at the fortieth (40th) timestep:
     >>> fig, ax = plt.subplots(1, 3)
     >>> golfcube.show_plan('eta', t=40, ax=ax[0])
     >>> golfcube.show_plan('velocity', t=40, ax=ax[1], ticks=True)
-    >>> golfcube.show_plan('strata_sand_frac', t=40, ax=ax[2])
+    >>> golfcube.show_plan('sandfrac', t=40, ax=ax[2])
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/10min_three_plans.py
@@ -116,7 +117,7 @@ We must directly tell the Cube instance to compute stratigraphy by specifying wh
 
 .. doctest::
 
-    >>> golfcube.stratigraphy_from('eta')
+    >>> golfcube.stratigraphy_from('eta', dz=0.1)
 
 For this example, the stratigraphic computation is relatively fast (< one second), but for large data domains covering a large amount of time, this computation may not be as fast.
 The stratigraphy computed via `stratigraphy_from` is often referred to as "quick" stratigraphy, and may be helpful for visualizing cross sections of the deposit, but we recommend creating a :obj:`~deltametrics.cube.StratigraphyCube` from a `DataCube` for thorough analysis of stratigraphy.
