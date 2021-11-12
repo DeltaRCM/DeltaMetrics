@@ -598,15 +598,17 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
         where elevation is expected to along the zeroth axis.
 
     z : :obj:`ndarray`, optional
-        Array of Z values to use, returned unchanged if supplied.
+        Array of Z values to use for bounding intervals (i.e., points in `z`),
+        returned unchanged if supplied.
 
     dz : :obj:`float`, optional
         Interval in created Z array. Z array is created as
         ``np.arange(np.min(elev), np.max(elev)+dz, step=dz)``.
 
     nz : :obj:`int`, optional
-        Number of intervals in `z`. Z array is created as
-        ``np.linspace(np.min(elev), np.max(elev), num=nz, endpoint=True)``.
+        Number of *intervals* in `z`, that is, the number of points in `z` is
+        `nz+1`. Z array is created as ``np.linspace(np.min(elev), np.max
+        (elev), num=nz, endpoint=True)``.
     """
     # if nothing is supplied
     if (dz is None) and (z is None) and (nz is None):
@@ -635,6 +637,6 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
             raise _valerr
         max_dos = np.max(elev.data)
         min_dos = np.min(elev.data)
-        return np.linspace(min_dos, max_dos, num=nz, endpoint=True)
+        return np.linspace(min_dos, max_dos, num=nz+1, endpoint=True)
     else:
         raise RuntimeError('No coordinates determined. Check inputs.')
