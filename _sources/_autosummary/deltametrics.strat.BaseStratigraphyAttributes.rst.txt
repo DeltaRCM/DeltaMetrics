@@ -1,4 +1,4 @@
-deltametrics.strat.BaseStratigraphyAttributes
+﻿deltametrics.strat.BaseStratigraphyAttributes
 =============================================
 
 .. currentmodule:: deltametrics.strat

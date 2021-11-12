@@ -1,4 +1,4 @@
-deltametrics.section.BaseSectionVariable
+﻿deltametrics.section.BaseSectionVariable
 ========================================
 
 .. currentmodule:: deltametrics.section
@@ -13,6 +13,7 @@ deltametrics.section.BaseSectionVariable
 
    .. autosummary::
    
+      ~BaseSectionVariable.__init__
       ~BaseSectionVariable.all
       ~BaseSectionVariable.any
       ~BaseSectionVariable.argmax

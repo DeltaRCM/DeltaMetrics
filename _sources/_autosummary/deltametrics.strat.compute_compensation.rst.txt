@@ -1,4 +1,4 @@
-deltametrics.strat.compute\_compensation
+﻿deltametrics.strat.compute\_compensation
 ========================================
 
 .. currentmodule:: deltametrics.strat

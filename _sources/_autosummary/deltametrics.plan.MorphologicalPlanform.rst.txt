@@ -1,4 +1,4 @@
-deltametrics.plan.MorphologicalPlanform
+﻿deltametrics.plan.MorphologicalPlanform
 =======================================
 
 .. currentmodule:: deltametrics.plan

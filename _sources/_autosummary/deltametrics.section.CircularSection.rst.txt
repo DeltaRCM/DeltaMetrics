@@ -1,4 +1,4 @@
-deltametrics.section.CircularSection
+﻿deltametrics.section.CircularSection
 ====================================
 
 .. currentmodule:: deltametrics.section

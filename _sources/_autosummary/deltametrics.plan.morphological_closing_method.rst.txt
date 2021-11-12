@@ -1,4 +1,4 @@
-deltametrics.plan.morphological\_closing\_method
+﻿deltametrics.plan.morphological\_closing\_method
 ================================================
 
 .. currentmodule:: deltametrics.plan

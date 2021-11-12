@@ -1,4 +1,4 @@
-deltametrics.section.DipSection
+﻿deltametrics.section.DipSection
 ===============================
 
 .. currentmodule:: deltametrics.section

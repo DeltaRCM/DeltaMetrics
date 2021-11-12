@@ -1,4 +1,4 @@
-deltametrics.cube.StratigraphyCube
+﻿deltametrics.cube.StratigraphyCube
 ==================================
 
 .. currentmodule:: deltametrics.cube

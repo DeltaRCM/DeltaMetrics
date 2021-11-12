@@ -1,4 +1,4 @@
-deltametrics.mask.ThresholdValueMask
+﻿deltametrics.mask.ThresholdValueMask
 ====================================
 
 .. currentmodule:: deltametrics.mask

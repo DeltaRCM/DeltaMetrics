@@ -1,4 +1,4 @@
-deltametrics.plan.compute\_shoreline\_length
+﻿deltametrics.plan.compute\_shoreline\_length
 ============================================
 
 .. currentmodule:: deltametrics.plan

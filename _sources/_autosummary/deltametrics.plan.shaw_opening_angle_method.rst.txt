@@ -1,4 +1,4 @@
-deltametrics.plan.shaw\_opening\_angle\_method
+﻿deltametrics.plan.shaw\_opening\_angle\_method
 ==============================================
 
 .. currentmodule:: deltametrics.plan

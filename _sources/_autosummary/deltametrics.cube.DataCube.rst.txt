@@ -1,4 +1,4 @@
-deltametrics.cube.DataCube
+﻿deltametrics.cube.DataCube
 ==========================
 
 .. currentmodule:: deltametrics.cube

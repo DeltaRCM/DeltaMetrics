@@ -1,21 +1,21 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>Introduction to Planform Objects &#8212; DeltaMetrics 0.3.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/sphinxdoc.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../../../_static/jquery.js"></script>
-    <script type="text/javascript" src="../../../_static/underscore.js"></script>
-    <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <script type="text/javascript" src="../../../_static/language_data.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Developer Guide" href="../../devguide.html" />
@@ -35,46 +35,10 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../userguide.html" >User Guide</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../index.html" accesskey="U">Examples</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../index.html" accesskey="U">Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Introduction to Planform Objects</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h3><a href="../../../index.html">Table of Contents</a></h3>
-  <ul>
-<li><a class="reference internal" href="#">Introduction to Planform Objects</a><ul>
-<li><a class="reference internal" href="#the-openingangleplanform">The OpeningAnglePlanform</a></li>
-<li><a class="reference internal" href="#the-morphologicalplanform">The MorphologicalPlanform</a></li>
-<li><a class="reference internal" href="#mask-extraction">Mask Extraction</a></li>
-</ul>
-</li>
-</ul>
-
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../computations/comparing_speeds_of_stratigraphy_access.html"
-                        title="previous chapter">Comparing speed of stratigraphy access</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../../devguide.html"
-                        title="next chapter">Developer Guide</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../../../_sources/guides/examples/planforms/planform_intro.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -97,12 +61,12 @@ If not specified explicitly, they are often implicitly part of binary mask creat
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../../../guides/examples/planforms/planform_intro-1.png">png</a>, <a class="reference external" href="../../../guides/examples/planforms/planform_intro-1.hires.png">hires.png</a>)</p>
-<figure class="align-center">
+<figure class="align-default">
 <img alt="../../../_images/planform_intro-1.png" class="plot-directive" src="../../../_images/planform_intro-1.png" />
 </figure>
 <section id="the-openingangleplanform">
 <h2>The OpeningAnglePlanform<a class="headerlink" href="#the-openingangleplanform" title="Permalink to this headline">¶</a></h2>
-<p>This planform object is based around the Opening Angle Method <a class="footnote-reference brackets" href="#id2" id="id1">1</a>.</p>
+<p>This planform object is based around the Opening Angle Method <a class="footnote-reference brackets" href="#id3" id="id1">1</a>.</p>
 <p>The <cite>OpeningAnglePlanform</cite> can be created directly from elevation data:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="n">OAP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">OpeningAnglePlanform</span><span class="o">.</span><span class="n">from_elevation_data</span><span class="p">(</span>
@@ -117,18 +81,18 @@ In the case of the <cite>OpeningAnglePlanform</cite>, the <cite>composite_array<
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../../../guides/examples/planforms/planform_intro-4.png">png</a>, <a class="reference external" href="../../../guides/examples/planforms/planform_intro-4.hires.png">hires.png</a>)</p>
-<figure class="align-center">
+<figure class="align-default">
 <img alt="../../../_images/planform_intro-4.png" class="plot-directive" src="../../../_images/planform_intro-4.png" />
 </figure>
 <dl class="footnote brackets">
-<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
 <dd><p>Shaw, J. B., Wolinsky, M. A., Paola, C., &amp; Voller, V. R. (2008). An image‐based method for shoreline mapping on complex coasts. Geophysical Research Letters, 35(12).</p>
 </dd>
 </dl>
 </section>
 <section id="the-morphologicalplanform">
 <h2>The MorphologicalPlanform<a class="headerlink" href="#the-morphologicalplanform" title="Permalink to this headline">¶</a></h2>
-<p>This planform object uses mathematical morphology to identify the delta planform, inspired by Geleynse et al (2012) <a class="footnote-reference brackets" href="#id4" id="id3">2</a>.</p>
+<p>This planform object uses mathematical morphology to identify the delta planform, inspired by Geleynse et al (2012) <a class="footnote-reference brackets" href="#id6" id="id4">2</a>.</p>
 <p>The <cite>MorphologicalPlanform</cite> can also be created directly from elevation data:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">MorphologicalPlanform</span><span class="o">.</span><span class="n">from_elevation_data</span><span class="p">(</span>
   <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_disk</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
@@ -141,11 +105,11 @@ In the case of the <cite>OpeningAnglePlanform</cite>, the <cite>composite_array<
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../../../guides/examples/planforms/planform_intro-7.png">png</a>, <a class="reference external" href="../../../guides/examples/planforms/planform_intro-7.hires.png">hires.png</a>)</p>
-<figure class="align-center">
+<figure class="align-default">
 <img alt="../../../_images/planform_intro-7.png" class="plot-directive" src="../../../_images/planform_intro-7.png" />
 </figure>
 <dl class="footnote brackets">
-<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
+<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
 <dd><p>Geleynse, N., Voller, V. R., Paola, C., &amp; Ganti, V. (2012). Characterization of river delta shorelines. Geophysical research letters, 39(17).</p>
 </dd>
 </dl>
@@ -181,7 +145,7 @@ Of course the two methods are different, so the shorelines identified will also 
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../../../guides/examples/planforms/planform_intro-9.png">png</a>, <a class="reference external" href="../../../guides/examples/planforms/planform_intro-9.hires.png">hires.png</a>)</p>
-<figure class="align-center">
+<figure class="align-default">
 <img alt="../../../_images/planform_intro-9.png" class="plot-directive" src="../../../_images/planform_intro-9.png" />
 </figure>
 <p>Both methods require the user to set a “contour threshold” value when extracting the shoreline.
@@ -192,7 +156,45 @@ Overall though, this example shows that the two methods produce roughly similar 
 </section>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../../../index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction to Planform Objects</a><ul>
+<li><a class="reference internal" href="#the-openingangleplanform">The OpeningAnglePlanform</a></li>
+<li><a class="reference internal" href="#the-morphologicalplanform">The MorphologicalPlanform</a></li>
+<li><a class="reference internal" href="#mask-extraction">Mask Extraction</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../computations/comparing_speeds_of_stratigraphy_access.html"
+                        title="previous chapter">Comparing speed of stratigraphy access</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../devguide.html"
+                        title="next chapter">Developer Guide</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/guides/examples/planforms/planform_intro.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -211,12 +213,13 @@ Overall though, this example shows that the two methods produce roughly similar 
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../userguide.html" >User Guide</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../index.html" >Examples</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../index.html" >Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Introduction to Planform Objects</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
     </div>
   </body>
 </html>

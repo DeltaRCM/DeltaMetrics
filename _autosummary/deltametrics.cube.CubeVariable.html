@@ -1,21 +1,21 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.cube.CubeVariable &#8212; DeltaMetrics 0.3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Planview operations" href="../reference/plan/index.html" />
@@ -35,36 +35,10 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/cube/index.html" accesskey="U">The Cube</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/cube/index.html" accesskey="U">The Cube</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.cube.CubeVariable</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="deltametrics.cube.BaseCube.html"
-                        title="previous chapter">deltametrics.cube.BaseCube</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="../reference/plan/index.html"
-                        title="next chapter">Planview operations</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_autosummary/deltametrics.cube.CubeVariable.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -73,9 +47,9 @@
             
   <section id="deltametrics-cube-cubevariable">
 <h1>deltametrics.cube.CubeVariable<a class="headerlink" href="#deltametrics-cube-cubevariable" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="deltametrics.cube.CubeVariable">
-<em class="property">class </em><code class="descclassname">deltametrics.cube.</code><code class="descname">CubeVariable</code><span class="sig-paren">(</span><em>xarray_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="deltametrics.cube.CubeVariable">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.cube.</span></span><span class="sig-name descname"><span class="pre">CubeVariable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xarray_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Slice of a Cube.</p>
 <p>Slicing an <code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> returns an object of this type.
 The <code class="docutils literal notranslate"><span class="pre">CubeVariable</span></code> is an accessor of the <cite>xarray.DataArray</cite> class,
@@ -100,14 +74,14 @@ the <cite>xarray</cite> object and it’s native functionality under
 <span class="go">&#39;velocity&#39;</span>
 </pre></div>
 </div>
-<dl class="method">
-<dt id="deltametrics.cube.CubeVariable.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>xarray_obj</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable.__init__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.CubeVariable.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xarray_obj</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the <code class="docutils literal notranslate"><span class="pre">CubeVariable</span></code> object.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -124,9 +98,9 @@ the <cite>xarray</cite> object and it’s native functionality under
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="deltametrics.cube.CubeVariable.__getitem__">
-<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>slc</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.CubeVariable.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get items from the underlying data.</p>
 <p>Takes a numpy slicing style and slices data from the underlying data.
 Note that the underlying data is stored in an <code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray.DataArray</span></code>,
@@ -139,15 +113,15 @@ Dimension validation is not performed before slicing.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.CubeVariable.as_frozen">
-<code class="descname">as_frozen</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable.as_frozen" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.CubeVariable.as_frozen">
+<span class="sig-name descname"><span class="pre">as_frozen</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable.as_frozen" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export variable values as a <cite>numpy.ndarray</cite>.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.CubeVariable.initialize">
-<code class="descname">initialize</code><span class="sig-paren">(</span><em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable.initialize" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.CubeVariable.initialize">
+<span class="sig-name descname"><span class="pre">initialize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.CubeVariable.initialize" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize with <cite>**kwargs</cite>.</p>
 </dd></dl>
 
@@ -156,7 +130,35 @@ Dimension validation is not performed before slicing.</p>
 </section>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.cube.BaseCube.html"
+                        title="previous chapter">deltametrics.cube.BaseCube</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../reference/plan/index.html"
+                        title="next chapter">Planview operations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.cube.CubeVariable.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -175,12 +177,13 @@ Dimension validation is not performed before slicing.</p>
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/cube/index.html" >The Cube</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/cube/index.html" >The Cube</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.cube.CubeVariable</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
     </div>
   </body>
 </html>

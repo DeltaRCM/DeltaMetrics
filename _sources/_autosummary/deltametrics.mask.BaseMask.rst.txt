@@ -1,4 +1,4 @@
-deltametrics.mask.BaseMask
+﻿deltametrics.mask.BaseMask
 ==========================
 
 .. currentmodule:: deltametrics.mask

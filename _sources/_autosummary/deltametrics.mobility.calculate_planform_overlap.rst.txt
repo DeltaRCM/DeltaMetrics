@@ -1,4 +1,4 @@
-deltametrics.mobility.calculate\_planform\_overlap
+﻿deltametrics.mobility.calculate\_planform\_overlap
 ==================================================
 
 .. currentmodule:: deltametrics.mobility

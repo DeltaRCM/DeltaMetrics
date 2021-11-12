@@ -1,4 +1,4 @@
-deltametrics.mask.ShorelineMask
+﻿deltametrics.mask.ShorelineMask
 ===============================
 
 .. currentmodule:: deltametrics.mask

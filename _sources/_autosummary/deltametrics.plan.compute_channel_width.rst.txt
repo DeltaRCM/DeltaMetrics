@@ -1,4 +1,4 @@
-deltametrics.plan.compute\_channel\_width
+﻿deltametrics.plan.compute\_channel\_width
 =========================================
 
 .. currentmodule:: deltametrics.plan

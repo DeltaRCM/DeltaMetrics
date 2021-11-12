@@ -1,4 +1,4 @@
-deltametrics.strat.compute\_boxy\_stratigraphy\_coordinates
+﻿deltametrics.strat.compute\_boxy\_stratigraphy\_coordinates
 ===========================================================
 
 .. currentmodule:: deltametrics.strat

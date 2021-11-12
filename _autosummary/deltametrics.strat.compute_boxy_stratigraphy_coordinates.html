@@ -1,21 +1,21 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.strat.compute_boxy_stratigraphy_coordinates &#8212; DeltaMetrics 0.3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.strat.compute_trajectory" href="deltametrics.strat.compute_trajectory.html" />
@@ -35,36 +35,10 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/strat/index.html" accesskey="U">Stratigraphy functions</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/strat/index.html" accesskey="U">Stratigraphy functions</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.strat.compute_boxy_stratigraphy_coordinates</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="deltametrics.strat.compute_boxy_stratigraphy_volume.html"
-                        title="previous chapter">deltametrics.strat.compute_boxy_stratigraphy_volume</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="deltametrics.strat.compute_trajectory.html"
-                        title="next chapter">deltametrics.strat.compute_trajectory</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_autosummary/deltametrics.strat.compute_boxy_stratigraphy_coordinates.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -73,9 +47,9 @@
             
   <section id="deltametrics-strat-compute-boxy-stratigraphy-coordinates">
 <h1>deltametrics.strat.compute_boxy_stratigraphy_coordinates<a class="headerlink" href="#deltametrics-strat-compute-boxy-stratigraphy-coordinates" title="Permalink to this headline">¶</a></h1>
-<dl class="function">
-<dt id="deltametrics.strat.compute_boxy_stratigraphy_coordinates">
-<code class="descclassname">deltametrics.strat.</code><code class="descname">compute_boxy_stratigraphy_coordinates</code><span class="sig-paren">(</span><em>elev</em>, <em>dz=None</em>, <em>z=None</em>, <em>return_cube=False</em>, <em>return_strata=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.compute_boxy_stratigraphy_coordinates" title="Permalink to this definition">¶</a></dt>
+<dl class="py function">
+<dt class="sig sig-object py" id="deltametrics.strat.compute_boxy_stratigraphy_coordinates">
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">compute_boxy_stratigraphy_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_strata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.compute_boxy_stratigraphy_coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process t-x-y data volume to boxy stratigraphy coordinates.</p>
 <p>This function computes the corresponding preservation of <cite>t-x-y</cite>
 coordinates in a dense 3D volume of stratigraphy, as <cite>z-x-y</cite> coordinates.
@@ -102,7 +76,35 @@ dataset.</p>
 </section>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.strat.compute_boxy_stratigraphy_volume.html"
+                        title="previous chapter">deltametrics.strat.compute_boxy_stratigraphy_volume</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.strat.compute_trajectory.html"
+                        title="next chapter">deltametrics.strat.compute_trajectory</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.strat.compute_boxy_stratigraphy_coordinates.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -121,12 +123,13 @@ dataset.</p>
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/strat/index.html" >Stratigraphy functions</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/strat/index.html" >Stratigraphy functions</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.strat.compute_boxy_stratigraphy_coordinates</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
     </div>
   </body>
 </html>

@@ -1,4 +1,4 @@
-deltametrics.plot.VariableInfo
+﻿deltametrics.plot.VariableInfo
 ==============================
 
 .. currentmodule:: deltametrics.plot

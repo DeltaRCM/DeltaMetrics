@@ -1,4 +1,4 @@
-deltametrics.mask.LandMask
+﻿deltametrics.mask.LandMask
 ==========================
 
 .. currentmodule:: deltametrics.mask

@@ -1,4 +1,4 @@
-deltametrics.plot.show\_one\_dimensional\_trajectory\_to\_strata
+﻿deltametrics.plot.show\_one\_dimensional\_trajectory\_to\_strata
 ================================================================
 
 .. currentmodule:: deltametrics.plot

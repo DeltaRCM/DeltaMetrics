@@ -1,21 +1,21 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.plot.VariableSet &#8212; DeltaMetrics 0.3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.plot.show_one_dimensional_trajectory_to_strata" href="deltametrics.plot.show_one_dimensional_trajectory_to_strata.html" />
@@ -35,36 +35,10 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/plot/index.html" accesskey="U">Plotting utilities and functions</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/plot/index.html" accesskey="U">Plotting utilities and functions</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.plot.VariableSet</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="deltametrics.plot.VariableInfo.html"
-                        title="previous chapter">deltametrics.plot.VariableInfo</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="deltametrics.plot.show_one_dimensional_trajectory_to_strata.html"
-                        title="next chapter">deltametrics.plot.show_one_dimensional_trajectory_to_strata</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_autosummary/deltametrics.plot.VariableSet.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -73,9 +47,9 @@
             
   <section id="deltametrics-plot-variableset">
 <h1>deltametrics.plot.VariableSet<a class="headerlink" href="#deltametrics-plot-variableset" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="deltametrics.plot.VariableSet">
-<em class="property">class </em><code class="descclassname">deltametrics.plot.</code><code class="descname">VariableSet</code><span class="sig-paren">(</span><em>override_dict=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">VariableSet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">override_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet" title="Permalink to this definition">¶</a></dt>
 <dd><p>A default set of properties for variables.</p>
 <p>This makes it easy to have consistent plots.</p>
 <p>This class defines a dictionary of VariableInfo objects, which store
@@ -90,9 +64,9 @@ colormaps, etc.</p>
 <span class="go">&lt;deltametrics.plot.VariableSet object at 0x...&gt;</span>
 </pre></div>
 </div>
-<dl class="method">
-<dt id="deltametrics.plot.VariableSet.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>override_dict=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet.__init__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">override_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the VariableSet.</p>
 <p>Initialize the set with default colormaps.</p>
 <div class="admonition note">
@@ -124,7 +98,7 @@ or an Mx3 numpy array that can be coerced into a linear colormap.</p>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -136,7 +110,7 @@ or an Mx3 numpy array that can be coerced into a linear colormap.</p>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -186,9 +160,9 @@ or an Mx3 numpy array that can be coerced into a linear colormap.</p>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="deltametrics.plot.VariableSet.__getitem__">
-<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>var</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the attribute.</p>
 <p>Variable styling (i.e., the <cite>VariableInfo</cite> instances can be accessed by
 slicing the VariableSet with a string matching the VariableInfo <cite>name</cite>
@@ -196,70 +170,70 @@ field. This enables accessing variables in evaluation, rather than
 explicit typing of variable names.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.plot.VariableSet.__setattr__">
-<code class="descname">__setattr__</code><span class="sig-paren">(</span><em>key</em>, <em>var</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet.__setattr__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.__setattr__">
+<span class="sig-name descname"><span class="pre">__setattr__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.VariableSet.__setattr__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set, with check for types.</p>
 <p>This prevents setting non-VariableInfo attributes.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.plot.VariableSet.depth">
-<code class="descname">depth</code><a class="headerlink" href="#deltametrics.plot.VariableSet.depth" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.depth">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">depth</span></span><a class="headerlink" href="#deltametrics.plot.VariableSet.depth" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flow depth style.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.plot.VariableSet.discharge">
-<code class="descname">discharge</code><a class="headerlink" href="#deltametrics.plot.VariableSet.discharge" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.discharge">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">discharge</span></span><a class="headerlink" href="#deltametrics.plot.VariableSet.discharge" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flow discharge style.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.plot.VariableSet.eta">
-<code class="descname">eta</code><a class="headerlink" href="#deltametrics.plot.VariableSet.eta" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.eta">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">eta</span></span><a class="headerlink" href="#deltametrics.plot.VariableSet.eta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bed elevation style.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.plot.VariableSet.net_to_gross">
-<code class="descname">net_to_gross</code><a class="headerlink" href="#deltametrics.plot.VariableSet.net_to_gross" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.net_to_gross">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">net_to_gross</span></span><a class="headerlink" href="#deltametrics.plot.VariableSet.net_to_gross" title="Permalink to this definition">¶</a></dt>
 <dd><p>Net-to-gross style.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.plot.VariableSet.sandfrac">
-<code class="descname">sandfrac</code><a class="headerlink" href="#deltametrics.plot.VariableSet.sandfrac" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.sandfrac">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sandfrac</span></span><a class="headerlink" href="#deltametrics.plot.VariableSet.sandfrac" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sand fraction style.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.plot.VariableSet.sedflux">
-<code class="descname">sedflux</code><a class="headerlink" href="#deltametrics.plot.VariableSet.sedflux" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.sedflux">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sedflux</span></span><a class="headerlink" href="#deltametrics.plot.VariableSet.sedflux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flow sedflux style.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.plot.VariableSet.stage">
-<code class="descname">stage</code><a class="headerlink" href="#deltametrics.plot.VariableSet.stage" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.stage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">stage</span></span><a class="headerlink" href="#deltametrics.plot.VariableSet.stage" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flow stage style.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.plot.VariableSet.strata_sand_frac">
-<code class="descname">strata_sand_frac</code><a class="headerlink" href="#deltametrics.plot.VariableSet.strata_sand_frac" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.strata_sand_frac">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">strata_sand_frac</span></span><a class="headerlink" href="#deltametrics.plot.VariableSet.strata_sand_frac" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sand fraction style.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.plot.VariableSet.time">
-<code class="descname">time</code><a class="headerlink" href="#deltametrics.plot.VariableSet.time" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.time">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">time</span></span><a class="headerlink" href="#deltametrics.plot.VariableSet.time" title="Permalink to this definition">¶</a></dt>
 <dd><p>Temporal history style.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.plot.VariableSet.velocity">
-<code class="descname">velocity</code><a class="headerlink" href="#deltametrics.plot.VariableSet.velocity" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plot.VariableSet.velocity">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">velocity</span></span><a class="headerlink" href="#deltametrics.plot.VariableSet.velocity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Flow velocity style.</p>
 </dd></dl>
 
@@ -268,7 +242,35 @@ explicit typing of variable names.</p>
 </section>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.plot.VariableInfo.html"
+                        title="previous chapter">deltametrics.plot.VariableInfo</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.plot.show_one_dimensional_trajectory_to_strata.html"
+                        title="next chapter">deltametrics.plot.show_one_dimensional_trajectory_to_strata</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.plot.VariableSet.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -287,12 +289,13 @@ explicit typing of variable names.</p>
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/plot/index.html" >Plotting utilities and functions</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/plot/index.html" >Plotting utilities and functions</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.plot.VariableSet</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
     </div>
   </body>
 </html>

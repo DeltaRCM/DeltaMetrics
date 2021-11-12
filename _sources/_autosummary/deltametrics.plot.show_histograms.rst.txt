@@ -1,4 +1,4 @@
-deltametrics.plot.show\_histograms
+﻿deltametrics.plot.show\_histograms
 ==================================
 
 .. currentmodule:: deltametrics.plot

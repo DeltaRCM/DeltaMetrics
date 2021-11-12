@@ -1,4 +1,4 @@
-deltametrics.mask.FlowMask
+﻿deltametrics.mask.FlowMask
 ==========================
 
 .. currentmodule:: deltametrics.mask

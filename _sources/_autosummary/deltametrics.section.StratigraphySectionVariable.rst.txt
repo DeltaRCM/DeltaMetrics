@@ -1,4 +1,4 @@
-deltametrics.section.StratigraphySectionVariable
+﻿deltametrics.section.StratigraphySectionVariable
 ================================================
 
 .. currentmodule:: deltametrics.section

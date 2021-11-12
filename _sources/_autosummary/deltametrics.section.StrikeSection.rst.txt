@@ -1,4 +1,4 @@
-deltametrics.section.StrikeSection
+﻿deltametrics.section.StrikeSection
 ==================================
 
 .. currentmodule:: deltametrics.section

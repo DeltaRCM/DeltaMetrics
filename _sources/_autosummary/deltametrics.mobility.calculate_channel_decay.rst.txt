@@ -1,4 +1,4 @@
-deltametrics.mobility.calculate\_channel\_decay
+﻿deltametrics.mobility.calculate\_channel\_decay
 ===============================================
 
 .. currentmodule:: deltametrics.mobility

@@ -1,4 +1,4 @@
-deltametrics.io.NetCDFIO
+﻿deltametrics.io.NetCDFIO
 ========================
 
 .. currentmodule:: deltametrics.io

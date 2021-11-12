@@ -1,4 +1,4 @@
-deltametrics.mask.ChannelMask
+﻿deltametrics.mask.ChannelMask
 =============================
 
 .. currentmodule:: deltametrics.mask

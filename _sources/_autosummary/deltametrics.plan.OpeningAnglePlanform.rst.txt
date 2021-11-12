@@ -1,4 +1,4 @@
-deltametrics.plan.OpeningAnglePlanform
+﻿deltametrics.plan.OpeningAnglePlanform
 ======================================
 
 .. currentmodule:: deltametrics.plan

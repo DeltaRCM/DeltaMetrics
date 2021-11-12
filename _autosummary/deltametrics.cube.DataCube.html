@@ -1,21 +1,21 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.cube.DataCube &#8212; DeltaMetrics 0.3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.cube.StratigraphyCube" href="deltametrics.cube.StratigraphyCube.html" />
@@ -35,36 +35,10 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/cube/index.html" accesskey="U">The Cube</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/cube/index.html" accesskey="U">The Cube</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.cube.DataCube</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="../reference/cube/index.html"
-                        title="previous chapter">The Cube</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="deltametrics.cube.StratigraphyCube.html"
-                        title="next chapter">deltametrics.cube.StratigraphyCube</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_autosummary/deltametrics.cube.DataCube.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -73,15 +47,15 @@
             
   <section id="deltametrics-cube-datacube">
 <h1>deltametrics.cube.DataCube<a class="headerlink" href="#deltametrics-cube-datacube" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="deltametrics.cube.DataCube">
-<em class="property">class </em><code class="descclassname">deltametrics.cube.</code><code class="descname">DataCube</code><span class="sig-paren">(</span><em>data</em>, <em>read=[]</em>, <em>varset=None</em>, <em>stratigraphy_from=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.cube.</span></span><span class="sig-name descname"><span class="pre">DataCube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratigraphy_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube" title="Permalink to this definition">¶</a></dt>
 <dd><p>DataCube object.</p>
 <p>DataCube contains t-x-y information. It may have any
 number of attached attributes (grain size, mud frac, elevation).</p>
-<dl class="method">
-<dt id="deltametrics.cube.DataCube.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>data</em>, <em>read=[]</em>, <em>varset=None</em>, <em>stratigraphy_from=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.__init__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratigraphy_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coordinates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the BaseCube.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -108,13 +82,13 @@ method.</p></li>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.DataCube.__init__" title="deltametrics.cube.DataCube.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data[, read, varset, stratigraphy_from])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.DataCube.__init__" title="deltametrics.cube.DataCube.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data[, read, varset, ...])</p></td>
 <td><p>Initialize the BaseCube.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.DataCube.export_frozen_variable" title="deltametrics.cube.DataCube.export_frozen_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_frozen_variable</span></code></a>(var[, return_cube])</p></td>
@@ -126,13 +100,13 @@ method.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.DataCube.register_plan" title="deltametrics.cube.DataCube.register_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_plan</span></code></a>(name, PlanInstance)</p></td>
 <td><p>Register a planform to the cube.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.DataCube.register_section" title="deltametrics.cube.DataCube.register_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code></a>(name, SectionInstance[, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.DataCube.register_section" title="deltametrics.cube.DataCube.register_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code></a>(name, SectionInstance[, ...])</p></td>
 <td><p>Register a section to the <a class="reference internal" href="#deltametrics.cube.DataCube.section_set" title="deltametrics.cube.DataCube.section_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_set()</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.DataCube.show_cube" title="deltametrics.cube.DataCube.show_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_cube</span></code></a>(var[, t, x, y, ax])</p></td>
 <td><p>Show the cube in a 3d axis.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.DataCube.show_plan" title="deltametrics.cube.DataCube.show_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_plan</span></code></a>(var[, t, ax, title, ticks, …])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.DataCube.show_plan" title="deltametrics.cube.DataCube.show_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_plan</span></code></a>(var[, t, ax, title, ticks, ...])</p></td>
 <td><p>Show planform image.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.DataCube.show_section" title="deltametrics.cube.DataCube.show_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_section</span></code></a>(*args, **kwargs)</p></td>
@@ -144,7 +118,7 @@ method.</p></li>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -218,51 +192,51 @@ method.</p></li>
 </tr>
 </tbody>
 </table>
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.H">
-<code class="descname">H</code><a class="headerlink" href="#deltametrics.cube.DataCube.H" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.H">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">H</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.H" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of elements, vertical (height) coordinate.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.L">
-<code class="descname">L</code><a class="headerlink" href="#deltametrics.cube.DataCube.L" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.L">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">L</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.L" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of elements, length coordinate.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.T">
-<code class="descname">T</code><a class="headerlink" href="#deltametrics.cube.DataCube.T" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.T">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.T" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vertical mesh.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.W">
-<code class="descname">W</code><a class="headerlink" href="#deltametrics.cube.DataCube.W" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.W">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">W</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.W" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of elements, width coordinate.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.X">
-<code class="descname">X</code><a class="headerlink" href="#deltametrics.cube.DataCube.X" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.X">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">X</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.X" title="Permalink to this definition">¶</a></dt>
 <dd><p>x-direction mesh.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.Y">
-<code class="descname">Y</code><a class="headerlink" href="#deltametrics.cube.DataCube.Y" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.Y">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Y</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.Y" title="Permalink to this definition">¶</a></dt>
 <dd><p>y-direction mesh.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.Z">
-<code class="descname">Z</code><a class="headerlink" href="#deltametrics.cube.DataCube.Z" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.Z">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Z</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.Z" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vertical mesh.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.DataCube.__getitem__">
-<code class="descname">__getitem__</code><span class="sig-paren">(</span><em>var</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the variable.</p>
 <p>Overload slicing operations for io to return a
 <a class="reference internal" href="deltametrics.cube.CubeVariable.html#deltametrics.cube.CubeVariable" title="deltametrics.cube.CubeVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CubeVariable</span></code></a> instance when slicing.</p>
@@ -279,25 +253,9 @@ method.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.DataCube._connect_to_file">
-<code class="descname">_connect_to_file</code><span class="sig-paren">(</span><em>data_path</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube._connect_to_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connect to file.</p>
-<p>This method is used internally to send the <code class="docutils literal notranslate"><span class="pre">data_path</span></code> to the
-correct IO handler.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="deltametrics.cube.DataCube._read_meta_from_file">
-<code class="descname">_read_meta_from_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube._read_meta_from_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Read metadata information from variables in file.</p>
-<p>This method is used internally to gather some useful info for
-navigating the variable trees in the stored files.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.coords">
-<code class="descname">coords</code><a class="headerlink" href="#deltametrics.cube.DataCube.coords" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.coords">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coords</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.coords" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of coordinate names as strings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -306,9 +264,9 @@ navigating the variable trees in the stored files.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.data_path">
-<code class="descname">data_path</code><a class="headerlink" href="#deltametrics.cube.DataCube.data_path" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.data_path">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_path</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.data_path" title="Permalink to this definition">¶</a></dt>
 <dd><p>Path connected to for file IO.</p>
 <p>Returns a string if connected to file, or None if cube initialized
 from <code class="docutils literal notranslate"><span class="pre">dict</span></code>.</p>
@@ -319,9 +277,9 @@ from <code class="docutils literal notranslate"><span class="pre">dict</span></c
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.dataio">
-<code class="descname">dataio</code><a class="headerlink" href="#deltametrics.cube.DataCube.dataio" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.dataio">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataio</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.dataio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Data I/O handler.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -330,9 +288,9 @@ from <code class="docutils literal notranslate"><span class="pre">dict</span></c
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.DataCube.export_frozen_variable">
-<code class="descname">export_frozen_variable</code><span class="sig-paren">(</span><em>var</em>, <em>return_cube=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.export_frozen_variable" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.export_frozen_variable">
+<span class="sig-name descname"><span class="pre">export_frozen_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.export_frozen_variable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Export a cube with frozen values.</p>
 <p>Creates a <cite>H x L x W</cite> <cite>ndarray</cite> with values from variable <cite>var</cite> placed
 into the array. This method is particularly useful for inputs to
@@ -342,9 +300,9 @@ loaded in memory, because the <cite>Cube</cite> utilities are configured to read
 data off-disk as needed.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.plan_set">
-<code class="descname">plan_set</code><a class="headerlink" href="#deltametrics.cube.DataCube.plan_set" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.plan_set">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plan_set</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.plan_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of plan instances.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -353,9 +311,9 @@ data off-disk as needed.</p>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.plans">
-<code class="descname">plans</code><a class="headerlink" href="#deltametrics.cube.DataCube.plans" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.plans">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plans</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.plans" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of plan instances.</p>
 <p>Alias to <a class="reference internal" href="#deltametrics.cube.DataCube.plan_set" title="deltametrics.cube.DataCube.plan_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plan_set()</span></code></a>.</p>
 <dl class="field-list simple">
@@ -365,9 +323,9 @@ data off-disk as needed.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.DataCube.read">
-<code class="descname">read</code><span class="sig-paren">(</span><em>variables</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.read" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.read">
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read variable into memory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -376,15 +334,15 @@ data off-disk as needed.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.DataCube.register_plan">
-<code class="descname">register_plan</code><span class="sig-paren">(</span><em>name</em>, <em>PlanInstance</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.register_plan" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.register_plan">
+<span class="sig-name descname"><span class="pre">register_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PlanInstance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.register_plan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a planform to the cube.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.DataCube.register_section">
-<code class="descname">register_section</code><span class="sig-paren">(</span><em>name</em>, <em>SectionInstance</em>, <em>return_section=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.register_section" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.register_section">
+<span class="sig-name descname"><span class="pre">register_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SectionInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.register_section" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a section to the <a class="reference internal" href="#deltametrics.cube.DataCube.section_set" title="deltametrics.cube.DataCube.section_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_set()</span></code></a>.</p>
 <p>Connect a section to the cube.</p>
 <dl class="field-list simple">
@@ -405,9 +363,9 @@ user having to specify <code class="docutils literal notranslate"><span class="p
 <code class="docutils literal notranslate"><span class="pre">rcm8cube.register_section('trial',</span> <span class="pre">trace='strike',</span> <span class="pre">y=5)</span></code>.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.section_set">
-<code class="descname">section_set</code><a class="headerlink" href="#deltametrics.cube.DataCube.section_set" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.section_set">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">section_set</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.section_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of section instances.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -416,9 +374,9 @@ user having to specify <code class="docutils literal notranslate"><span class="p
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.sections">
-<code class="descname">sections</code><a class="headerlink" href="#deltametrics.cube.DataCube.sections" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.sections">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sections</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.sections" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of section instances.</p>
 <p>Alias to <a class="reference internal" href="#deltametrics.cube.DataCube.section_set" title="deltametrics.cube.DataCube.section_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_set()</span></code></a>.</p>
 <dl class="field-list simple">
@@ -428,15 +386,15 @@ user having to specify <code class="docutils literal notranslate"><span class="p
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.shape">
-<code class="descname">shape</code><a class="headerlink" href="#deltametrics.cube.DataCube.shape" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.shape">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of elements in data (HxLxW).</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.DataCube.show_cube">
-<code class="descname">show_cube</code><span class="sig-paren">(</span><em>var</em>, <em>t=-1</em>, <em>x=-1</em>, <em>y=-1</em>, <em>ax=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.show_cube" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.show_cube">
+<span class="sig-name descname"><span class="pre">show_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.show_cube" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the cube in a 3d axis.</p>
 <p>3d visualization via <cite>pyvista</cite>.</p>
 <div class="admonition warning">
@@ -445,9 +403,9 @@ user having to specify <code class="docutils literal notranslate"><span class="p
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.DataCube.show_plan">
-<code class="descname">show_plan</code><span class="sig-paren">(</span><em>var</em>, <em>t=-1</em>, <em>ax=None</em>, <em>title=None</em>, <em>ticks=False</em>, <em>colorbar_label=False</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.show_plan" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.show_plan">
+<span class="sig-name descname"><span class="pre">show_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.show_plan" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show planform image.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -455,9 +413,9 @@ user having to specify <code class="docutils literal notranslate"><span class="p
 </div>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.DataCube.show_section">
-<code class="descname">show_section</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.show_section" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.show_section">
+<span class="sig-name descname"><span class="pre">show_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.show_section" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show a section.</p>
 <p>Can be called by name if section is already registered, or pass a
 fresh section instance and it will be connected.</p>
@@ -465,9 +423,9 @@ fresh section instance and it will be connected.</p>
 method.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.cube.DataCube.stratigraphy_from">
-<code class="descname">stratigraphy_from</code><span class="sig-paren">(</span><em>variable='eta'</em>, <em>style='mesh'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.stratigraphy_from" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.stratigraphy_from">
+<span class="sig-name descname"><span class="pre">stratigraphy_from</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'eta'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mesh'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.DataCube.stratigraphy_from" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute stratigraphy attributes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -484,15 +442,15 @@ initializers.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.t">
-<code class="descname">t</code><a class="headerlink" href="#deltametrics.cube.DataCube.t" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.t">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">t</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.t" title="Permalink to this definition">¶</a></dt>
 <dd><p>time coordinate.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.variables">
-<code class="descname">variables</code><a class="headerlink" href="#deltametrics.cube.DataCube.variables" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.variables">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variables</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of variable names as strings.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
@@ -501,9 +459,9 @@ initializers.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.varset">
-<code class="descname">varset</code><a class="headerlink" href="#deltametrics.cube.DataCube.varset" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.varset">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">varset</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.varset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Variable styling for plotting.</p>
 <p>Can be set with <code class="code docutils literal notranslate"><span class="pre">cube.varset</span> <span class="pre">=</span> <span class="pre">VariableSetInstance</span></code> where
 <code class="docutils literal notranslate"><span class="pre">VariableSetInstance</span></code> is a valid instance of
@@ -515,21 +473,21 @@ initializers.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.x">
-<code class="descname">x</code><a class="headerlink" href="#deltametrics.cube.DataCube.x" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.x">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">x</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.x" title="Permalink to this definition">¶</a></dt>
 <dd><p>x-direction coordinate.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.y">
-<code class="descname">y</code><a class="headerlink" href="#deltametrics.cube.DataCube.y" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.y">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">y</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.y" title="Permalink to this definition">¶</a></dt>
 <dd><p>y-direction coordinate.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.cube.DataCube.z">
-<code class="descname">z</code><a class="headerlink" href="#deltametrics.cube.DataCube.z" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.DataCube.z">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">z</span></span><a class="headerlink" href="#deltametrics.cube.DataCube.z" title="Permalink to this definition">¶</a></dt>
 <dd><p>Vertical coordinate.</p>
 </dd></dl>
 
@@ -538,7 +496,35 @@ initializers.</p></li>
 </section>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../reference/cube/index.html"
+                        title="previous chapter">The Cube</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.cube.StratigraphyCube.html"
+                        title="next chapter">deltametrics.cube.StratigraphyCube</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.cube.DataCube.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -557,12 +543,13 @@ initializers.</p></li>
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/cube/index.html" >The Cube</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/cube/index.html" >The Cube</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.cube.DataCube</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
     </div>
   </body>
 </html>

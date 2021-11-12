@@ -1,4 +1,4 @@
-deltametrics.plan.compute\_shoreline\_roughness
+﻿deltametrics.plan.compute\_shoreline\_roughness
 ===============================================
 
 .. currentmodule:: deltametrics.plan

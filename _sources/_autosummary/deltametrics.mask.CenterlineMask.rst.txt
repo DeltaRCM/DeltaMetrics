@@ -1,4 +1,4 @@
-deltametrics.mask.CenterlineMask
+﻿deltametrics.mask.CenterlineMask
 ================================
 
 .. currentmodule:: deltametrics.mask

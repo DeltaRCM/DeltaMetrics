@@ -1,4 +1,4 @@
-deltametrics.section.RadialSection
+﻿deltametrics.section.RadialSection
 ==================================
 
 .. currentmodule:: deltametrics.section

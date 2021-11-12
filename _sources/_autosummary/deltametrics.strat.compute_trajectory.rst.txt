@@ -1,4 +1,4 @@
-deltametrics.strat.compute\_trajectory
+﻿deltametrics.strat.compute\_trajectory
 ======================================
 
 .. currentmodule:: deltametrics.strat

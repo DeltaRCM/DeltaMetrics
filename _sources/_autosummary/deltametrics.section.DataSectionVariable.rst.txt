@@ -1,4 +1,4 @@
-deltametrics.section.DataSectionVariable
+﻿deltametrics.section.DataSectionVariable
 ========================================
 
 .. currentmodule:: deltametrics.section

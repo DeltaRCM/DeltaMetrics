@@ -1,4 +1,4 @@
-deltametrics.strat.compute\_boxy\_stratigraphy\_volume
+﻿deltametrics.strat.compute\_boxy\_stratigraphy\_volume
 ======================================================
 
 .. currentmodule:: deltametrics.strat

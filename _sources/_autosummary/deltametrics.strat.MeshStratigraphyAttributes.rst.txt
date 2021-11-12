@@ -1,4 +1,4 @@
-deltametrics.strat.MeshStratigraphyAttributes
+﻿deltametrics.strat.MeshStratigraphyAttributes
 =============================================
 
 .. currentmodule:: deltametrics.strat

@@ -1,4 +1,4 @@
-deltametrics.mobility.calculate\_channel\_abandonment
+﻿deltametrics.mobility.calculate\_channel\_abandonment
 =====================================================
 
 .. currentmodule:: deltametrics.mobility

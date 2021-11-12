@@ -1,4 +1,4 @@
-deltametrics.io.BaseIO
+﻿deltametrics.io.BaseIO
 ======================
 
 .. currentmodule:: deltametrics.io

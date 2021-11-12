@@ -1,4 +1,4 @@
-deltametrics.strat.BoxyStratigraphyAttributes
+﻿deltametrics.strat.BoxyStratigraphyAttributes
 =============================================
 
 .. currentmodule:: deltametrics.strat

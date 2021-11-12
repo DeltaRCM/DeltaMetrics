@@ -1,4 +1,4 @@
-deltametrics.mask.GeometricMask
+﻿deltametrics.mask.GeometricMask
 ===============================
 
 .. currentmodule:: deltametrics.mask

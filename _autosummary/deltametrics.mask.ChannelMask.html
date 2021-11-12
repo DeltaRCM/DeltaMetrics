@@ -1,21 +1,21 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.mask.ChannelMask &#8212; DeltaMetrics 0.3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.mask.EdgeMask" href="deltametrics.mask.EdgeMask.html" />
@@ -35,36 +35,10 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" accesskey="U">Masking operations</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" accesskey="U">Masking operations</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.mask.ChannelMask</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="deltametrics.mask.WetMask.html"
-                        title="previous chapter">deltametrics.mask.WetMask</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="deltametrics.mask.EdgeMask.html"
-                        title="next chapter">deltametrics.mask.EdgeMask</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_autosummary/deltametrics.mask.ChannelMask.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -73,9 +47,9 @@
             
   <section id="deltametrics-mask-channelmask">
 <h1>deltametrics.mask.ChannelMask<a class="headerlink" href="#deltametrics-mask-channelmask" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="deltametrics.mask.ChannelMask">
-<em class="property">class </em><code class="descclassname">deltametrics.mask.</code><code class="descname">ChannelMask</code><span class="sig-paren">(</span><em>*args</em>, <em>is_mask=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="deltametrics.mask.ChannelMask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.mask.</span></span><span class="sig-name descname"><span class="pre">ChannelMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identify a binary channel mask.</p>
 <p>A channel mask object, helps enforce valid masking of channels.</p>
 <p class="rubric">Examples</p>
@@ -94,12 +68,12 @@
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../_autosummary/deltametrics-mask-ChannelMask-1.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-ChannelMask-1.hires.png">hires.png</a>)</p>
-<figure class="align-center">
+<figure class="align-default">
 <img alt="../_images/deltametrics-mask-ChannelMask-1.png" class="plot-directive" src="../_images/deltametrics-mask-ChannelMask-1.png" />
 </figure>
-<dl class="method">
-<dt id="deltametrics.mask.ChannelMask.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>is_mask=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.__init__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ChannelMask.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the ChannelMask.</p>
 <p>Intializing the channel mask requires a flow velocity field and an
 array of the delta topography.</p>
@@ -117,10 +91,6 @@ Default is 75 degrees. Threshold could be between 0-1 for the MPM.</p>
 False. This should be set to True, if you have already binarized
 the data yourself, using custom routines, and want to just store
 the data in the ChannelMask object.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Other Parameters</dt>
-<dd class="field-even"><ul class="simple">
 <li><p><strong>landmask</strong> (<a class="reference internal" href="deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a>, optional) – A <a class="reference internal" href="deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a> object with a defined binary land mask.
 If given, it will be used to help define the channel mask.</p></li>
 <li><p><strong>wetmask</strong> (<a class="reference internal" href="deltametrics.mask.WetMask.html#deltametrics.mask.WetMask" title="deltametrics.mask.WetMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WetMask</span></code></a>, optional) – A <a class="reference internal" href="deltametrics.mask.WetMask.html#deltametrics.mask.WetMask" title="deltametrics.mask.WetMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WetMask</span></code></a> object with a defined binary wet mask.
@@ -133,7 +103,7 @@ determine the channel mask.</p></li>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -145,7 +115,7 @@ determine the channel mask.</p></li>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_Planform</span></code>(*args, **kwargs)</p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.from_Planform_and_FlowMask" title="deltametrics.mask.ChannelMask.from_Planform_and_FlowMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_Planform_and_FlowMask</span></code></a>(_Planform, …)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.from_Planform_and_FlowMask" title="deltametrics.mask.ChannelMask.from_Planform_and_FlowMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_Planform_and_FlowMask</span></code></a>(_Planform, ...)</p></td>
 <td><p>Create from a Planform object and a FlowMask.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.ChannelMask.from_array" title="deltametrics.mask.ChannelMask.from_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_array</span></code></a>(_arr)</p></td>
@@ -166,7 +136,7 @@ determine the channel mask.</p></li>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -186,40 +156,15 @@ determine the channel mask.</p></li>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="deltametrics.mask.ChannelMask._compute_mask">
-<code class="descname">_compute_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask._compute_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the ChannelMask.</p>
-<p>Note that this method in implementation should rely only on <em>array</em>
-masks, not on the dm.mask objects.</p>
-<p>For this Mask, we require a landmask array and a flowmask array.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="deltametrics.mask.ChannelMask._set_shape_mask">
-<code class="descname">_set_shape_mask</code><span class="sig-paren">(</span><em>_shape</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask._set_shape_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the mask shape.</p>
-<p>This is called during instantiation in most standard use-cases and
-pathways, however, if you are implementing your own mask or your own
-static method to create a mask, you may need to manually call this
-method to set the fields of the mask correctly before doing any mask
-computation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>shape</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>) – Shape of the mask.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="staticmethod">
-<dt id="deltametrics.mask.ChannelMask.from_Planform_and_FlowMask">
-<em class="property">static </em><code class="descname">from_Planform_and_FlowMask</code><span class="sig-paren">(</span><em>_Planform</em>, <em>_FlowMask</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.from_Planform_and_FlowMask" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ChannelMask.from_Planform_and_FlowMask">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_Planform_and_FlowMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_Planform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_FlowMask</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.from_Planform_and_FlowMask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create from a Planform object and a FlowMask.</p>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="deltametrics.mask.ChannelMask.from_array">
-<em class="property">static </em><code class="descname">from_array</code><span class="sig-paren">(</span><em>_arr</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.from_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ChannelMask.from_array">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_arr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.from_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ChannelMask from an array.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -236,9 +181,9 @@ will be coerced to <cite>boolean</cite>.</p>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="deltametrics.mask.ChannelMask.from_mask">
-<em class="property">static </em><code class="descname">from_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.from_mask" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ChannelMask.from_mask">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.from_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a <cite>ChannelMask</cite> directly from another mask.</p>
 <p>Can take either an ElevationMask or LandMask, and a
 FlowMask as input.</p>
@@ -267,14 +212,14 @@ FlowMask as input.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../_autosummary/deltametrics-mask-ChannelMask-2.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-ChannelMask-2.hires.png">hires.png</a>)</p>
-<figure class="align-center">
+<figure class="align-default">
 <img alt="../_images/deltametrics-mask-ChannelMask-2.png" class="plot-directive" src="../_images/deltametrics-mask-ChannelMask-2.png" />
 </figure>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.mask.ChannelMask.integer_mask">
-<code class="descname">integer_mask</code><a class="headerlink" href="#deltametrics.mask.ChannelMask.integer_mask" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.mask.ChannelMask.integer_mask">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">integer_mask</span></span><a class="headerlink" href="#deltametrics.mask.ChannelMask.integer_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Binary mask values as integer</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -290,9 +235,9 @@ also <a class="reference internal" href="#deltametrics.mask.ChannelMask.mask" ti
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.mask.ChannelMask.mask">
-<code class="descname">mask</code><a class="headerlink" href="#deltametrics.mask.ChannelMask.mask" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.mask.ChannelMask.mask">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#deltametrics.mask.ChannelMask.mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Binary mask values.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -307,15 +252,15 @@ also <a class="reference internal" href="#deltametrics.mask.ChannelMask.mask" ti
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.mask.ChannelMask.mask_type">
-<code class="descname">mask_type</code><a class="headerlink" href="#deltametrics.mask.ChannelMask.mask_type" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.mask.ChannelMask.mask_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask_type</span></span><a class="headerlink" href="#deltametrics.mask.ChannelMask.mask_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type of the mask (string)</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.mask.ChannelMask.show">
-<code class="descname">show</code><span class="sig-paren">(</span><em>ax=None</em>, <em>title=None</em>, <em>ticks=False</em>, <em>colorbar=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.show" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ChannelMask.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the mask.</p>
 <p>The <cite>Mask</cite> is shown in a <cite>matplotlib</cite> axis with <cite>imshow</cite>. The <cite>mask</cite>
 values are accessed from <a class="reference internal" href="#deltametrics.mask.ChannelMask.integer_mask" title="deltametrics.mask.ChannelMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a>, so the display will show
@@ -332,9 +277,9 @@ black and white.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.mask.ChannelMask.trim_mask">
-<code class="descname">trim_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>value=False</em>, <em>axis=1</em>, <em>length=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.trim_mask" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ChannelMask.trim_mask">
+<span class="sig-name descname"><span class="pre">trim_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ChannelMask.trim_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace a part of the mask with a new value.</p>
 <p>This is sometimes necessary before using a mask in certain
 computations. Most often, this method is used to manually correct
@@ -360,7 +305,35 @@ the top domain edge.</p></li>
 </section>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.mask.WetMask.html"
+                        title="previous chapter">deltametrics.mask.WetMask</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.mask.EdgeMask.html"
+                        title="next chapter">deltametrics.mask.EdgeMask</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.mask.ChannelMask.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -379,12 +352,13 @@ the top domain edge.</p></li>
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" >Masking operations</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" >Masking operations</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.mask.ChannelMask</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
     </div>
   </body>
 </html>

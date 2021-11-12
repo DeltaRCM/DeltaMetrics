@@ -1,4 +1,4 @@
-deltametrics.mobility.calculate\_reworking\_fraction
+﻿deltametrics.mobility.calculate\_reworking\_fraction
 ====================================================
 
 .. currentmodule:: deltametrics.mobility

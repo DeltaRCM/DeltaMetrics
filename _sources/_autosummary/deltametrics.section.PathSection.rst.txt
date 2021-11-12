@@ -1,4 +1,4 @@
-deltametrics.section.PathSection
+﻿deltametrics.section.PathSection
 ================================
 
 .. currentmodule:: deltametrics.section

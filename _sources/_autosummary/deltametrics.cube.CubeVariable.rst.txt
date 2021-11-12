@@ -1,4 +1,4 @@
-deltametrics.cube.CubeVariable
+﻿deltametrics.cube.CubeVariable
 ==============================
 
 .. currentmodule:: deltametrics.cube

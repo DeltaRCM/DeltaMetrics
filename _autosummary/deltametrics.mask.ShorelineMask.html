@@ -1,21 +1,21 @@
 
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
   <head>
-    <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.mask.ShorelineMask &#8212; DeltaMetrics 0.3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/sphinxdoc.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.mask.WetMask" href="deltametrics.mask.WetMask.html" />
@@ -35,36 +35,10 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" accesskey="U">Masking operations</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" accesskey="U">Masking operations</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.mask.ShorelineMask</a></li> 
       </ul>
-    </div>
-      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
-        <div class="sphinxsidebarwrapper">
-  <h4>Previous topic</h4>
-  <p class="topless"><a href="deltametrics.mask.LandMask.html"
-                        title="previous chapter">deltametrics.mask.LandMask</a></p>
-  <h4>Next topic</h4>
-  <p class="topless"><a href="deltametrics.mask.WetMask.html"
-                        title="next chapter">deltametrics.mask.WetMask</a></p>
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_autosummary/deltametrics.mask.ShorelineMask.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div>
-<div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
-    <div class="searchformwrapper">
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-    </form>
-    </div>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
+    </div>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -73,9 +47,9 @@
             
   <section id="deltametrics-mask-shorelinemask">
 <h1>deltametrics.mask.ShorelineMask<a class="headerlink" href="#deltametrics-mask-shorelinemask" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="deltametrics.mask.ShorelineMask">
-<em class="property">class </em><code class="descclassname">deltametrics.mask.</code><code class="descname">ShorelineMask</code><span class="sig-paren">(</span><em>*args</em>, <em>contour_threshold=75</em>, <em>method='OAM'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.mask.</span></span><span class="sig-name descname"><span class="pre">ShorelineMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'OAM'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Identify the shoreline as a binary mask.</p>
 <p>A shoreline mask object, provides a binary identification of shoreline
 pixels.</p>
@@ -93,12 +67,12 @@ pixels.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href="../_autosummary/deltametrics-mask-ShorelineMask-1.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-ShorelineMask-1.hires.png">hires.png</a>)</p>
-<figure class="align-center">
+<figure class="align-default">
 <img alt="../_images/deltametrics-mask-ShorelineMask-1.png" class="plot-directive" src="../_images/deltametrics-mask-ShorelineMask-1.png" />
 </figure>
-<dl class="method">
-<dt id="deltametrics.mask.ShorelineMask.__init__">
-<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>contour_threshold=75</em>, <em>method='OAM'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.__init__" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contour_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'OAM'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the ShorelineMask.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -122,10 +96,6 @@ the contour from the mean_image array.</p></li>
 <li><p><strong>method</strong> (<em>str</em><em>, </em><em>optional</em>) – Specifies the method to use for shoreline mask computation.
 Currently supports ‘OAM’ for the opening angle method (default)
 and ‘MPM’ for the morpholigcal planform method.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Other Parameters</dt>
-<dd class="field-even"><ul class="simple">
 <li><p><strong>elevation_threshold</strong> – Passed to the initialization of an ElevationMask to discern the
 ocean area binary mask input to the opening angle method.</p></li>
 <li><p><strong>kwargs</strong> (<em>optional</em>) – Keyword arguments for
@@ -136,7 +106,7 @@ ocean area binary mask input to the opening angle method.</p></li>
 </dd></dl>
 
 <p class="rubric">Methods</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -169,7 +139,7 @@ ocean area binary mask input to the opening angle method.</p></li>
 </tbody>
 </table>
 <p class="rubric">Attributes</p>
-<table class="longtable docutils align-center">
+<table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
 <col style="width: 90%" />
@@ -192,72 +162,15 @@ ocean area binary mask input to the opening angle method.</p></li>
 </tr>
 </tbody>
 </table>
-<dl class="method">
-<dt id="deltametrics.mask.ShorelineMask._compute_MPM_mask">
-<code class="descname">_compute_MPM_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask._compute_MPM_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the shoreline mask using the MPM.</p>
-<p>Applies the Morphological Planform Method to compute the shoreline
-mask. Implementation of the MPM is in
-<a class="reference internal" href="deltametrics.plan.morphological_closing_method.html#deltametrics.plan.morphological_closing_method" title="deltametrics.plan.morphological_closing_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">morphological_closing_method</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Other Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>topo_threshold</strong> (<em>float, optional</em>) – Threshold depth to use. Default is -0.5.</p></li>
-<li><p><strong>max_disk</strong> (<em>int, optional</em>) – Defines the max disk size for the morphological element.
-Default is 3.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="deltametrics.mask.ShorelineMask._compute_OAM_mask">
-<code class="descname">_compute_OAM_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask._compute_OAM_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Compute the shoreline mask using the OAM.</p>
-<p>Applies the Opening Angle Method to compute the shoreline mask.
-Implementation of the OAM is in
-<a class="reference internal" href="deltametrics.plan.shaw_opening_angle_method.html#deltametrics.plan.shaw_opening_angle_method" title="deltametrics.plan.shaw_opening_angle_method"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shaw_opening_angle_method</span></code></a>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Other Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>topo_threshold</strong> (<em>float, optional</em>) – Threshold depth to use for the OAM. Default is -0.5.</p></li>
-<li><p><strong>numviews</strong> (<em>int, optional</em>) – Defines the number of times to ‘look’ for the OAM. Default is 3.</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="deltametrics.mask.ShorelineMask._compute_mask">
-<code class="descname">_compute_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask._compute_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Internally call either the OAM or MPM method.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="deltametrics.mask.ShorelineMask._set_shape_mask">
-<code class="descname">_set_shape_mask</code><span class="sig-paren">(</span><em>_shape</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask._set_shape_mask" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set the mask shape.</p>
-<p>This is called during instantiation in most standard use-cases and
-pathways, however, if you are implementing your own mask or your own
-static method to create a mask, you may need to manually call this
-method to set the fields of the mask correctly before doing any mask
-computation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>shape</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>) – Shape of the mask.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="deltametrics.mask.ShorelineMask.contour_threshold">
-<code class="descname">contour_threshold</code><a class="headerlink" href="#deltametrics.mask.ShorelineMask.contour_threshold" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask.contour_threshold">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contour_threshold</span></span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.contour_threshold" title="Permalink to this definition">¶</a></dt>
 <dd><p>Threshold value used for picking shoreline contour.</p>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="deltametrics.mask.ShorelineMask.from_array">
-<em class="property">static </em><code class="descname">from_array</code><span class="sig-paren">(</span><em>_arr</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.from_array" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask.from_array">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_arr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.from_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ShorelineMask from an array.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -274,21 +187,21 @@ will be coerced to <cite>boolean</cite>.</p>
 </dl>
 </dd></dl>
 
-<dl class="staticmethod">
-<dt id="deltametrics.mask.ShorelineMask.from_mask">
-<em class="property">static </em><code class="descname">from_mask</code><span class="sig-paren">(</span><em>UnknownMask</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.from_mask" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask.from_mask">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">UnknownMask</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.from_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a ShorelineMask directly from an ElevationMask.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.mask.ShorelineMask.grab_contour">
-<code class="descname">grab_contour</code><span class="sig-paren">(</span><em>arr</em>, <em>shoremap</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.grab_contour" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask.grab_contour">
+<span class="sig-name descname"><span class="pre">grab_contour</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shoremap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.grab_contour" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method to grab contour from some input array using a threshold.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.mask.ShorelineMask.integer_mask">
-<code class="descname">integer_mask</code><a class="headerlink" href="#deltametrics.mask.ShorelineMask.integer_mask" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask.integer_mask">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">integer_mask</span></span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.integer_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Binary mask values as integer</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -304,9 +217,9 @@ also <a class="reference internal" href="#deltametrics.mask.ShorelineMask.mask" 
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.mask.ShorelineMask.mask">
-<code class="descname">mask</code><a class="headerlink" href="#deltametrics.mask.ShorelineMask.mask" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask.mask">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Binary mask values.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -321,15 +234,15 @@ also <a class="reference internal" href="#deltametrics.mask.ShorelineMask.mask" 
 </dl>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="deltametrics.mask.ShorelineMask.mask_type">
-<code class="descname">mask_type</code><a class="headerlink" href="#deltametrics.mask.ShorelineMask.mask_type" title="Permalink to this definition">¶</a></dt>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask.mask_type">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask_type</span></span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.mask_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>Type of the mask (string)</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.mask.ShorelineMask.show">
-<code class="descname">show</code><span class="sig-paren">(</span><em>ax=None</em>, <em>title=None</em>, <em>ticks=False</em>, <em>colorbar=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.show" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the mask.</p>
 <p>The <cite>Mask</cite> is shown in a <cite>matplotlib</cite> axis with <cite>imshow</cite>. The <cite>mask</cite>
 values are accessed from <a class="reference internal" href="#deltametrics.mask.ShorelineMask.integer_mask" title="deltametrics.mask.ShorelineMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a>, so the display will show
@@ -346,9 +259,9 @@ black and white.</p>
 </dl>
 </dd></dl>
 
-<dl class="method">
-<dt id="deltametrics.mask.ShorelineMask.trim_mask">
-<code class="descname">trim_mask</code><span class="sig-paren">(</span><em>*args</em>, <em>value=False</em>, <em>axis=1</em>, <em>length=None</em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.trim_mask" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.ShorelineMask.trim_mask">
+<span class="sig-name descname"><span class="pre">trim_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.ShorelineMask.trim_mask" title="Permalink to this definition">¶</a></dt>
 <dd><p>Replace a part of the mask with a new value.</p>
 <p>This is sometimes necessary before using a mask in certain
 computations. Most often, this method is used to manually correct
@@ -374,7 +287,35 @@ the top domain edge.</p></li>
 </section>
 
 
+            <div class="clearer"></div>
           </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="deltametrics.mask.LandMask.html"
+                        title="previous chapter">deltametrics.mask.LandMask</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="deltametrics.mask.WetMask.html"
+                        title="next chapter">deltametrics.mask.WetMask</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.mask.ShorelineMask.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -393,12 +334,13 @@ the top domain edge.</p></li>
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" >Masking operations</a> &#187;</li> 
+          <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" >Masking operations</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.mask.ShorelineMask</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 2.0.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.3.0.
     </div>
   </body>
 </html>
