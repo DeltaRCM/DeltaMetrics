@@ -9,6 +9,7 @@ Examples of how to do various tasks and visualizations in DeltaMetrics.
    :maxdepth: 1
 
    io/connect_to_nonstandard_data
+   io/setup_any_dataset
    plot/show_plan
    plot/show_section
    computations/preserved_velocities

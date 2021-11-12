@@ -98,7 +98,7 @@ class BaseCube(abc.ABC):
 
     """
 
-    def __init__(self, data, read=[], varset=None):
+    def __init__(self, data, read=[], varset=None, coordinates={}):
         """Initialize the BaseCube.
 
         Parameters
@@ -122,7 +122,7 @@ class BaseCube(abc.ABC):
             # handle a path to netCDF file
             self._data_path = data
             self._connect_to_file(data_path=data)
-            self._read_meta_from_file()
+            self._read_meta_from_file(coordinates)
         elif type(data) is dict:
             # handle a dict, arrays set up already, make an io class to wrap it
             self._data_path = None
@@ -131,7 +131,7 @@ class BaseCube(abc.ABC):
             # handle initializing one cube type from another
             self._data_path = data.data_path
             self._dataio = data._dataio
-            self._read_meta_from_file()
+            self._read_meta_from_file(coordinates)
         else:
             raise TypeError('Invalid type for "data": %s' % type(data))
 
@@ -167,12 +167,29 @@ class BaseCube(abc.ABC):
             raise ValueError(
                 'Invalid file extension for "data_path": %s' % data_path)
 
-    def _read_meta_from_file(self):
+    def _read_meta_from_file(self, coordinates):
         """Read metadata information from variables in file.
 
         This method is used internally to gather some useful info for
         navigating the variable trees in the stored files.
+
+        Parameters
+        ----------
+        coordinates : :obj:`dict`
+
+            A dictionary describing *substitutions* to make for coordinates in
+            the underlying dataset with coordinates in DeltaMetrics.
+            Dictionary may be empty (default), in which case we connect the
+            `x` coordinate in DeltaMetrics to the `x` coordinate in the
+            underlying data file, and similarly for `y`. If the underlying
+            data file uses a different convention, for example `x` means
+            downstream rather than left-right, you can specify this by
+            passing a `key-value` pair describing the `value` in the
+            underlying data file that corresponds to the DeltaMetrics `key`.
         """
+        default_coordinates = {'x': 'x', 'y': 'y'}
+        default_coordinates.update(coordinates)
+        self.coordinates = copy.deepcopy(default_coordinates)
         self._coords = self._dataio.known_coords
         self._variables = self._dataio.known_variables
         # if x is 2-D then we assume x and y are mesh grid values
@@ -183,8 +200,8 @@ class BaseCube(abc.ABC):
             self._y = np.copy(self._Y[:, 0].squeeze())  # array of yval of cube
         # if x is 1-D we do mesh-gridding
         elif np.ndim(self._dataio['x']) == 1:
-            self._x = self._dataio['x']  # array of xval of cube
-            self._y = self._dataio['y']  # array of yval of cube
+            self._x = self._dataio[default_coordinates['x']]  # array of xval of cube
+            self._y = self._dataio[default_coordinates['y']]  # array of yval of cube
             self._X, self._Y = np.meshgrid(self._x, self._y)  # mesh grids x&y
 
     def read(self, variables):
@@ -418,6 +435,12 @@ class BaseCube(abc.ABC):
 
         _plan = self[var].data[t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
 
+        _dx = self.x[1] - self.x[0]
+        _extent = [self._x[0] - (_dx/2),
+                   self._x[-1] + (_dx/2),
+                   self._y[-1] + (_dx/2),
+                   self._y[0] - (_dx/2)]
+
         if not ax:
             ax = plt.gca()
 
@@ -425,7 +448,8 @@ class BaseCube(abc.ABC):
                        cmap=self.varset[var].cmap,
                        norm=self.varset[var].norm,
                        vmin=self.varset[var].vmin,
-                       vmax=self.varset[var].vmax)
+                       vmax=self.varset[var].vmax,
+                       extent=_extent)
         cb = plot.append_colorbar(im, ax)
         if colorbar_label:
             _colorbar_label = \
@@ -438,16 +462,6 @@ class BaseCube(abc.ABC):
             ax.set_yticks([], minor=[])
         if title:
             ax.set_title(str(title))
-
-        # read from metadata if available
-        if self.meta is not None:
-            ax.set_ylim(self.x[0] / self.meta['dx'],
-                        self.x[-1] / self.meta['dx'])
-            ax.set_xlim(self.y[0] / self.meta['dx'],
-                        self.y[-1] / self.meta['dx'])
-        else:
-            ax.set_xlim(self.x[0], self.x[-1])
-            ax.set_ylim(self.y[0], self.y[-1])
 
     def show_section(self, *args, **kwargs):
         """Show a section.
@@ -489,7 +503,8 @@ class DataCube(BaseCube):
     number of attached attributes (grain size, mud frac, elevation).
     """
 
-    def __init__(self, data, read=[], varset=None, stratigraphy_from=None):
+    def __init__(self, data, read=[], varset=None, stratigraphy_from=None,
+                 coordinates={}):
         """Initialize the BaseCube.
 
         Parameters
@@ -518,7 +533,7 @@ class DataCube(BaseCube):
             with the :meth:`~deltametrics.cube.DataCube.stratigraphy_from`
             method.
         """
-        super().__init__(data, read, varset)
+        super().__init__(data, read, varset, coordinates)
 
         self._t = np.array(self._dataio['time'], copy=True)
         _, self._T, _ = np.meshgrid(self.y, self.t, self.x)
@@ -642,7 +657,8 @@ class StratigraphyCube(BaseCube):
 
     """
     @staticmethod
-    def from_DataCube(DataCubeInstance, stratigraphy_from='eta', dz=0.1):
+    def from_DataCube(DataCubeInstance, stratigraphy_from='eta',
+                      dz=None, z=None, nz=None):
         """Create from a DataCube.
 
         Examples
@@ -675,10 +691,12 @@ class StratigraphyCube(BaseCube):
         """
         return StratigraphyCube(DataCubeInstance,
                                 stratigraphy_from=stratigraphy_from,
-                                dz=dz)
+                                coordinates=DataCubeInstance.coordinates,
+                                dz=dz, z=z, nz=nz)
 
     def __init__(self, data, read=[], varset=None,
-                 stratigraphy_from=None, dz=None):
+                 stratigraphy_from=None, coordinates={},
+                 dz=None, z=None, nz=None):
         """Initialize the StratigraphicCube.
 
         Any instantiation pathway must configure :obj:`z`, :obj:`H`, :obj:`L`,
@@ -702,7 +720,7 @@ class StratigraphyCube(BaseCube):
             to style this cube similarly to another cube. If no argument is
             supplied, a new default VariableSet instance is created.
         """
-        super().__init__(data, read, varset)
+        super().__init__(data, read, varset, coordinates)
         if isinstance(data, str):
             raise NotImplementedError('Precomputed NetCDF?')
         elif isinstance(data, np.ndarray):
@@ -712,7 +730,8 @@ class StratigraphyCube(BaseCube):
             _elev = copy.deepcopy(data[stratigraphy_from])
 
             # set up coordinates of the array
-            self._z = strat._determine_strat_coordinates(_elev.data, dz=dz)
+            self._z = strat._determine_strat_coordinates(
+                _elev.data, dz=dz, z=z, nz=nz)
             self._H = len(self.z)
             self._L, self._W = _elev.shape[1:]
             self._Z = np.tile(self.z, (self.W, self.L, 1)).T

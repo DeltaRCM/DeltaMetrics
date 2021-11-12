@@ -63,8 +63,7 @@ class TestComputeBoxyStratigraphyVolume:
                 dz=0.05)
 
     def test_no_z_options(self):
-        with pytest.raises(ValueError,
-                           match=r'You must specify "z", "dz", or "nz.'):
+        with pytest.warns(UserWarning, match=r'No specification .*'):
             strat.compute_boxy_stratigraphy_volume(self.elev, self.time)
 
 
@@ -100,8 +99,7 @@ class TestComputeBoxyStratigraphyCoordinates:
             self.elev, dz=0.05, return_cube=True)
 
     def test_no_z_options(self):
-        with pytest.raises(ValueError,
-                           match=r'You must specify "z", "dz", or "nz.'):
+        with pytest.warns(UserWarning, match=r'No specification .*'):
             strat.compute_boxy_stratigraphy_coordinates(
                 self.elev[:, 10, 120].squeeze())
 
@@ -305,9 +303,9 @@ class TestOneDimStratigraphyExamples:
 
 class TestDetermineStratCoordinates:
 
-    def test_given_none(self):
+    def test_given_none_chooses_default(self):
         e = np.array([0, 1, 1, 2, 1])
-        with pytest.raises(ValueError, match=r'You must *.'):
+        with pytest.warns(UserWarning, match=r'No specification *.'):
             _ = strat._determine_strat_coordinates(e)
 
     def test_given_z(self):

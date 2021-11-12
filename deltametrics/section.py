@@ -280,7 +280,9 @@ class BaseSection(abc.ABC):
              + (self._y[1:] - self._y[:-1])**2))))
         self._z = self.cube.z
         self._shape = (len(self._z), len(self._s))
-        self._trace = np.column_stack((self._x, self._y))
+        self._xytrace = np.column_stack((self._x, self._y))
+        self._trace = np.column_stack((self.cube.x[self._x],
+                                       self.cube.y[self._y]))
 
     @property
     def trace(self):
@@ -388,8 +390,9 @@ class BaseSection(abc.ABC):
         Parameters
         ----------
 
-        SectionAttribute : :obj:`str`
-            Which attribute to show.
+        SectionAttribute : :obj:`str`, :obj:`SectionVariableInstance`
+            Which attribute to show. Can be a string for a named `Cube`
+            attribute, or any arbitrary data.
 
         style : :obj:`str`, optional
             What style to display the section with. Choices are 'mesh' or
@@ -431,34 +434,34 @@ class BaseSection(abc.ABC):
 
         .. doctest::
 
-            >>> rcm8cube = dm.sample_data.rcm8()
-            >>> rcm8cube.register_section(
+            >>> golfcube = dm.sample_data.golf()
+            >>> golfcube.register_section(
             ...     'demo', dm.section.StrikeSection(y=5))
-            >>> rcm8cube.sections['demo'].show('velocity')
+            >>> golfcube.sections['demo'].show('velocity')
 
         .. plot:: section/section_demo_spacetime.py
 
         Note that the last line above is functionally equivalent to
-        ``rcm8cube.show_section('demo', 'velocity')``.
+        ``golfcube.show_section('demo', 'velocity')``.
 
         *Example 2:* Display a section, with "quick" stratigraphy, as the
         `depth` attribute, displaying several different section styles.
 
         .. doctest::
 
-            >>> rcm8cube = dm.sample_data.rcm8()
-            >>> rcm8cube.stratigraphy_from('eta')
-            >>> rcm8cube.register_section(
+            >>> golfcube = dm.sample_data.golf()
+            >>> golfcube.stratigraphy_from('eta')
+            >>> golfcube.register_section(
             ...     'demo', dm.section.StrikeSection(y=5))
 
             >>> fig, ax = plt.subplots(4, 1, sharex=True, figsize=(6, 9))
-            >>> rcm8cube.sections['demo'].show('depth', data='spacetime',
+            >>> golfcube.sections['demo'].show('depth', data='spacetime',
             ...                                 ax=ax[0], label='spacetime')
-            >>> rcm8cube.sections['demo'].show('depth', data='preserved',
+            >>> golfcube.sections['demo'].show('depth', data='preserved',
             ...                                ax=ax[1], label='preserved')
-            >>> rcm8cube.sections['demo'].show('depth', data='stratigraphy',
+            >>> golfcube.sections['demo'].show('depth', data='stratigraphy',
             ...                                ax=ax[2], label='quick stratigraphy')
-            >>> rcm8cube.sections['demo'].show('depth', style='lines', data='stratigraphy',
+            >>> golfcube.sections['demo'].show('depth', style='lines', data='stratigraphy',
             ...                                ax=ax[3], label='quick stratigraphy')          # noqa: E501
 
         .. plot:: section/section_demo_quick_strat.py
@@ -508,7 +511,7 @@ class BaseSection(abc.ABC):
         ax.set_xlim(xmin, xmax)
         ax.set_ylim(ymin, ymax)
 
-    def show_trace(self, *args, ax=None, **kwargs):
+    def show_trace(self, *args, ax=None, autoscale=False, **kwargs):
         """Plot section trace (x-y plane path).
 
         Plot the section trace (:obj:`trace`) onto an x-y planview.
@@ -523,6 +526,11 @@ class BaseSection(abc.ABC):
             provided, a call is made to ``plt.gca()`` to get the current (or
             create a new) `Axes` object.
 
+        autoscale : :obj:`bool`
+            Whether to rescale the axis based on the limits of the section.
+            Manipulates the `matplotlib` `autoscale` attribute. Default is
+            ``False``.
+
         **kwargs
             Passed to `matplotlib` :obj:`~matplotlib.pyplot.plot()`.
         """
@@ -531,7 +539,19 @@ class BaseSection(abc.ABC):
 
         _label = kwargs.pop('label', self.name)
 
-        ax.plot(self._x, self._y, label=_label, *args, **kwargs)
+        _x = self.cube.x[self._x]
+        _y = self.cube.y[self._y]
+
+        # get the limits to be able to reset if autoscale false
+        lims = [ax.get_xlim(), ax.get_ylim()]
+
+        # add the trace
+        ax.plot(_x, _y, label=_label, *args, **kwargs)
+
+        # if autscale is false, reset the axes
+        if not autoscale:
+            ax.set_xlim(*lims[0])
+            ax.set_ylim(*lims[1])
 
 
 class PathSection(BaseSection):
@@ -579,15 +599,15 @@ class PathSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.rcm8()
-        >>> rcm8cube.register_section('path', dm.section.PathSection(
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section('path', dm.section.PathSection(
         ...     path=np.array([[50, 3], [65, 17], [130, 10]])))
         >>>
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
-        >>> rcm8cube.sections['path'].show_trace('r--', ax=ax[0])
-        >>> rcm8cube.sections['path'].show('velocity', ax=ax[1])
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.sections['path'].show_trace('r--', ax=ax[0])
+        >>> golfcube.sections['path'].show('velocity', ax=ax[1])
         >>> plt.show()
     """
 
@@ -681,14 +701,14 @@ class StrikeSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.rcm8()
-        >>> rcm8cube.register_section('strike', dm.section.StrikeSection(y=10))
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section('strike', dm.section.StrikeSection(y=10))
         >>>
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
-        >>> rcm8cube.sections['strike'].show_trace('r--', ax=ax[0])
-        >>> rcm8cube.sections['strike'].show('velocity', ax=ax[1])
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.sections['strike'].show_trace('r--', ax=ax[0])
+        >>> golfcube.sections['strike'].show('velocity', ax=ax[1])
         >>> plt.show()
 
     Similarly, create a `StrikeSection` that is registered to a
@@ -698,14 +718,14 @@ class StrikeSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.rcm8()
-        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube)
+        >>> golfcube = dm.sample_data.golf()
+        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(golfcube)
         >>> sc8cube.register_section(
         ...     'strike_half', dm.section.StrikeSection(y=20, x=[0, 120]))
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
         >>> sc8cube.sections['strike_half'].show_trace('r--', ax=ax[0])
         >>> sc8cube.sections['strike_half'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -779,14 +799,14 @@ class DipSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.rcm8()
-        >>> rcm8cube.register_section('dip', dm.section.DipSection(x=130))
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section('dip', dm.section.DipSection(x=130))
         >>>
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
-        >>> rcm8cube.sections['dip'].show_trace('r--', ax=ax[0])
-        >>> rcm8cube.sections['dip'].show('velocity', ax=ax[1])
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.sections['dip'].show_trace('r--', ax=ax[0])
+        >>> golfcube.sections['dip'].show('velocity', ax=ax[1])
         >>> plt.show()
 
     Similarly, create a `DipSection` that is registered to a
@@ -796,14 +816,14 @@ class DipSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.rcm8()
-        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube)
+        >>> golfcube = dm.sample_data.golf()
+        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(golfcube)
         >>> sc8cube.register_section(
         ...     'dip_short', dm.section.DipSection(y=[0, 50]))
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
         >>> sc8cube.sections['dip_short'].show_trace('r--', ax=ax[0])
         >>> sc8cube.sections['dip_short'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -894,15 +914,15 @@ class CircularSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.rcm8()
-        >>> rcm8cube.register_section(
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section(
         ...     'circular', dm.section.CircularSection(radius=30))
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
-        >>> rcm8cube.sections['circular'].show_trace('r--', ax=ax[0])
-        >>> rcm8cube.sections['circular'].show('velocity', ax=ax[1])
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.sections['circular'].show_trace('r--', ax=ax[0])
+        >>> golfcube.sections['circular'].show('velocity', ax=ax[1])
         >>> plt.show()
     """
 
@@ -1011,15 +1031,15 @@ class RadialSection(BaseSection):
     .. plot::
         :include-source:
 
-        >>> rcm8cube = dm.sample_data.rcm8()
-        >>> rcm8cube.register_section(
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section(
         ...     'radial', dm.section.RadialSection(azimuth=45))
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> rcm8cube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
-        >>> rcm8cube.sections['radial'].show_trace('r--', ax=ax[0])
-        >>> rcm8cube.sections['radial'].show('velocity', ax=ax[1])
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.sections['radial'].show_trace('r--', ax=ax[0])
+        >>> golfcube.sections['radial'].show('velocity', ax=ax[1])
         >>> plt.show()
     """
     def __init__(self, *args, azimuth=None, origin=None, length=None,

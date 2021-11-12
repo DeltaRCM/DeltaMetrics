@@ -1,6 +1,6 @@
-rcm8cube = dm.sample_data.rcm8()
+golfcube = dm.sample_data.golf()
 
-ets = rcm8cube['eta'].data[:, 25, 120]  # a "real" slice of the model
+ets = golfcube['eta'].data[:, 10, 85]  # a "real" slice of the model
 
 fig, ax = plt.subplots(figsize=(8, 4))
 dm.plot.show_one_dimensional_trajectory_to_strata(ets, ax=ax, dz=0.25)

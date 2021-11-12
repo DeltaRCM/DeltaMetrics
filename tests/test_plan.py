@@ -26,7 +26,9 @@ class TestOpeningAnglePlanform:
     simple_ocean = (1 - simple_land)
 
     golf_path = _get_golf_path()
-    golfcube = cube.DataCube(golf_path)
+    golfcube = cube.DataCube(
+        golf_path,
+        coordinates={'x': 'y', 'y': 'x'})
 
     def test_defaults_array_int(self):
 
@@ -104,7 +106,9 @@ class TestMorphologicalPlanform:
 
     simple_land = simple_land
     golf_path = _get_golf_path()
-    golfcube = cube.DataCube(golf_path)
+    golfcube = cube.DataCube(
+        golf_path,
+        coordinates={'x': 'y', 'y': 'x'})
 
     def test_defaults_array_int(self):
         mpm = plan.MorphologicalPlanform(self.simple_land.astype(int), 2)
@@ -335,7 +339,9 @@ class TestShorelineLength:
 class TestShorelineDistance:
 
     golf_path = _get_golf_path()
-    golf = cube.DataCube(golf_path)
+    golf = cube.DataCube(
+        golf_path,
+        coordinates={'x': 'y', 'y': 'x'})
 
     sm = mask.ShorelineMask(
         golf['eta'][-1, :, :],
@@ -391,7 +397,9 @@ class TestComputeChannelWidth:
         ).astype(int)
 
     golf_path = _get_golf_path()
-    golf = cube.DataCube(golf_path)
+    golf = cube.DataCube(
+        golf_path,
+        coordinates={'x': 'y', 'y': 'x'})
 
     cm = mask.ChannelMask(
         golf['eta'][-1, :, :],
@@ -468,7 +476,9 @@ class TestComputeChannelDepth:
         ).astype(int)
 
     golf_path = _get_golf_path()
-    golf = cube.DataCube(golf_path)
+    golf = cube.DataCube(
+        golf_path,
+        coordinates={'x': 'y', 'y': 'x'})
 
     cm = mask.ChannelMask(
         golf['eta'][-1, :, :],

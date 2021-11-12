@@ -48,39 +48,39 @@ DeltaMetrics centers around the use of “Cubes” in DeltaMetrics language are 
 
 .. doctest::
 
-    >>> rcm8cube = dm.sample_data.rcm8()
-    >>> rcm8cube
+    >>> golfcube = dm.sample_data.golf()
+    >>> golfcube
     <deltametrics.cube.DataCube object at 0x...>
 
-Creating the ``rcm8cube`` connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets. The type of the ``rcm8cube`` is ``DataCube``.
+Creating the ``golfcube`` connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets. The type of the ``golfcube`` is ``DataCube``.
 
-Inspect which variables are available in the ``rcm8cube``.
+Inspect which variables are available in the ``golfcube``.
 
 .. doctest::
 
-    >>> rcm8cube.variables
-    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_sand_frac']
+    >>> golfcube.variables
+    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'sedflux', 'sandfrac']
 
 We can access the underlying variables by name. The returned object are xarray-accessors with coordinates ``t-x-y``.
 For example, access variables as:
 
 .. doctest::
 
-    >>> type(rcm8cube['eta'])
+    >>> type(golfcube['eta'])
     <class 'deltametrics.cube.CubeVariable'>
-    >>> rcm8cube['eta'].shape
-    (51, 120, 240)
+    >>> golfcube['eta'].shape
+    (101, 100, 200)
 
 Let’s examine the timeseries of bed elevations by taking slices out of the ``'eta'`` variable, at various indicies (``t``) along the 0th dimension.
 
 .. doctest::
 
     >>> nt = 5
-    >>> ts = np.linspace(0, rcm8cube['eta'].shape[0]-1, num=nt, dtype=np.int)  # linearly interpolate ts
+    >>> ts = np.linspace(0, golfcube['eta'].shape[0]-1, num=nt, dtype=int)  # linearly interpolate ts
 
     >>> fig, ax = plt.subplots(1, nt, figsize=(12, 2))
     >>> for i, t in enumerate(ts):
-    ...     ax[i].imshow(rcm8cube['eta'][t, :, :], vmin=-5, vmax=0.5) #doctest: +SKIP
+    ...     ax[i].imshow(golfcube['eta'][t, :, :], vmin=-2, vmax=0.5) #doctest: +SKIP
     ...     ax[i].set_title('t = ' + str(t)) #doctest: +SKIP
     ...     ax[i].axes.get_xaxis().set_ticks([]) #doctest: +SKIP
     ...     ax[i].axes.get_yaxis().set_ticks([]) #doctest: +SKIP
@@ -100,7 +100,7 @@ For example:
 .. doctest::
 
     >>> # compute the change in bed elevation between the last two intervals above
-    >>> diff_time = rcm8cube['eta'][ts[-1], ...] - rcm8cube['eta'][ts[-2], ...]
+    >>> diff_time = golfcube['eta'][ts[-1], ...] - golfcube['eta'][ts[-2], ...]
 
     >>> fig, ax = plt.subplots(figsize=(5, 3))
     >>> im = ax.imshow(diff_time, cmap='RdBu', vmax=abs(diff_time).max(), vmin=-abs(diff_time).max())
@@ -148,7 +148,7 @@ For a data cube, sections are most easily instantiated by the :obj:`~deltametric
 
 .. doctest::
 
-    >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=10))
+    >>> golfcube.register_section('demo', dm.section.StrikeSection(y=10))
 
 which creates a section across a constant y-value ``==10``.
 The path of any `Section` in the ``x-y`` plane can always be accessed via the ``.trace`` attribute.
@@ -157,9 +157,9 @@ We can plot the trace on top the the final bed elevation to see where the sectio
 .. doctest::
 
     >>> fig, ax = plt.subplots()
-    >>> rcm8cube.show_plan('eta', t=-1, ax=ax, ticks=True)
-    >>> ax.plot(rcm8cube.sections['demo'].trace[:,0],
-    ...         rcm8cube.sections['demo'].trace[:,1], 'r--') #doctest: +SKIP
+    >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+    >>> ax.plot(golfcube.sections['demo'].trace[:,0],
+    ...         golfcube.sections['demo'].trace[:,1], 'r--') #doctest: +SKIP
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_strikesection_location.py
@@ -168,7 +168,7 @@ Any registered section can then be accessed via the :obj:`~deltametrics.cube.Cub
 
 .. doctest::
 
-    >>> rcm8cube.sections['demo']
+    >>> golfcube.sections['demo']
     <deltametrics.section.StrikeSection object at 0x...>
 
 Available section types are ``PathSection``, ``StrikeSection``,
@@ -178,24 +178,31 @@ are sliced themselves, similarly to the cube.
 
 .. doctest::
 
-    >>> rcm8cube.register_section('demo', dm.section.StrikeSection(y=10))
-    >>> rcm8cube.sections['demo']['velocity']
-    DataSectionVariable([[0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.],
+    >>> golfcube.register_section('demo', dm.section.StrikeSection(y=10))
+    >>> golfcube.sections['demo']['velocity']
+    DataSectionVariable([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   ,
+                          0.2   ],
+                         [0.    , 0.    , 0.    , ..., 0.    , 0.    ,
+                          0.    ],
+                         [0.    , 0.0025, 0.    , ..., 0.    , 0.    ,
+                          0.    ],
                          ...,
-                         [0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.]], dtype=float32)
+                         [0.    , 0.    , 0.    , ..., 0.0025, 0.    ,
+                          0.    ],
+                         [0.    , 0.    , 0.    , ..., 0.    , 0.    ,
+                          0.    ],
+                         [0.    , 0.    , 0.    , ..., 0.0025, 0.    ,
+                          0.    ]], dtype=float32)
+
 
 We can visualize sections:
 
 .. doctest::
 
     >>> fig, ax = plt.subplots(3, 1, sharex=True, figsize=(12,6))
-    >>> rcm8cube.show_section('demo', 'eta', ax=ax[0])
-    >>> rcm8cube.show_section('demo', 'velocity', ax=ax[1])
-    >>> rcm8cube.show_section('demo', 'strata_sand_frac', ax=ax[2])
+    >>> golfcube.show_section('demo', 'eta', ax=ax[0])
+    >>> golfcube.show_section('demo', 'velocity', ax=ax[1])
+    >>> golfcube.show_section('demo', 'sandfrac', ax=ax[2])
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_three_spacetime_sections.py
@@ -205,8 +212,8 @@ You can also create a standalone section, which is not registered to the cube, b
 
 .. doctest::
 
-    >>> sass = dm.section.StrikeSection(rcm8cube, y=10)
-    >>> np.all(sass['velocity'] == rcm8cube.sections['demo']['velocity']) #doctest: +SKIP
+    >>> sass = dm.section.StrikeSection(golfcube, y=10)
+    >>> np.all(sass['velocity'] == golfcube.sections['demo']['velocity']) #doctest: +SKIP
     True
 
 .. _userguide_quick_stratigraphy:
@@ -223,15 +230,17 @@ Compute the quick stratigraphy as:
 
 .. doctest::
 
-    >>> rcm8cube.stratigraphy_from('eta')
+    >>> golfcube.stratigraphy_from('eta')
 
 Now, the ``DataCube`` has knowledge of stratigraphy, which we can further use to visualize preservation within the spacetime, or visualize as an actual stratigraphic slice.
 
 .. doctest::
 
-    >>> rcm8cube.sections['demo']['velocity'].as_preserved()
+    >>> golfcube.sections['demo']['velocity'].as_preserved()
     masked_DataSectionVariable(
-      data=[[0.0, 0.0, 0.0, ..., 0.0, 0.0, 0.0],
+      data=[[0.20000000298023224, 0.20000000298023224, 0.20000000298023224,
+             ..., 0.20000000298023224, 0.20000000298023224,
+             0.20000000298023224],
             [--, --, --, ..., --, --, --],
             [--, --, --, ..., --, --, --],
             ...,
@@ -248,12 +257,13 @@ Now, the ``DataCube`` has knowledge of stratigraphy, which we can further use to
       fill_value=1e+20,
       dtype=float32)
 
+
 .. doctest::
 
     >>> fig, ax = plt.subplots(3, 1, sharex=True, figsize=(12, 8))
-    >>> rcm8cube.show_section('demo', 'velocity', ax=ax[0])
-    >>> rcm8cube.show_section('demo', 'velocity', data='preserved', ax=ax[1])
-    >>> rcm8cube.show_section('demo', 'velocity', data='stratigraphy', ax=ax[2])
+    >>> golfcube.show_section('demo', 'velocity', ax=ax[0])
+    >>> golfcube.show_section('demo', 'velocity', data='preserved', ax=ax[1])
+    >>> golfcube.show_section('demo', 'velocity', data='stratigraphy', ax=ax[2])
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_quick_stratigraphy_sections.py
@@ -263,10 +273,10 @@ Quick stratigraphy makes it easy to visualize the behavior of the model across e
 
 .. doctest::
 
-    >>> fig, ax = plt.subplots(7, 1, sharex=True, sharey=True, figsize=(12, 12))
+    >>> fig, ax = plt.subplots(5, 1, sharex=True, sharey=True, figsize=(12, 12))
     >>> ax = ax.flatten()
-    >>> for i, var in enumerate(['time'] + rcm8cube.dataio.known_variables):
-    ...     rcm8cube.show_section('demo', var, ax=ax[i], label=True,
+    >>> for i, var in enumerate(['time', 'eta', 'velocity', 'discharge', 'sandfrac']):
+    ...     golfcube.show_section('demo', var, ax=ax[i], label=True,
     ...       style='shaded', data='stratigraphy')
     >>> plt.show() #doctest: +SKIP
 
@@ -282,11 +292,11 @@ The following are currently implemented.
 
 .. doctest::
 
-    >>> _strike = dm.section.StrikeSection(rcm8cube, y=18)
-    >>> _path = dm.section.PathSection(rcm8cube, path=np.column_stack((np.linspace(50, 150, num=4000, dtype=np.int),
-    ...                                                                np.linspace(10, 90, num=4000, dtype=np.int))))
-    >>> _circ = dm.section.CircularSection(rcm8cube, radius=30)
-    >>> _rad = dm.section.RadialSection(rcm8cube, azimuth=70)
+    >>> _strike = dm.section.StrikeSection(golfcube, y=18)
+    >>> _path = dm.section.PathSection(golfcube, path=np.column_stack((np.linspace(50, 150, num=4000, dtype=int),
+    ...                                                                np.linspace(10, 90, num=4000, dtype=int))))
+    >>> _circ = dm.section.CircularSection(golfcube, radius=40)
+    >>> _rad = dm.section.RadialSection(golfcube, azimuth=70)
 
 
 The `Section` classes all inherit from the same ``BaseSection`` class, which means they mostly have the same options available to them, and have a common API.
@@ -299,7 +309,7 @@ Each has unique instantiation arguments, though, which must be properly specifie
     >>> ax0 = fig.add_subplot(spec[0, :])
     >>> axs = [fig.add_subplot(spec[i, j]) for i, j in zip(np.repeat(np.arange(1, 3), 2), np.tile(np.arange(2), (3,)))]
 
-    >>> rcm8cube.show_plan('eta', t=-1, ax=ax0, ticks=True)
+    >>> golfcube.show_plan('eta', t=-1, ax=ax0, ticks=True)
     >>> for i, s in enumerate([_strike, _path, _circ, _rad]):
     ...     ax0.plot(s.trace[:,0], s.trace[:,1], 'r--') #doctest: +SKIP
     ...     s.show('velocity', ax=axs[i]) #doctest: +SKIP
@@ -316,7 +326,7 @@ Computing and Manipulating Stratigraphy
 1) Does not consider volume of sediment filled by preserved-time indicies, 2) cannot be sliced by planform, 3) irregularity does not lend well to computation and other uses (hydrological studies).
 
 So, we want to be able to create what I refer to as "boxy" stratigraphy.
-This has been done in the past by "placing" values from, e.g., ``strata_sand_frac`` into stratigraphy.
+This has been done in the past by "placing" values from, e.g., ``sandfrac`` into stratigraphy.
 This requires full computation for any variable you want to examine though.
 Here, we use a method that computes boxy stratigraphy only once, then synthesizes the volume from
 the precomputed sparse indicies.
@@ -325,7 +335,7 @@ Here’s a simple example to demonstrate how we place data into the stratigraphy
 
 .. doctest::
 
-    >>> ets = rcm8cube['eta'][:, 25, 120]  # a "real" slice of the model
+    >>> ets = golfcube['eta'][:, 10, 85]  # a "real" slice of the model
     >>> fig, ax = plt.subplots(figsize=(8, 4))
     >>> dm.plot.show_one_dimensional_trajectory_to_strata(ets, ax=ax, dz=0.25)
     >>> plt.show() #doctest: +SKIP
@@ -337,19 +347,19 @@ Begin by creating a ``StratigraphyCube``:
 
 .. doctest::
 
-    >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.05)
-    >>> sc8cube.variables
-    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'strata_sand_frac']
+    >>> stratcube = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.05)
+    >>> stratcube.variables
+    ['eta', 'stage', 'depth', 'discharge', 'velocity', 'sedflux', 'sandfrac']
 
 
 We can then slice this cube in the same way as the ``DataCube``, but what we get back is *stratigraphy* rather than *spacetime*.
-Compare the slice from the `rcm8cube` (left) to the `sc8cube` (right):
+Compare the slice from the `golfcube` (left) to the `stratcube` (right):
 
 .. doctest::
 
     >>> fig, ax = plt.subplots(1, 2, figsize=(8, 2))
-    >>> rcm8cube.sections['demo'].show('velocity', ax=ax[0]) #doctest: +SKIP
-    >>> sc8cube.sections['demo'].show('velocity', ax=ax[1]) #doctest: +SKIP
+    >>> golfcube.sections['demo'].show('velocity', ax=ax[0]) #doctest: +SKIP
+    >>> stratcube.sections['demo'].show('velocity', ax=ax[1]) #doctest: +SKIP
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_compare_slices.py
@@ -358,12 +368,12 @@ Compare the slice from the `rcm8cube` (left) to the `sc8cube` (right):
 Validation of the stratigraphy is easily seen by looking at the ``time`` attribute.
 Note that sections are *not* inherited from the ``DataCube`` by default (we’re working on this and related features).
 
-Let’s add a section at the same location as ``rcm8cube.sections['demo']``.
+Let’s add a section at the same location as ``golfcube.sections['demo']``.
 
 .. doctest::
 
-    >>> sc8cube.register_section('demo', dm.section.StrikeSection(y=10))
-    >>> sc8cube.sections
+    >>> stratcube.register_section('demo', dm.section.StrikeSection(y=10))
+    >>> stratcube.sections
     {'demo': <deltametrics.section.StrikeSection object at 0x...>}
 
 Let's examine the stratigraphy in three different visual styles.
@@ -371,9 +381,9 @@ Let's examine the stratigraphy in three different visual styles.
 .. doctest::
 
     >>> fig, ax = plt.subplots(3, 1, sharex=True, sharey=True, figsize=(12, 8))
-    >>> rcm8cube.sections['demo'].show('time', style='lines', data='stratigraphy', ax=ax[0], label=True)
-    >>> sc8cube.sections['demo'].show('time', ax=ax[1])
-    >>> rcm8cube.sections['demo'].show('time', data='stratigraphy', ax=ax[2])
+    >>> golfcube.sections['demo'].show('time', style='lines', data='stratigraphy', ax=ax[0], label=True)
+    >>> stratcube.sections['demo'].show('time', ax=ax[1])
+    >>> golfcube.sections['demo'].show('time', data='stratigraphy', ax=ax[2])
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_three_stratigraphy.py
@@ -382,10 +392,10 @@ Similar to the demonstration above, each variable (property) of the underlying c
 
 .. doctest::
 
-    >>> fig, ax = plt.subplots(7, 1, sharex=True, sharey=True, figsize=(12, 12))
+    >>> fig, ax = plt.subplots(5, 1, sharex=True, sharey=True, figsize=(12, 12))
     >>> ax = ax.flatten()
-    >>> for i, var in enumerate(['time'] + sc8cube.dataio.known_variables):
-    ...     sc8cube.show_section('demo', var, ax=ax[i], label=True,
+    >>> for i, var in enumerate(['time', 'eta', 'velocity', 'discharge', 'sandfrac']):
+    ...     stratcube.show_section('demo', var, ax=ax[i], label=True,
     ...                          style='shaded', data='stratigraphy')
     >>> plt.show() #doctest: +SKIP
 
@@ -398,10 +408,10 @@ values. This might be done by subclassing ``xarray`` rather than
 
 .. doctest::
 
-    >>> elev_idx = (np.abs(sc8cube.z - -2)).argmin()  # find nearest idx to -2 m
+    >>> elev_idx = (np.abs(stratcube.z - -2)).argmin()  # find nearest idx to -2 m
 
     >>> fig, ax = plt.subplots(figsize=(5, 3))
-    >>> sc8cube.show_plan('strata_sand_frac', elev_idx, ticks=True)
+    >>> stratcube.show_plan('sandfrac', elev_idx, ticks=True)
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_stratigraphy_planform_slice.py
@@ -415,15 +425,15 @@ speed up computations if an array is being accessed over and over.
 
 .. code::
 
-    fs = sc8cube.export_frozen_variable('strata_sand_frac')
-    fe = sc8cube.Z  # exported volume does not have coordinate information!
+    fs = stratcube.export_frozen_variable('sandfrac')
+    fe = stratcube.Z  # exported volume does not have coordinate information!
 
     fig, ax = plt.subplots(figsize=(10, 2))
     pcm = ax.pcolormesh(np.tile(np.arange(fs.shape[2]), (fs.shape[0], 1)),
        fe[:,10,:], fs[:,10,:], shading='auto',
-       cmap=rcm8cube.varset['strata_sand_frac'].cmap,
-       vmin=rcm8cube.varset['strata_sand_frac'].vmin,
-       vmax=rcm8cube.varset['strata_sand_frac'].vmax)
+       cmap=golfcube.varset['sandfrac'].cmap,
+       vmin=golfcube.varset['sandfrac'].vmin,
+       vmax=golfcube.varset['sandfrac'].vmax)
     dm.plot.append_colorbar(pcm, ax)
     plt.show() #doctest: +SKIP
 
@@ -432,7 +442,7 @@ and just directly obtain a frozen volume with:
 
 .. doctest::
 
-   >>> fs, fe = dm.strat.compute_boxy_stratigraphy_volume(rcm8cube['eta'], rcm8cube['strata_sand_frac'], dz=0.05)
+   >>> fs, fe = dm.strat.compute_boxy_stratigraphy_volume(golfcube['eta'], golfcube['sandfrac'], dz=0.05)
 
 However, this will require recomputing the stratigraphy preservation to create another cube in the future, and because the ``StratigraphyCube`` stores data on disk, the memory footprint is relatively small, and so we recommend just computing the ``StratigraphyCube`` and using the ``export_frozen_variable)`` method.
 Finally, ``DataCubeVariable`` and ``StratigraphyCubeVariable`` support a ``.as_frozen()`` method themselves.
@@ -441,7 +451,7 @@ We should verify that the frozen cubes actually match the underlying data!
 
 .. doctest::
 
-    >>> np.all( fs[~np.isnan(fs)] == sc8cube['strata_sand_frac'][~np.isnan(sc8cube['strata_sand_frac'])] ) #doctest: +SKIP
+    >>> np.all( fs[~np.isnan(fs)] == stratcube['sandfrac'][~np.isnan(stratcube['sandfrac'])] ) #doctest: +SKIP
     True
 
 The access speed of a frozen volume is **much** faster than a live cube.
