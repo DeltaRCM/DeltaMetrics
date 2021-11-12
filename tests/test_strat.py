@@ -18,7 +18,7 @@ class TestComputeBoxyStratigraphyVolume:
     elev = golfcube['eta']
     time = golfcube['time']
 
-    def test_returns_volume_and_elevations(self):
+    def test_returns_volume_and_elevations_given_dz(self):
         s, e = strat.compute_boxy_stratigraphy_volume(
             self.elev, self.time, dz=0.05)
         assert s.ndim == 3
@@ -32,6 +32,13 @@ class TestComputeBoxyStratigraphyVolume:
         assert s.ndim == 3
         assert s.shape == e.shape
         assert np.all(e[:, 0, 0] == z)
+
+    def test_returns_volume_and_elevations_given_nz(self):
+        s, e = strat.compute_boxy_stratigraphy_volume(
+            self.elev, self.time, nz=33)
+        assert s.ndim == 3
+        assert s.shape == e.shape
+        assert s.shape[0] == 33 + 1
 
     @pytest.mark.xfail(raises=NotImplementedError,
                        strict=True, reason='Not yet developed.')
@@ -72,6 +79,18 @@ class TestComputeBoxyStratigraphyCoordinates:
     elev = golfcube['eta']
     time = golfcube['time']
 
+    def test_returns_sc_dc_given_dz(self):
+        # check for the warning when no option passed
+        with pytest.warns(UserWarning):
+            sc, dc = strat.compute_boxy_stratigraphy_coordinates(
+                self.elev)
+        # now specify dz
+        sc, dc = strat.compute_boxy_stratigraphy_coordinates(
+            self.elev, dz=0.05)
+        assert sc.shape == dc.shape
+        assert sc.shape[1] == 3
+        assert sc.shape[0] > 1  # don't know how big it will be
+
     def test_returns_sc_dc(self):
         sc, dc = strat.compute_boxy_stratigraphy_coordinates(
             self.elev, dz=0.05)
@@ -91,6 +110,14 @@ class TestComputeBoxyStratigraphyCoordinates:
         sc, dc = strat.compute_boxy_stratigraphy_coordinates(self.elev, z=z)
         assert np.min(sc[:, 0]) == 0
         assert np.max(sc[:, 0]) == 6
+        # check that the number of z values matches len(z)
+        assert np.unique(sc[:, 0]).shape[0] == len(z)
+
+    def test_returns_sc_dc_given_nz(self):
+        sc, dc = strat.compute_boxy_stratigraphy_coordinates(self.elev, nz=13)
+        assert np.min(sc[:, 0]) == 0
+        # check that the number of z values matches nz
+        assert np.unique(sc[:, 0]).shape[0] == 13
 
     @pytest.mark.xfail(raises=NotImplementedError,
                        strict=True, reason='Not yet developed.')
@@ -347,18 +374,18 @@ class TestDetermineStratCoordinates:
     def test_given_nz(self):
         e = np.array([0, 1, 1, 2, 1])
         z = strat._determine_strat_coordinates(e, nz=50)
-        assert len(z) == 50
+        assert len(z) == 50 + 1
         assert z[-1] == 2.00
         assert z[0] == 0
-        assert z[1] - z[0] == pytest.approx(2 / 49)
+        assert z[1] - z[0] == pytest.approx(2 / 50)  # delta_Z / nz
 
     def test_given_nz_negative_endpoint(self):
         e = np.array([0, 1, 1, 50, -1])
         z = strat._determine_strat_coordinates(e, nz=50)
-        assert len(z) == 50
+        assert len(z) == 50 + 1
         assert z[-1] == pytest.approx(50)
         assert z[0] == -1
-        assert z[1] - z[0] == pytest.approx(51 / 49)
+        assert z[1] - z[0] == pytest.approx(51 / 50)  # delta_Z / nz
 
     def test_given_nz_zero(self):
         e = np.array([0, 1, 1, 2, 1])
