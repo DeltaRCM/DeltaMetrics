@@ -49,7 +49,7 @@
 <h1>deltametrics.strat.compute_boxy_stratigraphy_volume<a class="headerlink" href="#deltametrics-strat-compute-boxy-stratigraphy-volume" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.strat.compute_boxy_stratigraphy_volume">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">compute_boxy_stratigraphy_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.compute_boxy_stratigraphy_volume" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">compute_boxy_stratigraphy_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.compute_boxy_stratigraphy_volume" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process t-x-y data volume to boxy stratigraphy volume.</p>
 <p>This function returns a “frozen” cube of stratigraphy
 with values of the supplied property/variable (<code class="xref py py-obj docutils literal notranslate"><span class="pre">prop</span></code>) placed into a
@@ -64,16 +64,32 @@ three-dimesional real-valued 3D array.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of elevation data to determine stratigraphy.</p></li>
 <li><p><strong>prop</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of property data to process into the stratigraphy.</p></li>
-<li><p><strong>dz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Vertical resolution of stratigraphy, in meters.</p></li>
-<li><p><strong>return_cube</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code>, optional) – Whether to return the stratigraphy as a
+<li><p><strong>z</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>, optional) – Vertical coordinates for stratigraphy, in meters. Optional, and
+mutually exclusive with <code class="xref py py-obj docutils literal notranslate"><span class="pre">dz</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nz</span></code>,
+see <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._determine_strat_coordinates" title="deltametrics.strat._determine_strat_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_determine_strat_coordinates</span></code></a> for complete description.</p></li>
+<li><p><strong>dz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Vertical resolution of stratigraphy, in meters. Optional, and mutually
+exclusive with <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nz</span></code>,
+see <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._determine_strat_coordinates" title="deltametrics.strat._determine_strat_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_determine_strat_coordinates</span></code></a> for complete description.</p></li>
+<li><p><strong>nz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Number of intervals for vertical coordinates of stratigraphy.
+Optional, and mutually exclusive with <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">dz</span></code>,
+see <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._determine_strat_coordinates" title="deltametrics.strat._determine_strat_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_determine_strat_coordinates</span></code></a> for complete description.</p></li>
+<li><p><strong>return_cube</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code>, optional) – <p>Whether to return the stratigraphy as a
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">FrozenStratigraphyCube</span></code> instance. Default is
-to return an <cite>ndarray</cite> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">elevations</span></code> <cite>ndarray</cite>.</p></li>
+to return an <cite>ndarray</cite> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">elevations</span></code> <cite>ndarray</cite>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>not implemented!</p>
+</div>
+</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p><ul class="simple">
-<li><p><em>stratigraphy</em></p></li>
-<li><p><em>elevations</em></p></li>
+<li><p><strong>stratigraphy_cube</strong> (<a class="reference internal" href="deltametrics.cube.StratigraphyCube.html#deltametrics.cube.StratigraphyCube" title="deltametrics.cube.StratigraphyCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StratigraphyCube</span></code></a>) – Not Implemented.</p></li>
+<li><p><strong>stratigraphy</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>z-x-y</cite> <cite>ndarray</cite> with data from <cite>prop</cite> placed into voxels to fill
+stratigraphy.</p></li>
+<li><p><strong>elevations</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>z-x-y</cite> <cite>ndarray</cite> with elevations for each voxel in the stratigraphy
+array.</p></li>
 </ul>
 </p>
 </dd>

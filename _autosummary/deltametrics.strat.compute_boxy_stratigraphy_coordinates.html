@@ -49,7 +49,7 @@
 <h1>deltametrics.strat.compute_boxy_stratigraphy_coordinates<a class="headerlink" href="#deltametrics-strat-compute-boxy-stratigraphy-coordinates" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.strat.compute_boxy_stratigraphy_coordinates">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">compute_boxy_stratigraphy_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_strata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.compute_boxy_stratigraphy_coordinates" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">compute_boxy_stratigraphy_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_strata</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.compute_boxy_stratigraphy_coordinates" title="Permalink to this definition">¶</a></dt>
 <dd><p>Process t-x-y data volume to boxy stratigraphy coordinates.</p>
 <p>This function computes the corresponding preservation of <cite>t-x-y</cite>
 coordinates in a dense 3D volume of stratigraphy, as <cite>z-x-y</cite> coordinates.
@@ -60,15 +60,43 @@ dataset.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of elevation data to determine stratigraphy.</p></li>
-<li><p><strong>prop</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of property data to process into the stratigraphy.</p></li>
-<li><p><strong>dz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Vertical resolution of stratigraphy, in meters.</p></li>
+<li><p><strong>z</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>, optional) – Vertical coordinates for stratigraphy, in meters. Optional, and
+mutually exclusive with <code class="xref py py-obj docutils literal notranslate"><span class="pre">dz</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nz</span></code>,
+see <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._determine_strat_coordinates" title="deltametrics.strat._determine_strat_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_determine_strat_coordinates</span></code></a> for complete description.</p></li>
+<li><p><strong>dz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Vertical resolution of stratigraphy, in meters. Optional, and mutually
+exclusive with <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">nz</span></code>,
+see <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._determine_strat_coordinates" title="deltametrics.strat._determine_strat_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_determine_strat_coordinates</span></code></a> for complete description.</p></li>
+<li><p><strong>nz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Number of intervals for vertical coordinates of stratigraphy.
+Optional, and mutually exclusive with <code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code> and <code class="xref py py-obj docutils literal notranslate"><span class="pre">dz</span></code>,
+see <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._determine_strat_coordinates" title="deltametrics.strat._determine_strat_coordinates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_determine_strat_coordinates</span></code></a> for complete description.</p></li>
+<li><p><strong>return_cube</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code>, optional) – <p>Whether to return the stratigraphy as a
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">FrozenStratigraphyCube</span></code> instance. Default is
+<cite>False</cite>, do not return a cube.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>not implemented!</p>
+</div>
+</p></li>
+<li><p><strong>return_strata</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">boolean</span></code>, optional) – Whether to return the stratigraphy elevations, as returned from
+internal computations in <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._compute_elevation_to_preservation" title="deltametrics.strat._compute_elevation_to_preservation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_elevation_to_preservation</span></code></a>.
+Default is <cite>False</cite>, do not return strata.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p></p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>stratigraphy_cube</p>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>stratigraphy_cube</strong> (<a class="reference internal" href="deltametrics.cube.StratigraphyCube.html#deltametrics.cube.StratigraphyCube" title="deltametrics.cube.StratigraphyCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StratigraphyCube</span></code></a>) – Not Implemented.</p></li>
+<li><p><strong>strata_coords</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – An <cite>N x 3</cite> array of <cite>z-x-y</cite> coordinates where information is preserved
+in the boxy stratigraphy. Rows in <cite>strat_coords</cite> correspond with rows
+in <cite>data_coords</cite>. See <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._compute_preservation_to_cube" title="deltametrics.strat._compute_preservation_to_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_preservation_to_cube</span></code></a> for
+computation implementation.</p></li>
+<li><p><strong>data_coords</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – An <cite>N x 3</cite> array of <cite>t-x-y</cite> coordinates where information is to be
+extracted from the data array. Rows in <cite>data_coords</cite> correspond with
+rows in <cite>strat_coords</cite>.  See <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._compute_preservation_to_cube" title="deltametrics.strat._compute_preservation_to_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_preservation_to_cube</span></code></a> for
+computation implementation.</p></li>
+<li><p><strong>strata</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>t-x-y</cite> <cite>ndarry</cite> of stratal surface elevations. Returned as third
+argument only if <cite>return_strata=True</cite>.</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>

@@ -244,11 +244,13 @@ is used of <cite>dz=0.1</cite>.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – An up-to-three-dimensional array with timeseries of elevation values,
 where elevation is expected to along the zeroth axis.</p></li>
-<li><p><strong>z</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>, optional) – Array of Z values to use, returned unchanged if supplied.</p></li>
+<li><p><strong>z</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>, optional) – Array of Z values to use for bounding intervals (i.e., points in <cite>z</cite>),
+returned unchanged if supplied.</p></li>
 <li><p><strong>dz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Interval in created Z array. Z array is created as
 <code class="docutils literal notranslate"><span class="pre">np.arange(np.min(elev),</span> <span class="pre">np.max(elev)+dz,</span> <span class="pre">step=dz)</span></code>.</p></li>
-<li><p><strong>nz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Number of intervals in <cite>z</cite>. Z array is created as
-<code class="docutils literal notranslate"><span class="pre">np.linspace(np.min(elev),</span> <span class="pre">np.max(elev),</span> <span class="pre">num=nz,</span> <span class="pre">endpoint=True)</span></code>.</p></li>
+<li><p><strong>nz</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Number of <em>intervals</em> in <cite>z</cite>, that is, the number of points in <cite>z</cite> is
+<cite>nz+1</cite>. Z array is created as <code class="docutils literal notranslate"><span class="pre">np.linspace(np.min(elev),</span> <span class="pre">np.max</span>
+<span class="pre">(elev),</span> <span class="pre">num=nz,</span> <span class="pre">endpoint=True)</span></code>.</p></li>
 </ul>
 </dd>
 </dl>
