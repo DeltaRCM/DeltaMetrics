@@ -1,4 +1,5 @@
 import numpy as np
+import xarray as xr
 
 from scipy.spatial import ConvexHull
 from shapely.geometry.polygon import Polygon
@@ -329,9 +330,24 @@ class OpeningAnglePlanform(BasePlanform):
                     '{0}. If you are trying to instantiate an OAP from '
                     'elevation data directly, see static method '
                     '`OpeningAnglePlanform.from_elevation_data`.')
+
+            # now check the type and allocate the arrays as xr.DataArray
+            if isinstance(_below_mask, xr.core.dataarray.DataArray):
+                self._below_mask = xr.zeros_like(_below_mask, dtype=bool)
+                self._sea_angles = xr.zeros_like(_below_mask, dtype=float)
+            elif isinstance(_below_mask, np.ndarray):
+                # this will use meshgrid to fill out with dx=1 in shape of array
+                self._below_mask = xr.DataArray(
+                    data=np.zeros(_below_mask.shape, dtype=bool))
+                self._sea_angles = xr.DataArray(
+                    data=np.zeros(_below_mask.shape, dtype=float))
+            else:
+                raise TypeError('Invalid type {0}'.format(type(_below_mask)))
+
         elif issubclass(type(args[0]), cube.BaseCube):
             raise NotImplementedError(
                 'Instantiation from a Cube is not yet implemented.')
+
         else:
             # bad type supplied as argument
             raise TypeError('Invalid type for argument.')
@@ -378,11 +394,11 @@ class OpeningAnglePlanform(BasePlanform):
             sea_angles.flat[flat_inds] = seaangles[-1, :]
 
         # assign shore_image to the mask object with proper size
-        self._sea_angles = sea_angles
+        self._sea_angles[:] = sea_angles
 
         # properly assign the oceanmap to the self.below_mask
         #   set it to be bool regardless of input type
-        self._below_mask = below_mask.astype(bool)
+        self._below_mask[:] = below_mask.astype(bool)
 
     @property
     def sea_angles(self):
@@ -499,30 +515,43 @@ class MorphologicalPlanform(BasePlanform):
                 raise ValueError(
                     'Expected at least 1 input, got 0.')
         # assign first argument to attribute of self
-        if isinstance(args[0], mask.BaseMask):
-            self._elevation_mask = args[0]
+        if issubclass(type(args[0]), mask.BaseMask):
+            self._elevation_mask = args[0]._mask
         elif utils.is_ndarray_or_xarray(args[0]):
             self._elevation_mask = args[0]
         else:
             raise TypeError(
                 'Type of first argument is unrecognized or unsupported')
+        # now check the type and allocate the arrays as xr.DataArray
+        if isinstance(self._elevation_mask, xr.core.dataarray.DataArray):
+            self._mean_image = xr.zeros_like(self._elevation_mask, dtype=float)
+        elif isinstance(self._elevation_mask, np.ndarray):
+            # this will use meshgrid to fill out with dx=1 in shape of array
+            self._mean_image = xr.DataArray(
+                data=np.zeros(self._elevation_mask.shape, dtype=float))
+        else:
+            raise TypeError(
+                'Invalid type {0}'.format(type(self._elevation_mask)))
+        
         # see if the inlet width is provided, if not see if cube is avail
         if (len(args) > 1):
             if isinstance(args[1], (int, float)):
                 self._max_disk = int(args[1])
             else:
                 raise TypeError(
-                'Expected single number to set max inlet size, got something '
-                'else instead.')
+                    'Expected single number to set max inlet size, got: '
+                    '{0}'.format(args[1]))
         elif isinstance(self.cube, cube.BaseCube):
             try:
                 self._max_disk = self.cube.meta['N0'].data
             except Exception:
                 raise TypeError(
-                'Data cube does not contain metadata, specify the inlet size')
+                    'Data cube does not contain metadata, you must '
+                    'specify the inlet size.')
         else:
             raise TypeError(
-            'Something went wrong. This error message should be better.')
+                'Something went wrong. Check second input argument for '
+                'inlet width.')
 
         self._shape = self._elevation_mask.shape
 
@@ -531,7 +560,7 @@ class MorphologicalPlanform(BasePlanform):
             self._elevation_mask, biggestdisk=self._max_disk)
 
         # assign arrays to object
-        self._mean_image = np.ones_like(mean_image) - mean_image
+        self._mean_image[:] = np.ones_like(mean_image) - mean_image
         self._all_images = all_images
 
     @property
@@ -548,6 +577,7 @@ class MorphologicalPlanform(BasePlanform):
     def composite_array(self):
         """Alias the mean image."""
         return self._mean_image
+
 
 def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
     """Compute shoreline roughness.
@@ -663,9 +693,19 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
     """
     # extract data from masks
     if isinstance(land_mask, mask.LandMask):
-        _lm = land_mask.mask
-    else:
+        land_mask = land_mask.mask
+        _lm = land_mask.values
+        _dx = float(land_mask[land_mask.dims[0]][1] -
+                    land_mask[land_mask.dims[0]][0])
+    elif isinstance(land_mask, xr.core.dataarray.DataArray):
+        _lm = land_mask.values
+        _dx = float(land_mask[land_mask.dims[0]][1] -
+                    land_mask[land_mask.dims[0]][0])
+    elif isinstance(land_mask, np.ndarray):
         _lm = land_mask
+        _dx = 1
+    else:
+        raise TypeError('Invalid type {0}'.format(type(land_mask)))
 
     _ = kwargs.pop('return_line', None)  # trash this variable if passed
     shorelength = compute_shoreline_length(
@@ -673,7 +713,7 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
 
     # compute the length of the shoreline and area of land
     shore_len_pix = shorelength
-    land_area_pix = np.sum(_lm)
+    land_area_pix = np.sum(_lm) * _dx * _dx
 
     if (land_area_pix > 0):
         # compute roughness
@@ -761,9 +801,20 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     """
     # check if mask or already array
     if isinstance(shore_mask, mask.ShorelineMask):
-        _sm = shore_mask.mask
-    else:
+        shore_mask = shore_mask.mask 
+        _sm = shore_mask.values
+        _dx = float(shore_mask[shore_mask.dims[0]][1] -
+                    shore_mask[shore_mask.dims[0]][0])
+    elif isinstance(shore_mask, xr.core.dataarray.DataArray):
+        _sm = shore_mask.values
+        _dx = float(shore_mask[shore_mask.dims[0]][1] -
+                    shore_mask[shore_mask.dims[0]][0])
+    elif isinstance(shore_mask, np.ndarray):
         _sm = shore_mask
+        _dx = 1
+        # should we have a warning that no dx was found here?
+    else:
+        raise TypeError('Invalid type {0}'.format(type(shore_mask)))
 
     if not (np.sum(_sm) > 0):
         raise ValueError('No pixels in shoreline mask.')
@@ -789,7 +840,8 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     hit_pts[_closest] = True
 
     # compute the distance to the next point
-    dists_pts = np.sqrt((_x[~hit_pts]-_x[_closest])**2 + (_y[~hit_pts]-_y[_closest])**2)
+    dists_pts = np.sqrt((_x[~hit_pts]-_x[_closest])**2 +
+                        (_y[~hit_pts]-_y[_closest])**2)
     dist_next = np.min(dists_pts)
     dist_max = np.sqrt(15)
 
@@ -830,7 +882,8 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     if (not np.all(hit_pts)):
 
         # compute dists from the intial point
-        dists_pts = np.sqrt((_x[~hit_pts]-line_xs_0[0])**2 + (_y[~hit_pts]-line_ys_0[0])**2)
+        dists_pts = np.sqrt((_x[~hit_pts]-line_xs_0[0])**2 +
+                            (_y[~hit_pts]-line_ys_0[0])**2)
         dist_next = np.min(dists_pts)
 
         # loop through all of the other points and organize into a line
@@ -852,7 +905,8 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
 
             # compute distance from ith point to all other points
             _xi, _yi = line_xs_1[idx], line_ys_1[idx]
-            dists_pts = np.sqrt((_x[~hit_pts]-_xi)**2 + (_y[~hit_pts]-_yi)**2)
+            dists_pts = np.sqrt((_x[~hit_pts]-_xi)**2 +
+                                (_y[~hit_pts]-_yi)**2)
             if (not np.all(hit_pts)):
                 dist_next = np.min(dists_pts)
             else:
@@ -869,9 +923,10 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     line_xs = np.hstack((np.flip(line_xs_1), line_xs_0))
     line_ys = np.hstack((np.flip(line_ys_1), line_ys_0))
 
-    # combine the xs and ys
-    line = np.column_stack((line_xs, line_ys))
-    length = np.sum(np.sqrt((line_xs[1:]-line_xs[:-1])**2 + (line_ys[1:]-line_ys[:-1])**2))
+    # combine the xs and ys AND multiply by dx
+    line = np.column_stack((line_xs, line_ys)) * _dx
+    length = np.sum(np.sqrt((line_xs[1:]-line_xs[:-1])**2 +
+                            (line_ys[1:]-line_ys[:-1])**2)) * _dx
 
     if return_line:
         return length, line
@@ -924,7 +979,8 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
     Examples
     --------
 
-    .. doctest::
+    .. plot::
+        :include-source:
 
         golf = dm.sample_data.golf()
 
@@ -937,12 +993,27 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
         mean, stddev = dm.plan.compute_shoreline_distance(
             sm, origin=[golf.meta['CTR'].data, golf.meta['L0'].data])
 
+        # make the plot
+        fig, ax = plt.subplots()
+        golf.show_plan('eta', t=-1, ticks=True, ax=ax)
+        ax.set_title('mean = {:.2f}'.format(mean))
+        plt.show()
     """
     # check if mask or already array
     if isinstance(shore_mask, mask.ShorelineMask):
-        _sm = shore_mask.mask
-    else:
+        shore_mask = shore_mask.mask
+        _sm = shore_mask.values
+        _dx = float(shore_mask[shore_mask.dims[0]][1] -
+                    shore_mask[shore_mask.dims[0]][0])
+    elif isinstance(shore_mask, xr.core.dataarray.DataArray):
+        _sm = shore_mask.values
+        _dx = float(shore_mask[shore_mask.dims[0]][1] -
+                    shore_mask[shore_mask.dims[0]][0])
+    elif isinstance(shore_mask, np.ndarray):
         _sm = shore_mask
+        _dx = 1
+    else:
+        raise TypeError('Invalid type {0}'.format(type(shore_mask)))
 
     if not (np.sum(_sm) > 0):
         raise ValueError('No pixels in shoreline mask.')
@@ -953,8 +1024,8 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
     # find where the mask is True (all x-y pairs along shore)
     _y, _x = np.argwhere(_sm).T
 
-    # determine the distances
-    _dists = np.sqrt((_x - origin[0])**2 + (_y - origin[1])**2)
+    # determine the distances (multiply by dx)
+    _dists = np.sqrt((_x - origin[0])**2 + (_y - origin[1])**2) * _dx
 
     if return_distances:
         return np.nanmean(_dists), np.nanstd(_dists), _dists
@@ -1233,7 +1304,7 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
             cm, section=sec, return_widths=True)
 
         fig, ax = plt.subplots()
-        cm.show(ax=ax)
+        cm.show(ax=ax, ticks=True)
         sec.show_trace('r-', ax=ax)
         ax.set_title(f'mean: {m:.2f}; stddev: {s:.2f}')
         plt.show()
@@ -1252,10 +1323,18 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
     # check that the section trace is a valid shape
     #   todo...
 
+    # coerce the channel mask to just the raw mask values
     if utils.is_ndarray_or_xarray(channelmask):
-        pass
+        if isinstance(channelmask, xr.core.dataarray.DataArray):
+            _dx = float(channelmask[channelmask.dims[0]][1] -
+                        channelmask[channelmask.dims[0]][0])
+        elif isinstance(channelmask, np.ndarray):
+            _dx = 1
     elif isinstance(channelmask, mask.ChannelMask):
-        channelmask = np.array(channelmask.mask)
+        channelmask = channelmask.mask
+        _dx = float(channelmask[channelmask.dims[0]][1] -
+                    channelmask[channelmask.dims[0]][0])
+        channelmask = np.array(channelmask)
     else:
         raise TypeError(
             'Input for `channelmask` was wrong type: {}.'.format(
@@ -1266,9 +1345,14 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
         _get_channel_starts_and_ends(channelmask, section_trace)
 
     # compute the metric
-    _channelwidths = section_coord[_channelends-1] - section_coord[_channelstarts-1]
+    #   Note: channel widths are pulled from the coordinates of the section,
+    #   which incorporate grid-spacing information. So, we DO NOT multiply
+    #   the width by dx here.
+    _channelwidths = (section_coord[_channelends - 1] -
+                      section_coord[_channelstarts - 1])
 
     _m, _s = np.nanmean(_channelwidths), np.nanstd(_channelwidths)
+
     if return_widths:
         return _m, _s, _channelwidths
     else:
