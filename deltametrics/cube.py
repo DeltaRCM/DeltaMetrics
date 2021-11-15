@@ -435,11 +435,13 @@ class BaseCube(abc.ABC):
 
         _plan = self[var].data[t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
 
-        _dx = self.x[1] - self.x[0]
-        _extent = [self._x[0] - (_dx/2),
-                   self._x[-1] + (_dx/2),
-                   self._y[-1] + (_dx/2),
-                   self._y[0] - (_dx/2)]
+        # get the extent as arbitrary dimensions
+        d0, d1 = _plan.dims
+        d0_arr, d1_arr = _plan[d0], _plan[d1]
+        _extent = [d1_arr[0],                  # dim1, 0
+                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
+                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
+                   d0_arr[0]]                  # dim0, 0
 
         if not ax:
             ax = plt.gca()
@@ -571,12 +573,12 @@ class DataCube(BaseCube):
         CubeVariable : `~deltametrics.cube.CubeVariable`
             The instantiated CubeVariable.
         """
+        _coords = {}
+        _coords['t'] = self.t
+        _coords['x'] = self._x
+        _coords['y'] = self._y
         if var in self._coords:
             # ensure coords can be called by cube[var]
-            _coords = {}
-            _coords['t'] = self.T
-            _coords['x'] = self.X
-            _coords['y'] = self.Y
             if var == 'time':  # special case for time
                 _t = np.expand_dims(self.dataio.dataset['time'].values,
                                     axis=(1, 2))
@@ -589,7 +591,7 @@ class DataCube(BaseCube):
 
         elif var in self._variables:
             _obj = self._dataio.dataset[var].cubevar
-            _obj.initialize(variable=var)
+            _obj.initialize(variable=var, coords=_coords)
             return _obj
 
         else:
