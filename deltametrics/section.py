@@ -350,7 +350,7 @@ class BaseSection(abc.ABC):
         if type(self.cube) is cube.DataCube:
             if self.cube._knows_stratigraphy:
                 return DataSectionVariable(
-                    _data=self.cube[var].data.values[:, self._y, self._x],
+                    _data=self.cube[var].data[:, self._y, self._x],
                     _s=self.s, _z=self.z,
                     _psvd_mask=self.cube.strat_attr.psvd_idx[:, self._y, self._x],  # noqa: E501
                     _strat_attr=self.cube.strat_attr(
@@ -358,12 +358,12 @@ class BaseSection(abc.ABC):
                     )
             else:
                 return DataSectionVariable(
-                    _data=self.cube[var].data.values[:, self._y, self._x],
+                    _data=self.cube[var].data[:, self._y, self._x],
                     _s=self.s, _z=self.z
                     )
         elif type(self.cube) is cube.StratigraphyCube:
             return StratigraphySectionVariable(
-                _data=self.cube[var].data.values[:, self._y, self._x],
+                _data=self.cube[var].data[:, self._y, self._x],
                 _s=self.s, _z=self.z
                 )
         elif self.cube is None:

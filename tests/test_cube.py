@@ -79,9 +79,9 @@ class TestDataCubeNoStratigraphy:
     def test_slice_op(self):
         rcm8cube = cube.DataCube(rcm8_path)
         slc = rcm8cube['eta']
-        assert type(slc) is cube.CubeVariable
+        assert type(slc) is xr.core.dataarray.DataArray
         assert slc.ndim == 3
-        assert type(slc.data) is xr.core.dataarray.DataArray
+        assert type(slc.values) is np.ndarray
 
     def test_slice_op_invalid_name(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -254,11 +254,11 @@ class TestDataCubeWithStratigraphy:
         with pytest.raises(AttributeError):
             self.fixeddatacube.sections = 10
 
-    def test_var_export_frozen(self):
-        fdv = self.fixeddatacube['time'].as_frozen()
-        assert isinstance(fdv, np.ndarray)
-        assert not isinstance(fdv, cube.CubeVariable)
-        assert not hasattr(fdv, 'x')
+    # def test_var_export_frozen(self):
+    #     fdv = self.fixeddatacube['time'].as_frozen()
+    #     assert isinstance(fdv, np.ndarray)
+    #     assert not isinstance(fdv, cube.CubeVariable)
+    #     assert not hasattr(fdv, 'x')
 
     def test_section_with_stratigraphy(self):
         assert hasattr(self.fixeddatacube, 'strat_attr')
@@ -287,12 +287,12 @@ class TestStratigraphyCube:
         frzn = self.fixedstratigraphycube.export_frozen_variable('time')
         assert frzn.ndim == 3
 
-    def test_var_export_frozen(self):
-        fv = self.fixedstratigraphycube['time'].as_frozen()
-        assert isinstance(fv, np.ndarray)
-        assert not isinstance(fv, cube.CubeVariable)
-        assert not hasattr(fv, 'x')
-        assert fv.ndim == 3
+    # def test_var_export_frozen(self):
+    #     fv = self.fixedstratigraphycube['time'].as_frozen()
+    #     assert isinstance(fv, np.ndarray)
+    #     assert not isinstance(fv, cube.CubeVariable)
+    #     assert not hasattr(fv, 'x')
+    #     assert fv.ndim == 3
 
 
 class TestFrozenStratigraphyCube:
@@ -310,8 +310,8 @@ class TestFrozenStratigraphyCube:
         assert not (self.frozenstratigraphycube is self.fixedstratigraphycube)
         frzn_log = self.frozenstratigraphycube.values[
             ~np.isnan(self.frozenstratigraphycube.values)]
-        fixd_log = self.fixedstratigraphycube['time'].data.values[
-            ~np.isnan(self.fixedstratigraphycube['time'].data.values)]
+        fixd_log = self.fixedstratigraphycube['time'].values[
+            ~np.isnan(self.fixedstratigraphycube['time'].values)]
         assert frzn_log.shape == fixd_log.shape
         assert np.all(fixd_log == frzn_log)
 

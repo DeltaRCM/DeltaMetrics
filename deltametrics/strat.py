@@ -106,8 +106,8 @@ def compute_boxy_stratigraphy_volume(elev, prop, z=None, dz=None, nz=None,
     # copy data out and into the stratigraphy based on coordinates
     nx, ny = strata.shape[1:]
     stratigraphy = np.full((len(z), nx, ny), np.nan)  # preallocate nans
-    _cut = prop.data.values[data_coords[:, 0], data_coords[:, 1],
-                            data_coords[:, 2]]
+    _cut = prop.values[data_coords[:, 0], data_coords[:, 1],
+                       data_coords[:, 2]]
     stratigraphy[strata_coords[:, 0],
                  strata_coords[:, 1],
                  strata_coords[:, 2]] = _cut
@@ -311,7 +311,7 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
         """
         super().__init__('mesh')
 
-        _eta = elev.data.copy()
+        _eta = elev.copy()
         _strata, _psvd = _compute_elevation_to_preservation(_eta)
         _psvd[0, ...] = True
         self.strata = _strata
@@ -331,9 +331,9 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
                                   *_eta.shape[1:]), np.nan)
         for i in np.arange(_eta.shape[1]):
             for j in np.arange(_eta.shape[2]):
-                self.psvd_vxl_eta[0:self.psvd_vxl_cnt[i, j], i, j] = _eta.data[
+                self.psvd_vxl_eta[0:self.psvd_vxl_cnt[i, j], i, j] = _eta[
                     self.psvd_idx[:, i, j], i, j].copy()
-                self.psvd_flld[0:self.psvd_vxl_cnt[i, j], i, j] = _eta.data[
+                self.psvd_flld[0:self.psvd_vxl_cnt[i, j], i, j] = _eta[
                     self.psvd_idx[:, i, j], i, j].copy()
                 self.psvd_flld[self.psvd_vxl_cnt[i, j]:, i, j] = self.psvd_flld[  # noqa: E501
                     self.psvd_vxl_cnt[i, j] - 1, i, j]

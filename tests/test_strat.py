@@ -319,8 +319,7 @@ class TestOneDimStratigraphyExamples:
 
     def test_onedim_traj_upsanddowns_negatives(self):
         # e = np.array([0, 0, -1, -4, -2, 3, 3.5, 3, 3, 4, 4])
-        e_xr = xr.DataArray([0, 0, -1, -4, -2, 3, 3.5, 3, 3, 4, 4])
-        e = e_xr.cubevar
+        e = xr.DataArray([0, 0, -1, -4, -2, 3, 3.5, 3, 3, 4, 4])
         z = strat._determine_strat_coordinates(e, dz=0.5)  # vert coordinates
         s, p = strat._compute_elevation_to_preservation(e)
         sc, dc = strat._compute_preservation_to_cube(s, z)
