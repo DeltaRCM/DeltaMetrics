@@ -12,7 +12,7 @@ m, s, w = dm.plan.compute_channel_width(
     cm, section=sec, return_widths=True)
 
 fig, ax = plt.subplots()
-cm.show(ax=ax)
+cm.show(ax=ax, ticks=True)
 sec.show_trace('r-', ax=ax)
 ax.set_title(f'mean: {m:.2f}; stddev: {s:.2f}')
 plt.show()

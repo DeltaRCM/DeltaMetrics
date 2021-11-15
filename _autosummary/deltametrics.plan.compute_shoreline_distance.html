@@ -76,18 +76,28 @@ are returned).</p></li>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="go">golf = dm.sample_data.golf()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golf</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 
-<span class="go">sm = dm.mask.ShorelineMask(</span>
-<span class="go">    golf[&#39;eta&#39;][-1, :, :],</span>
-<span class="go">    elevation_threshold=0,</span>
-<span class="go">    elevation_offset=-0.5)</span>
+<span class="n">sm</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ShorelineMask</span><span class="p">(</span>
+    <span class="n">golf</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">elevation_offset</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">)</span>
 
-<span class="go"># compute mean and stddev distance</span>
-<span class="go">mean, stddev = dm.plan.compute_shoreline_distance(</span>
-<span class="go">    sm, origin=[golf.meta[&#39;CTR&#39;].data, golf.meta[&#39;L0&#39;].data])</span>
+<span class="c1"># compute mean and stddev distance</span>
+<span class="n">mean</span><span class="p">,</span> <span class="n">stddev</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">compute_shoreline_distance</span><span class="p">(</span>
+    <span class="n">sm</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="p">[</span><span class="n">golf</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;CTR&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">golf</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;L0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">])</span>
+
+<span class="c1"># make the plot</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">golf</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;mean = </span><span class="si">{:.2f}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">mean</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-plan-compute_shoreline_distance-1.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-plan-compute_shoreline_distance-1.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../_images/deltametrics-plan-compute_shoreline_distance-1.png" class="plot-directive" src="../_images/deltametrics-plan-compute_shoreline_distance-1.png" />
+</figure>
 </dd></dl>
 
 </section>
