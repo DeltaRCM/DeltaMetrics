@@ -275,14 +275,14 @@ class BaseSection(abc.ABC):
         Compute the along-section coordinate array from x-y pts pairs
         definining the section.
         """
-        self._s = np.cumsum(np.hstack(
-            (0, np.sqrt((self._x[1:] - self._x[:-1])**2
-             + (self._y[1:] - self._y[:-1])**2))))
-        self._z = self.cube.z
-        self._shape = (len(self._z), len(self._s))
         self._xytrace = np.column_stack((self._x, self._y))
         self._trace = np.column_stack((self.cube.x[self._x],
                                        self.cube.y[self._y]))
+        self._s = np.cumsum(np.hstack(
+            (0, np.sqrt((self._trace[1:, 0] - self._trace[:-1, 0])**2
+             + (self._trace[1:, 1] - self._trace[:-1, 1])**2))))
+        self._z = self.cube.z
+        self._shape = (len(self._z), len(self._s))
 
     @property
     def trace(self):

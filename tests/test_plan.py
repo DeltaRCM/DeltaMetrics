@@ -4,6 +4,7 @@ import sys
 import os
 
 import numpy as np
+import xarray as xr
 
 from deltametrics.sample_data import _get_rcm8_path, _get_golf_path
 
@@ -33,14 +34,14 @@ class TestOpeningAnglePlanform:
     def test_defaults_array_int(self):
 
         oap = plan.OpeningAnglePlanform(self.simple_ocean.astype(int))
-        assert isinstance(oap.sea_angles, np.ndarray)
+        assert isinstance(oap.sea_angles, xr.core.dataarray.DataArray)
         assert oap.sea_angles.shape == self.simple_ocean.shape
         assert oap.below_mask.dtype == bool
 
     def test_defaults_array_bool(self):
 
         oap = plan.OpeningAnglePlanform(self.simple_ocean.astype(bool))
-        assert isinstance(oap.sea_angles, np.ndarray)
+        assert isinstance(oap.sea_angles, xr.core.dataarray.DataArray)
         assert oap.sea_angles.shape == self.simple_ocean.shape
         assert oap.below_mask.dtype == bool
 
@@ -60,7 +61,7 @@ class TestOpeningAnglePlanform:
         oap = plan.OpeningAnglePlanform.from_elevation_data(
             self.golfcube['eta'][-1, :, :],
             elevation_threshold=0)
-        assert isinstance(oap.sea_angles, np.ndarray)
+        assert isinstance(oap.sea_angles, xr.core.dataarray.DataArray)
         assert oap.sea_angles.shape == self.golfcube.shape[1:]
         assert oap.below_mask.dtype == bool
 
@@ -78,7 +79,7 @@ class TestOpeningAnglePlanform:
 
         oap = plan.OpeningAnglePlanform.from_ElevationMask(_em)
 
-        assert isinstance(oap.sea_angles, np.ndarray)
+        assert isinstance(oap.sea_angles, xr.core.dataarray.DataArray)
         assert oap.sea_angles.shape == _em.shape
         assert oap.below_mask.dtype == bool
 
@@ -112,7 +113,7 @@ class TestMorphologicalPlanform:
 
     def test_defaults_array_int(self):
         mpm = plan.MorphologicalPlanform(self.simple_land.astype(int), 2)
-        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._mean_image, xr.core.dataarray.DataArray)
         assert isinstance(mpm._all_images, np.ndarray)
         assert mpm._mean_image.shape == self.simple_land.shape
         assert len(mpm._all_images.shape) == 3
@@ -120,7 +121,7 @@ class TestMorphologicalPlanform:
 
     def test_defaults_array_bool(self):
         mpm = plan.MorphologicalPlanform(self.simple_land.astype(bool), 2)
-        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._mean_image, xr.core.dataarray.DataArray)
         assert isinstance(mpm._all_images, np.ndarray)
         assert mpm._mean_image.shape == self.simple_land.shape
         assert len(mpm._all_images.shape) == 3
@@ -128,7 +129,7 @@ class TestMorphologicalPlanform:
 
     def test_defaults_array_float(self):
         mpm = plan.MorphologicalPlanform(self.simple_land.astype(float), 2.0)
-        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._mean_image, xr.core.dataarray.DataArray)
         assert isinstance(mpm._all_images, np.ndarray)
         assert mpm._mean_image.shape == self.simple_land.shape
         assert len(mpm._all_images.shape) == 3
@@ -146,13 +147,13 @@ class TestMorphologicalPlanform:
         assert mpm.planform_type == 'morphological method'
         assert mpm._mean_image.shape == (100, 200)
         assert mpm._all_images.shape == (3, 100, 200)
-        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._mean_image, xr.core.dataarray.DataArray)
         assert isinstance(mpm._all_images, np.ndarray)
 
     def test_static_from_mask(self):
         mpm = plan.MorphologicalPlanform.from_mask(
             self.simple_land, 2)
-        assert isinstance(mpm._mean_image, np.ndarray)
+        assert isinstance(mpm._mean_image, xr.core.dataarray.DataArray)
         assert isinstance(mpm._all_images, np.ndarray)
         assert mpm._mean_image.shape == self.simple_land.shape
         assert len(mpm._all_images.shape) == 3
@@ -161,7 +162,7 @@ class TestMorphologicalPlanform:
     def test_static_from_mask_negative_disk(self):
         mpm = plan.MorphologicalPlanform.from_mask(
             self.simple_land, -2)
-        assert isinstance(mpm.mean_image, np.ndarray)
+        assert isinstance(mpm.mean_image, xr.core.dataarray.DataArray)
         assert isinstance(mpm.all_images, np.ndarray)
         assert mpm.mean_image.shape == self.simple_land.shape
         assert len(mpm.all_images.shape) == 3

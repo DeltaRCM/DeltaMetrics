@@ -1,5 +1,6 @@
 """Classes and methods to create masks of planform features and attributes."""
 import numpy as np
+import xarray as xr
 import matplotlib.pyplot as plt
 from skimage import feature
 from skimage import morphology
@@ -51,10 +52,14 @@ class BaseMask(abc.ABC):
                 raise ValueError('Expected 1 input, got 0.')
         elif (len(args) == 1) and issubclass(type(args[0]), cube.BaseCube):
             self._input_flag = 'cube'
-            self._set_shape_mask(args[0].shape[1:])
+            # take a slice to have the coordinates available
+            #   note: this is an uncessary disk-read operation, which 
+            #   should be fixed to access the coordinates needed directly.
+            self._set_shape_mask(
+                array=args[0][args[0].variables[0]][0, :, :])
         elif (len(args) >= 1) and issubclass(type(args[0]), BaseMask):
             self._input_flag = 'mask'
-            self._set_shape_mask(args[0].shape)
+            self._set_shape_mask(args[0].mask)
         elif utils.is_ndarray_or_xarray(args[0]):
             # check that all arguments are xarray or numpy arrays
             self._input_flag = 'array'
@@ -65,29 +70,52 @@ class BaseMask(abc.ABC):
                         'but then a later argument was not an array. '
                         'This is not supported. Type was {}'.format(
                             type(args[i])))
-            self._set_shape_mask(args[0].shape)
+            self._set_shape_mask(args[0])
         else:
             raise TypeError(
                 'Unexpected type was input: {0}'.format(type(args[0])))
 
-        self._check_deprecated_3d_input(args[0].shape)
-
-    def _set_shape_mask(self, _shape):
+    def _set_shape_mask(self, array):
         """Set the mask shape.
 
-        This is called during instantiation in most standard use-cases and
-        pathways, however, if you are implementing your own mask or your own
-        static method to create a mask, you may need to manually call this
-        method to set the fields of the mask correctly before doing any mask
-        computation.
+        This function is called during instantiation in most standard
+        use-cases and pathways, however, if you are implementing your own
+        mask or your own static method to create a mask, you may need to
+        manually call this method to set the fields of the mask correctly
+        before doing any mask computation.
 
         Parameters
         ----------
-        shape : :obj:`tuple`
-            Shape of the mask.
+        array : :obj:`np.ndarray` or :obj:`xr.DataArray`
+            A 2D array-like object from which the shape is inferred. If
+            available, pass a `DataArray`, and coordinates from the array
+            will be preserved. If an `ndarray` is passed, the coordinates are
+            generated according to `xarray` defaults.
         """
-        self._shape = _shape
-        self._mask = np.zeros(self._shape, dtype=bool)
+        # check that type is not a mask (must be an array, but simpler)
+        if issubclass(type(array), BaseMask):
+            raise TypeError(
+                'Input must be array-like, but was a `Mask` type: '
+                '{0}'.format(type(array)))
+
+        # check that the input is not 3D
+        #   Note, this check should remain after deprecation notice is remove,
+        #   but test could be relocated/renamed.
+        _shape = array.shape
+        self._check_deprecated_3d_input(_shape)
+
+        # set the mask as an xarray with coordinates attached
+        if isinstance(array, xr.core.dataarray.DataArray):
+            self._mask = xr.zeros_like(array, dtype=bool)
+        elif isinstance(array, np.ndarray):
+            # this will use meshgrid to fill out with dx=1 in shape of array
+            self._mask = xr.DataArray(
+                data=np.zeros(_shape, dtype=bool))
+        else:
+            raise TypeError('Invalid type {0}'.format(type(array)))
+
+        # set the shape attribute
+        self._shape = self._mask.shape
 
     def trim_mask(self, *args, value=False, axis=1, length=None):
         """Replace a part of the mask with a new value.
@@ -207,9 +235,17 @@ class BaseMask(abc.ABC):
                 '`mask` field has not been intialized yet. '
                 'If this is unexpected, please report error.')
 
-        im = ax.imshow(
-            self.integer_mask, origin='lower',
-            cmap=cmap, **kwargs)
+        # make the extent to show
+        d0, d1 = self.integer_mask.dims
+        d0_arr, d1_arr = self.integer_mask[d0], self.integer_mask[d1]
+        _extent = [d1_arr[0],                  # 0
+                   d1_arr[-1] + d1_arr[1],     # end + dx
+                   d0_arr[-1] + d0_arr[1],     # end + dx
+                   d0_arr[0]]                  # 0
+        im = ax.imshow(self.integer_mask,
+                       cmap=cmap,
+                       extent=_extent, **kwargs)
+
         if colorbar:
             _ = plot.append_colorbar(im, ax)
 
@@ -342,7 +378,7 @@ class ElevationMask(ThresholdValueMask):
         emap = (_eta > self._threshold)
 
         # set the data into the mask
-        self._mask[:, :] = emap
+        self._mask[:] = emap
 
     @property
     def elevation_threshold(self):
@@ -407,7 +443,7 @@ class FlowMask(ThresholdValueMask):
         fmap = (_flow > self._threshold)
 
         # set the data into the mask
-        self._mask = fmap
+        self._mask[:] = fmap
 
     @property
     def flow_threshold(self):
@@ -446,7 +482,8 @@ class ChannelMask(BaseMask):
         """
         # set up the empty shoreline mask
         _CM = ChannelMask(allow_empty=True, **kwargs)
-        _CM._set_shape_mask(_Planform.shape)
+        _CM._set_shape_mask(
+            array=_Planform.composite_array)
 
         # set up the needed flow mask and landmask
         _LM = LandMask.from_Planform(_Planform, **kwargs)
@@ -526,7 +563,7 @@ class ChannelMask(BaseMask):
 
         # set up the empty shoreline mask
         _CM = ChannelMask(allow_empty=True)
-        _CM._set_shape_mask(_LM.shape)
+        _CM._set_shape_mask(array=_LM._mask)
 
         # compute the mask
         _CM._compute_mask(_LM, _FM, **kwargs)
@@ -551,7 +588,7 @@ class ChannelMask(BaseMask):
         """
         # set directly
         _CM = ChannelMask(allow_empty=True)
-        _CM._set_shape_mask(_arr.shape)
+        _CM._set_shape_mask(_arr)
         _CM._input_flag = None
         _CM._mask = _arr.astype(bool)  # set the array as mask
         return _CM
@@ -645,17 +682,17 @@ class ChannelMask(BaseMask):
             raise ValueError
 
         if isinstance(args[0], LandMask):
-            lm_array = args[0]._mask
-            fm_array = args[1]._mask
+            lm_array = args[0]._mask.values
+            fm_array = args[1]._mask.values
         elif utils.is_ndarray_or_xarray(args[0]):
-            lm_array = args[0]
-            fm_array = args[1]
+            lm_array = args[0].values
+            fm_array = args[1].values
         else:
             raise TypeError
 
         # calculate the channelmask as the cells exceeding the threshold
         #   within the topset of the delta (ignoring flow in ocean)
-        self._mask = np.logical_and(lm_array, fm_array)
+        self._mask[:] = np.logical_and(lm_array, fm_array)
 
 
 class WetMask(BaseMask):
@@ -693,7 +730,7 @@ class WetMask(BaseMask):
         """
         # set up the empty shoreline mask
         _CM = WetMask(allow_empty=True, **kwargs)
-        _CM._set_shape_mask(_Planform.shape)
+        _CM._set_shape_mask(array=_Planform.composite_array)
 
         # set up the needed flow mask and landmask
         _LM = LandMask.from_Planform(_Planform)
@@ -752,7 +789,7 @@ class WetMask(BaseMask):
 
         # set up the empty shoreline mask
         _WM = WetMask(allow_empty=True)
-        _WM._set_shape_mask(_LM.shape)
+        _WM._set_shape_mask(_LM._mask)
 
         # compute the mask
         _WM._compute_mask(_LM, _EM, **kwargs)
@@ -875,7 +912,7 @@ class WetMask(BaseMask):
             raise ValueError
 
         # calculate the WetMask
-        self._mask = np.logical_and(below_array, lm_array)
+        self._mask[:] = np.logical_and(below_array, lm_array)
 
 
 class LandMask(BaseMask):
@@ -916,7 +953,8 @@ class LandMask(BaseMask):
         """
         # set up the empty shoreline mask
         _LM = LandMask(allow_empty=True, **kwargs)
-        _LM._set_shape_mask(_Planform.shape)
+        _LM._set_shape_mask(
+            array=_Planform.composite_array)
 
         # compute the mask
         _LM._compute_mask(_Planform, **kwargs)
@@ -973,7 +1011,7 @@ class LandMask(BaseMask):
 
         # set up the empty shoreline mask
         _LM = LandMask(allow_empty=True, contour_threshold=_contour_threshold)
-        _LM._set_shape_mask(_Planform.shape)
+        _LM._set_shape_mask(array=_Planform.composite_array)
 
         # compute the mask
         _composite_array = _Planform.composite_array
@@ -1114,12 +1152,12 @@ class LandMask(BaseMask):
             raise ValueError('Specify only 1 argument.')
 
         if np.all(composite_array == 0):
-            self._mask = np.zeros(self._shape, dtype=bool)
+            self._mask[:] = np.zeros(self._shape, dtype=bool)
         else:
-            self._mask = (composite_array < self._contour_threshold)
+            self._mask[:] = (composite_array < self._contour_threshold)
 
         # fill any holes in the mask
-        self._mask = binary_fill_holes(self._mask)
+        self._mask[:] = binary_fill_holes(self._mask)
 
     @property
     def contour_threshold(self):
@@ -1156,7 +1194,7 @@ class ShorelineMask(BaseMask):
     def from_Planform(_Planform, **kwargs):
         # set up the empty shoreline mask
         _SM = ShorelineMask(allow_empty=True, **kwargs)
-        _SM._set_shape_mask(_Planform.shape)
+        _SM._set_shape_mask(array=_Planform.composite_array)
 
         # compute the mask
         _SM._compute_mask(_Planform, **kwargs)
@@ -1206,7 +1244,7 @@ class ShorelineMask(BaseMask):
             will be coerced to `boolean`.
         """
         _SM = ShorelineMask(allow_empty=True)
-        _SM._set_shape_mask(_arr.shape)
+        _SM._set_shape_mask(_arr)
         _SM._contour_threshold = None
         _SM._input_flag = None
         _SM._mask = _arr.astype(bool)  # set the array as mask
@@ -1376,10 +1414,10 @@ class ShorelineMask(BaseMask):
             pass
         else:
             # grab contour from sea_angles corresponding to angle threshold
-            shoremap = self.grab_contour(_sea_angles, shoremap)
+            shoremap = self.grab_contour(np.array(_sea_angles), shoremap)
 
         # write shoreline map out to data.mask
-        self._mask = np.copy(shoremap.astype(bool))
+        self._mask[:] = np.copy(shoremap.astype(bool))
 
     def _compute_MPM_mask(self, *args, **kwargs):
         """Compute the shoreline mask using the MPM.
@@ -1423,10 +1461,10 @@ class ShorelineMask(BaseMask):
             pass
         else:
             # grab contour corresponding to angle threshold
-            shoremap = self.grab_contour(_mean_image, shoremap)
+            shoremap = self.grab_contour(np.array(_mean_image), shoremap)
 
         # write shoreline map out to data.mask
-        self._mask = np.copy(shoremap.astype(bool))
+        self._mask[:] = np.copy(shoremap.astype(bool))
 
     @property
     def contour_threshold(self):
@@ -1496,7 +1534,7 @@ class EdgeMask(BaseMask):
         """
         # set up the empty edge mask mask
         _EGM = EdgeMask(allow_empty=True, **kwargs)
-        _EGM._set_shape_mask(_Planform.shape)
+        _EGM._set_shape_mask(array=_Planform.composite_array)
 
         # set up the needed flow mask and landmask
         _LM = LandMask.from_Planform(_Planform, **kwargs)
@@ -1514,7 +1552,7 @@ class EdgeMask(BaseMask):
         """Create EdgeMask from a Planform.
         """
         _EGM = EdgeMask(allow_empty=True, **kwargs)
-        _EGM._set_shape_mask(_Planform.shape)
+        _EGM._set_shape_mask(array=_Planform.composite_array)
 
         # set up the needed flow mask and landmask
         _LM = LandMask.from_Planform(_Planform, **kwargs)
@@ -1537,7 +1575,7 @@ class EdgeMask(BaseMask):
                     _LM = UnknownMask
                 else:
                     raise TypeError(
-                        'Double `Mask` input types must be `WetMask` '
+                        'Paired `Mask` input types must be `WetMask` '
                         'and `LandMask`, but received argument of type '
                         '`{0}`.'.format(type(UnknownMask)))
         else:
@@ -1548,7 +1586,7 @@ class EdgeMask(BaseMask):
 
         # set up the empty shoreline mask
         _EGM = EdgeMask(allow_empty=True)
-        _EGM._set_shape_mask(_LM.shape)
+        _EGM._set_shape_mask(_LM._mask)
 
         # compute the mask
         _EGM._compute_mask(_LM, _WM, **kwargs)
@@ -1642,7 +1680,7 @@ class EdgeMask(BaseMask):
         # make the required Masks from a planform
         if 'method' in kwargs:
             _method = kwargs.pop('method')
-            if 'method' == 'MPM':
+            if _method == 'MPM':
                 _Planform = plan.MorphologicalPlanform.from_elevation_data(
                     _eta, **kwargs)
             else:
@@ -1680,9 +1718,13 @@ class EdgeMask(BaseMask):
             raise ValueError(
                 'Must supply `LandMask` and `WetMask` information.')
 
+        # added computation, but ensures type is array
+        lm_array = np.array(lm_array)
+        wm_array = np.array(wm_array)
+
         # compute the mask with canny edge detection
         #   the arrays must be type float for this to work!
-        self._mask = np.maximum(
+        self._mask[:] = np.maximum(
                 0, (feature.canny(wm_array) * 1 -
                     feature.canny(lm_array) * 1)).astype(bool)
 
@@ -1718,7 +1760,7 @@ class CenterlineMask(BaseMask):
         """
         # set up the empty shoreline mask
         _CntM = CenterlineMask(allow_empty=True, **kwargs)
-        _CntM._set_shape_mask(_Planform.shape)
+        _CntM._set_shape_mask(array=_Planform.composite_array)
 
         # set up the needed flow mask and channelmask
         _FM = _FlowMask
@@ -1785,7 +1827,7 @@ class CenterlineMask(BaseMask):
 
         # set up the empty shoreline mask
         _CntM = CenterlineMask(allow_empty=True)
-        _CntM._set_shape_mask(_CM.shape)
+        _CntM._set_shape_mask(_CM._mask)
 
         # compute the mask
         _CntM._compute_mask(_CM, **kwargs)
@@ -1928,7 +1970,7 @@ class CenterlineMask(BaseMask):
         # skimage.morphology.skeletonize() method
         if self.method == 'skeletonize':
             # for i in range(0, np.shape(self._mask)[0]):
-            self._mask = morphology.skeletonize(cm_array)
+            self._mask[:] = morphology.skeletonize(cm_array)
 
         # rivamap based method
         if self.method == 'rivamap':
@@ -1960,7 +2002,7 @@ class CenterlineMask(BaseMask):
             self.nms = eCL(orient, self.psi)
             nms_norm = self.nms/self.nms.max()
             # compute mask
-            self._mask = (nms_norm > self.nms_threshold)
+            self._mask[:] = (nms_norm > self.nms_threshold)
 
     @property
     def method(self):
@@ -2065,7 +2107,7 @@ class GeometricMask(BaseMask):
 
         # FOR GEOMETRIC, NEED START FROM ALL TRUE
         #   replace values from init immediately
-        self._mask = np.ones(self.shape, dtype=bool)
+        self._mask[:] = np.ones(self.shape, dtype=bool)
 
         # pull the shape into components for convenience
         self._L, self._W = self.shape
@@ -2128,16 +2170,16 @@ class GeometricMask(BaseMask):
             :include-source:
 
             golfcube = dm.sample_data.golf()
-            arr = golfcube['eta'][-1, :, :].data
+            arr = golfcube['eta'][-1, :, :]
             gmsk = dm.mask.GeometricMask(arr)
 
-            # Define an angular mask to cover part of the domain from 0 to pi/3.
+            # Define an angular mask to cover part of the domain from 0 to pi/3
             gmsk.angular(0, np.pi/3)
 
             # Visualize the mask:
             fig, ax = plt.subplots(1, 2, figsize=(8, 4))
             gmsk.show(ax=ax[0], title='Binary Mask')
-            ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask, origin='lower')
+            ax[1].imshow(golfcube['eta'][-1, :, :] * gmsk.mask)
             ax[1].set_xticks([]); ax[1].set_yticks([])
             ax[1].set_title('Mask * Topography')
             plt.show()
@@ -2153,7 +2195,7 @@ class GeometricMask(BaseMask):
         _, B = np.shape(anglemask)
         anglemap = anglemask[:self._L, int(B/2-self._W/2):int(B/2+self._W/2)]
 
-        self._mask = self._mask * anglemap
+        self._mask[:] = self._mask * anglemap
 
     def circular(self, rad1, rad2=None, origin=None):
         """Make a circular mask bounded by two radii.
@@ -2182,7 +2224,7 @@ class GeometricMask(BaseMask):
             :include-source:
 
             golfcube = dm.sample_data.golf()
-            arr = golfcube['eta'][-1, :, :].data
+            arr = golfcube['eta'][-1, :, :]
             gmsk = dm.mask.GeometricMask(arr)
 
             # Define an circular mask to exclude region near the inlet
@@ -2191,7 +2233,7 @@ class GeometricMask(BaseMask):
             # Visualize the mask:
             fig, ax = plt.subplots(1, 2, figsize=(8, 4))
             gmsk.show(ax=ax[0], title='Binary Mask')
-            ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask, origin='lower')
+            ax[1].imshow(golfcube['eta'][-1, :, :] * gmsk.mask)
             ax[1].set_xticks([]); ax[1].set_yticks([])
             ax[1].set_title('Mask * Topography')
             plt.show()
@@ -2218,7 +2260,7 @@ class GeometricMask(BaseMask):
         # make 3D to be consistent with mask
         raddist = np.reshape(raddist, [self._L, self._W])
         # combine with current mask via multiplication
-        self._mask = self._mask * raddist
+        self._mask[:] = self._mask * raddist
 
     def strike(self, ind1, ind2=None):
         """Make a mask based on two indices.
@@ -2243,7 +2285,7 @@ class GeometricMask(BaseMask):
             :include-source:
 
             golfcube = dm.sample_data.golf()
-            arr = golfcube['eta'][-1, :, :].data
+            arr = golfcube['eta'][-1, :, :]
             gmsk = dm.mask.GeometricMask(arr)
 
             # Define a mask that isolates the region 20-50 pixels from the inlet
@@ -2252,7 +2294,7 @@ class GeometricMask(BaseMask):
             # Visualize the mask:
             fig, ax = plt.subplots(1, 2, figsize=(8, 4))
             gmsk.show(ax=ax[0], title='Binary Mask')
-            ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask, origin='lower')
+            ax[1].imshow(golfcube['eta'][-1, :, :] * gmsk.mask)
             ax[1].set_xticks([]); ax[1].set_yticks([])
             ax[1].set_title('Mask * Topography')
             plt.show()
@@ -2263,7 +2305,7 @@ class GeometricMask(BaseMask):
         temp_mask = np.zeros_like(self._mask)
         temp_mask[ind1:ind2, :] = 1
 
-        self._mask = self._mask * temp_mask
+        self._mask[:] = self._mask * temp_mask
 
     def dip(self, ind1, ind2=None):
         """Make a mask parallel to the inlet.
@@ -2291,7 +2333,7 @@ class GeometricMask(BaseMask):
             :include-source:
 
             golfcube = dm.sample_data.golf()
-            arr = golfcube['eta'][-1, :, :].data
+            arr = golfcube['eta'][-1, :, :]
             gmsk = dm.mask.GeometricMask(arr)
 
             # Define mask with width of 50 px. inline with the inlet
@@ -2300,7 +2342,7 @@ class GeometricMask(BaseMask):
             # Visualize the mask:
             fig, ax = plt.subplots(1, 2, figsize=(8, 4))
             gmsk.show(ax=ax[0], title='Binary Mask')
-            ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask, origin='lower')
+            ax[1].imshow(golfcube['eta'][-1, :, :] * gmsk.mask)
             ax[1].set_xticks([]); ax[1].set_yticks([])
             ax[1].set_title('Mask * Topography')
             plt.show()
@@ -2312,7 +2354,7 @@ class GeometricMask(BaseMask):
         else:
             temp_mask[:, ind1:ind2] = 1
 
-        self._mask = self._mask * temp_mask
+        self._mask[:] = self._mask * temp_mask
 
     def _compute_mask(self):
         """Does Nothing!"""
