@@ -7,44 +7,56 @@ Most importantly, a Section is defined by a set of coordinates in the x-y plane 
 
 Therefore, we transform variable definitions when extracting the `Section`, and the coordinate system of the section is defined by the along-section direction :math:`s` and a vertical section coordinate, which is :math:`z` when viewing stratigraphy, and :math:`t` when viewing a spacetime section.
 
-The data that make up the section can view the section as a `spacetime` section by simply calling a `DataSectionVariable` directly.
+The data that make up the section can view the section as a `spacetime` section by simply calling a variable from the a section into a `DataCube`.
 
 .. doctest::
 
     >>> rcm8cube = dm.sample_data.rcm8()
     >>> strike = dm.section.StrikeSection(rcm8cube, y=10)
     >>> strike['velocity']
-    DataSectionVariable([[0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.],
-                         ...,
-                         [0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.],
-                         [0., 0., 0., ..., 0., 0., 0.]], dtype=float32)
+    <xarray.DataArray 'velocity' (z: 51, s: 240)>
+    array([[0., 0., 0., ..., 0., 0., 0.],
+           [0., 0., 0., ..., 0., 0., 0.],
+           [0., 0., 0., ..., 0., 0., 0.],
+           ...,
+           [0., 0., 0., ..., 0., 0., 0.],
+           [0., 0., 0., ..., 0., 0., 0.],
+           [0., 0., 0., ..., 0., 0., 0.]], dtype=float32)
+    Coordinates:
+      * s        (s) float64 0.0 1.0 2.0 3.0 4.0 ... 235.0 236.0 237.0 238.0 239.0
+      * z        (z) float32 0.0 50.0 100.0 150.0 ... 2.4e+03 2.45e+03 2.5e+03
+    Attributes:
+        slicetype:           data_section
+        knows_stratigraphy:  False
+        knows_spacetime:     True
 
-If a `DataSectionVariable` has preservation information (i.e., if the :meth:`~deltametrics.cube.DataCube.stratigraphy_from()` method has been called), then the `DataSectionVariable`, may be requested in the "preserved" form, where non-preserved t-x-y cells are masked with ``np.nan``. Note that the section has access to the preservation information of the data, even though it was instantiated prior to the computation of preservation!
+
+If a `DataCube` has preservation information (i.e., if the :meth:`~deltametrics.cube.DataCube.stratigraphy_from()` method has been called), then the `xarray` object that is returned has this information too.
+The same `spacetime` data can be requested in the "preserved" form, where non-preserved t-x-y points are masked with ``np.nan``.
 
 .. doctest::
 
     >>> rcm8cube.stratigraphy_from('eta')
-    >>> strike['velocity'].as_preserved()
-    masked_DataSectionVariable(
-      data=[[0.0, 0.0, 0.0, ..., 0.0, 0.0, 0.0],
-            [--, --, --, ..., --, --, --],
-            [--, --, --, ..., --, --, --],
-            ...,
-            [--, --, --, ..., --, --, --],
-            [--, --, --, ..., --, --, --],
-            [--, --, --, ..., --, --, --]],
-      mask=[[False, False, False, ..., False, False, False],
-            [ True,  True,  True, ...,  True,  True,  True],
-            [ True,  True,  True, ...,  True,  True,  True],
-            ...,
-            [ True,  True,  True, ...,  True,  True,  True],
-            [ True,  True,  True, ...,  True,  True,  True],
-            [ True,  True,  True, ...,  True,  True,  True]],
-      fill_value=1e+20,
-      dtype=float32)
+    >>> strike['velocity'].strat.as_preserved()
+    <xarray.DataArray 'velocity' (z: 51, s: 240)>
+    array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],
+           [nan, nan, nan, ..., nan, nan, nan],
+           [nan, nan, nan, ..., nan, nan, nan],
+           ...,
+           [nan, nan, nan, ..., nan, nan, nan],
+           [nan, nan, nan, ..., nan, nan, nan],
+           [nan, nan, nan, ..., nan, nan, nan]], dtype=float32)
+    Coordinates:
+      * s        (s) float64 0.0 1.0 2.0 3.0 4.0 ... 235.0 236.0 237.0 238.0 239.0
+      * z        (z) float32 0.0 50.0 100.0 150.0 ... 2.4e+03 2.45e+03 2.5e+03
+    Attributes:
+        slicetype:           data_section
+        knows_stratigraphy:  True
+        knows_spacetime:     True
+
+.. note::
+    The section has access to the preservation information of the data, even though it was instantiated prior to the computation of preservation!
+
 
 We can display the arrays using `matplotlib` to examine the spatiotemporal change of any variable; show the `velocity` in the below examples.
 

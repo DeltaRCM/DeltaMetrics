@@ -17,7 +17,7 @@ def pick_velocities(sect):
     """
     _whr = [sect['eta'] != sect['eta'][0, :]]
     _a = np.nanmean(sect['velocity'][tuple(_whr)])
-    _s = np.nanmean(sect['velocity'].as_preserved()[tuple(_whr)])
+    _s = np.nanmean(sect['velocity'].strat.as_preserved()[tuple(_whr)])
     return _a, _s
 
 

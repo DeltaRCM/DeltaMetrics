@@ -28,14 +28,3 @@ Section types
     CircularSection
     RadialSection
     BaseSection
-
-
-Section returns
-===============
-
-.. autosummary:: 
-    :toctree: ../../_autosummary
-
-    DataSectionVariable
-    StratigraphySectionVariable
-    BaseSectionVariable
