@@ -573,25 +573,24 @@ class DataCube(BaseCube):
         CubeVariable : `~deltametrics.cube.CubeVariable`
             The instantiated CubeVariable.
         """
-        _coords = {}
-        _coords['t'] = self.t
-        _coords['x'] = self._x
-        _coords['y'] = self._y
         if var in self._coords:
             # ensure coords can be called by cube[var]
             if var == 'time':  # special case for time
                 _t = np.expand_dims(self.dataio.dataset['time'].values,
                                     axis=(1, 2))
-                _xrt = xr.DataArray(np.tile(_t, (1, *self.shape[1:])))
+                _xrt = xr.DataArray(
+                    np.tile(_t, (1, *self.shape[1:])),
+                    coords={"t": self._t,
+                            "y": self.dataio[self.coordinates['x']],
+                            "x": self.dataio[self.coordinates['y']]},
+                    dims=['t', 'x', 'y'])
                 _obj = _xrt
             else:
                 _obj = self._dataio.dataset[var]
-            # _obj.initialize(variable=var, coords=_coords)
             return _obj
 
         elif var in self._variables:
             _obj = self._dataio.dataset[var]
-            # _obj.initialize(variable=var, coords=_coords)
             return _obj
 
         else:
@@ -768,18 +767,26 @@ class StratigraphyCube(BaseCube):
             _var = np.tile(_t, (1, *self.shape[1:]))
         elif var in self._variables:
             _arr = np.full(self.shape, np.nan)
-            _var = np.array(self.dataio[var], copy=True)
+            # _var = np.array(self.dataio[var], copy=True)
+            _var = self.dataio[var]
         else:
             raise AttributeError('No variable of {cube} named {var}'.format(
                                  cube=str(self), var=var))
 
+        # breakpoint()
         # the following lines apply the data to stratigraphy mapping
-        _cut = _var[self.data_coords[:, 0], self.data_coords[:, 1],
-                    self.data_coords[:, 2]]
+        if isinstance(_var, xr.core.dataarray.DataArray):
+            _vardata = _var.data
+        else:
+            _vardata = _var
+        _cut = _vardata[self.data_coords[:, 0], self.data_coords[:, 1],
+                        self.data_coords[:, 2]]
         _arr[self.strata_coords[:, 0], self.strata_coords[:, 1],
              self.strata_coords[:, 2]] = _cut
-        _obj = xr.DataArray(_arr)
-        # _obj.initialize(variable=var)
+        _obj = xr.DataArray(
+            _arr,
+            coords={"z": self._z, "y": self._x, "x": self._y},
+            dims=['z', 'x', 'y'])
         return _obj
 
     @property

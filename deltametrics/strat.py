@@ -308,10 +308,24 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
 
         elev :
             elevation t-x-y array to compute from
+
+        Keyword arguments
+        -----------------
+        load : :obj:`bool`, optional
+            Whether to load the eta array into memory before computation. For
+            especially large data files, `load` should be `False` to keep the
+            file on disk; note on-disk computation is considerably slower.
         """
         super().__init__('mesh')
 
-        _eta = elev.copy()
+        # load or read eta field
+        load = kwargs.pop('load', True)
+        if load:
+            _eta = np.array(elev)
+        else:
+            _eta = elev
+
+        # make computation
         _strata, _psvd = _compute_elevation_to_preservation(_eta)
         _psvd[0, ...] = True
         self.strata = _strata
