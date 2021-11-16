@@ -20,7 +20,7 @@ class TestDataCubeNoStratigraphy:
 
     # create a fixed cube for variable existing, type checks
     fixeddatacube = cube.DataCube(rcm8_path)
-    golfcube = cube.DataCube(golf_path)
+    golfcube = cube.DataCube(golf_path, coordinates={'x': 'y', 'y': 'x'})
 
     def test_init_cube_from_path_rcm8(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -113,7 +113,7 @@ class TestDataCubeNoStratigraphy:
         rcm8cube.register_section('testsection', section.StrikeSection(y=10))
         assert rcm8cube._knows_stratigraphy is False
         with pytest.raises(utils.NoStratigraphyError):
-            rcm8cube.sections['testsection']['velocity'].as_stratigraphy()
+            rcm8cube.sections['testsection']['velocity'].strat.as_stratigraphy()
 
     def test_fixeddatacube_init_varset(self):
         assert type(self.fixeddatacube.varset) is plot.VariableSet
@@ -191,7 +191,7 @@ class TestDataCubeNoStratigraphy:
         with pytest.raises(utils.NoStratigraphyError):
             _ = sc.strat_attr
         with pytest.raises(utils.NoStratigraphyError):
-            _ = sc['velocity'].as_preserved()
+            _ = sc['velocity'].strat.as_preserved()
 
 
 class TestDataCubeWithStratigraphy:
@@ -254,21 +254,19 @@ class TestDataCubeWithStratigraphy:
         with pytest.raises(AttributeError):
             self.fixeddatacube.sections = 10
 
-    # def test_var_export_frozen(self):
-    #     fdv = self.fixeddatacube['time'].as_frozen()
-    #     assert isinstance(fdv, np.ndarray)
-    #     assert not isinstance(fdv, cube.CubeVariable)
-    #     assert not hasattr(fdv, 'x')
+    def test_export_frozen_variable(self):
+        frzn = self.fixeddatacube.export_frozen_variable('velocity')
+        assert frzn.ndim == 3
 
     def test_section_with_stratigraphy(self):
         assert hasattr(self.fixeddatacube, 'strat_attr')
         sc = section.StrikeSection(self.fixeddatacube, y=10)
         assert sc.strat_attr is self.fixeddatacube.strat_attr
         _take = sc['velocity'][:, 1]
-        assert _take.shape == (51,)
+        assert _take.shape == (self.fixeddatacube.shape[0],)
         assert hasattr(sc, 'strat_attr')
-        _take2 = sc['velocity'].as_preserved()
-        assert _take2.shape == (51, 240)
+        _take2 = sc['velocity'].strat.as_preserved()
+        assert _take2.shape == (self.fixeddatacube.shape[0], self.fixeddatacube.shape[2])
 
 
 class TestStratigraphyCube:
@@ -286,13 +284,6 @@ class TestStratigraphyCube:
     def test_export_frozen_variable(self):
         frzn = self.fixedstratigraphycube.export_frozen_variable('time')
         assert frzn.ndim == 3
-
-    # def test_var_export_frozen(self):
-    #     fv = self.fixedstratigraphycube['time'].as_frozen()
-    #     assert isinstance(fv, np.ndarray)
-    #     assert not isinstance(fv, cube.CubeVariable)
-    #     assert not hasattr(fv, 'x')
-    #     assert fv.ndim == 3
 
 
 class TestFrozenStratigraphyCube:
