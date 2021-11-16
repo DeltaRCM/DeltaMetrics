@@ -15,72 +15,6 @@ from . import strat
 from . import plot
 
 
-# @xr.register_dataarray_accessor("cubevar")
-# class CubeVariable():
-#     """Slice of a Cube.
-
-#     Slicing an :obj:`~deltametrics.cube.Cube` returns an object of this type.
-#     The ``CubeVariable`` is an accessor of the `xarray.DataArray` class,
-#     enabling additional functions to be added to the object, while retaining
-#     the `xarray` object and it's native functionality under
-#     ``CubeVariable.data``.
-
-#     .. warning::
-#         You probably should not instantiate objects of this type directly.
-
-#     Examples
-#     --------
-#     .. doctest::
-
-#         >>> import deltametrics as dm
-#         >>> rcm8cube = dm.sample_data.rcm8()
-
-#         >>> type(rcm8cube['velocity'])
-#         <class 'deltametrics.cube.CubeVariable'>
-
-#         >>> type(rcm8cube['velocity'].data)
-#         <class 'xarray.DataArray'>
-
-#         >>> rcm8cube['velocity'].variable
-#         'velocity'
-#     """
-
-#     def __init__(self, xarray_obj):
-#         """Initialize the ``CubeVariable`` object."""
-#         self.data = xarray_obj
-
-#     def initialize(self, **kwargs):
-#         """Initialize with `**kwargs`."""
-#         self.shape = self.data.shape
-#         self.ndim = len(self.shape)
-#         variable = kwargs.pop('variable', None)
-#         self.variable = variable
-#         coords = kwargs.pop('coords', None)
-#         if not coords:
-#             self.t, self.x, self.y = [np.arange(itm) for itm in self.shape]
-#         else:
-#             self.t, self.x, self.y = coords['t'], coords['x'], coords['y']
-
-#     def as_frozen(self):
-#         """Export variable values as a `numpy.ndarray`."""
-#         return self.data.values
-
-#     def __getitem__(self, slc):
-#         """Get items from the underlying data.
-
-#         Takes a numpy slicing style and slices data from the underlying data.
-#         Note that the underlying data is stored in an :obj:`xarray.DataArray`,
-#         and this method returns a :obj:`xarray.DataArray`.
-
-#         Parameters
-#         ----------
-#         slc : a `numpy` slice
-#             A valid `numpy` style slice. For example, :code:`[10, ...]`.
-#             Dimension validation is not performed before slicing.
-#         """
-#         return self.data[slc]
-
-
 class BaseCube(abc.ABC):
     """Base cube object.
 
@@ -773,7 +707,6 @@ class StratigraphyCube(BaseCube):
             raise AttributeError('No variable of {cube} named {var}'.format(
                                  cube=str(self), var=var))
 
-        # breakpoint()
         # the following lines apply the data to stratigraphy mapping
         if isinstance(_var, xr.core.dataarray.DataArray):
             _vardata = _var.data
