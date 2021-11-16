@@ -480,7 +480,7 @@ class VariableSet(object):
             combined = np.vstack((greys(np.linspace(0.3, 0.6, 2)),
                                   oranges(np.linspace(0.2, 0.8, 6))))
             ntgcmap = colors.ListedColormap(combined, name='net_to_gross')
-            ntgcmap.set_bad("white")
+            ntgcmap.set_bad("white", alpha=0)
             self._net_to_gross = VariableInfo('net_to_gross',
                                               cmap=ntgcmap,
                                               label='net-to-gross')
@@ -630,35 +630,37 @@ def get_display_arrays(VarInst, data=None):
         x-coordinates and 3) display y-coordinates.
     """
     # # #  SectionVariables  # # #
-    if issubclass(type(VarInst), section.BaseSectionVariable):
+    if VarInst.slicetype == 'data_section':
         # #  DataSection  # #
-        if isinstance(VarInst, section.DataSectionVariable):
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                return VarInst, VarInst._S, VarInst._Z
-            elif data in VarInst._preserved_names:
-                return VarInst.as_preserved(), VarInst._S, VarInst._Z
-            elif data in VarInst._stratigraphy_names:
-                _sp = VarInst.as_stratigraphy()
-                _den = _sp.toarray().view(section.DataSectionVariable)
-                _arr_Y = VarInst.strat_attr['psvd_flld'][:_sp.shape[0], ...]
-                _arr_X = np.tile(VarInst._s, (_sp.shape[0], 1))
-                return _den[1:, 1:], _arr_X, _arr_Y
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
-        # #  StratigraphySection  # #
-        elif isinstance(VarInst, section.StratigraphySectionVariable):
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._preserved_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._stratigraphy_names:
-                return VarInst, VarInst._S, VarInst._Z
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
+        data = data or 'spacetime'
+        if data in VarInst.strat._spacetime_names:
+            _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+            return VarInst.values, _S, _Z
+        elif data in VarInst.strat._preserved_names:
+            VarInst.strat._check_knows_spacetime()
+            _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+            return VarInst.strat.as_preserved(), _S, _Z
+        elif data in VarInst.strat._stratigraphy_names:
+            _sp = VarInst.strat.as_stratigraphy()
+            _den = _sp.toarray()  # .view(section.DataSectionVariable)
+            _arr_Y = VarInst.strat.strat_attr['psvd_flld'][:_sp.shape[0], ...]
+            _arr_X = np.tile(VarInst['s'], (_sp.shape[0], 1))
+            return _den[1:, 1:], _arr_X, _arr_Y
         else:
-            raise TypeError
+            raise ValueError('Bad data argument: %s' % str(data))
+
+    elif VarInst.slicetype == 'stratigraphy_section':
+        # #  StratigraphySection  # #
+        data = data or 'stratigraphy'
+        if data in VarInst.strat._spacetime_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._preserved_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._stratigraphy_names:
+            _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+            return VarInst, _S, _Z
+        else:
+            raise ValueError('Bad data argument: %s' % str(data))
 
     # # #  PlanformVariables  # # #
     elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
@@ -700,46 +702,45 @@ def get_display_lines(VarInst, data=None):
         dimension of the array.
     """
     # # #  SectionVariables  # # #
-    if issubclass(type(VarInst), section.BaseSectionVariable):
+    if VarInst.slicetype == 'data_section':
         # #  DataSection  # #
-        if isinstance(VarInst, section.DataSectionVariable):
-            def _reshape_long(X):
-                # util for reshaping s- and z-values appropriately
-                return np.vstack((X[:, :-1].flatten(),
-                                  X[:, 1:].flatten())).T.reshape(-1, 2, 1)
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                z = _reshape_long(VarInst._Z)
-                vals = VarInst[:, :-1]
-            elif data in VarInst._preserved_names:
-                z = _reshape_long(VarInst._Z)
-                vals = VarInst.as_preserved()[:, :-1]
-            elif data in VarInst._stratigraphy_names:
-                VarInst._check_knows_stratigraphy()  # need to check explicitly
-                z = _reshape_long(np.copy(VarInst.strat_attr['strata']))
-                vals = VarInst[:, :-1]
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
-            s = _reshape_long(VarInst._S)
-            segments = np.concatenate([s, z], axis=2)
-            if data in VarInst._stratigraphy_names:
-                # flip = draw late to early
-                vals = np.fliplr(np.flipud(vals))
-                segments = np.flipud(segments)
-            return vals, segments
-        # #  StratigraphySection  # #
-        elif isinstance(VarInst, section.StratigraphySectionVariable):
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._preserved_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._stratigraphy_names:
-                raise NotImplementedError  # not sure best implementation
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
+        def _reshape_long(X):
+            # util for reshaping s- and z-values appropriately
+            return np.vstack((X[:, :-1].flatten(),
+                              X[:, 1:].flatten())).T.reshape(-1, 2, 1)
+        data = data or 'spacetime'
+        _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+        if data in VarInst.strat._spacetime_names:
+            z = _reshape_long(_Z)
+            vals = VarInst[:, :-1]
+        elif data in VarInst.strat._preserved_names:
+            z = _reshape_long(_Z)
+            vals = VarInst.strat.as_preserved()[:, :-1]
+        elif data in VarInst.strat._stratigraphy_names:
+            VarInst.strat._check_knows_stratigraphy()  # need to check explicitly
+            z = _reshape_long(np.copy(VarInst.strat.strat_attr['strata']))
+            vals = VarInst[:, :-1]
         else:
-            raise TypeError
+            raise ValueError('Bad data argument: %s' % str(data))
+        s = _reshape_long(_S)
+        segments = np.concatenate([s, z], axis=2)
+        if data in VarInst.strat._stratigraphy_names:
+            # flip = draw late to early
+            vals = np.fliplr(np.flipud(vals))
+            segments = np.flipud(segments)
+        return np.array(vals), segments
+
+    elif VarInst.slicetype == 'stratigraphy_section':
+        # #  StratigraphySection  # #
+        data = data or 'stratigraphy'
+        if data in VarInst.strat._spacetime_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._preserved_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._stratigraphy_names:
+            raise NotImplementedError  # not sure best implementation
+        else:
+            raise ValueError('Bad data argument: %s' % str(data))
 
     # # #  PlanformVariables  # # #
     elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
@@ -748,7 +749,7 @@ def get_display_lines(VarInst, data=None):
         raise TypeError('Invaid "VarInst" type: %s' % type(VarInst))
 
 
-def get_display_limits(VarInst, data=None):
+def get_display_limits(VarInst, data=None, factor=1.5):
     """Get limits to resize the display of Variables.
 
     Function takes as argument a `VariableInstance` from a `Section` or
@@ -768,6 +769,9 @@ def get_display_limits(VarInst, data=None):
         :obj:`get_display_lines`. Supported options are `'spacetime'`,
         `'preserved'`, and `'stratigraphy'`.
 
+    factor : :obj:`float`, optional
+        Factor to extend vertical limits upward for stratigraphic sections.
+
     Returns
     -------
     xmin, xmax, ymin, ymax : :obj:`float`
@@ -775,40 +779,38 @@ def get_display_limits(VarInst, data=None):
         ``ax.set_xlim((xmin, xmax))``.
     """
     # # #  SectionVariables  # # #
-    if issubclass(type(VarInst), section.BaseSectionVariable):
+    if VarInst.slicetype == 'data_section':
         # #  DataSection  # #
-        if isinstance(VarInst, section.DataSectionVariable):
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                return np.min(VarInst._S), np.max(VarInst._S), \
-                    np.min(VarInst._Z), np.max(VarInst._Z)
-            elif data in VarInst._preserved_names:
-                VarInst._check_knows_stratigraphy()  # need to check explicitly
-                return np.min(VarInst._S), np.max(VarInst._S), \
-                    np.min(VarInst._Z), np.max(VarInst._Z)
-            elif data in VarInst._stratigraphy_names:
-                VarInst._check_knows_stratigraphy()  # need to check explicitly
-                _strata = np.copy(VarInst.strat_attr['strata'])
-                return np.min(VarInst._S), np.max(VarInst._S), \
-                    np.min(_strata), np.max(_strata) * 1.5
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
-
-        # #  StratigraphySection  # #
-        elif isinstance(VarInst, section.StratigraphySectionVariable):
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._preserved_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._stratigraphy_names:
-                return np.min(VarInst._S), np.max(VarInst._S), \
-                    np.min(VarInst._Z), np.max(VarInst._Z) * 1.5
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
-
+        data = data or 'spacetime'
+        _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+        if data in VarInst.strat._spacetime_names:
+            return np.min(_S), np.max(_S), \
+                np.min(_Z), np.max(_Z)
+        elif data in VarInst.strat._preserved_names:
+            VarInst.strat._check_knows_stratigraphy()  # need to check explicitly
+            return np.min(_S), np.max(_S), \
+                np.min(_Z), np.max(_Z)
+        elif data in VarInst.strat._stratigraphy_names:
+            VarInst.strat._check_knows_stratigraphy()  # need to check explicitly
+            _strata = np.copy(VarInst.strat.strat_attr['strata'])
+            return np.min(_S), np.max(_S), \
+                np.min(_strata), np.max(_strata) * factor
         else:
-            raise TypeError
+            raise ValueError('Bad data argument: %s' % str(data))
+
+    elif VarInst.slicetype == 'stratigraphy_section':
+        # #  StratigraphySection  # #
+        data = data or 'stratigraphy'
+        _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+        if data in VarInst.strat._spacetime_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._preserved_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._stratigraphy_names:
+            return np.min(_S), np.max(_S), \
+                np.min(_Z), np.max(_Z) * factor
+        else:
+            raise ValueError('Bad data argument: %s' % str(data))
 
     # # #  PlanformVariables  # # #
     elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
