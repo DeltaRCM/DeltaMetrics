@@ -12,7 +12,7 @@ ax[0].imshow(golfcube.sections['demo']['velocity'],
              origin='lower', cmap=golfcube.varset['velocity'].cmap)
 ax[0].set_ylabel('$t$ coordinate')
 
-ax[1].imshow(golfcube.sections['demo']['velocity'].as_preserved(),
+ax[1].imshow(golfcube.sections['demo']['velocity'].strat.as_preserved(),
              origin='lower', cmap=golfcube.varset['velocity'].cmap)
 ax[1].set_ylabel('$t$ coordinate')
 

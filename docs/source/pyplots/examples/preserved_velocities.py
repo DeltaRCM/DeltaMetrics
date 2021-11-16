@@ -16,8 +16,8 @@ def pick_velocities(sect):
     deposited/eroded in the model domain.
     """
     _whr = [sect['eta'] != sect['eta'][0, :]]
-    _a = np.nanmean(sect['velocity'][tuple(_whr)])
-    _s = np.nanmean(sect['velocity'].strat.as_preserved()[tuple(_whr)])
+    _a = np.nanmean(sect['velocity'].data[tuple(_whr)])
+    _s = np.nanmean(sect['velocity'].strat.as_preserved().data[tuple(_whr)])
     return _a, _s
 
 
