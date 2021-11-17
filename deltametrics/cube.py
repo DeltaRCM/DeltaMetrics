@@ -126,17 +126,28 @@ class BaseCube(abc.ABC):
         self.coordinates = copy.deepcopy(default_coordinates)
         self._coords = self._dataio.known_coords
         self._variables = self._dataio.known_variables
+
+        # process the dimensions into attributes
+        if len(self._dataio.dims) > 0:
+            d0, d1, d2 = self._dataio.dims
+        else:
+            # try taking a slice of the dataset to get the coordinates
+            d0, d1, d2 = self.dataio[self._dataio.known_variables[0]].dims
+        self._dim0_idx = self._dataio.dataset[d0]
+
         # if x is 2-D then we assume x and y are mesh grid values
-        if np.ndim(self._dataio['x']) == 2:
-            self._X = self._dataio['x']  # mesh grid of x values of cube
-            self._Y = self._dataio['y']  # mesh grid of y values of cube
-            self._x = np.copy(self._X[0, :].squeeze())  # array of xval of cube
-            self._y = np.copy(self._Y[:, 0].squeeze())  # array of yval of cube
+        if np.ndim(self._dataio[d1]) == 2:
+            self._dim1_idx = self._dataio.dataset[d1][:, 0].squeeze()
+            self._dim2_idx = self._dataio.dataset[d2][0, :].squeeze()
         # if x is 1-D we do mesh-gridding
-        elif np.ndim(self._dataio['x']) == 1:
-            self._x = self._dataio[default_coordinates['x']]  # array of xval of cube
-            self._y = self._dataio[default_coordinates['y']]  # array of yval of cube
-            self._X, self._Y = np.meshgrid(self._x, self._y)  # mesh grids x&y
+        elif np.ndim(self._dataio[d1]) == 1:
+            self._dim1_idx = self._dataio.dataset[d1]
+            self._dim2_idx = self._dataio.dataset[d2]
+
+        # assign values to dimensions of cube
+        self._dim0_coords = self._t = self._dim0_idx
+        self._dim1_coords = self._dim1_idx
+        self._dim2_coords = self._dim2_idx
 
     def read(self, variables):
         """Read variable into memory.
@@ -277,24 +288,22 @@ class BaseCube(abc.ABC):
             return self._section_set[name]
 
     @property
-    def x(self):
-        """x-direction coordinate."""
-        return self._x
+    def dim0_coords(self):
+        """Coordinates along the first dimension of `cube`.
+        """
+        return self.z
 
     @property
-    def X(self):
-        """x-direction mesh."""
-        return self._X
+    def dim1_coords(self):
+        """Coordinates along the second dimension of `cube`.
+        """
+        return self._dim1_coords
 
     @property
-    def y(self):
-        """y-direction coordinate."""
-        return self._y
-
-    @property
-    def Y(self):
-        """y-direction mesh."""
-        return self._Y
+    def dim2_coords(self):
+        """Coordinates along the third dimension of `cube`.
+        """
+        return self._dim2_coords
 
     @property
     @abc.abstractmethod
@@ -471,8 +480,9 @@ class DataCube(BaseCube):
         """
         super().__init__(data, read, varset, coordinates)
 
-        self._t = np.array(self._dataio['time'], copy=True)
-        _, self._T, _ = np.meshgrid(self.y, self.t, self.x)
+        # set up the grid for time
+        _, self._T, _ = np.meshgrid(
+            self.dim1_coords, self.dim0_coords, self.dim2_coords)
 
         # get shape from a variable that is not x, y, or time
         i = 0
@@ -485,6 +495,14 @@ class DataCube(BaseCube):
                 i = len(self.variables)
 
         self._H, self._L, self._W = self[_var].data.shape
+
+        # set up dimension and coordinate fields for when slices of the cube
+        # are made
+        self._view_dimensions = self._dataio.dims
+        self._view_coordinates = copy.deepcopy({
+            self._view_dimensions[0]: self.dim0_coords,
+            self._view_dimensions[1]: self.dim1_coords,
+            self._view_dimensions[2]: self.dim2_coords})
 
         self._knows_stratigraphy = False
 
@@ -514,10 +532,8 @@ class DataCube(BaseCube):
                                     axis=(1, 2))
                 _xrt = xr.DataArray(
                     np.tile(_t, (1, *self.shape[1:])),
-                    coords={"t": self._t,
-                            "y": self.dataio[self.coordinates['x']],
-                            "x": self.dataio[self.coordinates['y']]},
-                    dims=['t', 'x', 'y'])
+                    coords=self._view_coordinates,
+                    dims=self._view_dimensions)
                 _obj = _xrt
             else:
                 _obj = self._dataio.dataset[var]
@@ -665,17 +681,24 @@ class StratigraphyCube(BaseCube):
             _elev = copy.deepcopy(data[stratigraphy_from])
 
             # set up coordinates of the array
-            self._z = strat._determine_strat_coordinates(
+            _z = strat._determine_strat_coordinates(
                 _elev.data, dz=dz, z=z, nz=nz)
+            self._z = xr.DataArray(_z, name='z', dims=['z'], coords={'z': _z})
             self._H = len(self.z)
             self._L, self._W = _elev.shape[1:]
             self._Z = np.tile(self.z, (self.W, self.L, 1)).T
 
             _out = strat.compute_boxy_stratigraphy_coordinates(
-                _elev, z=self.z, return_strata=True)
+                _elev, z=_z, return_strata=True)
             self.strata_coords, self.data_coords, self.strata = _out
         else:
             raise TypeError('No other input types implemented yet.')
+
+        self._view_dimensions = ['z', *data._dataio.dims[1:]]
+        self._view_coordinates = copy.deepcopy({
+            self._view_dimensions[0]: self._z,
+            self._view_dimensions[1]: self.dim1_coords,
+            self._view_dimensions[2]: self.dim2_coords})
 
     def __getitem__(self, var):
         """Return the variable.
@@ -718,8 +741,8 @@ class StratigraphyCube(BaseCube):
              self.strata_coords[:, 2]] = _cut
         _obj = xr.DataArray(
             _arr,
-            coords={"z": self._z, "y": self._x, "x": self._y},
-            dims=['z', 'x', 'y'])
+            coords=self._view_coordinates,
+            dims=self._view_dimensions)
         return _obj
 
     @property

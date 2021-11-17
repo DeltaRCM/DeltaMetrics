@@ -103,7 +103,7 @@ def test_nofile():
 
 def test_empty_file(tmp_path):
     p = utilities.create_dummy_netcdf(tmp_path)
-    with pytest.warns(UserWarning):
+    with pytest.raises(NotImplementedError):
         io.NetCDFIO(p, 'netcdf')
 
 

@@ -28,8 +28,7 @@ class TestOpeningAnglePlanform:
 
     golf_path = _get_golf_path()
     golfcube = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+        golf_path)
 
     def test_defaults_array_int(self):
 
@@ -108,8 +107,7 @@ class TestMorphologicalPlanform:
     simple_land = simple_land
     golf_path = _get_golf_path()
     golfcube = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+        golf_path)
 
     def test_defaults_array_int(self):
         mpm = plan.MorphologicalPlanform(self.simple_land.astype(int), 2)
@@ -341,8 +339,7 @@ class TestShorelineDistance:
 
     golf_path = _get_golf_path()
     golf = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+        golf_path)
 
     sm = mask.ShorelineMask(
         golf['eta'][-1, :, :],
@@ -393,14 +390,13 @@ class TestComputeChannelWidth:
 
     simple_cm = np.array([[0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0]])
     trace = np.column_stack((
-        np.arange(simple_cm.shape[1]),
-        np.zeros(simple_cm.shape[1]))
+        np.zeros(simple_cm.shape[1]),
+        np.arange(simple_cm.shape[1]))
         ).astype(int)
 
     golf_path = _get_golf_path()
     golf = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+        golf_path)
 
     cm = mask.ChannelMask(
         golf['eta'][-1, :, :],
@@ -433,7 +429,6 @@ class TestComputeChannelWidth:
         This test does not actually test the computation, just that something
         valid is returned, i.e., the function takes the input.
         """
-
         m, s = plan.compute_channel_width(
             self.cm, section=self.sec)
         # check valid values returned
@@ -472,14 +467,13 @@ class TestComputeChannelDepth:
     simple_cm = np.array([[0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 0]])
     simple_depth = np.array([[1.5, 0.5, 1.5, 0.2, 0.4, 1.5, 1.5, 1, 1, 1, 1, 1.5, 1.5, 9, 0]])
     trace = np.column_stack((
-        np.arange(simple_cm.shape[1]),
-        np.zeros(simple_cm.shape[1]))
+        np.zeros(simple_cm.shape[1]),
+        np.arange(simple_cm.shape[1]))
         ).astype(int)
 
     golf_path = _get_golf_path()
     golf = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+        golf_path)
 
     cm = mask.ChannelMask(
         golf['eta'][-1, :, :],

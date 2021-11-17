@@ -20,7 +20,7 @@ class TestDataCubeNoStratigraphy:
 
     # create a fixed cube for variable existing, type checks
     fixeddatacube = cube.DataCube(rcm8_path)
-    golfcube = cube.DataCube(golf_path, coordinates={'x': 'y', 'y': 'x'})
+    golfcube = cube.DataCube(golf_path)
 
     def test_init_cube_from_path_rcm8(self):
         rcm8cube = cube.DataCube(rcm8_path)
@@ -149,17 +149,11 @@ class TestDataCubeNoStratigraphy:
     def test_metadata_none_nometa(self):
         assert self.fixeddatacube.meta is None
 
-    def test_fixeddatacube_x(self):
-        assert self.fixeddatacube.x.shape == (240,)
+    def test_fixeddatacube_dim1_coords(self):
+        assert self.fixeddatacube.dim1_coords.shape == (120,)
 
-    def test_fixeddatacube_X(self):
-        assert self.fixeddatacube.X.shape == (120, 240)
-
-    def test_fixeddatacube_y(self):
-        assert self.fixeddatacube.y.shape == (120,)
-
-    def test_fixeddatacube_Y(self):
-        assert self.fixeddatacube.Y.shape == (120, 240)
+    def test_fixeddatacube_dim2_coords(self):
+        assert self.fixeddatacube.dim2_coords.shape == (240,)
 
     def test_fixeddatacube_z(self):
         assert self.fixeddatacube.z.shape == (51,)
