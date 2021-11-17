@@ -84,16 +84,21 @@
 <span class="go">&lt;deltametrics.cube.DataCube object at 0x...&gt;</span>
 </pre></div>
 </div>
-<p>Creating the <code class="docutils literal notranslate"><span class="pre">golfcube</span></code> connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets. The type of the <code class="docutils literal notranslate"><span class="pre">golfcube</span></code> is <code class="docutils literal notranslate"><span class="pre">DataCube</span></code>.</p>
+<p>Creating the <code class="docutils literal notranslate"><span class="pre">golfcube</span></code> connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets.
+The type of the <code class="docutils literal notranslate"><span class="pre">golfcube</span></code> is <code class="docutils literal notranslate"><span class="pre">DataCube</span></code>.</p>
 <p>Inspect which variables are available in the <code class="docutils literal notranslate"><span class="pre">golfcube</span></code>.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">variables</span>
 <span class="go">[&#39;eta&#39;, &#39;stage&#39;, &#39;depth&#39;, &#39;discharge&#39;, &#39;velocity&#39;, &#39;sedflux&#39;, &#39;sandfrac&#39;]</span>
 </pre></div>
 </div>
-<p>We can access the underlying variables by name. The returned object are xarray-accessors with coordinates <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code>.
+<p>We can access the underlying variables by name.
+The returned object is an <cite>xarray</cite> <cite>DataArray</cite> with coordinates matching the underlying data source.
+Per <cite>xarray</cite>, the underlying <cite>data</cite> field contains a <cite>numpy</cite> array.
 For example, access variables as:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">])</span>
-<span class="go">&lt;class &#39;deltametrics.cube.CubeVariable&#39;&gt;</span>
+<span class="go">&lt;class &#39;xarray.core.dataarray.DataArray&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+<span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span>
 <span class="go">(101, 100, 200)</span>
 </pre></div>
@@ -189,19 +194,22 @@ Notably, <cite>Sections</cite> do not refer to any variable in particular, so <c
 are sliced themselves, similarly to the cube.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span>
-<span class="go">DataSectionVariable([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   ,</span>
-<span class="go">                      0.2   ],</span>
-<span class="go">                     [0.    , 0.    , 0.    , ..., 0.    , 0.    ,</span>
-<span class="go">                      0.    ],</span>
-<span class="go">                     [0.    , 0.0025, 0.    , ..., 0.    , 0.    ,</span>
-<span class="go">                      0.    ],</span>
-<span class="go">                     ...,</span>
-<span class="go">                     [0.    , 0.    , 0.    , ..., 0.0025, 0.    ,</span>
-<span class="go">                      0.    ],</span>
-<span class="go">                     [0.    , 0.    , 0.    , ..., 0.    , 0.    ,</span>
-<span class="go">                      0.    ],</span>
-<span class="go">                     [0.    , 0.    , 0.    , ..., 0.0025, 0.    ,</span>
-<span class="go">                      0.    ]], dtype=float32)</span>
+<span class="go">&lt;xarray.DataArray &#39;velocity&#39; (z: 101, s: 200)&gt;</span>
+<span class="go">array([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   , 0.2   ],</span>
+<span class="go">       [0.    , 0.    , 0.    , ..., 0.    , 0.    , 0.    ],</span>
+<span class="go">       [0.    , 0.0025, 0.    , ..., 0.    , 0.    , 0.    ],</span>
+<span class="go">       ...,</span>
+<span class="go">       [0.    , 0.    , 0.    , ..., 0.0025, 0.    , 0.    ],</span>
+<span class="go">       [0.    , 0.    , 0.    , ..., 0.    , 0.    , 0.    ],</span>
+<span class="go">       [0.    , 0.    , 0.    , ..., 0.0025, 0.    , 0.    ]],</span>
+<span class="go">      dtype=float32)</span>
+<span class="go">Coordinates:</span>
+<span class="go">  * s        (s) float64 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03</span>
+<span class="go">  * z        (z) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07</span>
+<span class="go">Attributes:</span>
+<span class="go">    slicetype:           data_section</span>
+<span class="go">    knows_stratigraphy:  False</span>
+<span class="go">    knows_spacetime:     True</span>
 </pre></div>
 </div>
 <p>We can visualize sections:</p>
@@ -233,26 +241,22 @@ Compute the quick stratigraphy as:</p>
 </pre></div>
 </div>
 <p>Now, the <code class="docutils literal notranslate"><span class="pre">DataCube</span></code> has knowledge of stratigraphy, which we can further use to visualize preservation within the spacetime, or visualize as an actual stratigraphic slice.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_preserved</span><span class="p">()</span>
-<span class="go">masked_DataSectionVariable(</span>
-<span class="go">  data=[[0.20000000298023224, 0.20000000298023224, 0.20000000298023224,</span>
-<span class="go">         ..., 0.20000000298023224, 0.20000000298023224,</span>
-<span class="go">         0.20000000298023224],</span>
-<span class="go">        [--, --, --, ..., --, --, --],</span>
-<span class="go">        [--, --, --, ..., --, --, --],</span>
-<span class="go">        ...,</span>
-<span class="go">        [--, --, --, ..., --, --, --],</span>
-<span class="go">        [--, --, --, ..., --, --, --],</span>
-<span class="go">        [--, --, --, ..., --, --, --]],</span>
-<span class="go">  mask=[[False, False, False, ..., False, False, False],</span>
-<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
-<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
-<span class="go">        ...,</span>
-<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
-<span class="go">        [ True,  True,  True, ...,  True,  True,  True],</span>
-<span class="go">        [ True,  True,  True, ...,  True,  True,  True]],</span>
-<span class="go">  fill_value=1e+20,</span>
-<span class="go">  dtype=float32)</span>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strat</span><span class="o">.</span><span class="n">as_preserved</span><span class="p">()</span>
+<span class="go">&lt;xarray.DataArray &#39;velocity&#39; (z: 101, s: 200)&gt;</span>
+<span class="go">array([[0.2, 0.2, 0.2, ..., 0.2, 0.2, 0.2],</span>
+<span class="go">       [nan, nan, nan, ..., nan, nan, nan],</span>
+<span class="go">       [nan, nan, nan, ..., nan, nan, nan],</span>
+<span class="go">       ...,</span>
+<span class="go">       [nan, nan, nan, ..., nan, nan, nan],</span>
+<span class="go">       [nan, nan, nan, ..., nan, nan, nan],</span>
+<span class="go">       [nan, nan, nan, ..., nan, nan, nan]], dtype=float32)</span>
+<span class="go">Coordinates:</span>
+<span class="go">  * s        (s) float64 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03</span>
+<span class="go">  * z        (z) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07</span>
+<span class="go">Attributes:</span>
+<span class="go">    slicetype:           data_section</span>
+<span class="go">    knows_stratigraphy:  True</span>
+<span class="go">    knows_spacetime:     True</span>
 </pre></div>
 </div>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>

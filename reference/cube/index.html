@@ -48,7 +48,7 @@
 <h1>The Cube<a class="headerlink" href="#the-cube" title="Permalink to this headline">¶</a></h1>
 <p>The package makes available <cite>Cube</cite> objects, which are the central office to all of the other functionality of DeltaMetrics.</p>
 <p>The cubes keep track of underlying data, which may represent any number of unique variables.
-For example, the <a class="reference internal" href="../../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a> connects to a set of data in the form of a <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code> <cite>ndarray</cite>, and associated metadata defining the array coordinates, type, and data units.
+For example, the <a class="reference internal" href="../../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a> connects to a set of data in the form of a <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code> array-like dataset, and associated metadata defining the array coordinates, type, and data units.
 So, variables in the underlying data might be lidar scans, overhead photos, grain size maps (pyDeltaRCM), or flow velocity records (pyDeltaRCM), etc.</p>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.cube</span></code>.</p>
 <section id="cube-types">
@@ -71,20 +71,6 @@ So, variables in the underlying data might be lidar scans, overhead photos, grai
 </tbody>
 </table>
 </section>
-<section id="cube-returns">
-<h2>Cube returns<a class="headerlink" href="#cube-returns" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.cube.CubeVariable.html#deltametrics.cube.CubeVariable" title="deltametrics.cube.CubeVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CubeVariable</span></code></a>(xarray_obj)</p></td>
-<td><p>Slice of a Cube.</p></td>
-</tr>
-</tbody>
-</table>
-</section>
 </section>
 
 
@@ -98,7 +84,6 @@ So, variables in the underlying data might be lidar scans, overhead photos, grai
   <ul>
 <li><a class="reference internal" href="#">The Cube</a><ul>
 <li><a class="reference internal" href="#cube-types">Cube types</a></li>
-<li><a class="reference internal" href="#cube-returns">Cube returns</a></li>
 </ul>
 </li>
 </ul>

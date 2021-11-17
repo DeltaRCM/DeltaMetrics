@@ -57,10 +57,10 @@ Slicing a cube returns an instance of :obj:`~deltametrics.cube.CubeVariable`, wh
 .. doctest::
 
     >>> type(golfcube['velocity'])
-    <class 'deltametrics.cube.CubeVariable'>
+    <class 'xarray.core.dataarray.DataArray'>
 
     >>> type(golfcube['velocity'].data)
-    <class 'xarray.core.dataarray.DataArray'>
+    <class 'numpy.ndarray'>
 
 The underlying xarray object can be directly accessed by using a ``.data`` attribute, however, this is not necessary, and you can slice the `CubeVariable` directly with any valid `numpy` slicing style. For example, we could determine how much the average bed elevation changed at a specific location in the model domain (43, 123), by slicing the ``eta`` variable, and differencing timesteps.
 

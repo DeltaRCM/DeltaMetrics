@@ -78,12 +78,12 @@ Creating the <code class="docutils literal notranslate"><span class="pre">golfcu
 <section id="accessing-data-from-a-datacube">
 <h2>Accessing data from a DataCube<a class="headerlink" href="#accessing-data-from-a-datacube" title="Permalink to this headline">¶</a></h2>
 <p>A <a class="reference internal" href="../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a> can be sliced directly by variable name.
-Slicing a cube returns an instance of <a class="reference internal" href="../_autosummary/deltametrics.cube.CubeVariable.html#deltametrics.cube.CubeVariable" title="deltametrics.cube.CubeVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CubeVariable</span></code></a>, which is an xarray “accessor”; this means that it contains an xarray object in addition to custom functions.</p>
+Slicing a cube returns an instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">CubeVariable</span></code>, which is an xarray “accessor”; this means that it contains an xarray object in addition to custom functions.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">])</span>
-<span class="go">&lt;class &#39;deltametrics.cube.CubeVariable&#39;&gt;</span>
+<span class="go">&lt;class &#39;xarray.core.dataarray.DataArray&#39;&gt;</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-<span class="go">&lt;class &#39;xarray.core.dataarray.DataArray&#39;&gt;</span>
+<span class="go">&lt;class &#39;numpy.ndarray&#39;&gt;</span>
 </pre></div>
 </div>
 <p>The underlying xarray object can be directly accessed by using a <code class="docutils literal notranslate"><span class="pre">.data</span></code> attribute, however, this is not necessary, and you can slice the <cite>CubeVariable</cite> directly with any valid <cite>numpy</cite> slicing style. For example, we could determine how much the average bed elevation changed at a specific location in the model domain (43, 123), by slicing the <code class="docutils literal notranslate"><span class="pre">eta</span></code> variable, and differencing timesteps.</p>

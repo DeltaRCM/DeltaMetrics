@@ -310,8 +310,8 @@ and 3) display y-coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>VarInst</strong> (<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
-<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> or
+<li><p><strong>VarInst</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> or
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePlanformVariable</span></code>.</p></li>
 <li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – The type of data to visualize. Supported options are <cite>‘spacetime’</cite>,
 <cite>‘preserved’</cite>, and <cite>‘stratigraphy’</cite>. Default is to display full
@@ -342,8 +342,8 @@ type to return, and gives back data and line segments for display.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>VarInst</strong> (<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
-<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> or
+<li><p><strong>VarInst</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> or
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePlanformVariable</span></code>.</p></li>
 <li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – The type of data to visualize. Supported options are <cite>‘spacetime’</cite>,
 <cite>‘preserved’</cite>, and <cite>‘stratigraphy’</cite>. Default is to display full
@@ -367,7 +367,7 @@ dimension of the array.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.get_display_limits">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">get_display_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">VarInst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_limits" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">get_display_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">VarInst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_limits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get limits to resize the display of Variables.</p>
 <p>Function takes as argument a <cite>VariableInstance</cite> from a <cite>Section</cite> or
 <cite>Planform</cite> and an optional <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> argument, which specifies how to
@@ -375,13 +375,14 @@ determine the limits to return.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>VarInst</strong> (<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
-<a class="reference internal" href="../../_autosummary/deltametrics.section.BaseSectionVariable.html#deltametrics.section.BaseSectionVariable" title="deltametrics.section.BaseSectionVariable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code></a> or
+<li><p><strong>VarInst</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
+<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> or
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePlanformVariable</span></code>.</p></li>
 <li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – The type of data to compute limits for. Typically this will be the
 same value used with either <a class="reference internal" href="#deltametrics.plot.get_display_arrays" title="deltametrics.plot.get_display_arrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_display_arrays</span></code></a> or
 <a class="reference internal" href="#deltametrics.plot.get_display_lines" title="deltametrics.plot.get_display_lines"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_display_lines</span></code></a>. Supported options are <cite>‘spacetime’</cite>,
 <cite>‘preserved’</cite>, and <cite>‘stratigraphy’</cite>.</p></li>
+<li><p><strong>factor</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Factor to extend vertical limits upward for stratigraphic sections.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
