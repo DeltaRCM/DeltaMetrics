@@ -1,7 +1,7 @@
 golfcube = dm.sample_data.golf()
 
 stratcube = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.05)
-stratcube.register_section('demo', dm.section.StrikeSection(y=10))
+stratcube.register_section('demo', dm.section.StrikeSection(idx=10))
 
 fig, ax = plt.subplots(5, 1, sharex=True, sharey=True, figsize=(12, 9))
 ax = ax.flatten()

@@ -29,7 +29,7 @@ _mstrat = np.full_like(_ys, np.nan, dtype=float)
 
 # loop through all of the sections defined in _ys
 for i, _y in enumerate(_ys):
-    _s = dm.section.StrikeSection(golfcube, y=_y)
+    _s = dm.section.StrikeSection(golfcube, idx=_y)
     _mall[i], _mstrat[i] = pick_velocities(_s)
 
 
