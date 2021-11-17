@@ -663,12 +663,23 @@ class StrikeSection(BaseSection):
     """Strike section object.
 
     Section oriented parallel to the `dim2` axis. Specify the location of the
-    strike section with :obj:`y` and :obj:`x` keyword parameter options.
+    strike section with :obj:`distance` and :obj:`length` *or* :obj:`idx`
+    and :obj:`length` keyword parameters.
 
-    .. important::
+    .. plot::
 
-        The `y` and `x` parameters must be specified as cell indices (not
-        actual x and y coordinate values). This is a needed patch.
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section('strike', dm.section.StrikeSection(distance=1500))
+
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots()
+        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.sections['strike'].show_trace('r--', ax=ax)
+        >>> plt.show()
+
+    .. hint::
+
+        Either :obj:`distance` *or* :obj:`idx` must be specified.
 
     Parameters
     ----------
@@ -676,14 +687,21 @@ class StrikeSection(BaseSection):
         The `Cube` object to link for underlying data. This option should be
         ommitted if using the :obj:`register_section` method of a `Cube`.
 
-    distance
-        Note, that the actual section will be interpolated to the nearest grid cell!
+    distance : :obj:`float`, optional
+        Distance *in `dim1` coordinates* from the `dim1` lower domain edge to
+        place the section. The section location will be interpolated to the
+        nearest grid cell. Mutually exclusive with :obj:`idx`.
 
-    idx
+    idx : :obj:`int`, optional
+        Distance *in cell indices* from the `dim1` lower domain edge to place
+        the section. Mutually exclusive with :obj:`distance`.
 
-    length
-        Assumes either coordinates or indices based on values of `distance`
-        and `idx`.
+    length : :obj:`tuple` or :obj:`list` of `int` or `float`, optional
+        A two-element tuple specifying the bounding points of the section in
+        the `dim2` axis. Values are treated as cell indices if :obj:`idx` is
+        given and as `dim2` coordinates if :obj:`distance` is given. If no
+        value is supplied, the section is drawn across the entire `dim2`
+        axis (i.e., across the whole domain).
 
     y : :obj:`int`, optional, deprecated
         The number of cells in from the `dim1` lower domain edge. If used, the
@@ -710,15 +728,15 @@ class StrikeSection(BaseSection):
     Examples
     --------
 
-    To create a `StrikeSection` that is registered to a `DataCube` at
-    specified `y` coordinate ``=10``, and spans the entire model domain:
+    Create a `StrikeSection` that is registered to a `DataCube` at specified
+    `distance` in `dim1` coordinates, and spans the entire model domain:
 
     .. plot::
         :include-source:
 
         >>> golfcube = dm.sample_data.golf()
-        >>> golfcube.register_section('strike', dm.section.StrikeSection(y=10))
-        >>>
+        >>> golfcube.register_section('strike', dm.section.StrikeSection(distance=3500))
+
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
         >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
@@ -726,9 +744,25 @@ class StrikeSection(BaseSection):
         >>> golfcube.sections['strike'].show('velocity', ax=ax[1])
         >>> plt.show()
 
-    Similarly, create a `StrikeSection` that is registered to a
-    `StratigraphyCube` at specified `y` coordinate ``=20``, and spans only the
-    left side of the model domain:
+    Create a `StrikeSection` that is registered to a `DataCube` at
+    specified `idx` index ``=10``, and spans the entire model domain:
+
+    .. plot::
+        :include-source:
+
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section('strike', dm.section.StrikeSection(idx=10))
+
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.sections['strike'].show_trace('r--', ax=ax[0])
+        >>> golfcube.sections['strike'].show('velocity', ax=ax[1])
+        >>> plt.show()
+
+    Create a `StrikeSection` that is registered to a `StratigraphyCube` at
+    specified `distance` in `dim1` coordinates, and spans only a range in the
+    middle of the domain:
 
     .. plot::
         :include-source:
@@ -736,7 +770,7 @@ class StrikeSection(BaseSection):
         >>> golfcube = dm.sample_data.golf()
         >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube)
         >>> golfstrat.register_section(
-        ...     'strike_half', dm.section.StrikeSection(y=20, x=[0, 100]))
+        ...     'strike_half', dm.section.StrikeSection(distance=1500, length=(2000, 5000)))
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
@@ -770,6 +804,11 @@ class StrikeSection(BaseSection):
                     '`length` to specify coordinate values.')
                 idx = y
                 length = x
+        else:
+            #   if y or x is not given, must give either distance or idx
+            if (distance is None) and (idx is None):
+                raise ValueError(
+                    'Must specify `distance` or `idx`.')
         #   if both distance and idx are given
         if (not (distance is None)) and (not (idx is None)):
             raise ValueError('Cannot specify both `distance` and `idx`.')
@@ -827,10 +866,12 @@ class StrikeSection(BaseSection):
 
     @property
     def y(self):
+        """Deprecated. Use :obj:`idx`."""
         return self._idx
 
     @property
     def x(self):
+        """Deprecated. Use :obj:`length`."""
         if self._input_distance is None:
             return self._length
         else:
@@ -840,14 +881,26 @@ class StrikeSection(BaseSection):
 
     @property
     def distance(self):
+        """Distance of section from `dim1` lower edge, in `dim1` coordinates.
+        """
         return self._distance
 
     @property
     def idx(self):
+        """Distance of section from `dim1` lower edge, in cell indices.
+        """
         return self._idx
 
     @property
     def length(self):
+        """Bounding `dim2` coordinates of section.
+
+        .. warning::
+
+            Generally try to avoid using this attribute after section
+            instantiation, because the value returned will depend on whether
+            `distance` or `idx` was specified as input.
+        """
         return self._length
 
 

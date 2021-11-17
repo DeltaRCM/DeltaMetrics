@@ -94,6 +94,12 @@ class TestStrikeSection:
         assert rcm8cube.sections['lengthtest'].length == (2000, 5000)
         assert rcm8cube.sections['lengthtest'].distance == 2000
 
+    def test_StrikeSection_register_section_either_distance_idx(self):
+        rcm8cube = cube.DataCube(golf_path)
+        with pytest.raises(ValueError, match=r'Must specify `distance` or .*'):
+            rcm8cube.register_section(
+                'test', section.StrikeSection())
+
     def test_StrikeSection_register_section_notboth_distance_idx(self):
         rcm8cube = cube.DataCube(golf_path)
         with pytest.raises(ValueError, match=r'Cannot specify both `distance` .*'):  # noqa: E501
