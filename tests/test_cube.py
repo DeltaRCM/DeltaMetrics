@@ -1,4 +1,5 @@
 import pytest
+import re
 
 import numpy as np
 import xarray as xr
@@ -19,16 +20,17 @@ hdf_path = _get_landsat_path()
 class TestDataCubeNoStratigraphy:
 
     # create a fixed cube for variable existing, type checks
-    fixeddatacube = cube.DataCube(rcm8_path)
-    golfcube = cube.DataCube(golf_path)
+    fixeddatacube = cube.DataCube(golf_path)
+
+    fdc_shape = fixeddatacube.shape
 
     def test_init_cube_from_path_rcm8(self):
-        rcm8cube = cube.DataCube(rcm8_path)
-        assert rcm8cube._data_path == rcm8_path
-        assert rcm8cube.dataio.type == 'netcdf'
-        assert rcm8cube._plan_set == {}
-        assert rcm8cube._section_set == {}
-        assert type(rcm8cube.varset) is plot.VariableSet
+        golf = cube.DataCube(golf_path)
+        assert golf._data_path == golf_path
+        assert golf.dataio.type == 'netcdf'
+        assert golf._plan_set == {}
+        assert golf._section_set == {}
+        assert type(golf.varset) is plot.VariableSet
 
     def test_error_init_empty_cube(self):
         with pytest.raises(TypeError):
@@ -42,84 +44,82 @@ class TestDataCubeNoStratigraphy:
         with pytest.raises(ValueError):
             _ = cube.DataCube('./nonexistent/path.doc')
 
-    def test_warning_netcdf_no_metadata(self):
-        with pytest.warns(UserWarning):
-            _ = cube.DataCube(rcm8_path)
-
     def test_stratigraphy_from_eta(self):
-        rcm8cube = cube.DataCube(rcm8_path)
-        rcm8cube.stratigraphy_from('eta')
-        assert rcm8cube._knows_stratigraphy is True
+        golf0 = cube.DataCube(golf_path)
+        golf1 = cube.DataCube(golf_path)
+        golf0.stratigraphy_from('eta')
+        assert golf0._knows_stratigraphy is True
+        assert golf1._knows_stratigraphy is False
 
     def test_init_cube_stratigraphy_argument(self):
-        rcm8cube = cube.DataCube(rcm8_path, stratigraphy_from='eta')
-        assert rcm8cube._knows_stratigraphy is True
+        golf = cube.DataCube(golf_path, stratigraphy_from='eta')
+        assert golf._knows_stratigraphy is True
 
     def test_stratigraphy_from_default_noargument(self):
-        rcm8cube = cube.DataCube(rcm8_path)
-        rcm8cube.stratigraphy_from()
-        assert rcm8cube._knows_stratigraphy is True
+        golf = cube.DataCube(golf_path)
+        golf.stratigraphy_from()
+        assert golf._knows_stratigraphy is True
 
     def test_init_with_shared_varset_prior(self):
         shared_varset = plot.VariableSet()
-        rcm8cube1 = cube.DataCube(rcm8_path, varset=shared_varset)
-        rcm8cube2 = cube.DataCube(rcm8_path, varset=shared_varset)
-        assert type(rcm8cube1.varset) is plot.VariableSet
-        assert type(rcm8cube2.varset) is plot.VariableSet
-        assert rcm8cube1.varset is shared_varset
-        assert rcm8cube1.varset is rcm8cube2.varset
+        golf1 = cube.DataCube(golf_path, varset=shared_varset)
+        golf2 = cube.DataCube(golf_path, varset=shared_varset)
+        assert type(golf1.varset) is plot.VariableSet
+        assert type(golf2.varset) is plot.VariableSet
+        assert golf1.varset is shared_varset
+        assert golf1.varset is golf2.varset
 
     def test_init_with_shared_varset_from_first(self):
-        rcm8cube1 = cube.DataCube(rcm8_path)
-        rcm8cube2 = cube.DataCube(rcm8_path, varset=rcm8cube1.varset)
-        assert type(rcm8cube1.varset) is plot.VariableSet
-        assert type(rcm8cube2.varset) is plot.VariableSet
-        assert rcm8cube1.varset is rcm8cube2.varset
+        golf1 = cube.DataCube(golf_path)
+        golf2 = cube.DataCube(golf_path, varset=golf1.varset)
+        assert type(golf1.varset) is plot.VariableSet
+        assert type(golf2.varset) is plot.VariableSet
+        assert golf1.varset is golf2.varset
 
     def test_slice_op(self):
-        rcm8cube = cube.DataCube(rcm8_path)
-        slc = rcm8cube['eta']
+        golf = cube.DataCube(golf_path)
+        slc = golf['eta']
         assert type(slc) is xr.core.dataarray.DataArray
         assert slc.ndim == 3
         assert type(slc.values) is np.ndarray
 
     def test_slice_op_invalid_name(self):
-        rcm8cube = cube.DataCube(rcm8_path)
+        golf = cube.DataCube(golf_path)
         with pytest.raises(AttributeError):
-            _ = rcm8cube['nonexistentattribute']
+            _ = golf['nonexistentattribute']
 
     def test_register_section(self):
-        rcm8cube = cube.DataCube(rcm8_path)
-        rcm8cube.stratigraphy_from('eta')
-        rcm8cube.register_section('testsection', section.StrikeSection(y=10))
-        assert rcm8cube.sections is rcm8cube.section_set
-        assert len(rcm8cube.sections.keys()) == 1
-        assert 'testsection' in rcm8cube.sections.keys()
+        golf = cube.DataCube(golf_path)
+        golf.stratigraphy_from('eta', dz=0.1)
+        golf.register_section('testsection', section.StrikeSection(y=10))
+        assert golf.sections is golf.section_set
+        assert len(golf.sections.keys()) == 1
+        assert 'testsection' in golf.sections.keys()
 
     def test_sections_slice_op(self):
-        rcm8cube = cube.DataCube(rcm8_path)
-        rcm8cube.stratigraphy_from('eta')
-        rcm8cube.register_section('testsection', section.StrikeSection(y=10))
-        assert 'testsection' in rcm8cube.sections.keys()
-        slc = rcm8cube.sections['testsection']
+        golf = cube.DataCube(golf_path)
+        golf.stratigraphy_from('eta', dz=0.1)
+        golf.register_section('testsection', section.StrikeSection(y=10))
+        assert 'testsection' in golf.sections.keys()
+        slc = golf.sections['testsection']
         assert issubclass(type(slc), section.BaseSection)
 
     def test_nostratigraphy_default(self):
-        rcm8cube = cube.DataCube(rcm8_path)
-        assert rcm8cube._knows_stratigraphy is False
+        golf = cube.DataCube(golf_path)
+        assert golf._knows_stratigraphy is False
 
     def test_nostratigraphy_default_attribute_derived_variable(self):
-        rcm8cube = cube.DataCube(rcm8_path)
-        rcm8cube.register_section('testsection', section.StrikeSection(y=10))
-        assert rcm8cube._knows_stratigraphy is False
+        golf = cube.DataCube(golf_path)
+        golf.register_section('testsection', section.StrikeSection(y=10))
+        assert golf._knows_stratigraphy is False
         with pytest.raises(utils.NoStratigraphyError):
-            rcm8cube.sections['testsection']['velocity'].strat.as_stratigraphy()
+            golf.sections['testsection']['velocity'].strat.as_stratigraphy()
 
     def test_fixeddatacube_init_varset(self):
         assert type(self.fixeddatacube.varset) is plot.VariableSet
 
     def test_fixeddatacube_init_data_path(self):
-        assert self.fixeddatacube.data_path == rcm8_path
+        assert self.fixeddatacube.data_path == golf_path
 
     def test_fixeddatacube_init_dataio(self):
         assert hasattr(self.fixeddatacube, 'dataio')
@@ -144,39 +144,36 @@ class TestDataCubeNoStratigraphy:
         assert self.fixeddatacube.sections is self.fixeddatacube.section_set
 
     def test_metadata_present(self):
-        assert self.golfcube.meta is self.golfcube._dataio.meta
-
-    def test_metadata_none_nometa(self):
-        assert self.fixeddatacube.meta is None
+        assert self.fixeddatacube.meta is self.fixeddatacube._dataio.meta
 
     def test_fixeddatacube_dim1_coords(self):
-        assert self.fixeddatacube.dim1_coords.shape == (120,)
+        assert self.fixeddatacube.dim1_coords.shape == (self.fdc_shape[1],)
 
     def test_fixeddatacube_dim2_coords(self):
-        assert self.fixeddatacube.dim2_coords.shape == (240,)
+        assert self.fixeddatacube.dim2_coords.shape == (self.fdc_shape[2],)
 
     def test_fixeddatacube_z(self):
-        assert self.fixeddatacube.z.shape == (51,)
+        assert self.fixeddatacube.z.shape == (self.fdc_shape[0],)
         assert np.all(self.fixeddatacube.z == self.fixeddatacube.t)
 
     def test_fixeddatacube_Z(self):
-        assert self.fixeddatacube.Z.shape == (51, 120, 240)
+        assert self.fixeddatacube.Z.shape == self.fdc_shape
         assert np.all(self.fixeddatacube.Z == self.fixeddatacube.T)
 
     def test_fixeddatacube_t(self):
-        assert self.fixeddatacube.t.shape == (51,)
+        assert self.fixeddatacube.t.shape == (self.fdc_shape[0],)
 
     def test_fixeddatacube_T(self):
-        assert self.fixeddatacube.T.shape == (51, 120, 240)
+        assert self.fixeddatacube.T.shape == self.fdc_shape
 
     def test_fixeddatacube_H(self):
-        assert self.fixeddatacube.H == 51
+        assert self.fixeddatacube.H == self.fdc_shape[0]
 
     def test_fixeddatacube_L(self):
-        assert self.fixeddatacube.L == 120
+        assert self.fixeddatacube.L == self.fdc_shape[1]
 
     def test_fixeddatacube_shape(self):
-        assert self.fixeddatacube.shape == (51, 120, 240)
+        assert self.fixeddatacube.shape == self.fdc_shape
 
     def test_section_no_stratigraphy(self):
         sc = section.StrikeSection(self.fixeddatacube, y=10)
@@ -191,8 +188,8 @@ class TestDataCubeNoStratigraphy:
 class TestDataCubeWithStratigraphy:
 
     # create a fixed cube for variable existing, type checks
-    fixeddatacube = cube.DataCube(rcm8_path)
-    fixeddatacube.stratigraphy_from('eta')  # compute stratigraphy for the cube
+    fixeddatacube = cube.DataCube(golf_path)
+    fixeddatacube.stratigraphy_from('eta', dz=0.1)  # compute stratigraphy for the cube
 
     # test setting all the properties / attributes
     def test_fixeddatacube_set_varset(self):
@@ -212,7 +209,7 @@ class TestDataCubeWithStratigraphy:
 
     def test_fixeddatacube_set_dataio(self):
         with pytest.raises(AttributeError):
-            self.fixeddatacube.dataio = 10  # io.NetCDF_IO(rcm8_path)
+            self.fixeddatacube.dataio = 10  # io.NetCDF_IO(golf_path)
 
     def test_fixeddatacube_set_variables_list(self):
         with pytest.raises(AttributeError):
@@ -266,8 +263,9 @@ class TestDataCubeWithStratigraphy:
 class TestStratigraphyCube:
 
     # create a fixed cube for variable existing, type checks
-    fixeddatacube = cube.DataCube(rcm8_path)
-    fixedstratigraphycube = cube.StratigraphyCube.from_DataCube(fixeddatacube)
+    fixeddatacube = cube.DataCube(golf_path)
+    fixedstratigraphycube = cube.StratigraphyCube.from_DataCube(
+        fixeddatacube, dz=0.1)
 
     def test_no_tT_StratigraphyCube(self):
         with pytest.raises(AttributeError):
@@ -282,8 +280,9 @@ class TestStratigraphyCube:
 
 class TestFrozenStratigraphyCube:
 
-    fixeddatacube = cube.DataCube(rcm8_path)
-    fixedstratigraphycube = cube.StratigraphyCube.from_DataCube(fixeddatacube)
+    fixeddatacube = cube.DataCube(golf_path)
+    fixedstratigraphycube = cube.StratigraphyCube.from_DataCube(
+        fixeddatacube, dz=0.1)
     frozenstratigraphycube = fixedstratigraphycube.export_frozen_variable(
         'time')
 
@@ -301,12 +300,44 @@ class TestFrozenStratigraphyCube:
         assert np.all(fixd_log == frzn_log)
 
 
+class TestLegacyPyDeltaRCMCube:
+
+    def test_init_cube_from_path_rcm8(self):
+        with pytest.warns(UserWarning) as record:
+            rcm8cube = cube.DataCube(rcm8_path)
+        assert rcm8cube._data_path == rcm8_path
+        assert rcm8cube.dataio.type == 'netcdf'
+        assert rcm8cube._plan_set == {}
+        assert rcm8cube._section_set == {}
+        assert type(rcm8cube.varset) is plot.VariableSet
+
+        # check that two warnings were raised
+        assert re.match(
+            r'Coordinates for "time", .*',
+            record[0].message.args[0]
+            )
+        assert re.match(
+            r'No associated metadata .*',
+            record[1].message.args[0])
+
+    def test_warning_netcdf_no_metadata(self):
+        with pytest.warns(UserWarning, match=r'No associated metadata'):
+            _ = cube.DataCube(rcm8_path)
+
+    def test_metadata_none_nometa(self):
+        with pytest.warns(UserWarning):
+            rcm8cube = cube.DataCube(rcm8_path)
+        assert rcm8cube.meta is None
+
+
 class TestLandsatCube:
 
-    landsatcube = cube.DataCube(hdf_path)
+    with pytest.warns(UserWarning, match=r'No associated metadata'):
+        landsatcube = cube.DataCube(hdf_path)
 
     def test_init_cube_from_path_hdf5(self):
-        hdfcube = cube.DataCube(hdf_path)
+        with pytest.warns(UserWarning, match=r'No associated metadata'):
+            hdfcube = cube.DataCube(hdf_path)
         assert hdfcube._data_path == hdf_path
         assert hdfcube.dataio.type == 'hdf5'
         assert hdfcube._plan_set == {}
