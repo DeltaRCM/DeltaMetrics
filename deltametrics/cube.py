@@ -149,6 +149,9 @@ class BaseCube(abc.ABC):
         self._dim1_coords = self._dim1_idx
         self._dim2_coords = self._dim2_idx
 
+        # DEVELOPER NOTE: can we remvoe the _dimX_idx altogether and just use
+        # the _dimX_coords arrays?
+
     def read(self, variables):
         """Read variable into memory.
 

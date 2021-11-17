@@ -176,13 +176,16 @@ class BaseSection(abc.ABC):
         self.cube = None
 
         self.section_type = section_type
-        self._name = name
+        self._name = name  # default `name` is None
 
+        # check that zero or one postitional argument was given
         if len(args) > 1:
             raise ValueError('Expected single positional argument to \
                              %s instantiation.'
                              % type(self))
 
+        # if one positional argument was given, connect to the cube,
+        #    otherwise return an unconnected section.
         if len(args) > 0:
             self.connect(args[0])
         else:
@@ -261,13 +264,13 @@ class BaseSection(abc.ABC):
 
     @property
     def idx_trace(self):
-        """Indices of section points in the dim1, dim2 plane.
+        """Indices of section points in the `dim1`-`dim2` plane.
         """
         return self._idx_trace
 
     @property
     def trace(self):
-        """Coordinates of the section in the x-y plane.
+        """Coordinates of the section in the `dim1`-`dim2` plane.
 
         .. note:: stack of [dim2, dim1].
         """
@@ -644,8 +647,6 @@ class PathSection(BaseSection):
         self._path = np.unique(_cell, axis=0)
         self._vertices = np.unique(self._input_path, axis=0)
 
-        self._x = self._path[:, 0]
-        self._y = self._path[:, 1]
         self._dim1_idx = self._path[:, 1]
         self._dim2_idx = self._path[:, 0]
 
@@ -661,9 +662,8 @@ class PathSection(BaseSection):
 class StrikeSection(BaseSection):
     """Strike section object.
 
-    Section oriented along the delta strike (i.e., perpendicular to an inlet
-    channel). Specify the location of the strike section with :obj:`y` and
-    :obj:`x` keyword parameter options.
+    Section oriented parallel to the `dim2` axis. Specify the location of the
+    strike section with :obj:`y` and :obj:`x` keyword parameter options.
 
     .. important::
 
@@ -676,15 +676,23 @@ class StrikeSection(BaseSection):
         The `Cube` object to link for underlying data. This option should be
         ommitted if using the :obj:`register_section` method of a `Cube`.
 
-    y : :obj:`int`, optional
-        The `y` location of the section. This is the distance to locate the
-        section from the domain edge with a channel inlet. Defaults to ``0``
-        if no value is given.
+    distance
+        Note, that the actual section will be interpolated to the nearest grid cell!
 
-    x : :obj:`int`, optional
-        The `x` limits for the section. Defaults to the full domain width.
-        Specify as a two-element `tuple` or `list` of `int`, giving the lower
-        and upper bounds of `x` values to span the section.
+    idx
+
+    length
+        Assumes either coordinates or indices based on values of `distance`
+        and `idx`.
+
+    y : :obj:`int`, optional, deprecated
+        The number of cells in from the `dim1` lower domain edge. If used, the
+        value is internally coerced to :obj:`idx`.
+
+    x : :obj:`int`, optional, deprecated
+        The limits of the section. Defaults to the full `dim2`
+        domain `width`. Specify as a two-element `tuple` or `list` of `int`,
+        giving the lower and upper bounds of `x` values to span the section.
 
     **kwargs
         Keyword arguments are passed to `BaseSection.__init__()`. Supported
@@ -726,34 +734,121 @@ class StrikeSection(BaseSection):
         :include-source:
 
         >>> golfcube = dm.sample_data.golf()
-        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(golfcube)
-        >>> sc8cube.register_section(
-        ...     'strike_half', dm.section.StrikeSection(y=20, x=[0, 120]))
+        >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube)
+        >>> golfstrat.register_section(
+        ...     'strike_half', dm.section.StrikeSection(y=20, x=[0, 100]))
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
         >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
-        >>> sc8cube.sections['strike_half'].show_trace('r--', ax=ax[0])
-        >>> sc8cube.sections['strike_half'].show('velocity', ax=ax[1])
+        >>> golfstrat.sections['strike_half'].show_trace('r--', ax=ax[0])
+        >>> golfstrat.sections['strike_half'].show('velocity', ax=ax[1])
         >>> plt.show()
     """
 
-    def __init__(self, *args, y=None, x=None, **kwargs):
+    def __init__(self, *args, distance=None, idx=None, length=None,
+                 y=None, x=None, **kwargs):
 
-        self.y = y  # strike coord scalar
-        self._input_xlim = x  # the input x lims
+        self._distance = None
+        self._idx = None
+        self._length = None
+
+        # process the optional/deprecated input arguments
+        #   if y or x is given, cannot also give distance idx or length
+        if ((not (y is None)) or (not (x is None))):
+            #   check if new args are given
+            if (not (distance is None)) or (not (idx is None)) or (not (length is None)):  # noqa: E501
+                raise ValueError(
+                    'Cannot specify `distance`, `idx`, or `length` if '
+                    'specifying `y` or `x`.')
+            #   if new args not given, then use old args in place of new
+            else:
+                warnings.warn(
+                    'Arguments `y` and `x` are deprecated and will be removed'
+                    'in a future release. Please use `idx` and `length` to '
+                    'continue to specify cell indices, or use `distance` and '
+                    '`length` to specify coordinate values.')
+                idx = y
+                length = x
+        #   if both distance and idx are given
+        if (not (distance is None)) and (not (idx is None)):
+            raise ValueError('Cannot specify both `distance` and `idx`.')
+
+        self._input_distance = distance
+        self._input_idx = idx
+        self._input_length = length
         super().__init__('strike', *args, **kwargs)
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.
         """
-        if self._input_xlim is None:
-            _nx = self.cube['eta'].shape[2]
-            self._dim2_idx = np.arange(_nx)
+        # if input length is None, we need to use endpoints of the dim2 coords
+        if self._input_length is None:
+            # if the value is given as distance
+            if not (self._input_distance is None):
+                _length = (float(self.cube.dim2_coords[0]),
+                           float(self.cube.dim2_coords[-1]))
+            # if the value is given as idx
+            else:
+                _length = (0, self.cube.W)
+
         else:
-            self._dim2_idx = np.arange(self._input_xlim[0], self._input_xlim[1])
-            _nx = len(self._dim2_idx)
-        self._dim1_idx = np.tile(self.y, (_nx))
+            # quick check that value for length is valid
+            if len(self._input_length) != 2:
+                raise ValueError(
+                    'Input `length` must be two element tuple or list, '
+                    'but was {0}'.format(str(self._input_length)))
+            _length = self._input_length
+
+        # if the value is given as distance
+        if not (self._input_distance is None):
+            # interpolate to an idx
+            _idx = np.argmin(np.abs(
+                np.array(self.cube.dim1_coords) - self._input_distance))
+            # treat length as coordinates
+            #   should have some kind of checks here for valid values?
+            _start_idx = np.argmin(np.abs(
+                np.array(self.cube.dim2_coords) - _length[0]))
+            _end_idx = np.argmin(np.abs(
+                np.array(self.cube.dim2_coords) - _length[1]))
+        else:
+            # apply the input idx value
+            _idx = int(self._input_idx)
+            # treat length as indices
+            _start_idx, _end_idx = _length
+
+        self._distance = float(self.cube.dim1_coords[_idx])
+        self._idx = _idx
+        self._length = _length  # will vary based on how instantiated!
+
+        # now compute the indices to use for the section
+        self._dim2_idx = np.arange(_start_idx, _end_idx, dtype=int)
+        self._dim1_idx = np.tile(self._idx, (len(self._dim2_idx)))
+
+    @property
+    def y(self):
+        return self._idx
+
+    @property
+    def x(self):
+        if self._input_distance is None:
+            return self._length
+        else:
+            raise AttributeError(
+                '`x` is deprecated, and also undefined if '
+                '`_input_distance` was `None`.')
+
+    @property
+    def distance(self):
+        return self._distance
+
+    @property
+    def idx(self):
+        return self._idx
+
+    @property
+    def length(self):
+        return self._length
 
 
 class DipSection(BaseSection):
