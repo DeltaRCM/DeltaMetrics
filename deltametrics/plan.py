@@ -1264,9 +1264,9 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
 
     section : :obj:`~deltametrics.section.BaseSection` subclass, or :obj:`ndarray`
         The section along which to compute channel widths. If a `Section` type
-        is passed, the `.trace` attribute will be used to query the
+        is passed, the `.idx_trace` attribute will be used to query the
         `ChannelMask` and determine widths. Otherwise, an `Nx2` array can be
-        passed, which specified the x-y coordinate pairs to use as the
+        passed, which specified the `dim1-dim2` coordinate pairs to use as the
         trace.
 
     return_widths : bool, optional
@@ -1311,8 +1311,8 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
     """
     if not (section is None):
         if issubclass(type(section), dm_section.BaseSection):
-            section_trace = section._xytrace
-            section_coord = section._s
+            section_trace = section.idx_trace
+            section_coord = section._s.data
         elif isinstance(section, np.ndarray):
             section_trace = section
             section_coord = np.arange(len(section))
@@ -1365,11 +1365,11 @@ def _get_channel_starts_and_ends(channelmask, section_trace):
     .. important::
 
         section_trace must be the index coordinates of the section trace, and
-        not the coordinate values that are returned from `section.trace`.
+        not the coordinate values that are returned from `section.idx_trace`.
 
     """
-    _channelseries = channelmask[section_trace[:, 1],
-                                 section_trace[:, 0]].astype(int)
+    _channelseries = channelmask[section_trace[:, 0],
+                                 section_trace[:, 1]].astype(int)
     _padchannelseries = np.pad(_channelseries, (1,), 'constant',
                                constant_values=(False)).astype(int)
     _channelseries_diff = _padchannelseries[1:] - _padchannelseries[:-1]
@@ -1407,9 +1407,9 @@ def compute_channel_depth(channelmask, depth, section=None,
 
     section : :obj:`~deltametrics.section.BaseSection` subclass, or :obj:`ndarray`
         The section along which to compute channel depths. If a `Section` type
-        is passed, the `.trace` attribute will be used to query the
+        is passed, the `.idx_trace` attribute will be used to query the
         `ChannelMask` and determine depths. Otherwise, an `Nx2` array can be
-        passed, which specified the x-y coordinate pairs to use as the
+        passed, which specified the `dim1-dim2` coordinate pairs to use as the
         trace.
 
     depth_type : :obj:`str`
@@ -1434,8 +1434,8 @@ def compute_channel_depth(channelmask, depth, section=None,
     """
     if not (section is None):
         if issubclass(type(section), dm_section.BaseSection):
-            section_trace = section._xytrace
-            section_coord = section._s
+            section_trace = section.idx_trace
+            section_coord = section._s.data
         elif isinstance(section, np.ndarray):
             section_trace = section
             section_coord = np.arange(len(section))
@@ -1464,7 +1464,7 @@ def compute_channel_depth(channelmask, depth, section=None,
 
     # get the depth array along the section
     _depthslice = np.copy(depth)
-    _depthseries = _depthslice[section_trace[:, 1], section_trace[:, 0]]
+    _depthseries = _depthslice[section_trace[:, 0], section_trace[:, 1]]
 
     # for depth and area of channels, we loop through each discrete channel
     _channel_depth_means = np.full(len(_channelwidths), np.nan)

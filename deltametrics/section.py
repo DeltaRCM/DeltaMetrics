@@ -168,8 +168,8 @@ class BaseSection(abc.ABC):
         # begin unconnected
         self._s = None
         self._z = None
-        self._x = None
-        self._y = None
+        self._dim1_idx = None
+        self._dim2_idx = None
         self._trace = None
         self._shape = None
         self._variables = None
@@ -225,35 +225,51 @@ class BaseSection(abc.ABC):
     def _compute_section_coords(self):
         """Should calculate x-y coordinates of the section.
 
-        Sets the value ``self._x`` and ``self._y`` according to the algorithm
-        of each section initialization.
+        Sets the value ``self._dim1_idx`` and ``self._dim2_idx`` according to
+        the algorithm of each section initialization.
 
         .. warning::
 
-            When implementing new section types, be sure that ``self._x`` and
-            ``self._y`` are *one-dimensional arrays*, or you will get an
-            improperly shaped Section array in return.
+            When implementing new section types, be sure that
+            ``self._dim1_idx`` and ``self._dim2_idx`` are *one-dimensional
+            arrays*, or you will get an improperly shaped Section array in
+            return.
         """
         ...
 
     def _compute_section_attrs(self):
         """Compute attrs
 
-        Compute the along-section coordinate array from x-y pts pairs
-        definining the section.
+        Compute the along-section coordinate array from dimensions in the
+        cube (`dim1`, `dim2`) definining the section.
         """
-        self._xytrace = np.column_stack((self._x, self._y))
-        self._trace = np.column_stack((self.cube.x[self._x],
-                                       self.cube.y[self._y]))
-        self._s = np.cumsum(np.hstack(
+        self._idx_trace = np.column_stack((self._dim1_idx, self._dim2_idx))
+        self._trace = np.column_stack((self.cube._dim2_idx[self._dim2_idx],
+                                       self.cube._dim1_idx[self._dim1_idx]))
+        
+        # compute along section distance and place into a DataArray
+        _s = np.cumsum(np.hstack(
             (0, np.sqrt((self._trace[1:, 0] - self._trace[:-1, 0])**2
              + (self._trace[1:, 1] - self._trace[:-1, 1])**2))))
+        self._s = xr.DataArray(_s, name='s', dims=['s'], coords={'s': _s})
+
+        # take z from the underlying cube, should be a DataArray
         self._z = self.cube.z
+
+        # set shape from the coordinates
         self._shape = (len(self._z), len(self._s))
+
+    @property
+    def idx_trace(self):
+        """Indices of section points in the dim1, dim2 plane.
+        """
+        return self._idx_trace
 
     @property
     def trace(self):
         """Coordinates of the section in the x-y plane.
+
+        .. note:: stack of [dim2, dim1].
         """
         return self._trace
 
@@ -317,23 +333,23 @@ class BaseSection(abc.ABC):
         if isinstance(self.cube, cube.DataCube):
             if self.cube._knows_stratigraphy:
                 _xrDA = xr.DataArray(
-                    self.cube[var].data[:, self._y, self._x],
-                    coords={"s": self._s, "z": self._z},
-                    dims=['z', 's'],
+                    self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
+                    coords={"s": self._s, self._z.dims[0]: self._z},
+                    dims=[self._z.dims[0], 's'],
                     name=var,
                     attrs={'slicetype': 'data_section',
                            'knows_stratigraphy': True,
                            'knows_spacetime': True})
                 _xrDA.strat.add_information(
-                    _psvd_mask=self.cube.strat_attr.psvd_idx[:, self._y, self._x],  # noqa: E501
+                    _psvd_mask=self.cube.strat_attr.psvd_idx[:, self._dim1_idx, self._dim2_idx],  # noqa: E501
                     _strat_attr=self.cube.strat_attr(
-                        'section', self._y, self._x))
+                        'section', self._dim1_idx, self._dim2_idx))
                 return _xrDA
             else:
                 _xrDA = xr.DataArray(
-                    self.cube[var].data[:, self._y, self._x],
-                    coords={"s": self._s, "z": self._z},
-                    dims=['z', 's'],
+                    self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
+                    coords={"s": self._s, self._z.dims[0]: self._z},
+                    dims=[self._z.dims[0], 's'],
                     name=var,
                     attrs={'slicetype': 'data_section',
                            'knows_stratigraphy': False,
@@ -341,9 +357,9 @@ class BaseSection(abc.ABC):
                 return _xrDA
         elif isinstance(self.cube, cube.StratigraphyCube):
             _xrDA = xr.DataArray(
-                    self.cube[var].data[:, self._y, self._x],
-                    coords={"s": self._s, "z": self._z},
-                    dims=['z', 's'],
+                    self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
+                    coords={"s": self._s, self._z.dims[0]: self._z},
+                    dims=[self._z.dims[0], 's'],
                     name=var,
                     attrs={'slicetype': 'stratigraphy_section',
                            'knows_stratigraphy': True,
@@ -524,8 +540,8 @@ class BaseSection(abc.ABC):
 
         _label = kwargs.pop('label', self.name)
 
-        _x = self.cube.x[self._x]
-        _y = self.cube.y[self._y]
+        _x = self.cube._dim2_idx[self._dim2_idx]
+        _y = self.cube._dim1_idx[self._dim1_idx]
 
         # get the limits to be able to reset if autoscale false
         lims = [ax.get_xlim(), ax.get_ylim()]
@@ -543,14 +559,16 @@ class PathSection(BaseSection):
     """Path section object.
 
     Create a Section along user-specified path. Specify the section location
-    as an `(N, 2)` `ndarray` of x-y pairs of coordinates that define the
-    verticies of the path. All coordinates along the path will be included in
-    the section.
+    as an `(N, 2)` `ndarray` of `dim1-dim2` pairs of coordinates that define
+    the verticies of the path. All coordinates along the path will be
+    included in the section.
 
     .. important::
 
-        The vertex coordinates must be specified as cell indices (not
-        actual x and y coordinate values). This is a needed patch.
+        The vertex coordinates must be specified as cell indices along `dim1`
+        and `dim2`. That is to sat *not* actual `dim0` and `dim1` coordinate
+        values *and not* x-y cartesian indices (actually y-x indices).
+        Specifying coordinates is is a needed patch.
 
     Parameters
     ----------
@@ -559,8 +577,8 @@ class PathSection(BaseSection):
         ommitted if using the :obj:`register_section` method of a `Cube`.
 
     path : :obj:`ndarray`
-        An `(N, 2)` `ndarray` specifying the x-y pairs of coordinates that
-            define the verticies of the path to extract the section from.
+        An `(N, 2)` `ndarray` specifying the `dim1-dim2` pairs of coordinates
+        that define the verticies of the path to extract the section from.
 
     **kwargs
         Keyword arguments are passed to `BaseSection.__init__()`. Supported
@@ -586,7 +604,7 @@ class PathSection(BaseSection):
 
         >>> golfcube = dm.sample_data.golf()
         >>> golfcube.register_section('path', dm.section.PathSection(
-        ...     path=np.array([[50, 3], [65, 17], [130, 10]])))
+        ...     path=np.array([[3, 50], [17, 65], [10, 130]])))
         >>>
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
@@ -602,8 +620,9 @@ class PathSection(BaseSection):
         Parameters
         ----------
         path : :obj:`ndarray`
-            An `(N, 2)` `ndarray` specifying the x-y pairs of coordinates that
-            define the verticies of the path to extract the section from.
+            An `(N, 2)` `ndarray` specifying the dim1-dim2 pairs of
+            coordinates that define the verticies of the path to extract the
+            section from.
 
         .. note::
 
@@ -617,7 +636,8 @@ class PathSection(BaseSection):
         """Calculate coordinates of the strike section.
         """
         # convert the points into segments into lists of cells
-        _segs = utils.coordinates_to_segments(self._input_path)
+        # breakpoint()
+        _segs = utils.coordinates_to_segments(np.fliplr(self._input_path))
         _cell = utils.segments_to_cells(_segs)
 
         # determine only unique coordinates along the path
@@ -626,6 +646,8 @@ class PathSection(BaseSection):
 
         self._x = self._path[:, 0]
         self._y = self._path[:, 1]
+        self._dim1_idx = self._path[:, 1]
+        self._dim2_idx = self._path[:, 0]
 
     @property
     def path(self):
@@ -727,11 +749,11 @@ class StrikeSection(BaseSection):
         """
         if self._input_xlim is None:
             _nx = self.cube['eta'].shape[2]
-            self._x = np.arange(_nx)
+            self._dim2_idx = np.arange(_nx)
         else:
-            self._x = np.arange(self._input_xlim[0], self._input_xlim[1])
-            _nx = len(self._x)
-        self._y = np.tile(self.y, (_nx))
+            self._dim2_idx = np.arange(self._input_xlim[0], self._input_xlim[1])
+            _nx = len(self._dim2_idx)
+        self._dim1_idx = np.tile(self.y, (_nx))
 
 
 class DipSection(BaseSection):
@@ -828,11 +850,11 @@ class DipSection(BaseSection):
 
         if self._input_ylim is None:
             _ny = self.cube['eta'].shape[1]
-            self._y = np.arange(_ny)
+            self._dim1_idx = np.arange(_ny)
         else:
-            self._y = np.arange(self._input_ylim[0], self._input_ylim[1])
-            _ny = len(self._y)
-        self._x = np.tile(self.x, (_ny))
+            self._dim1_idx = np.arange(self._input_ylim[0], self._input_ylim[1])
+            _ny = len(self._dim1_idx)
+        self._dim2_idx = np.tile(self.x, (_ny))
 
 
 class CircularSection(BaseSection):
@@ -937,8 +959,9 @@ class CircularSection(BaseSection):
             self.origin = self._input_origin
 
         xy = utils.circle_to_cells(self.origin, self.radius)
-        self._x = xy[0]
-        self._y = xy[1]
+
+        self._dim1_idx = xy[1]
+        self._dim2_idx = xy[0]
 
 
 class RadialSection(BaseSection):
@@ -1098,5 +1121,6 @@ class RadialSection(BaseSection):
                          self.origin[1] + _len*vec_norm[1])
 
         xy = utils.line_to_cells(self.origin, end_point)
-        self._x = xy[0]
-        self._y = xy[1]
+
+        self._dim1_idx = xy[1]
+        self._dim2_idx = xy[0]

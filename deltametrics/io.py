@@ -163,24 +163,57 @@ class NetCDFIO(BaseIO):
                 self.data_path, "w", format="NETCDF4")
             _tempdataset.close()
 
-        if os.path.splitext(self.data_path)[-1] == '.nc':
+        _ext = os.path.splitext(self.data_path)[-1]
+        if _ext == '.nc':
             _engine = 'netcdf4'
-        elif os.path.splitext(self.data_path)[-1] == '.hdf5':
+        elif _ext == '.hdf5':
             _engine = 'h5netcdf'
         else:
-            TypeError('File format current unsupported by DeltaMetrics.')
+            TypeError('File format is not supported '
+                      'by DeltaMetrics: {0}'.format(_ext))
 
         try:
+            # open the dataset
             _dataset = xr.open_dataset(self.data_path, engine=_engine)
-            if set(['time', 'x', 'y']).issubset(set(_dataset.variables)):
-                self.dataset = _dataset.set_coords(['time', 'y', 'x'])
-            else:
-                self.dataset = _dataset.set_coords([])
-                warn('Dimensions "time", "y", and "x" not provided in the \
-                      given data file.', UserWarning)
         except Exception as e:
             raise TypeError(
                 f'File format out of scope for DeltaMetrics: {e}')
+
+        # try to find if coordinates have been preconfigured
+        _coords_list = list(_dataset.coords)
+        if set(['time', 'x', 'y']).issubset(set(_coords_list)):
+            # the coordinates are preconfigured
+            self.dataset = _dataset.set_coords(_coords_list)
+            self.dims = list(self.dataset.dims)
+            self.coords = list(self.dataset.coords)
+        elif set(['total_time', 'length', 'width']).issubset(set(_dataset.dims.keys())):
+            # the coordinates are not set, but there are matching arrays
+            # this is a legacy option, so issue a warning here
+            self.dataset = _dataset.set_coords(['x', 'y', 'time'])
+            self.dims = ['time', 'length', 'width']
+            self.coords = ['total_time', 'x', 'y']
+            warn('Coordinates for "time", and ("y", "x") were found as '
+                 'variables in the underlying data file, '
+                 'but are not specified as coordinates in the undelying '
+                 'data file. Please reformat the data file for use '
+                 'with DeltaMetrics. This warning may be replaced '
+                 'with an Error in a future version.', UserWarning)
+        else:
+            # coordinates were not found and are not being set
+            raise NotImplementedError(
+                'Underlying NetCDF datasets without any specified coordinates '
+                'are not supported. See source for additional notes about '
+                'how to implement this feature.')
+            # DEVELOPER NOTE: it may be possible to support a netcdf file that
+            # does not have specified coordinates, but we need a test case to
+            # make it work. It may work to just pass everything along to the
+            # cube, and let xarray automatically handle the naming of
+            # coordinates, but I have not tested this. 
+            
+            # self.dataset = _dataset.set_coords([])
+            # self.dims = []
+            # warn('Coordinates for "time", and set("x", "y") not provided in the \
+            #       given data file.', UserWarning)
 
         try:
             _meta = xr.open_dataset(self.data_path, group='meta',
