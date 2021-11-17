@@ -33,12 +33,13 @@
       ~BaseCube.H
       ~BaseCube.L
       ~BaseCube.W
-      ~BaseCube.X
-      ~BaseCube.Y
       ~BaseCube.Z
       ~BaseCube.coords
       ~BaseCube.data_path
       ~BaseCube.dataio
+      ~BaseCube.dim0_coords
+      ~BaseCube.dim1_coords
+      ~BaseCube.dim2_coords
       ~BaseCube.meta
       ~BaseCube.plan_set
       ~BaseCube.plans
@@ -47,8 +48,6 @@
       ~BaseCube.shape
       ~BaseCube.variables
       ~BaseCube.varset
-      ~BaseCube.x
-      ~BaseCube.y
       ~BaseCube.z
    
    

@@ -60,9 +60,9 @@ between points along the section is assumed to be <cite>==1</cite>.</p>
 <li><p><strong>channelmask</strong> (<a class="reference internal" href="deltametrics.mask.ChannelMask.html#deltametrics.mask.ChannelMask" title="deltametrics.mask.ChannelMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChannelMask</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The channel mask (i.e., should be binary) to compute channel widths
 from.</p></li>
 <li><p><strong>section</strong> (<a class="reference internal" href="deltametrics.section.BaseSection.html#deltametrics.section.BaseSection" title="deltametrics.section.BaseSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSection</span></code></a> subclass, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The section along which to compute channel widths. If a <cite>Section</cite> type
-is passed, the <cite>.trace</cite> attribute will be used to query the
+is passed, the <cite>.idx_trace</cite> attribute will be used to query the
 <cite>ChannelMask</cite> and determine widths. Otherwise, an <cite>Nx2</cite> array can be
-passed, which specified the x-y coordinate pairs to use as the
+passed, which specified the <cite>dim1-dim2</cite> coordinate pairs to use as the
 trace.</p></li>
 <li><p><strong>return_widths</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return (as third argument) a list of channel widths.
 Default is false (do not return list).</p></li>

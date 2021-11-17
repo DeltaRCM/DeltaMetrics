@@ -59,9 +59,9 @@ between points along the section is assumed to be <cite>==1</cite>.</p>
 from.</p></li>
 <li><p><strong>depth</strong> (<cite>xarray</cite> or <cite>ndarray</cite>) – The depth field corresponding to the channelmask array.</p></li>
 <li><p><strong>section</strong> (<a class="reference internal" href="deltametrics.section.BaseSection.html#deltametrics.section.BaseSection" title="deltametrics.section.BaseSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSection</span></code></a> subclass, or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The section along which to compute channel depths. If a <cite>Section</cite> type
-is passed, the <cite>.trace</cite> attribute will be used to query the
+is passed, the <cite>.idx_trace</cite> attribute will be used to query the
 <cite>ChannelMask</cite> and determine depths. Otherwise, an <cite>Nx2</cite> array can be
-passed, which specified the x-y coordinate pairs to use as the
+passed, which specified the <cite>dim1-dim2</cite> coordinate pairs to use as the
 trace.</p></li>
 <li><p><strong>depth_type</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Flag indicating how to compute the depth of <em>each</em> channel
 (i.e., before aggregating). Valid flags are <cite>‘thalweg’`(default) and

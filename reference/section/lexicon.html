@@ -40,20 +40,21 @@
 <p>Most importantly, a Section is defined by a set of coordinates in the x-y plane of a <cite>Cube</cite>.</p>
 <p>Therefore, we transform variable definitions when extracting the <cite>Section</cite>, and the coordinate system of the section is defined by the along-section direction <img class="math" src="../../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/> and a vertical section coordinate, which is <img class="math" src="../../_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> when viewing stratigraphy, and <img class="math" src="../../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/> when viewing a spacetime section.</p>
 <p>The data that make up the section can view the section as a <cite>spacetime</cite> section by simply calling a variable from the a section into a <cite>DataCube</cite>.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span>
-<span class="go">&lt;xarray.DataArray &#39;velocity&#39; (z: 51, s: 240)&gt;</span>
-<span class="go">array([[0., 0., 0., ..., 0., 0., 0.],</span>
-<span class="go">       [0., 0., 0., ..., 0., 0., 0.],</span>
-<span class="go">       [0., 0., 0., ..., 0., 0., 0.],</span>
+<span class="go">&lt;xarray.DataArray &#39;velocity&#39; (time: 101, s: 200)&gt;</span>
+<span class="go">array([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   , 0.2   ],</span>
+<span class="go">       [0.    , 0.    , 0.    , ..., 0.    , 0.    , 0.    ],</span>
+<span class="go">       [0.    , 0.0025, 0.    , ..., 0.    , 0.    , 0.    ],</span>
 <span class="go">       ...,</span>
-<span class="go">       [0., 0., 0., ..., 0., 0., 0.],</span>
-<span class="go">       [0., 0., 0., ..., 0., 0., 0.],</span>
-<span class="go">       [0., 0., 0., ..., 0., 0., 0.]], dtype=float32)</span>
+<span class="go">       [0.    , 0.    , 0.    , ..., 0.0025, 0.    , 0.    ],</span>
+<span class="go">       [0.    , 0.    , 0.    , ..., 0.    , 0.    , 0.    ],</span>
+<span class="go">       [0.    , 0.    , 0.    , ..., 0.0025, 0.    , 0.    ]],</span>
+<span class="go">      dtype=float32)</span>
 <span class="go">Coordinates:</span>
-<span class="go">  * s        (s) float64 0.0 1.0 2.0 3.0 4.0 ... 235.0 236.0 237.0 238.0 239.0</span>
-<span class="go">  * z        (z) float32 0.0 50.0 100.0 150.0 ... 2.4e+03 2.45e+03 2.5e+03</span>
+<span class="go">  * s        (s) float64 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03</span>
+<span class="go">  * time     (time) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07</span>
 <span class="go">Attributes:</span>
 <span class="go">    slicetype:           data_section</span>
 <span class="go">    knows_stratigraphy:  False</span>
@@ -64,8 +65,8 @@
 The same <cite>spacetime</cite> data can be requested in the “preserved” form, where non-preserved t-x-y points are masked with <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strat</span><span class="o">.</span><span class="n">as_preserved</span><span class="p">()</span>
-<span class="go">&lt;xarray.DataArray &#39;velocity&#39; (z: 51, s: 240)&gt;</span>
-<span class="go">array([[ 0.,  0.,  0., ...,  0.,  0.,  0.],</span>
+<span class="go">&lt;xarray.DataArray &#39;velocity&#39; (time: 101, s: 200)&gt;</span>
+<span class="go">array([[0.2, 0.2, 0.2, ..., 0.2, 0.2, 0.2],</span>
 <span class="go">       [nan, nan, nan, ..., nan, nan, nan],</span>
 <span class="go">       [nan, nan, nan, ..., nan, nan, nan],</span>
 <span class="go">       ...,</span>
@@ -73,8 +74,8 @@ The same <cite>spacetime</cite> data can be requested in the “preserved” for
 <span class="go">       [nan, nan, nan, ..., nan, nan, nan],</span>
 <span class="go">       [nan, nan, nan, ..., nan, nan, nan]], dtype=float32)</span>
 <span class="go">Coordinates:</span>
-<span class="go">  * s        (s) float64 0.0 1.0 2.0 3.0 4.0 ... 235.0 236.0 237.0 238.0 239.0</span>
-<span class="go">  * z        (z) float32 0.0 50.0 100.0 150.0 ... 2.4e+03 2.45e+03 2.5e+03</span>
+<span class="go">  * s        (s) float64 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03</span>
+<span class="go">  * time     (time) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07</span>
 <span class="go">Attributes:</span>
 <span class="go">    slicetype:           data_section</span>
 <span class="go">    knows_stratigraphy:  True</span>

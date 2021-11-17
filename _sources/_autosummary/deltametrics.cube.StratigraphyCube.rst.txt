@@ -34,12 +34,13 @@
       ~StratigraphyCube.H
       ~StratigraphyCube.L
       ~StratigraphyCube.W
-      ~StratigraphyCube.X
-      ~StratigraphyCube.Y
       ~StratigraphyCube.Z
       ~StratigraphyCube.coords
       ~StratigraphyCube.data_path
       ~StratigraphyCube.dataio
+      ~StratigraphyCube.dim0_coords
+      ~StratigraphyCube.dim1_coords
+      ~StratigraphyCube.dim2_coords
       ~StratigraphyCube.meta
       ~StratigraphyCube.plan_set
       ~StratigraphyCube.plans
@@ -49,8 +50,6 @@
       ~StratigraphyCube.strata
       ~StratigraphyCube.variables
       ~StratigraphyCube.varset
-      ~StratigraphyCube.x
-      ~StratigraphyCube.y
       ~StratigraphyCube.z
    
    

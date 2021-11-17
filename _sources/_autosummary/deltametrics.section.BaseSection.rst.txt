@@ -26,6 +26,7 @@
 
    .. autosummary::
    
+      ~BaseSection.idx_trace
       ~BaseSection.name
       ~BaseSection.s
       ~BaseSection.shape

@@ -194,7 +194,7 @@ Notably, <cite>Sections</cite> do not refer to any variable in particular, so <c
 are sliced themselves, similarly to the cube.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span>
-<span class="go">&lt;xarray.DataArray &#39;velocity&#39; (z: 101, s: 200)&gt;</span>
+<span class="go">&lt;xarray.DataArray &#39;velocity&#39; (time: 101, s: 200)&gt;</span>
 <span class="go">array([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   , 0.2   ],</span>
 <span class="go">       [0.    , 0.    , 0.    , ..., 0.    , 0.    , 0.    ],</span>
 <span class="go">       [0.    , 0.0025, 0.    , ..., 0.    , 0.    , 0.    ],</span>
@@ -205,7 +205,7 @@ are sliced themselves, similarly to the cube.</p>
 <span class="go">      dtype=float32)</span>
 <span class="go">Coordinates:</span>
 <span class="go">  * s        (s) float64 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03</span>
-<span class="go">  * z        (z) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07</span>
+<span class="go">  * time     (time) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07</span>
 <span class="go">Attributes:</span>
 <span class="go">    slicetype:           data_section</span>
 <span class="go">    knows_stratigraphy:  False</span>
@@ -242,7 +242,7 @@ Compute the quick stratigraphy as:</p>
 </div>
 <p>Now, the <code class="docutils literal notranslate"><span class="pre">DataCube</span></code> has knowledge of stratigraphy, which we can further use to visualize preservation within the spacetime, or visualize as an actual stratigraphic slice.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strat</span><span class="o">.</span><span class="n">as_preserved</span><span class="p">()</span>
-<span class="go">&lt;xarray.DataArray &#39;velocity&#39; (z: 101, s: 200)&gt;</span>
+<span class="go">&lt;xarray.DataArray &#39;velocity&#39; (time: 101, s: 200)&gt;</span>
 <span class="go">array([[0.2, 0.2, 0.2, ..., 0.2, 0.2, 0.2],</span>
 <span class="go">       [nan, nan, nan, ..., nan, nan, nan],</span>
 <span class="go">       [nan, nan, nan, ..., nan, nan, nan],</span>
@@ -252,7 +252,7 @@ Compute the quick stratigraphy as:</p>
 <span class="go">       [nan, nan, nan, ..., nan, nan, nan]], dtype=float32)</span>
 <span class="go">Coordinates:</span>
 <span class="go">  * s        (s) float64 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03</span>
-<span class="go">  * z        (z) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07</span>
+<span class="go">  * time     (time) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07</span>
 <span class="go">Attributes:</span>
 <span class="go">    slicetype:           data_section</span>
 <span class="go">    knows_stratigraphy:  True</span>
@@ -289,8 +289,8 @@ Compute the quick stratigraphy as:</p>
 <p>There are multiple section types available.
 The following are currently implemented.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">_strike</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">_path</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">PathSection</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
-<span class="gp">... </span>                                                               <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">))))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">_path</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">PathSection</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">),</span>
+<span class="gp">... </span>                                                               <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">4000</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">))))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_circ</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">CircularSection</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">40</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_rad</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">RadialSection</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">azimuth</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
 </pre></div>
@@ -310,10 +310,6 @@ Each has unique instantiation arguments, though, which must be properly specifie
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../pyplots/guides/userguide_section_type_demos.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_section_type_demos.hires.png">hires.png</a>)</p>
-<figure class="align-default">
-<img alt="../_images/userguide_section_type_demos.png" class="plot-directive" src="../_images/userguide_section_type_demos.png" />
-</figure>
 </section>
 </section>
 <section id="computing-and-manipulating-stratigraphy">

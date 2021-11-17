@@ -26,6 +26,7 @@
 
    .. autosummary::
    
+      ~RadialSection.idx_trace
       ~RadialSection.name
       ~RadialSection.s
       ~RadialSection.shape

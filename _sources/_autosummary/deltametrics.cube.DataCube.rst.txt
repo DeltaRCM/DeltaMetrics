@@ -35,12 +35,13 @@
       ~DataCube.L
       ~DataCube.T
       ~DataCube.W
-      ~DataCube.X
-      ~DataCube.Y
       ~DataCube.Z
       ~DataCube.coords
       ~DataCube.data_path
       ~DataCube.dataio
+      ~DataCube.dim0_coords
+      ~DataCube.dim1_coords
+      ~DataCube.dim2_coords
       ~DataCube.meta
       ~DataCube.plan_set
       ~DataCube.plans
@@ -50,8 +51,6 @@
       ~DataCube.t
       ~DataCube.variables
       ~DataCube.varset
-      ~DataCube.x
-      ~DataCube.y
       ~DataCube.z
    
    
