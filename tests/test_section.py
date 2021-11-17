@@ -1,6 +1,7 @@
 import pytest
 
 import numpy as np
+import xarray as xr
 import matplotlib.pyplot as plt
 
 from deltametrics import cube
@@ -496,11 +497,11 @@ class TestSectionFromDataCubeNoStratigraphy:
 
     def test_nostrat_getitem_explicit(self):
         s = self.rcm8cube_nostrat.sections['test'].__getitem__('velocity')
-        assert isinstance(s, section.DataSectionVariable)
+        assert isinstance(s, xr.core.dataarray.DataArray)
 
     def test_nostrat_getitem_implicit(self):
         s = self.rcm8cube_nostrat.sections['test']['velocity']
-        assert isinstance(s, section.DataSectionVariable)
+        assert isinstance(s, xr.core.dataarray.DataArray)
 
     def test_nostrat_getitem_bad_variable(self):
         with pytest.raises(AttributeError):
@@ -524,17 +525,17 @@ class TestSectionFromDataCubeNoStratigraphy:
 
     def test_nostrat_not_knows_stratigraphy(self):
         assert self.rcm8cube_nostrat.sections['test'][
-            'velocity']._knows_stratigraphy is False
+            'velocity'].strat._knows_stratigraphy is False
         assert self.rcm8cube_nostrat.sections['test'][
-            'velocity'].knows_stratigraphy is False
+            'velocity'].strat.knows_stratigraphy is False
 
     def test_nostrat_nostratigraphyinfo(self):
         with pytest.raises(utils.NoStratigraphyError):
             _ = self.rcm8cube_nostrat.sections[
-                'test']['velocity'].as_stratigraphy()
+                'test']['velocity'].strat.as_stratigraphy()
         with pytest.raises(utils.NoStratigraphyError):
             _ = self.rcm8cube_nostrat.sections[
-                'test']['velocity'].as_preserved()
+                'test']['velocity'].strat.as_preserved()
 
     def test_nostrat_SectionVariable_basic_math_comparisons(self):
         s1 = self.rcm8cube_nostrat.sections['test']['velocity']
@@ -543,7 +544,7 @@ class TestSectionFromDataCubeNoStratigraphy:
         assert np.all(s1 + s1 == s1 * 2)
         assert not np.any((s2 - np.random.rand(*s2.shape)) == s2)
         assert np.all(s3 + s3 > s3)
-        assert type(s3) is section.DataSectionVariable
+        assert type(s3) is xr.core.dataarray.DataArray
 
     def test_nostrat_trace(self):
         assert isinstance(self.rcm8cube_nostrat.sections[
@@ -633,11 +634,11 @@ class TestSectionFromDataCubeWithStratigraphy:
 
     def test_withstrat_getitem_explicit(self):
         s = self.rcm8cube.sections['test'].__getitem__('velocity')
-        assert isinstance(s, section.DataSectionVariable)
+        assert isinstance(s, xr.core.dataarray.DataArray)
 
     def test_withstrat_getitem_implicit(self):
         s = self.rcm8cube.sections['test']['velocity']
-        assert isinstance(s, section.DataSectionVariable)
+        assert isinstance(s, xr.core.dataarray.DataArray)
 
     def test_withstrat_getitem_bad_variable(self):
         with pytest.raises(AttributeError):
@@ -660,9 +661,9 @@ class TestSectionFromDataCubeWithStratigraphy:
 
     def test_withstrat_knows_stratigraphy(self):
         assert self.rcm8cube.sections['test'][
-            'velocity']._knows_stratigraphy is True
+            'velocity'].strat._knows_stratigraphy is True
         assert self.rcm8cube.sections['test'][
-            'velocity'].knows_stratigraphy is True
+            'velocity'].strat.knows_stratigraphy is True
 
     def test_withstrat_trace(self):
         assert isinstance(self.rcm8cube.sections['test'].trace, np.ndarray)
@@ -693,7 +694,7 @@ class TestSectionFromDataCubeWithStratigraphy:
         assert np.all(s1 + s1 == s1 * 2)
 
     def test_withstrat_strat_attr_mesh_components(self):
-        sa = self.rcm8cube.sections['test']['velocity'].strat_attr
+        sa = self.rcm8cube.sections['test']['velocity'].strat.strat_attr
         assert 'strata' in sa.keys()
         assert 'psvd_idx' in sa.keys()
         assert 'psvd_flld' in sa.keys()
@@ -704,7 +705,7 @@ class TestSectionFromDataCubeWithStratigraphy:
         assert 'z_sp' in sa.keys()
 
     def test_withstrat_strat_attr_shapes(self):
-        sa = self.rcm8cube.sections['test']['velocity'].strat_attr
+        sa = self.rcm8cube.sections['test']['velocity'].strat.strat_attr
         assert sa['x0'].shape == (101, self.rcm8cube.shape[2])
         assert sa['x1'].shape == (101, self.rcm8cube.shape[2])
         assert sa['s'].shape == (self.rcm8cube.shape[2],)
@@ -777,11 +778,11 @@ class TestSectionFromStratigraphyCube:
 
     def test_strat_getitem_explicit(self):
         s = self.sc8cube.sections['test'].__getitem__('velocity')
-        assert isinstance(s, section.StratigraphySectionVariable)
+        assert isinstance(s, xr.core.dataarray.DataArray)
 
     def test_strat_getitem_implicit(self):
         s = self.sc8cube.sections['test']['velocity']
-        assert isinstance(s, section.StratigraphySectionVariable)
+        assert isinstance(s, xr.core.dataarray.DataArray)
 
     def test_strat_getitem_bad_variable(self):
         with pytest.raises(AttributeError):
@@ -893,7 +894,7 @@ class TestSectionFromStratigraphyCube:
         self.sc8cube.sections['test'].show('time', label='TESTLABEL!')
 
 
-class TestDataSectionVariableNoStratigraphy:
+class TestSectionVariableNoStratigraphy:
 
     rcm8cube = cube.DataCube(
         golf_path,
@@ -907,46 +908,25 @@ class TestDataSectionVariableNoStratigraphy:
         _arr2 = (_arr - 5)
         assert np.all(_arr2 == pytest.approx(self.dsv, abs=1e-6))
 
-    def test_dsv_instantiate_directly(self):
-        _arr = np.random.rand(100, 200)
-        _s = np.arange(200)
-        _z = np.linspace(0, 10, num=100)
-        _dsv = section.DataSectionVariable(_arr, _s, _z)
-        assert isinstance(_dsv, section.DataSectionVariable)
-        assert np.all(_dsv == _arr)
-        assert np.all(_dsv._s == _s)
-        assert np.all(_dsv._z == _z)
-        assert _dsv.shape == (100, 200)
-        assert _dsv._Z.shape == (100, 200)
-        assert _dsv._S.shape == (100, 200)
-        assert _dsv._psvd_mask is None
-
-    def test_dsv_instantiate_directly_bad_coords_shapes(self):
-        _arr = np.random.rand(100, 200)
-        _s = np.arange(200)
-        _z = np.linspace(0, 10, num=50)
-        with pytest.raises(ValueError):
-            _ = section.DataSectionVariable(_arr, _s, _z)
-
     def test_dsv_knows_stratigraphy(self):
-        assert self.dsv._knows_stratigraphy is False
-        assert self.dsv.knows_stratigraphy is False
-        assert self.dsv.knows_stratigraphy == self.dsv._knows_stratigraphy
+        assert self.dsv.strat._knows_stratigraphy is False
+        assert self.dsv.strat.knows_stratigraphy is False
+        assert self.dsv.strat.knows_stratigraphy == self.dsv.strat._knows_stratigraphy
 
     def test_dsv__check_knows_stratigraphy(self):
         with pytest.raises(utils.NoStratigraphyError):
-            self.dsv._check_knows_stratigraphy()
+            self.dsv.strat._check_knows_stratigraphy()
 
     def test_dsv_as_preserved(self):
         with pytest.raises(utils.NoStratigraphyError):
-            self.dsv.as_preserved()
+            self.dsv.strat.as_preserved()
 
     def test_dsv_as_stratigraphy(self):
         with pytest.raises(utils.NoStratigraphyError):
-            self.dsv.as_stratigraphy()
+            self.dsv.strat.as_stratigraphy()
 
 
-class TestDataSectionVariableWithStratigraphy:
+class TestSectionVariableWithStratigraphy:
 
     rcm8cube = cube.DataCube(
         golf_path,
@@ -955,56 +935,26 @@ class TestDataSectionVariableWithStratigraphy:
     rcm8cube.register_section('test', section.StrikeSection(y=5))
     dsv = rcm8cube.sections['test']['velocity']
 
-    def test_dsv_instantiate_directly(self):
-        _arr = np.random.rand(100, 200)
-        _s = np.arange(200)
-        _z = np.linspace(0, 10, num=100)
-        _dsv = section.DataSectionVariable(_arr, _s, _z)
-        assert isinstance(_dsv, section.DataSectionVariable)
-        assert np.all(_dsv == _arr)
-        assert np.all(_dsv._s == _s)
-        assert np.all(_dsv._z == _z)
-        assert _dsv.shape == (100, 200)
-        assert _dsv._Z.shape == (100, 200)
-        assert _dsv._S.shape == (100, 200)
-        assert _dsv._psvd_mask is None
-
-    def test_dsv_instantiate_directly_bad_shape_mask(self):
-        _arr = np.random.rand(100, 200)
-        _s = np.arange(200)
-        _z = np.linspace(0, 10, num=100)
-        _mask = np.random.randint(0, 2, (20, 200), dtype=bool)
-        with pytest.raises(ValueError, match=r'Shape of "_psvd_mask"*.'):
-            _ = section.DataSectionVariable(_arr, _s, _z, _mask)
-
-    def test_dsv_instantiate_directly_bad_shape_coord(self):
-        _arr = np.random.rand(100, 200)
-        _s = np.arange(500)
-        _z = np.linspace(0, 10, num=100)
-        _mask = np.random.randint(0, 2, (100, 200), dtype=bool)
-        with pytest.raises(ValueError, match=r'Shape of "_s"*.'):
-            _ = section.DataSectionVariable(_arr, _s, _z, _mask)
-
     def test_dsv_knows_stratigraphy(self):
-        assert self.dsv._knows_stratigraphy is True
-        assert self.dsv.knows_stratigraphy is True
-        assert self.dsv.knows_stratigraphy == self.dsv._knows_stratigraphy
+        assert self.dsv.strat._knows_stratigraphy is True
+        assert self.dsv.strat.knows_stratigraphy is True
+        assert self.dsv.strat.knows_stratigraphy == self.dsv.strat._knows_stratigraphy
 
     def test_dsv__check_knows_stratigraphy(self):
-        assert self.dsv._check_knows_stratigraphy()
+        assert self.dsv.strat._check_knows_stratigraphy()
 
     def test_dsv_as_preserved(self):
-        _arr = self.dsv.as_preserved()
+        _arr = self.dsv.strat.as_preserved()
         assert _arr.shape == self.dsv.shape
-        assert isinstance(_arr, np.ma.MaskedArray)
+        assert isinstance(_arr, xr.core.dataarray.DataArray)
 
     def test_dsv_as_stratigraphy(self):
-        _arr = self.dsv.as_stratigraphy()
-        assert _arr.shape == (np.max(self.dsv.strat_attr['z_sp']) + 1,
+        _arr = self.dsv.strat.as_stratigraphy()
+        assert _arr.shape == (np.max(self.dsv.strat.strat_attr['z_sp']) + 1,
                               self.dsv.shape[1])
 
 
-class TestStratigraphySectionVariable:
+class TestSectionVariableStratigraphyCube:
 
     rcm8cube = cube.DataCube(
         golf_path,
@@ -1019,47 +969,18 @@ class TestStratigraphySectionVariable:
         assert not (_arr is self.ssv)
         assert np.all(np.isnan(_arr) == np.isnan(self.ssv))
         _arr2 = (_arr - 5)
-        assert np.all(_arr2[~np.isnan(_arr2)].flatten() == pytest.approx(
-            self.ssv[~np.isnan(self.ssv)].flatten()))
-
-    def test_ssv_instantiate_directly_from_array(self):
-        _arr = np.random.rand(100, 200)
-        _s = np.arange(200)
-        _z = np.linspace(0, 10, num=100)
-        _ssv = section.StratigraphySectionVariable(_arr, _s, _z)
-        assert isinstance(_ssv, section.StratigraphySectionVariable)
-        assert np.all(_ssv == _arr)
-        assert np.all(_ssv._s == _s)
-        assert np.all(_ssv._z == _z)
-        assert _ssv.shape == (100, 200)
-        assert _ssv._Z.shape == (100, 200)
-        assert _ssv._S.shape == (100, 200)
-        assert _ssv._psvd_mask is None
-
-    def test_ssv_instantiate_directly_bad_addtl_argument(self):
-        _arr = np.random.rand(100, 200)
-        _s = np.arange(200)
-        _z = np.linspace(0, 10, num=100)
-        _mask = np.copy(_arr)
-        with pytest.raises(TypeError):
-            _ = section.StratigraphySectionVariable(_arr, _s, _z, _mask)
-
-    def test_ssv_instantiate_directly_bad_shape_coord(self):
-        _arr = np.random.rand(100, 200)
-        _s = np.arange(200)
-        _z = np.linspace(0, 10, num=50)
-        with pytest.raises(ValueError, match=r'Shape of "_s"*.'):
-            _ = section.StratigraphySectionVariable(_arr, _s, _z)
+        assert np.all(_arr2.data[~np.isnan(_arr2)].flatten() == pytest.approx(
+            self.ssv.data[~np.isnan(self.ssv)].flatten()))
 
     def test_ssv_knows_spacetime(self):
-        assert self.ssv._knows_spacetime is False
-        assert self.ssv.knows_spacetime is False
-        assert self.ssv.knows_spacetime == self.ssv._knows_spacetime
+        assert self.ssv.strat._knows_spacetime is False
+        assert self.ssv.strat.knows_spacetime is False
+        assert self.ssv.strat.knows_spacetime == self.ssv.strat._knows_spacetime
 
     def test_ssv__check_knows_spacetime(self):
         with pytest.raises(AttributeError,
                            match=r'No "spacetime" or "preserved"*.'):
-            self.ssv._check_knows_spacetime()
+            self.ssv.strat._check_knows_spacetime()
 
 
 class TestDipSection:

@@ -52,7 +52,8 @@ DeltaMetrics centers around the use of “Cubes” in DeltaMetrics language are 
     >>> golfcube
     <deltametrics.cube.DataCube object at 0x...>
 
-Creating the ``golfcube`` connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets. The type of the ``golfcube`` is ``DataCube``.
+Creating the ``golfcube`` connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets.
+The type of the ``golfcube`` is ``DataCube``.
 
 Inspect which variables are available in the ``golfcube``.
 
@@ -61,13 +62,17 @@ Inspect which variables are available in the ``golfcube``.
     >>> golfcube.variables
     ['eta', 'stage', 'depth', 'discharge', 'velocity', 'sedflux', 'sandfrac']
 
-We can access the underlying variables by name. The returned object are xarray-accessors with coordinates ``t-x-y``.
+We can access the underlying variables by name.
+The returned object is an `xarray` `DataArray` with coordinates matching the underlying data source.
+Per `xarray`, the underlying `data` field contains a `numpy` array.
 For example, access variables as:
 
 .. doctest::
 
     >>> type(golfcube['eta'])
-    <class 'deltametrics.cube.CubeVariable'>
+    <class 'xarray.core.dataarray.DataArray'>
+    >>> type(golfcube['eta'].data)
+    <class 'numpy.ndarray'>
     >>> golfcube['eta'].shape
     (101, 100, 200)
 
@@ -180,19 +185,22 @@ are sliced themselves, similarly to the cube.
 
     >>> golfcube.register_section('demo', dm.section.StrikeSection(y=10))
     >>> golfcube.sections['demo']['velocity']
-    DataSectionVariable([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   ,
-                          0.2   ],
-                         [0.    , 0.    , 0.    , ..., 0.    , 0.    ,
-                          0.    ],
-                         [0.    , 0.0025, 0.    , ..., 0.    , 0.    ,
-                          0.    ],
-                         ...,
-                         [0.    , 0.    , 0.    , ..., 0.0025, 0.    ,
-                          0.    ],
-                         [0.    , 0.    , 0.    , ..., 0.    , 0.    ,
-                          0.    ],
-                         [0.    , 0.    , 0.    , ..., 0.0025, 0.    ,
-                          0.    ]], dtype=float32)
+    <xarray.DataArray 'velocity' (z: 101, s: 200)>
+    array([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   , 0.2   ],
+           [0.    , 0.    , 0.    , ..., 0.    , 0.    , 0.    ],
+           [0.    , 0.0025, 0.    , ..., 0.    , 0.    , 0.    ],
+           ...,
+           [0.    , 0.    , 0.    , ..., 0.0025, 0.    , 0.    ],
+           [0.    , 0.    , 0.    , ..., 0.    , 0.    , 0.    ],
+           [0.    , 0.    , 0.    , ..., 0.0025, 0.    , 0.    ]],
+          dtype=float32)
+    Coordinates:
+      * s        (s) float64 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03
+      * z        (z) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07
+    Attributes:
+        slicetype:           data_section
+        knows_stratigraphy:  False
+        knows_spacetime:     True
 
 
 We can visualize sections:
@@ -236,26 +244,22 @@ Now, the ``DataCube`` has knowledge of stratigraphy, which we can further use to
 
 .. doctest::
 
-    >>> golfcube.sections['demo']['velocity'].as_preserved()
-    masked_DataSectionVariable(
-      data=[[0.20000000298023224, 0.20000000298023224, 0.20000000298023224,
-             ..., 0.20000000298023224, 0.20000000298023224,
-             0.20000000298023224],
-            [--, --, --, ..., --, --, --],
-            [--, --, --, ..., --, --, --],
-            ...,
-            [--, --, --, ..., --, --, --],
-            [--, --, --, ..., --, --, --],
-            [--, --, --, ..., --, --, --]],
-      mask=[[False, False, False, ..., False, False, False],
-            [ True,  True,  True, ...,  True,  True,  True],
-            [ True,  True,  True, ...,  True,  True,  True],
-            ...,
-            [ True,  True,  True, ...,  True,  True,  True],
-            [ True,  True,  True, ...,  True,  True,  True],
-            [ True,  True,  True, ...,  True,  True,  True]],
-      fill_value=1e+20,
-      dtype=float32)
+    >>> golfcube.sections['demo']['velocity'].strat.as_preserved()
+    <xarray.DataArray 'velocity' (z: 101, s: 200)>
+    array([[0.2, 0.2, 0.2, ..., 0.2, 0.2, 0.2],
+           [nan, nan, nan, ..., nan, nan, nan],
+           [nan, nan, nan, ..., nan, nan, nan],
+           ...,
+           [nan, nan, nan, ..., nan, nan, nan],
+           [nan, nan, nan, ..., nan, nan, nan],
+           [nan, nan, nan, ..., nan, nan, nan]], dtype=float32)
+    Coordinates:
+      * s        (s) float64 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03
+      * z        (z) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07
+    Attributes:
+        slicetype:           data_section
+        knows_stratigraphy:  True
+        knows_spacetime:     True
 
 
 .. doctest::

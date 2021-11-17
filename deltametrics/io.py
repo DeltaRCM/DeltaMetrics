@@ -242,7 +242,7 @@ class NetCDFIO(BaseIO):
         if var in self._in_memory_data.keys():
             return self._in_memory_data[var]
         else:
-            return self.dataset.variables[var]
+            return self.dataset[var]
 
     @property
     def keys(self):

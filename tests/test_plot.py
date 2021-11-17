@@ -365,7 +365,7 @@ class TestGetDisplayArrays:
         _data, _X, _Y = plot.get_display_arrays(self.dsv,
                                                 data='preserved')
         assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
-        assert np.any(~_data._mask)  # check that some are False
+        assert np.any(np.isnan(_data))  # check that some are False
 
     def test_dsv_get_display_arrays_stratigraphy(self):
         _data, _X, _Y = plot.get_display_arrays(self.dsv,
