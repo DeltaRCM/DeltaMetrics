@@ -185,7 +185,7 @@ are sliced themselves, similarly to the cube.
 
     >>> golfcube.register_section('demo', dm.section.StrikeSection(y=10))
     >>> golfcube.sections['demo']['velocity']
-    <xarray.DataArray 'velocity' (z: 101, s: 200)>
+    <xarray.DataArray 'velocity' (time: 101, s: 200)>
     array([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   , 0.2   ],
            [0.    , 0.    , 0.    , ..., 0.    , 0.    , 0.    ],
            [0.    , 0.0025, 0.    , ..., 0.    , 0.    , 0.    ],
@@ -196,7 +196,7 @@ are sliced themselves, similarly to the cube.
           dtype=float32)
     Coordinates:
       * s        (s) float64 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03
-      * z        (z) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07
+      * time     (time) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07
     Attributes:
         slicetype:           data_section
         knows_stratigraphy:  False
@@ -245,7 +245,7 @@ Now, the ``DataCube`` has knowledge of stratigraphy, which we can further use to
 .. doctest::
 
     >>> golfcube.sections['demo']['velocity'].strat.as_preserved()
-    <xarray.DataArray 'velocity' (z: 101, s: 200)>
+    <xarray.DataArray 'velocity' (time: 101, s: 200)>
     array([[0.2, 0.2, 0.2, ..., 0.2, 0.2, 0.2],
            [nan, nan, nan, ..., nan, nan, nan],
            [nan, nan, nan, ..., nan, nan, nan],
@@ -255,7 +255,7 @@ Now, the ``DataCube`` has knowledge of stratigraphy, which we can further use to
            [nan, nan, nan, ..., nan, nan, nan]], dtype=float32)
     Coordinates:
       * s        (s) float64 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03
-      * z        (z) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07
+      * time     (time) float32 0.0 5e+05 1e+06 1.5e+06 ... 4.9e+07 4.95e+07 5e+07
     Attributes:
         slicetype:           data_section
         knows_stratigraphy:  True
@@ -297,8 +297,8 @@ The following are currently implemented.
 .. doctest::
 
     >>> _strike = dm.section.StrikeSection(golfcube, y=18)
-    >>> _path = dm.section.PathSection(golfcube, path=np.column_stack((np.linspace(50, 150, num=4000, dtype=int),
-    ...                                                                np.linspace(10, 90, num=4000, dtype=int))))
+    >>> _path = dm.section.PathSection(golfcube, path=np.column_stack((np.linspace(10, 90, num=4000, dtype=int),
+    ...                                                                np.linspace(50, 150, num=4000, dtype=int))))
     >>> _circ = dm.section.CircularSection(golfcube, radius=40)
     >>> _rad = dm.section.RadialSection(golfcube, azimuth=70)
 
