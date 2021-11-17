@@ -334,7 +334,7 @@ class BaseSection(abc.ABC):
             if self.cube._knows_stratigraphy:
                 _xrDA = xr.DataArray(
                     self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
-                    coords={"s": self._s, "z": self._z},
+                    coords={"s": self._s, self._z.dims[0]: self._z},
                     dims=[self._z.dims[0], 's'],
                     name=var,
                     attrs={'slicetype': 'data_section',
@@ -348,7 +348,7 @@ class BaseSection(abc.ABC):
             else:
                 _xrDA = xr.DataArray(
                     self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
-                    coords={"s": self._s, "z": self._z},
+                    coords={"s": self._s, self._z.dims[0]: self._z},
                     dims=[self._z.dims[0], 's'],
                     name=var,
                     attrs={'slicetype': 'data_section',
@@ -358,7 +358,7 @@ class BaseSection(abc.ABC):
         elif isinstance(self.cube, cube.StratigraphyCube):
             _xrDA = xr.DataArray(
                     self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
-                    coords={"s": self._s, "z": self._z},
+                    coords={"s": self._s, self._z.dims[0]: self._z},
                     dims=[self._z.dims[0], 's'],
                     name=var,
                     attrs={'slicetype': 'stratigraphy_section',

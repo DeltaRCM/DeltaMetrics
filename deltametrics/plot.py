@@ -634,11 +634,11 @@ def get_display_arrays(VarInst, data=None):
         # #  DataSection  # #
         data = data or 'spacetime'
         if data in VarInst.strat._spacetime_names:
-            _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+            _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
             return VarInst.values, _S, _Z
         elif data in VarInst.strat._preserved_names:
             VarInst.strat._check_knows_spacetime()
-            _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+            _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
             return VarInst.strat.as_preserved(), _S, _Z
         elif data in VarInst.strat._stratigraphy_names:
             _sp = VarInst.strat.as_stratigraphy()
@@ -657,7 +657,7 @@ def get_display_arrays(VarInst, data=None):
         elif data in VarInst.strat._preserved_names:
             VarInst.strat._check_knows_spacetime()  # always False
         elif data in VarInst.strat._stratigraphy_names:
-            _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+            _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
             return VarInst, _S, _Z
         else:
             raise ValueError('Bad data argument: %s' % str(data))
@@ -709,7 +709,7 @@ def get_display_lines(VarInst, data=None):
             return np.vstack((X[:, :-1].flatten(),
                               X[:, 1:].flatten())).T.reshape(-1, 2, 1)
         data = data or 'spacetime'
-        _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+        _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
         if data in VarInst.strat._spacetime_names:
             z = _reshape_long(_Z)
             vals = VarInst[:, :-1]
@@ -782,7 +782,7 @@ def get_display_limits(VarInst, data=None, factor=1.5):
     if VarInst.slicetype == 'data_section':
         # #  DataSection  # #
         data = data or 'spacetime'
-        _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+        _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
         if data in VarInst.strat._spacetime_names:
             return np.min(_S), np.max(_S), \
                 np.min(_Z), np.max(_Z)
@@ -801,7 +801,7 @@ def get_display_limits(VarInst, data=None, factor=1.5):
     elif VarInst.slicetype == 'stratigraphy_section':
         # #  StratigraphySection  # #
         data = data or 'stratigraphy'
-        _S, _Z = np.meshgrid(VarInst['s'], VarInst['z'])
+        _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
         if data in VarInst.strat._spacetime_names:
             VarInst.strat._check_knows_spacetime()  # always False
         elif data in VarInst.strat._preserved_names:
