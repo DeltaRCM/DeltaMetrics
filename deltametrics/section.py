@@ -669,15 +669,14 @@ class StrikeSection(BaseSection):
     """Strike section object.
 
     Section oriented parallel to the `dim2` axis. Specify the location of the
-    strike section with :obj:`distance` and :obj:`length` *or* :obj:`distance_idx`
-    and :obj:`length` keyword parameters.
+    strike section with :obj:`distance` and :obj:`length` *or* 
+    :obj:`distance_idx` and :obj:`length` keyword parameters.
 
     .. plot::
 
         >>> golfcube = dm.sample_data.golf()
-        >>> golfcube.register_section('strike', dm.section.StrikeSection(distance=1500))
-
-        >>> # show the location and the "velocity" variable
+        >>> golfcube.register_section(
+        ...     'strike', dm.section.StrikeSection(distance=1500))
         >>> fig, ax = plt.subplots()
         >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
         >>> golfcube.sections['strike'].show_trace('r--', ax=ax)
@@ -704,10 +703,10 @@ class StrikeSection(BaseSection):
 
     length : :obj:`tuple` or :obj:`list` of `int` or `float`, optional
         A two-element tuple specifying the bounding points of the section in
-        the `dim2` axis. Values are treated as cell indices if :obj:`distance_idx` is
-        given and as `dim2` coordinates if :obj:`distance` is given. If no
-        value is supplied, the section is drawn across the entire `dim2`
-        axis (i.e., across the whole domain).
+        the `dim2` axis. Values are treated as cell indices
+        if :obj:`distance_idx` is given and as `dim2` coordinates
+        if :obj:`distance` is given. If no value is supplied, the section is
+        drawn across the entire `dim2` axis (i.e., across the whole domain).
 
     y : :obj:`int`, optional, deprecated
         The number of cells in from the `dim1` lower domain edge. If used, the
@@ -1017,22 +1016,23 @@ class CircularSection(BaseSection):
     """Circular section object.
 
     Section drawn as a circular cut, located a along the arc a specified
-    radius from specified origin.  Specify the location of the circular section
-    with :obj`radius` and :obj:`origin` keyword parameter options. The
-    circular section trace is interpolated to the nearest integer model domain
-    cells, following the mid-point circle algorithm
+    `radius` from specified `origin`.  Specify the location of the circular
+    section with :obj`radius` and :obj:`origin` keyword parameter options.
+    The circular section trace is interpolated to the nearest integer model
+    domain cells, following the mid-point circle algorithm
     (:obj:`~deltametrics.utils.circle_to_cells`).
 
-    .. important::
+    .. plot::
 
-        The `radius` and `origin` parameters must be specified as cell indices
-        (not actual x and y coordinate values). This is a needed patch.
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section(
+        ...     'circular', dm.section.CircularSection(radius=1200))
 
-    .. important::
-
-        The `origin` attempts to detect the land width from bed elevation
-        changes, but should use the value of ``L0`` recorded in the netcdf
-        file, or defined in the cube.
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots()
+        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.sections['circular'].show_trace('r--', ax=ax)
+        >>> plt.show()
 
     Parameters
     ----------
@@ -1040,20 +1040,29 @@ class CircularSection(BaseSection):
         The `Cube` object to link for underlying data. This option should be
         ommitted if using the :obj:`register_section` method of a `Cube`.
 
-    radius : :obj:`float`, `int`, optional
-        The `radius` of the section. This is the distance to locate the
-        section from the :obj:`origin`. If no value is given, the `radius`
-        defaults to half of the minimum model domain edge length if it can be
-        determined, otherwise defaults to ``1``.
+    radius : :obj:`float`, optional
+        The `radius` of the section in dimensional coordinates. This is the
+        distance to locate the section from the :obj:`origin`. If no value is
+        given, the `radius` defaults to half of the minimum model domain edge
+        length.
 
-    origin : :obj:`tuple` or `list` of `int`, optional
-        The `origin` of the circular section. This is the center of the
-        circle. If no value is given, the origin defaults to the center of the
-        x-direction of the model domain, and offsets into the domain a
-        distance of ``y == L0``, if these values can be determined. I.e., the
-        origin defaults to be centered over the channel inlet. If no value is
-        given, and these values cannot be determined, the origin defaults to
-        ``(0, 0)``.
+    origin : :obj:`tuple` of `float`, optional
+        The `origin` of the circular section in dimensional coordinates,
+        specified as a two-element tuple ``(dim1, dim2)``. This is the center
+        of the circle. If no value is given, the origin defaults to the
+        center of the x-direction of the model domain, and offsets into the
+        domain a distance of ``y == L0``, if this values can be determined.
+        I.e., the origin defaults to be centered over the channel inlet.
+
+    radius_idx : :obj:`float`, `int`, optional
+        The `radius` of the section in cell indices. This is the distance to
+        locate the section from the :obj:`origin`. Mutually exclusive
+        with :obj:`radius`.
+
+    origin_idx : :obj:`tuple` of `int`, optional
+        The `origin` of the circular section in dimensional coordinates,
+        specified as a two-element tuple ``(dim1, dim2)``. This is the center
+        of the circle. Mutually exclusive with :obj:`origin`.
 
     **kwargs
         Keyword arguments are passed to `BaseSection.__init__()`. Supported
@@ -1068,24 +1077,49 @@ class CircularSection(BaseSection):
         section, or the `Cube` is passed as the first positional argument
         during instantiation.
 
+    .. warning::
+
+        This section will not work for unequal `dim1` and `dim2` coordinate
+        spacing.
+
     Examples
     --------
 
-    To create a `CircularSection` that is registered to a `DataCube` with
-    radius ``=30``, and using the default `origin` options:
+    Create a `CircularSection` that is registered to a `DataCube` with
+    radius ``=1200``, and using the default `origin` options:
 
     .. plot::
         :include-source:
 
         >>> golfcube = dm.sample_data.golf()
         >>> golfcube.register_section(
-        ...     'circular', dm.section.CircularSection(radius=30))
+        ...     'circular', dm.section.CircularSection(radius=1200))
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
         >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['circular'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['circular'].show('velocity', ax=ax[1])
+        >>> plt.show()
+
+    Create a `CircularSection` that is registered to a `StratigraphyCube` with
+    radius index ``=50``, and the origin against the domain edge (using the
+    `origin_idx` option):
+
+    .. plot::
+        :include-source:
+
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube)
+        >>> golfstrat.register_section(
+        ...     'circular', dm.section.CircularSection(radius_idx=50,
+        ...                                            origin_idx=(0, 100)))
+
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfstrat.sections['circular'].show_trace('r--', ax=ax[0])
+        >>> golfstrat.sections['circular'].show('velocity', ax=ax[1])
         >>> plt.show()
     """
 

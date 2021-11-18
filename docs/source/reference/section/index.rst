@@ -10,10 +10,6 @@ All classes inherit from :obj:`BaseSection`, and redefine methods and attributes
 
 The classes are defined in ``deltametrics.section``. 
 
-
-.. include:: lexicon.rst
-
-
 Section types
 ==============
 
@@ -28,3 +24,9 @@ Section types
     CircularSection
     RadialSection
     BaseSection
+
+
+Information about Sections
+==========================
+
+.. include:: lexicon.rst

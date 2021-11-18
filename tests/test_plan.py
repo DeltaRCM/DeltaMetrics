@@ -403,7 +403,7 @@ class TestComputeChannelWidth:
         golf['velocity'][-1, :, :],
         elevation_threshold=0,
         flow_threshold=0.3)
-    sec = section.CircularSection(golf, radius=40)
+    sec = section.CircularSection(golf, radius_idx=40)
 
     def test_widths_simple(self):
         """Get mean and std from simple."""
@@ -480,7 +480,7 @@ class TestComputeChannelDepth:
         golf['velocity'][-1, :, :],
         elevation_threshold=0,
         flow_threshold=0.3)
-    sec = section.CircularSection(golf, radius=40)
+    sec = section.CircularSection(golf, radius_idx=40)
 
     def test_depths_simple_thalweg(self):
         """Get mean and std from simple."""
