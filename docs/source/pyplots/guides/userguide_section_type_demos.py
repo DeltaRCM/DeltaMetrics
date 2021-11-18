@@ -2,7 +2,7 @@ import matplotlib.gridspec as gs
 
 golfcube = dm.sample_data.golf()
 golfcube.stratigraphy_from('eta')
-golfcube.register_section('demo', dm.section.StrikeSection(idx=10))
+golfcube.register_section('demo', dm.section.StrikeSection(distance_idx=10))
 
 _strike = dm.section.StrikeSection(golfcube, y=18)
 __path = np.column_stack((np.linspace(10, 90, num=4000, dtype=int),

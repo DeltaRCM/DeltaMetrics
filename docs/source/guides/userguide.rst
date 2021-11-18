@@ -153,7 +153,7 @@ For a data cube, sections are most easily instantiated by the :obj:`~deltametric
 
 .. doctest::
 
-    >>> golfcube.register_section('demo', dm.section.StrikeSection(idx=10))
+    >>> golfcube.register_section('demo', dm.section.StrikeSection(distance_idx=10))
 
 which creates a section across a constant y-value ``==10``.
 The path of any `Section` in the ``x-y`` plane can always be accessed via the ``.trace`` attribute.
@@ -183,7 +183,7 @@ are sliced themselves, similarly to the cube.
 
 .. doctest::
 
-    >>> golfcube.register_section('demo', dm.section.StrikeSection(idx=10))
+    >>> golfcube.register_section('demo', dm.section.StrikeSection(distance_idx=10))
     >>> golfcube.sections['demo']['velocity']
     <xarray.DataArray 'velocity' (time: 101, s: 200)>
     array([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   , 0.2   ],
@@ -220,7 +220,7 @@ You can also create a standalone section, which is not registered to the cube, b
 
 .. doctest::
 
-    >>> sass = dm.section.StrikeSection(golfcube, idx=10)
+    >>> sass = dm.section.StrikeSection(golfcube, distance_idx=10)
     >>> np.all(sass['velocity'] == golfcube.sections['demo']['velocity']) #doctest: +SKIP
     True
 
@@ -296,7 +296,7 @@ The following are currently implemented.
 
 .. doctest::
 
-    >>> _strike = dm.section.StrikeSection(golfcube, idx=18)
+    >>> _strike = dm.section.StrikeSection(golfcube, distance_idx=18)
     >>> _path = dm.section.PathSection(golfcube, path=np.column_stack((np.linspace(10, 90, num=4000, dtype=int),
     ...                                                                np.linspace(50, 150, num=4000, dtype=int))))
     >>> _circ = dm.section.CircularSection(golfcube, radius=40)
@@ -376,7 +376,7 @@ Let’s add a section at the same location as ``golfcube.sections['demo']``.
 
 .. doctest::
 
-    >>> stratcube.register_section('demo', dm.section.StrikeSection(idx=10))
+    >>> stratcube.register_section('demo', dm.section.StrikeSection(distance_idx=10))
     >>> stratcube.sections
     {'demo': <deltametrics.section.StrikeSection object at 0x...>}
 

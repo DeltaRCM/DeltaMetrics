@@ -91,7 +91,8 @@ class TestDataCubeNoStratigraphy:
     def test_register_section(self):
         golf = cube.DataCube(golf_path)
         golf.stratigraphy_from('eta', dz=0.1)
-        golf.register_section('testsection', section.StrikeSection(y=10))
+        golf.register_section(
+            'testsection', section.StrikeSection(distance_idx=10))
         assert golf.sections is golf.section_set
         assert len(golf.sections.keys()) == 1
         assert 'testsection' in golf.sections.keys()
@@ -99,7 +100,8 @@ class TestDataCubeNoStratigraphy:
     def test_sections_slice_op(self):
         golf = cube.DataCube(golf_path)
         golf.stratigraphy_from('eta', dz=0.1)
-        golf.register_section('testsection', section.StrikeSection(y=10))
+        golf.register_section(
+            'testsection', section.StrikeSection(distance_idx=10))
         assert 'testsection' in golf.sections.keys()
         slc = golf.sections['testsection']
         assert issubclass(type(slc), section.BaseSection)
@@ -110,7 +112,8 @@ class TestDataCubeNoStratigraphy:
 
     def test_nostratigraphy_default_attribute_derived_variable(self):
         golf = cube.DataCube(golf_path)
-        golf.register_section('testsection', section.StrikeSection(y=10))
+        golf.register_section(
+            'testsection', section.StrikeSection(distance_idx=10))
         assert golf._knows_stratigraphy is False
         with pytest.raises(utils.NoStratigraphyError):
             golf.sections['testsection']['velocity'].strat.as_stratigraphy()
@@ -176,7 +179,7 @@ class TestDataCubeNoStratigraphy:
         assert self.fixeddatacube.shape == self.fdc_shape
 
     def test_section_no_stratigraphy(self):
-        sc = section.StrikeSection(self.fixeddatacube, y=10)
+        sc = section.StrikeSection(self.fixeddatacube, distance_idx=10)
         _ = sc['velocity'][:, 1]
         assert not hasattr(sc, 'strat_attr')
         with pytest.raises(utils.NoStratigraphyError):
@@ -251,7 +254,7 @@ class TestDataCubeWithStratigraphy:
 
     def test_section_with_stratigraphy(self):
         assert hasattr(self.fixeddatacube, 'strat_attr')
-        sc = section.StrikeSection(self.fixeddatacube, y=10)
+        sc = section.StrikeSection(self.fixeddatacube, distance_idx=10)
         assert sc.strat_attr is self.fixeddatacube.strat_attr
         _take = sc['velocity'][:, 1]
         assert _take.shape == (self.fixeddatacube.shape[0],)

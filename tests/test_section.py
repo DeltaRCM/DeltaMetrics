@@ -21,10 +21,10 @@ class TestStrikeSection:
     """Test the basic of the StrikeSection."""
 
     def test_StrikeSection_without_cube(self):
-        ss = section.StrikeSection(idx=5)
+        ss = section.StrikeSection(distance_idx=5)
         assert ss.name is None
         assert ss.idx is None
-        assert ss._input_idx == 5
+        assert ss._input_distance_idx == 5
         assert ss.shape is None
         assert ss.cube is None
         assert ss.s is None
@@ -38,13 +38,13 @@ class TestStrikeSection:
     def test_StrikeSection_bad_cube(self):
         badcube = ['some', 'list']
         with pytest.raises(TypeError, match=r'Expected type is *.'):
-            _ = section.StrikeSection(badcube, idx=12)
+            _ = section.StrikeSection(badcube, distance_idx=12)
         with pytest.raises(TypeError, match=r'Expected type is *.'):
             _ = section.StrikeSection(badcube, distance=1000)
 
     def test_StrikeSection_standalone_instantiation(self):
         rcm8cube = cube.DataCube(golf_path)
-        sass = section.StrikeSection(rcm8cube, idx=12)
+        sass = section.StrikeSection(rcm8cube, distance_idx=12)
         assert sass.name == 'strike'
         assert sass.y == 12
         assert sass.cube == rcm8cube
@@ -53,10 +53,10 @@ class TestStrikeSection:
 
     def test_StrikeSection_register_section_idx(self):
         rcm8cube = cube.DataCube(golf_path)
-        rcm8cube.register_section('test', section.StrikeSection(idx=5))
+        rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
         assert rcm8cube.sections['test'].name == 'test'
         assert rcm8cube.sections['test']._input_distance is None
-        assert rcm8cube.sections['test']._input_idx == 5
+        assert rcm8cube.sections['test']._input_distance_idx == 5
         assert rcm8cube.sections['test']._input_length is None
         assert rcm8cube.sections['test'].idx == 5
         assert rcm8cube.sections['test'].length == (0, rcm8cube.shape[2])
@@ -66,9 +66,9 @@ class TestStrikeSection:
         # test that the name warning is raised
         with pytest.warns(UserWarning, match=r'`name` argument supplied .*'):
             rcm8cube.register_section('testname', section.StrikeSection(
-                idx=5, name='TESTING'))
+                distance_idx=5, name='TESTING'))
             assert rcm8cube.sections['testname'].name == 'TESTING'
-        _sect = rcm8cube.register_section('test', section.StrikeSection(idx=5),
+        _sect = rcm8cube.register_section('test', section.StrikeSection(distance_idx=5),
                                           return_section=True)
         assert isinstance(_sect, section.StrikeSection)
 
@@ -77,7 +77,7 @@ class TestStrikeSection:
         rcm8cube.register_section('test', section.StrikeSection(distance=2000))
         assert rcm8cube.sections['test'].name == 'test'
         assert rcm8cube.sections['test']._input_distance == 2000
-        assert rcm8cube.sections['test']._input_idx is None
+        assert rcm8cube.sections['test']._input_distance_idx is None
         assert rcm8cube.sections['test']._input_length is None
         assert rcm8cube.sections['test'].idx > 0
         assert rcm8cube.sections['test'].length == (0, rcm8cube.dim2_coords[-1])
@@ -88,23 +88,23 @@ class TestStrikeSection:
             distance=2000, length=(2000, 5000)))
         assert rcm8cube.sections['lengthtest'].name == 'lengthtest'
         assert rcm8cube.sections['lengthtest']._input_distance == 2000
-        assert rcm8cube.sections['lengthtest']._input_idx is None
+        assert rcm8cube.sections['lengthtest']._input_distance_idx is None
         assert rcm8cube.sections['lengthtest']._input_length == (2000, 5000)
         assert rcm8cube.sections['lengthtest'].idx > 0
         assert rcm8cube.sections['lengthtest'].length == (2000, 5000)
         assert rcm8cube.sections['lengthtest'].distance == 2000
 
-    def test_StrikeSection_register_section_either_distance_idx(self):
+    def test_StrikeSection_register_section_either_distance_distance_idx(self):
         rcm8cube = cube.DataCube(golf_path)
         with pytest.raises(ValueError, match=r'Must specify `distance` or .*'):
             rcm8cube.register_section(
                 'test', section.StrikeSection())
 
-    def test_StrikeSection_register_section_notboth_distance_idx(self):
+    def test_StrikeSection_register_section_notboth_distance_distance_idx(self):
         rcm8cube = cube.DataCube(golf_path)
         with pytest.raises(ValueError, match=r'Cannot specify both `distance` .*'):  # noqa: E501
             rcm8cube.register_section(
-                'test', section.StrikeSection(distance=2000, idx=2))
+                'test', section.StrikeSection(distance=2000, distance_idx=2))
 
     def test_StrikeSection_register_section_deprecated(self):
         rcm8cube = cube.DataCube(golf_path)
@@ -113,7 +113,7 @@ class TestStrikeSection:
         # the section should still work though, so check on the attrs
         assert rcm8cube.sections['warn'].name == 'warn'
         assert rcm8cube.sections['warn']._input_distance is None
-        assert rcm8cube.sections['warn']._input_idx == 5
+        assert rcm8cube.sections['warn']._input_distance_idx == 5
         assert rcm8cube.sections['warn']._input_length is None
         assert rcm8cube.sections['warn'].idx == 5
         assert rcm8cube.sections['warn'].length == (0, rcm8cube.shape[2])
@@ -123,14 +123,14 @@ class TestStrikeSection:
         # test for the error with spec deprecated and new
         with pytest.raises(ValueError, match=r'Cannot specify `distance`, .*'):  # noqa: E501
             rcm8cube.register_section(
-                'fail', section.StrikeSection(y=2, distance=2000, idx=2))
+                'fail', section.StrikeSection(y=2, distance=2000, distance_idx=2))
 
     def test_StrikeSection_register_section_x_limits(self):
         rcm8cube = cube.DataCube(golf_path)
         rcm8cube.register_section(
-            'tuple', section.StrikeSection(idx=5, length=(10, 110)))
+            'tuple', section.StrikeSection(distance_idx=5, length=(10, 110)))
         rcm8cube.register_section(
-            'list', section.StrikeSection(idx=5, length=[20, 110]))
+            'list', section.StrikeSection(distance_idx=5, length=[20, 110]))
         assert len(rcm8cube.sections) == 2
         assert rcm8cube.sections['tuple']._dim2_idx.shape[0] == 100
         assert rcm8cube.sections['list']._dim2_idx.shape[0] == 90
@@ -211,7 +211,7 @@ class TestPathSection:
                               np.linspace(50, 150, num=4000, dtype=int)))
         saps1 = section.PathSection(rcm8cube, path=xy)
         assert saps1.path.shape != xy.shape
-        assert np.all(saps1._idx_trace == np.unique(xy, axis=0))
+        assert np.all(saps1.trace_idx == np.unique(xy, axis=0))
 
         # test a second case with small line to ensure non-unique removed
         saps2 = section.PathSection(rcm8cube, path=np.array([[50, 25],
@@ -225,7 +225,7 @@ class TestCircularSection:
     """Test the basic of the CircularSection."""
 
     def test_without_cube(self):
-        cs = section.CircularSection(radius=30)
+        cs = section.CircularSection(radius_idx=30)
         assert cs.name is None
         assert cs.shape is None
         assert cs.cube is None
@@ -234,66 +234,105 @@ class TestCircularSection:
         assert cs._dim1_idx is None
         assert cs._dim2_idx is None
         assert cs.variables is None
+        assert cs.radius is None
+        assert cs.origin is None
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             cs['velocity']
 
     def test_bad_cube(self):
         badcube = ['some', 'list']
         with pytest.raises(TypeError, match=r'Expected type is *.'):
-            _ = section.CircularSection(badcube, radius=30)
+            _ = section.CircularSection(badcube, radius_idx=30)
 
     def test_standalone_instantiation(self):
-        rcm8cube = cube.DataCube(
-            golf_path)
-        sacs = section.CircularSection(rcm8cube, radius=30)
-        assert sacs.name == 'circular'
-        assert sacs.cube == rcm8cube
-        assert sacs.trace.shape[0] == 85
-        assert len(sacs.variables) > 0
-        sacs2 = section.CircularSection(rcm8cube, radius=30, origin=(10, 0))
-        assert sacs2.name == 'circular'
-        assert sacs2.cube == rcm8cube
-        assert sacs2.trace.shape[0] == 53
-        assert len(sacs2.variables) > 0
-        assert sacs2.origin == (10, 0)
-
-    def test_standalone_instantiation_withmeta(self):
         golfcube = cube.DataCube(
             golf_path)
-        sacs = section.CircularSection(golfcube, radius=30)
+        sacs = section.CircularSection(
+            golfcube, radius_idx=30)
         assert sacs.name == 'circular'
         assert sacs.cube == golfcube
         assert sacs.trace.shape[0] == 85
+        assert sacs._input_radius_idx == 30
         assert len(sacs.variables) > 0
-        assert sacs.origin[1] == golfcube.meta['L0']
-        sacs2 = section.CircularSection(golfcube, radius=30, origin=(10, 0))
+        assert sacs._origin_idx[0] == golfcube.meta['L0']
+        assert sacs.radius == 1500
+
+        sacs2 = section.CircularSection(
+            golfcube, radius_idx=30, origin_idx=(0, 10))
         assert sacs2.name == 'circular'
         assert sacs2.cube == golfcube
         assert sacs2.trace.shape[0] == 53
         assert len(sacs2.variables) > 0
-        assert sacs2.origin == (10, 0)
+        assert sacs2._origin_idx == (0, 10)
 
-    @pytest.mark.xfail(AttributeError, reason='Not called if no cube.')
-    def no_radius_if_no_cube(self):
-        sacs3 = section.CircularSection()
-        assert sacs3.radius == 1
+        sacs3 = section.CircularSection(
+            golfcube, radius=2500)
+        assert sacs3.name == 'circular'
+        assert sacs3.cube == golfcube
+        assert sacs3.trace.shape[0] == 143
+        assert len(sacs3.variables) > 0
+        assert sacs3._origin_idx == (int(golfcube.meta['L0']),
+                                     golfcube.shape[2]//2)
+        assert sacs3._radius_idx == 50
+        assert sacs3.radius == 2500
+        assert sacs3.radius == sacs3._radius
+
+        sacs4 = section.CircularSection(
+            golfcube, origin=(1200, 1500))
+        assert sacs4.name == 'circular'
+        assert sacs4.cube == golfcube
+        assert sacs4.trace.shape[0] == 102
+        assert len(sacs4.variables) > 0
+        assert sacs4._origin_idx == (1200 // 50,  # 50 is dx
+                                     1500 // 50)
+        assert sacs4._radius_idx == 50
+        assert sacs4.radius == 2500
+        assert sacs4.radius == sacs4._radius
+
+    def test_standalone_instantiation_legacy_nometa(self):
+        with pytest.warns(UserWarning, match=r'Coordinates for "time".*'):
+            rcm8cube = cube.DataCube(rcm8_path)
+        # test that it guesses the origin
+        sacs = section.CircularSection(
+            rcm8cube, radius_idx=30)
+        assert sacs.name == 'circular'
+        assert sacs.cube == rcm8cube
+        assert sacs.trace.shape[0] == 85
+        assert len(sacs.variables) > 0
+        # test that it uses the origin
+        sacs2 = section.CircularSection(
+            rcm8cube, radius_idx=30, origin_idx=(0, 10))
+        assert sacs2.name == 'circular'
+        assert sacs2.cube == rcm8cube
+        assert sacs2.trace.shape[0] == 53
+        assert len(sacs2.variables) > 0
+        assert sacs2._origin_idx == (0, 10)
+
+    def test_standalone_instantiation_both_coord_idx_inputs(self):
+        golfcube = cube.DataCube(golf_path)
+        with pytest.raises(ValueError, match=r'.*`radius` and `radius_idx`'):
+            _ = section.CircularSection(
+                golfcube, radius=2500, radius_idx=30)
+        with pytest.raises(ValueError, match=r'.*`origin` and `origin_idx`'):
+            _ = section.CircularSection(
+                golfcube, origin=(2500, 1500), origin_idx=(3, 100))
 
     def test_register_section(self):
         rcm8cube = cube.DataCube(
             golf_path)
         rcm8cube.stratigraphy_from('eta')
         rcm8cube.register_section(
-            'test', section.CircularSection(radius=30))
+            'test', section.CircularSection(radius_idx=30))
         assert len(rcm8cube.sections['test'].variables) > 0
         # test that the name warning is raised
         assert isinstance(rcm8cube.sections['test'], section.CircularSection)
         with pytest.warns(UserWarning):
             rcm8cube.register_section(
-                'test2', section.CircularSection(radius=31, name='different'))
-            assert rcm8cube.sections['test2'].name == 'different'
+                'test2', section.CircularSection(radius_idx=31, name='diff'))
+            assert rcm8cube.sections['test2'].name == 'diff'
         rcm8cube.register_section(
             'test3', section.CircularSection())
-        assert rcm8cube.sections['test3'].radius == rcm8cube.shape[1] // 2
+        assert rcm8cube.sections['test3']._radius_idx == rcm8cube.shape[1] // 2
         _section = rcm8cube.register_section(
             'test3', section.CircularSection(), return_section=True)
         assert isinstance(_section, section.CircularSection)
@@ -302,14 +341,14 @@ class TestCircularSection:
         # we try this for a bunch of different radii
         rcm8cube = cube.DataCube(
             golf_path)
-        sacs1 = section.CircularSection(rcm8cube, radius=40)
-        assert len(sacs1._idx_trace) == len(np.unique(sacs1._idx_trace, axis=0))
-        sacs2 = section.CircularSection(rcm8cube, radius=23)
-        assert len(sacs2._idx_trace) == len(np.unique(sacs2._idx_trace, axis=0))
-        sacs3 = section.CircularSection(rcm8cube, radius=17)
-        assert len(sacs3._idx_trace) == len(np.unique(sacs3._idx_trace, axis=0))
-        sacs4 = section.CircularSection(rcm8cube, radius=33)
-        assert len(sacs4._idx_trace) == len(np.unique(sacs4._idx_trace, axis=0))
+        sacs1 = section.CircularSection(rcm8cube, radius_idx=40)
+        assert len(sacs1.trace_idx) == len(np.unique(sacs1.trace_idx, axis=0))
+        sacs2 = section.CircularSection(rcm8cube, radius_idx=23)
+        assert len(sacs2.trace_idx) == len(np.unique(sacs2.trace_idx, axis=0))
+        sacs3 = section.CircularSection(rcm8cube, radius_idx=17)
+        assert len(sacs3.trace_idx) == len(np.unique(sacs3.trace_idx, axis=0))
+        sacs4 = section.CircularSection(rcm8cube, radius_idx=33)
+        assert len(sacs4.trace_idx) == len(np.unique(sacs4.trace_idx, axis=0))
 
 
 class TestRadialSection:
@@ -493,10 +532,14 @@ class TestCubesWithManySections:
                       self.sc8cube.dataio['velocity'])
 
     def test_register_multiple_strikes(self):
-        self.rcm8cube.register_section('test1', section.StrikeSection(idx=5))
-        self.rcm8cube.register_section('test2', section.StrikeSection(idx=5))
-        self.rcm8cube.register_section('test3', section.StrikeSection(idx=8))
-        self.rcm8cube.register_section('test4', section.StrikeSection(idx=10))
+        self.rcm8cube.register_section(
+            'test1', section.StrikeSection(distance_idx=5))
+        self.rcm8cube.register_section(
+            'test2', section.StrikeSection(distance_idx=5))
+        self.rcm8cube.register_section(
+            'test3', section.StrikeSection(distance_idx=8))
+        self.rcm8cube.register_section(
+            'test4', section.StrikeSection(distance_idx=10))
         assert not self.rcm8cube.sections[
             'test1'] is self.rcm8cube.sections['test2']
         assert np.all(self.rcm8cube.sections['test1']['velocity'] ==
@@ -509,8 +552,10 @@ class TestCubesWithManySections:
                           self.rcm8cube.sections['test3']['velocity'])
 
     def test_register_strike_and_path(self):
-        self.rcm8cube.register_section('test1', section.StrikeSection(idx=5))
-        self.rcm8cube.register_section('test1a', section.StrikeSection(idx=5))
+        self.rcm8cube.register_section(
+            'test1', section.StrikeSection(distance_idx=5))
+        self.rcm8cube.register_section(
+            'test1a', section.StrikeSection(distance_idx=5))
         self.rcm8cube.register_section(
             'test2', section.PathSection(path=self.test_path))
         assert not self.rcm8cube.sections[
@@ -524,9 +569,9 @@ class TestCubesWithManySections:
 
     def test_show_trace_sections_multiple(self):
         self.rcm8cube.register_section(
-            'show_test1', section.StrikeSection(idx=5))
+            'show_test1', section.StrikeSection(distance_idx=5))
         self.rcm8cube.register_section(
-            'show_test2', section.StrikeSection(idx=50))
+            'show_test2', section.StrikeSection(distance_idx=50))
         fig, ax = plt.subplots(1, 2)
         self.rcm8cube.sections['show_test2'].show_trace('r--')
         self.rcm8cube.sections['show_test1'].show_trace('g--', ax=ax[0])
@@ -540,7 +585,7 @@ class TestSectionFromDataCubeNoStratigraphy:
     rcm8cube_nostrat = cube.DataCube(
         golf_path,
         coordinates={'x': 'y', 'y': 'x'})
-    rcm8cube_nostrat.register_section('test', section.StrikeSection(idx=5))
+    rcm8cube_nostrat.register_section('test', section.StrikeSection(distance_idx=5))
 
     def test_nostrat_getitem_explicit(self):
         s = self.rcm8cube_nostrat.sections['test'].__getitem__('velocity')
@@ -555,14 +600,14 @@ class TestSectionFromDataCubeNoStratigraphy:
             self.rcm8cube_nostrat.sections['test']['badvariablename']
 
     def test_nostrat_getitem_broken_cube(self):
-        sass = section.StrikeSection(idx=5)
+        sass = section.StrikeSection(distance_idx=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass['velocity']
         # make a good section, then switch to invalidcube inside section
         temp_rcm8cube_nostrat = cube.DataCube(
             golf_path)
         temp_rcm8cube_nostrat.register_section(
-            'test', section.StrikeSection(idx=5))
+            'test', section.StrikeSection(distance_idx=5))
         temp_rcm8cube_nostrat.sections['test'].cube = 'badvalue!'
         with pytest.raises(TypeError):
             _ = temp_rcm8cube_nostrat.sections['test'].__getitem__('velocity')
@@ -621,7 +666,7 @@ class TestSectionFromDataCubeNoStratigraphy:
                                                     data='spacetime', ax=ax)
 
     def test_nostrat_show_shaded_spacetime_no_cube(self):
-        sass = section.StrikeSection(idx=5)
+        sass = section.StrikeSection(distance_idx=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass.show('time', style='shaded',
                       data='spacetime')
@@ -676,7 +721,7 @@ class TestSectionFromDataCubeWithStratigraphy:
         golf_path,
         coordinates={'x': 'y', 'y': 'x'})
     rcm8cube.stratigraphy_from('eta', dz=0.1)
-    rcm8cube.register_section('test', section.StrikeSection(idx=5))
+    rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
 
     def test_withstrat_getitem_explicit(self):
         s = self.rcm8cube.sections['test'].__getitem__('velocity')
@@ -691,13 +736,13 @@ class TestSectionFromDataCubeWithStratigraphy:
             self.rcm8cube.sections['test']['badvariablename']
 
     def test_withstrat_getitem_broken_cube(self):
-        sass = section.StrikeSection(idx=5)
+        sass = section.StrikeSection(distance_idx=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass['velocity']
         # make a good section, then switch to invalidcube inside section
         temp_rcm8cube = cube.DataCube(
             golf_path)
-        temp_rcm8cube.register_section('test', section.StrikeSection(idx=5))
+        temp_rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
         temp_rcm8cube.sections['test'].cube = 'badvalue!'
         with pytest.raises(TypeError):
             _ = temp_rcm8cube.sections['test'].__getitem__('velocity')
@@ -729,7 +774,7 @@ class TestSectionFromDataCubeWithStratigraphy:
         assert isinstance(_v, list)
 
     def test_withstrat_registered_StrikeSection_attributes(self):
-        assert np.all(self.rcm8cube.sections['test']._idx_trace[:, 0] == 5)
+        assert np.all(self.rcm8cube.sections['test'].trace_idx[:, 0] == 5)
         assert self.rcm8cube.sections['test'].s.size == self.rcm8cube.shape[2]
         assert len(self.rcm8cube.sections['test'].variables) > 0
         assert self.rcm8cube.sections['test'].y == 5
@@ -766,7 +811,7 @@ class TestSectionFromDataCubeWithStratigraphy:
                                             data='spacetime', ax=ax)
 
     def test_withstrat_show_shaded_spacetime_no_cube(self):
-        sass = section.StrikeSection(idx=5)
+        sass = section.StrikeSection(distance_idx=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass.show('time', style='shaded',
                       data='spacetime')
@@ -818,8 +863,8 @@ class TestSectionFromStratigraphyCube:
         coordinates={'x': 'y', 'y': 'x'})
     sc8cube = cube.StratigraphyCube.from_DataCube(
         rcm8cube, dz=0.1)
-    rcm8cube.register_section('test', section.StrikeSection(idx=5))
-    sc8cube.register_section('test', section.StrikeSection(idx=5))
+    rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
+    sc8cube.register_section('test', section.StrikeSection(distance_idx=5))
 
     def test_strat_getitem_explicit(self):
         s = self.sc8cube.sections['test'].__getitem__('velocity')
@@ -834,13 +879,13 @@ class TestSectionFromStratigraphyCube:
             self.sc8cube.sections['test']['badvariablename']
 
     def test_strat_getitem_broken_cube(self):
-        sass = section.StrikeSection(idx=5)
+        sass = section.StrikeSection(distance_idx=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass['velocity']
         # make a good section, then switch to invalidcube inside section
         temp_rcm8cube = cube.DataCube(
             golf_path)
-        temp_rcm8cube.register_section('test', section.StrikeSection(idx=5))
+        temp_rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
         temp_rcm8cube.sections['test'].cube = 'badvalue!'
         with pytest.raises(TypeError):
             _ = temp_rcm8cube.sections['test'].__getitem__('velocity')
@@ -856,8 +901,8 @@ class TestSectionFromStratigraphyCube:
         assert isinstance(self.sc8cube.sections['test'].trace, np.ndarray)
 
     def test_idx_trace(self):
-        assert isinstance(self.rcm8cube.sections['test']._idx_trace, np.ndarray)
-        assert isinstance(self.sc8cube.sections['test']._idx_trace, np.ndarray)
+        assert isinstance(self.rcm8cube.sections['test'].trace_idx, np.ndarray)
+        assert isinstance(self.sc8cube.sections['test'].trace_idx, np.ndarray)
 
     def test_s(self):
         assert isinstance(self.rcm8cube.sections['test'].s, xr.core.dataarray.DataArray)
@@ -881,7 +926,7 @@ class TestSectionFromStratigraphyCube:
                                                data='spacetime')
 
     def test_strat_show_shaded_spacetime_no_cube(self):
-        sass = section.StrikeSection(idx=5)
+        sass = section.StrikeSection(distance_idx=5)
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             sass.show('time', style='shaded',
                       data='spacetime')
@@ -913,10 +958,11 @@ class TestSectionFromStratigraphyCube:
             self.sc8cube.sections['test'].show('time', style='lines',
                                                data='preserved')
 
-    @pytest.mark.xfail(reason='not yet decided best way to implement')
     def test_strat_show_lines_asstratigraphy(self):
-        self.sc8cube.sections['test'].show('time', style='lines',
-                                           data='stratigraphy')
+        # reason='not yet decided best way to implement'
+        with pytest.raises(NotImplementedError):
+            self.sc8cube.sections['test'].show('time', style='lines',
+                                               data='stratigraphy')
 
     def test_strat_show_bad_style(self):
         with pytest.raises(ValueError,
@@ -943,7 +989,7 @@ class TestSectionVariableNoStratigraphy:
     rcm8cube = cube.DataCube(
         golf_path,
         coordinates={'x': 'y', 'y': 'x'})
-    rcm8cube.register_section('test', section.StrikeSection(idx=5))
+    rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
     dsv = rcm8cube.sections['test']['velocity']
 
     def test_dsv_view_from(self):
@@ -976,7 +1022,7 @@ class TestSectionVariableWithStratigraphy:
         golf_path,
         coordinates={'x': 'y', 'y': 'x'})
     rcm8cube.stratigraphy_from('eta', dz=0.1)
-    rcm8cube.register_section('test', section.StrikeSection(idx=5))
+    rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
     dsv = rcm8cube.sections['test']['velocity']
 
     def test_dsv_knows_stratigraphy(self):
@@ -1005,7 +1051,7 @@ class TestSectionVariableStratigraphyCube:
         coordinates={'x': 'y', 'y': 'x'})
     sc8cube = cube.StratigraphyCube.from_DataCube(
         rcm8cube, dz=0.1)
-    sc8cube.register_section('test', section.StrikeSection(idx=5))
+    sc8cube.register_section('test', section.StrikeSection(distance_idx=5))
     ssv = sc8cube.sections['test']['velocity']
 
     def test_ssv_view_from(self):

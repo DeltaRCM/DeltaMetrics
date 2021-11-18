@@ -246,7 +246,7 @@ class BaseSection(abc.ABC):
         Compute the along-section coordinate array from dimensions in the
         cube (`dim1`, `dim2`) definining the section.
         """
-        self._idx_trace = np.column_stack((self._dim1_idx, self._dim2_idx))
+        self._trace_idx = np.column_stack((self._dim1_idx, self._dim2_idx))
         self._trace = np.column_stack((self.cube._dim2_idx[self._dim2_idx],
                                        self.cube._dim1_idx[self._dim1_idx]))
         
@@ -264,9 +264,15 @@ class BaseSection(abc.ABC):
 
     @property
     def idx_trace(self):
+        """Alias for `self.trace_idx`.
+        """
+        return self._trace_idx
+
+    @property
+    def trace_idx(self):
         """Indices of section points in the `dim1`-`dim2` plane.
         """
-        return self._idx_trace
+        return self._trace_idx
 
     @property
     def trace(self):
@@ -663,7 +669,7 @@ class StrikeSection(BaseSection):
     """Strike section object.
 
     Section oriented parallel to the `dim2` axis. Specify the location of the
-    strike section with :obj:`distance` and :obj:`length` *or* :obj:`idx`
+    strike section with :obj:`distance` and :obj:`length` *or* :obj:`distance_idx`
     and :obj:`length` keyword parameters.
 
     .. plot::
@@ -679,7 +685,7 @@ class StrikeSection(BaseSection):
 
     .. hint::
 
-        Either :obj:`distance` *or* :obj:`idx` must be specified.
+        Either :obj:`distance` *or* :obj:`distance_idx` must be specified.
 
     Parameters
     ----------
@@ -690,22 +696,22 @@ class StrikeSection(BaseSection):
     distance : :obj:`float`, optional
         Distance *in `dim1` coordinates* from the `dim1` lower domain edge to
         place the section. The section location will be interpolated to the
-        nearest grid cell. Mutually exclusive with :obj:`idx`.
+        nearest grid cell. Mutually exclusive with :obj:`distance_idx`.
 
-    idx : :obj:`int`, optional
+    distance_idx : :obj:`int`, optional
         Distance *in cell indices* from the `dim1` lower domain edge to place
         the section. Mutually exclusive with :obj:`distance`.
 
     length : :obj:`tuple` or :obj:`list` of `int` or `float`, optional
         A two-element tuple specifying the bounding points of the section in
-        the `dim2` axis. Values are treated as cell indices if :obj:`idx` is
+        the `dim2` axis. Values are treated as cell indices if :obj:`distance_idx` is
         given and as `dim2` coordinates if :obj:`distance` is given. If no
         value is supplied, the section is drawn across the entire `dim2`
         axis (i.e., across the whole domain).
 
     y : :obj:`int`, optional, deprecated
         The number of cells in from the `dim1` lower domain edge. If used, the
-        value is internally coerced to :obj:`idx`.
+        value is internally coerced to :obj:`distance_idx`.
 
     x : :obj:`int`, optional, deprecated
         The limits of the section. Defaults to the full `dim2`
@@ -751,7 +757,7 @@ class StrikeSection(BaseSection):
         :include-source:
 
         >>> golfcube = dm.sample_data.golf()
-        >>> golfcube.register_section('strike', dm.section.StrikeSection(idx=10))
+        >>> golfcube.register_section('strike', dm.section.StrikeSection(distance_idx=10))
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
@@ -780,7 +786,7 @@ class StrikeSection(BaseSection):
         >>> plt.show()
     """
 
-    def __init__(self, *args, distance=None, idx=None, length=None,
+    def __init__(self, *args, distance=None, distance_idx=None, length=None,
                  y=None, x=None, **kwargs):
 
         self._distance = None
@@ -791,30 +797,32 @@ class StrikeSection(BaseSection):
         #   if y or x is given, cannot also give distance idx or length
         if ((not (y is None)) or (not (x is None))):
             #   check if new args are given
-            if (not (distance is None)) or (not (idx is None)) or (not (length is None)):  # noqa: E501
+            if (not (distance is None)) or (not (distance_idx is None)) or (not (length is None)):  # noqa: E501
                 raise ValueError(
-                    'Cannot specify `distance`, `idx`, or `length` if '
-                    'specifying `y` or `x`.')
+                    'Cannot specify `distance`, `distance_idx`, or `length` '
+                    'if specifying `y` or `x`.')
             #   if new args not given, then use old args in place of new
             else:
                 warnings.warn(
                     'Arguments `y` and `x` are deprecated and will be removed'
-                    'in a future release. Please use `idx` and `length` to '
-                    'continue to specify cell indices, or use `distance` and '
-                    '`length` to specify coordinate values.')
-                idx = y
+                    'in a future release. Please use `distance_idx` and '
+                    '`length` to continue to specify cell indices, or '
+                    'use `distance` and `length` to specify '
+                    'coordinate values.')
+                distance_idx = y
                 length = x
         else:
             #   if y or x is not given, must give either distance or idx
-            if (distance is None) and (idx is None):
+            if (distance is None) and (distance_idx is None):
                 raise ValueError(
-                    'Must specify `distance` or `idx`.')
+                    'Must specify `distance` or `distance_idx`.')
         #   if both distance and idx are given
-        if (not (distance is None)) and (not (idx is None)):
-            raise ValueError('Cannot specify both `distance` and `idx`.')
+        if (not (distance is None)) and (not (distance_idx is None)):
+            raise ValueError(
+                'Cannot specify both `distance` and `distance_idx`.')
 
         self._input_distance = distance
-        self._input_idx = idx
+        self._input_distance_idx = distance_idx
         self._input_length = length
         super().__init__('strike', *args, **kwargs)
 
@@ -852,7 +860,7 @@ class StrikeSection(BaseSection):
                 np.array(self.cube.dim2_coords) - _length[1]))
         else:
             # apply the input idx value
-            _idx = int(self._input_idx)
+            _idx = int(self._input_distance_idx)
             # treat length as indices
             _start_idx, _end_idx = _length
 
@@ -1081,35 +1089,99 @@ class CircularSection(BaseSection):
         >>> plt.show()
     """
 
-    def __init__(self, *args, radius=None, origin=None, **kwargs):
+    def __init__(self, *args, radius=None, radius_idx=None,
+                 origin=None, origin_idx=None, **kwargs):
+
+        self._origin = None
+        self._radius = None
+
+        # process the multiple possible arguments
+        if (not (radius is None)) and (not (radius_idx is None)):
+            raise ValueError(
+                'Cannot specify both `radius` and `radius_idx`.')
+        if (not (origin is None)) and (not (origin_idx is None)):
+            raise ValueError(
+                'Cannot specify both `origin` and `origin_idx`.')
 
         self._input_radius = radius
         self._input_origin = origin
+        self._input_radius_idx = radius_idx
+        self._input_origin_idx = origin_idx
         super().__init__('circular', *args, **kwargs)
 
     def _compute_section_coords(self):
-        if (self._input_radius is None):
-            self.radius = int(np.min(self.cube.shape[1:]) / 2)
+        # determine the radius in indices
+        if (self._input_radius is None) and (self._input_radius_idx is None):
+            # if no inputs are provided, use a default based on domain dims
+            self._radius_idx = int(np.min(self.cube.shape[1:]) / 2)
+        elif not (self._input_radius is None):
+            # if radius was given in coords
+            self._radius_idx = np.argmin(np.abs(
+                np.array(self.cube.dim1_coords) - self._input_radius))
         else:
-            self.radius = self._input_radius
+            # if radius was given in indices
+            self._radius_idx = self._input_radius_idx
 
-        if (self._input_origin is None):
+        # determine the origin in indices
+        if (self._input_origin is None) and (self._input_origin_idx is None):
+            # if no inputs are provided, try to guess from metadata or land
+            # warnings.warn(
+            #     'Trying to determine the origin, this is unlikely to work '
+            #     'as expected for anything but pyDeltaRCM output data. '
+            #     'Instead, specify the `origin` or `origin_idx` '
+            #     'parameter directly when creating a `CircularSection`.')
             if (self.cube.meta is None):
                 # try and guess the value (should issue a warning?)
+                #   what if no field called 'eta'?? this will fail.
                 land_width = np.minimum(utils.guess_land_width_from_land(
                     self.cube['eta'][-1, :, 0]), 5)
             else:
-                # extract L0 from the cube
-                land_width = self.cube.meta['L0']
-            self.origin = (int(self.cube.shape[2] / 2),
-                           land_width)
+                # extract L0 from the cube metadata
+                land_width = int(self.cube.meta['L0'])
+            
+            # now find the center of the dim2 axis
+            center_dim2 = int(self.cube.shape[2] / 2)
+            # combine into the origin as a (dim1, dim2) point
+            self._origin_idx = (land_width, center_dim2)
+        elif not (self._input_origin is None):
+            # if origin was given in coords
+            idx_dim1 = np.argmin(np.abs(
+                np.array(self.cube.dim1_coords) - self._input_origin[0]))
+            idx_dim2 = np.argmin(np.abs(
+                np.array(self.cube.dim2_coords) - self._input_origin[1]))
+            self._origin_idx = (idx_dim1, idx_dim2)
         else:
-            self.origin = self._input_origin
+            # if origin was given in indices
+            self._origin_idx = self._input_origin_idx
 
-        xy = utils.circle_to_cells(self.origin, self.radius)
+        # use the utility to compute the cells *in order*
+        origin_idx_rev = tuple(reversed(self._origin_idx))  # input must be x,y
+        xy = utils.circle_to_cells(origin_idx_rev, self._radius_idx)
 
+        # store
         self._dim1_idx = xy[1]
         self._dim2_idx = xy[0]
+
+        # store other variables
+        self._radius = float(self.cube.dim1_coords[self._radius_idx])
+        self._origin = (float(self.cube.dim1_coords[self._origin_idx[0]]),
+                        float(self.cube.dim2_coords[self._origin_idx[1]]))
+
+    @property
+    def radius(self):
+        """Radius of the section in dimensional coordinates."""
+        return self._radius
+    
+    @property
+    def origin(self):
+        """Origin of the section in dimensional coordinates.
+
+        .. hint::
+
+            Returned as a point ``(dim1, dim2)``, so will need to be reversed
+            for plotting in Cartesian coordinates.
+        """
+        return self._origin
 
 
 class RadialSection(BaseSection):
