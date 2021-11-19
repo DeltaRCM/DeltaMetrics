@@ -665,7 +665,89 @@ class PathSection(BaseSection):
         return self.trace
 
 
-class StrikeSection(BaseSection):
+class LineSection(BaseSection):
+
+    def __init__(self, direction, *args, distance=None, distance_idx=None, length=None,
+                 x=None, y=None, **kwargs):
+        """Initialization for the LineSection.
+
+        The LineSection is the base class for Strike and Dip sections,
+        as these share identical input arguments, and processing steps, but
+        differ in which direction the line is drawn.
+
+        .. note:: the `RadialSection` does not subclass `LineSection`.
+        """
+
+        self._distance = None
+        self._distance_idx = None
+        self._length = None
+        self._length_idx = None
+
+        # process the optional/deprecated input arguments
+        #   if y or x is given, cannot also give distance idx or length
+        if ((not (y is None)) or (not (x is None))):
+            #   check if new args are given
+            if (not (distance is None)) or (not (distance_idx is None)) or (not (length is None)):  # noqa: E501
+                raise ValueError(
+                    'Cannot specify `distance`, `distance_idx`, or `length` '
+                    'if specifying `y` or `x`.')
+            #   if new args not given, then use old args in place of new
+            else:
+                warnings.warn(
+                    'Arguments `y` and `x` are deprecated and will be removed'
+                    'in a future release. Please use `distance_idx` and '
+                    '`length` to continue to specify cell indices, or '
+                    'use `distance` and `length` to specify '
+                    'coordinate values.')
+                if direction == 'strike':
+                    distance_idx = y
+                    length = x
+                elif direction == 'dip':
+                    distance_idx = x
+                    length = y
+                else:
+                    raise ValueError('Invalid `direction`.')
+        else:
+            #   if y or x is not given, must give either distance or idx
+            if (distance is None) and (distance_idx is None):
+                raise ValueError(
+                    'Must specify `distance` or `distance_idx`.')
+        #   if both distance and idx are given
+        if (not (distance is None)) and (not (distance_idx is None)):
+            raise ValueError(
+                'Cannot specify both `distance` and `distance_idx`.')
+
+        self._input_distance = distance
+        self._input_distance_idx = distance_idx
+        self._input_length = length
+        super().__init__(direction, *args, **kwargs)
+
+    @property
+    def distance(self):
+        """Distance of section from `dim1` lower edge, in `dim1` coordinates.
+        """
+        return self._distance
+
+    @property
+    def distance_idx(self):
+        """Distance of section from `dim1` lower edge, in `dim1` indices.
+        """
+        return self._distance_idx
+
+    @property
+    def length(self):
+        """Bounding `dim2` coordinates of section.
+        """
+        return self._length
+
+    @property
+    def length_idx(self):
+        """Bounding `dim2` indices of section.
+        """
+        return self._length_idx
+
+
+class StrikeSection(LineSection):
     """Strike section object.
 
     Section oriented parallel to the `dim2` axis. Specify the location of the
@@ -787,43 +869,10 @@ class StrikeSection(BaseSection):
 
     def __init__(self, *args, distance=None, distance_idx=None, length=None,
                  y=None, x=None, **kwargs):
-
-        self._distance = None
-        self._idx = None
-        self._length = None
-
-        # process the optional/deprecated input arguments
-        #   if y or x is given, cannot also give distance idx or length
-        if ((not (y is None)) or (not (x is None))):
-            #   check if new args are given
-            if (not (distance is None)) or (not (distance_idx is None)) or (not (length is None)):  # noqa: E501
-                raise ValueError(
-                    'Cannot specify `distance`, `distance_idx`, or `length` '
-                    'if specifying `y` or `x`.')
-            #   if new args not given, then use old args in place of new
-            else:
-                warnings.warn(
-                    'Arguments `y` and `x` are deprecated and will be removed'
-                    'in a future release. Please use `distance_idx` and '
-                    '`length` to continue to specify cell indices, or '
-                    'use `distance` and `length` to specify '
-                    'coordinate values.')
-                distance_idx = y
-                length = x
-        else:
-            #   if y or x is not given, must give either distance or idx
-            if (distance is None) and (distance_idx is None):
-                raise ValueError(
-                    'Must specify `distance` or `distance_idx`.')
-        #   if both distance and idx are given
-        if (not (distance is None)) and (not (distance_idx is None)):
-            raise ValueError(
-                'Cannot specify both `distance` and `distance_idx`.')
-
-        self._input_distance = distance
-        self._input_distance_idx = distance_idx
-        self._input_length = length
-        super().__init__('strike', *args, **kwargs)
+        # initialization is handled by the `LineSection` class
+        # _compute_section_coords is called by the `BaseSection` class
+        super().__init__('strike', *args,  distance=distance, distance_idx=distance_idx,
+                         length=length, x=x, y=y, **kwargs)
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.
@@ -864,54 +913,34 @@ class StrikeSection(BaseSection):
             _start_idx, _end_idx = _length
 
         self._distance = float(self.cube.dim1_coords[_idx])
-        self._idx = _idx
-        self._length = _length  # will vary based on how instantiated!
+        self._distance_idx = _idx
+        self._length = _length
+        self._length_idx = (_start_idx, _end_idx)
 
         # now compute the indices to use for the section
         self._dim2_idx = np.arange(_start_idx, _end_idx, dtype=int)
-        self._dim1_idx = np.tile(self._idx, (len(self._dim2_idx)))
+        self._dim1_idx = np.tile(self._distance_idx, (len(self._dim2_idx)))
 
     @property
     def y(self):
-        """Deprecated. Use :obj:`idx`."""
-        return self._idx
+        """Deprecated. Use :obj:`distance_idx`."""
+        warnings.warn(
+            '`.y` is a deprecated attribute. Use `.distance_idx` instead.')
+        return self._distance_idx
 
     @property
     def x(self):
-        """Deprecated. Use :obj:`length`."""
-        if self._input_distance is None:
-            return self._length
-        else:
-            raise AttributeError(
-                '`x` is deprecated, and also undefined if '
-                '`_input_distance` was `None`.')
+        """Deprecated. Use :obj:`length_idx`.
 
-    @property
-    def distance(self):
-        """Distance of section from `dim1` lower edge, in `dim1` coordinates.
+        Start and end indices of section.
         """
-        return self._distance
-
-    @property
-    def idx(self):
-        """Distance of section from `dim1` lower edge, in cell indices.
-        """
-        return self._idx
-
-    @property
-    def length(self):
-        """Bounding `dim2` coordinates of section.
-
-        .. warning::
-
-            Generally try to avoid using this attribute after section
-            instantiation, because the value returned will depend on whether
-            `distance` or `idx` was specified as input.
-        """
-        return self._length
+        warnings.warn(
+            '`.x` is a deprecated attribute. Use `.length_idx` instead.')
+        return self._length_idx
+        
 
 
-class DipSection(BaseSection):
+class DipSection(LineSection):
     """Dip section object.
 
     Section oriented along the delta dip (i.e., parallel to inlet channel).
@@ -991,26 +1020,77 @@ class DipSection(BaseSection):
         >>> plt.show()
     """
 
-    def __init__(self, *args, x=-1, y=None, **kwargs):
+    def __init__(self,  *args, distance=None, distance_idx=None, length=None,
+                 x=None, y=None, **kwargs):
+        # initialization is handled by the `LineSection` class
+        # _compute_section_coords is called by the `BaseSection` class
+        super().__init__('dip', *args,  distance=distance, distance_idx=distance_idx,
+                         length=length, x=x, y=y, **kwargs)
 
-        self.x = x  # dip coordinate scalar
-        self._input_ylim = y  # input y lims
-        super().__init__('dip', *args, **kwargs)
 
     def _compute_section_coords(self):
-        """Calculate coordinates of the dip section."""
-        # if x is -1 pick center cell
-        if self.x == -1:
-            self.x = int(self.cube['eta'].shape[2] / 2)
+        """Calculate coordinates of the dip section.
+        """
+        # if input length is None, we need to use endpoints of the dim1 coords
+        if self._input_length is None:
+            # if the value is given as distance
+            if not (self._input_distance is None):
+                _length = (float(self.cube.dim1_coords[0]),
+                           float(self.cube.dim1_coords[-1]))
+            # if the value is given as idx
+            else:
+                _length = (0, self.cube.L)
 
-        if self._input_ylim is None:
-            _ny = self.cube['eta'].shape[1]
-            self._dim1_idx = np.arange(_ny)
         else:
-            self._dim1_idx = np.arange(self._input_ylim[0], self._input_ylim[1])
-            _ny = len(self._dim1_idx)
-        self._dim2_idx = np.tile(self.x, (_ny))
+            # quick check that value for length is valid
+            if len(self._input_length) != 2:
+                raise ValueError(
+                    'Input `length` must be two element tuple or list, '
+                    'but was {0}'.format(str(self._input_length)))
+            _length = self._input_length
 
+        # if the value is given as distance
+        if not (self._input_distance is None):
+            # interpolate to an idx
+            _idx = np.argmin(np.abs(
+                np.array(self.cube.dim2_coords) - self._input_distance))
+            # treat length as coordinates
+            #   should have some kind of checks here for valid values?
+            _start_idx = np.argmin(np.abs(
+                np.array(self.cube.dim1_coords) - _length[0]))
+            _end_idx = np.argmin(np.abs(
+                np.array(self.cube.dim1_coords) - _length[1]))
+        else:
+            # apply the input idx value
+            _idx = int(self._input_distance_idx)
+            # treat length as indices
+            _start_idx, _end_idx = _length
+
+        self._distance = float(self.cube.dim2_coords[_idx])
+        self._distance_idx = _idx
+        self._length = _length
+        self._length_idx = (_start_idx, _end_idx)
+
+        # now compute the indices to use for the section
+        self._dim1_idx = np.arange(_start_idx, _end_idx, dtype=int)
+        self._dim2_idx = np.tile(self._distance_idx, (len(self._dim1_idx)))
+
+    @property
+    def y(self):
+        """Deprecated. Use :obj:`length_idx`."""
+        warnings.warn(
+            '`.y` is a deprecated attribute. Use `.length_idx` instead.')
+        return self._length_idx
+
+    @property
+    def x(self):
+        """Deprecated. Use :obj:`distance_idx`.
+
+        Start and end indices of section.
+        """
+        warnings.warn(
+            '`.x` is a deprecated attribute. Use `.distance_idx` instead.')
+        return self._distance_idx
 
 class CircularSection(BaseSection):
     """Circular section object.

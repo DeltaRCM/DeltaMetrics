@@ -23,7 +23,7 @@ class TestStrikeSection:
     def test_StrikeSection_without_cube(self):
         ss = section.StrikeSection(distance_idx=5)
         assert ss.name is None
-        assert ss.idx is None
+        assert ss._distance_idx is None
         assert ss._input_distance_idx == 5
         assert ss.shape is None
         assert ss.cube is None
@@ -51,18 +51,22 @@ class TestStrikeSection:
         assert sass.trace.shape == (rcm8cube.shape[2], 2)
         assert len(sass.variables) > 0
 
-    def test_StrikeSection_register_section_idx(self):
+    def test_StrikeSection_register_section_distance_idx(self):
         rcm8cube = cube.DataCube(golf_path)
         rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
         assert rcm8cube.sections['test'].name == 'test'
         assert rcm8cube.sections['test']._input_distance is None
         assert rcm8cube.sections['test']._input_distance_idx == 5
         assert rcm8cube.sections['test']._input_length is None
-        assert rcm8cube.sections['test'].idx == 5
+        assert rcm8cube.sections['test']._distance_idx == 5
         assert rcm8cube.sections['test'].length == (0, rcm8cube.shape[2])
         assert rcm8cube.sections['test'].distance == rcm8cube.dim1_coords[5]
         assert len(rcm8cube.sections['test'].variables) > 0
         assert rcm8cube.sections['test'].cube is rcm8cube
+        with pytest.warns(UserWarning, match=r'`.x` is a deprecated .*'):
+            assert rcm8cube.sections['test'].x == (0, rcm8cube.W)
+        with pytest.warns(UserWarning, match=r'`.y` is a deprecated .*'):
+            assert rcm8cube.sections['test'].y == 5
         # test that the name warning is raised
         with pytest.warns(UserWarning, match=r'`name` argument supplied .*'):
             rcm8cube.register_section('testname', section.StrikeSection(
@@ -79,7 +83,7 @@ class TestStrikeSection:
         assert rcm8cube.sections['test']._input_distance == 2000
         assert rcm8cube.sections['test']._input_distance_idx is None
         assert rcm8cube.sections['test']._input_length is None
-        assert rcm8cube.sections['test'].idx > 0
+        assert rcm8cube.sections['test']._distance_idx > 0
         assert rcm8cube.sections['test'].length == (0, rcm8cube.dim2_coords[-1])
         assert rcm8cube.sections['test'].distance == 2000
         assert len(rcm8cube.sections['test'].variables) > 0
@@ -90,7 +94,7 @@ class TestStrikeSection:
         assert rcm8cube.sections['lengthtest']._input_distance == 2000
         assert rcm8cube.sections['lengthtest']._input_distance_idx is None
         assert rcm8cube.sections['lengthtest']._input_length == (2000, 5000)
-        assert rcm8cube.sections['lengthtest'].idx > 0
+        assert rcm8cube.sections['lengthtest']._distance_idx > 0
         assert rcm8cube.sections['lengthtest'].length == (2000, 5000)
         assert rcm8cube.sections['lengthtest'].distance == 2000
 
@@ -115,7 +119,7 @@ class TestStrikeSection:
         assert rcm8cube.sections['warn']._input_distance is None
         assert rcm8cube.sections['warn']._input_distance_idx == 5
         assert rcm8cube.sections['warn']._input_length is None
-        assert rcm8cube.sections['warn'].idx == 5
+        assert rcm8cube.sections['warn']._distance_idx == 5
         assert rcm8cube.sections['warn'].length == (0, rcm8cube.shape[2])
         assert rcm8cube.sections['warn'].distance == rcm8cube.dim1_coords[5]
         assert len(rcm8cube.sections['warn'].variables) > 0
@@ -1077,9 +1081,9 @@ class TestDipSection:
     """Test the basic of the DipSection."""
 
     def test_DipSection_without_cube(self):
-        ss = section.DipSection(x=5)
+        ss = section.DipSection(distance_idx=5)
         assert ss.name is None
-        assert ss.x == 5
+        assert ss._input_distance_idx == 5
         assert ss.shape is None
         assert ss.cube is None
         assert ss.s is None
@@ -1093,41 +1097,102 @@ class TestDipSection:
     def test_DipSection_bad_cube(self):
         badcube = ['some', 'list']
         with pytest.raises(TypeError, match=r'Expected type is *.'):
-            _ = section.DipSection(badcube, x=12)
+            _ = section.DipSection(badcube, distance_idx=12)
+        with pytest.raises(TypeError, match=r'Expected type is *.'):
+            _ = section.StrikeSection(badcube, distance=1000)
 
     def test_DipSection_standalone_instantiation(self):
         rcm8cube = cube.DataCube(
             golf_path)
-        sass = section.DipSection(rcm8cube, x=120)
+        sass = section.DipSection(rcm8cube, distance_idx=120)
         assert sass.name == 'dip'
-        assert sass.x == 120
-        assert sass.cube == rcm8cube
+        assert sass.distance_idx ==120
+        with pytest.warns(UserWarning, match=r'`.x` is a deprecated .*'):
+            assert sass.x ==120
+        assert sass.cube is rcm8cube
         assert sass.trace.shape == (rcm8cube.shape[1], 2)
         assert len(sass.variables) > 0
+        sass = section.DipSection(rcm8cube, distance_idx=12, name='named')
+        assert sass.name == 'named'
+        with pytest.warns(UserWarning, match=r'`.x` is a deprecated .*'):
+            assert sass.x ==12
 
-    def test_DipSection_register_section(self):
+    def test_DipSection_register_section_distance_idx(self):
         rcm8cube = cube.DataCube(
             golf_path)
-        rcm8cube.register_section('test', section.DipSection(x=150))
+        rcm8cube.register_section('test', section.DipSection(distance_idx=150))
         assert rcm8cube.sections['test'].name == 'test'
         assert len(rcm8cube.sections['test'].variables) > 0
         assert rcm8cube.sections['test'].cube is rcm8cube
-        # test that the name warning is raised
+        with pytest.warns(UserWarning, match=r'`.x` is a deprecated .*'):
+            assert rcm8cube.sections['test'].x == 150
+        with pytest.warns(UserWarning, match=r'`.y` is a deprecated .*'):
+            assert rcm8cube.sections['test'].y == (0, rcm8cube.L)
+        # test that the name warning is raised when creating
         with pytest.warns(UserWarning, match=r'`name` argument supplied .*'):
             rcm8cube.register_section('testname', section.DipSection(
-                x=150, name='TESTING'))
+                distance_idx=150, name='TESTING'))
             assert rcm8cube.sections['testname'].name == 'TESTING'
-        _sect = rcm8cube.register_section('test', section.DipSection(x=150),
-                                          return_section=True)
+        _sect = rcm8cube.register_section('test', section.DipSection(
+            distance_idx=150), return_section=True)
         assert isinstance(_sect, section.DipSection)
 
-    def test_DipSection_register_section_x_limits(self):
+    def test_DipSection_register_section_distance(self):
+        rcm8cube = cube.DataCube(golf_path)
+        rcm8cube.register_section('test', section.DipSection(distance=4000))
+        assert rcm8cube.sections['test'].name == 'test'
+        assert rcm8cube.sections['test']._input_distance == 4000
+        assert rcm8cube.sections['test']._input_distance_idx is None
+        assert rcm8cube.sections['test']._input_length is None
+        assert rcm8cube.sections['test']._distance_idx > 0
+        assert rcm8cube.sections['test'].length == (0, rcm8cube.dim1_coords[-1])
+        assert rcm8cube.sections['test'].distance == 4000
+        assert len(rcm8cube.sections['test'].variables) > 0
+        assert rcm8cube.sections['test'].cube is rcm8cube
+        with pytest.warns(UserWarning, match=r'`.x` is a deprecated .*'):
+            assert rcm8cube.sections['test'].x == rcm8cube.sections['test']._distance_idx
+        rcm8cube.register_section('lengthtest', section.DipSection(
+            distance=7000, length=(500, 2000)))
+        assert rcm8cube.sections['lengthtest'].name == 'lengthtest'
+        assert rcm8cube.sections['lengthtest']._input_distance == 7000
+        assert rcm8cube.sections['lengthtest']._input_distance_idx is None
+        assert rcm8cube.sections['lengthtest']._input_length == (500, 2000)
+        assert rcm8cube.sections['lengthtest']._distance_idx > 0
+        assert rcm8cube.sections['lengthtest'].length == (500, 2000)
+        assert rcm8cube.sections['lengthtest'].distance == 7000
+
+    def test_DipSection_register_section_notboth_distance_distance_idx(self):
+        rcm8cube = cube.DataCube(golf_path)
+        with pytest.raises(ValueError, match=r'Cannot specify both `distance` .*'):  # noqa: E501
+            rcm8cube.register_section(
+                'test', section.DipSection(distance=2000, distance_idx=2))
+
+    def test_StrikeSection_register_section_deprecated(self):
+        rcm8cube = cube.DataCube(golf_path)
+        with pytest.warns(UserWarning, match=r'Arguments `y` and `x` are .*'):
+            rcm8cube.register_section('warn', section.DipSection(x=5))
+        # the section should still work though, so check on the attrs
+        assert rcm8cube.sections['warn'].name == 'warn'
+        assert rcm8cube.sections['warn']._input_distance is None
+        assert rcm8cube.sections['warn']._input_distance_idx == 5
+        assert rcm8cube.sections['warn']._input_length is None
+        assert rcm8cube.sections['warn']._distance_idx == 5
+        assert rcm8cube.sections['warn'].length == (0, rcm8cube.shape[1])
+        assert rcm8cube.sections['warn'].distance == rcm8cube.dim2_coords[5]
+        assert len(rcm8cube.sections['warn'].variables) > 0
+        assert rcm8cube.sections['warn'].cube is rcm8cube
+        # test for the error with spec deprecated and new
+        with pytest.raises(ValueError, match=r'Cannot specify `distance`, .*'):  # noqa: E501
+            rcm8cube.register_section(
+                'fail', section.StrikeSection(y=2, distance=2000, distance_idx=2))
+
+    def test_DipSection_register_section_length_limits(self):
         rcm8cube = cube.DataCube(
             golf_path)
-        rcm8cube.register_section('tuple', section.DipSection(x=150,
-                                                              y=(10, 50)))
-        rcm8cube.register_section('list', section.DipSection(x=150,
-                                                             y=(10, 40)))
+        rcm8cube.register_section('tuple', section.DipSection(distance_idx=150,
+                                                              length=(10, 50)))
+        rcm8cube.register_section('list', section.DipSection(distance_idx=150,
+                                                             length=(10, 40)))
         assert len(rcm8cube.sections) == 2
         assert rcm8cube.sections['tuple']._dim1_idx.shape[0] == 40
         assert rcm8cube.sections['list']._dim1_idx.shape[0] == 30
