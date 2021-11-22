@@ -46,7 +46,7 @@ class TestStrikeSection:
         rcm8cube = cube.DataCube(golf_path)
         sass = section.StrikeSection(rcm8cube, distance_idx=12)
         assert sass.name == 'strike'
-        assert sass.y == 12
+        assert sass.distance_idx == 12
         assert sass.cube == rcm8cube
         assert sass.trace.shape == (rcm8cube.shape[2], 2)
         assert len(sass.variables) > 0
@@ -406,35 +406,41 @@ class TestRadialSection:
         assert sars1.azimuth == 30
         sars2_starty = 2
         sars2 = section.RadialSection(
-            rcm8cube, azimuth=103, origin=(90, sars2_starty))
+            rcm8cube, azimuth=103, origin_idx=(sars2_starty, 90))
         assert sars2.name == 'radial'
         assert sars2.cube == rcm8cube
         assert sars2.trace.shape[0] == rcm8cube.shape[1] - sars2_starty
         assert len(sars2.variables) > 0
         assert sars2.azimuth == 103
-        assert sars2.origin == (90, 2)
+        assert sars2._origin_idx == (2, 90)
         sars3 = section.RadialSection(
-            rcm8cube, azimuth=178, origin=(143, 18), length=30, name='diff')
+            rcm8cube, azimuth=178, origin_idx=(18, 143), length=30, name='diff')
         assert sars3.name == 'diff'
         assert sars3.cube == rcm8cube
         assert sars3.trace.shape[0] == 31
         assert len(sars3.variables) > 0
         assert sars3.azimuth == 178
-        assert sars3.origin == (143, 18)
+        assert sars3._origin_idx == (18, 143)
+        sars4 = section.RadialSection(
+            rcm8cube, azimuth=90, origin=(200, 5000), length=2000)
+        assert sars4.cube == rcm8cube
+        assert sars4.trace.shape[0] == 41  # 2000 // 50 = L // dx == 40
+        assert sars4.azimuth == 90
+        assert sars4._origin_idx == (4, rcm8cube.W // 2)  # 5000 is center domain
 
     def test_standalone_instantiation_withmeta(self):
         golfcube = cube.DataCube(
             golf_path)
         sars = section.RadialSection(golfcube)
-        assert sars.origin[1] == golfcube.meta['L0']
+        assert sars._origin_idx[0] == golfcube.meta['L0']
         sars1 = section.RadialSection(golfcube, azimuth=30)
-        assert sars.origin[1] == golfcube.meta['L0']
-        sars2 = section.RadialSection(golfcube, azimuth=103, origin=(90, 2))
-        assert sars2.origin == (90, 2)
+        assert sars1._origin_idx[0] == golfcube.meta['L0']
+        sars2 = section.RadialSection(golfcube, azimuth=103, origin_idx=(90, 2))
+        assert sars2._origin_idx == (90, 2)
         sars3 = section.RadialSection(
-            golfcube, azimuth=178, origin=(143, 18), length=30, name='diff')
+            golfcube, azimuth=178, origin_idx=(18, 143), length=30, name='diff')
         assert sars3.name == 'diff'
-        assert sars3.origin == (143, 18)
+        assert sars3._origin_idx == (18, 143)
 
     def test_register_section(self):
         rcm8cube = cube.DataCube(
@@ -492,9 +498,9 @@ class TestRadialSection:
             'test5', section.RadialSection(azimuth=165))
         assert isinstance(rcm8cube.sections['test5'], section.RadialSection)
         assert rcm8cube.sections['test5'].trace.shape[0] > _cshp[1]  # obtuse
-        assert rcm8cube.sections['test5']._dim2_idx[-1] == _cshp[1]
-        assert rcm8cube.sections['test5']._dim2_idx[0] == 0
-        assert rcm8cube.sections['test5']._dim1_idx[-1] == 2  # this should change if sorting fixed?
+        assert rcm8cube.sections['test5']._dim2_idx[-1] == 0
+        assert rcm8cube.sections['test5']._dim2_idx[0] == _cshp[2] // 2
+        assert rcm8cube.sections['test5']._dim1_idx[-1] < _cshp[1] // 2  # acute
         assert rcm8cube.sections['test5']['velocity'].shape[0] == _cshp[0]
         with pytest.raises(ValueError, match=r'Azimuth must be *.'):
             rcm8cube.register_section(
@@ -507,13 +513,13 @@ class TestRadialSection:
         rcm8cube = cube.DataCube(
             golf_path)
         rcm8cube.register_section(
-            'test', section.RadialSection(azimuth=145, origin=(20, 3)))
+            'test', section.RadialSection(azimuth=145, origin_idx=(3, 20)))
         assert isinstance(rcm8cube.sections['test'], section.RadialSection)
         assert rcm8cube.sections['test'].trace.shape[0] == 21
-        assert rcm8cube.sections['test']._dim2_idx[-1] == 20
-        assert rcm8cube.sections['test']._dim2_idx[0] == 0
-        assert rcm8cube.sections['test']._dim1_idx[0] == 17
-        assert rcm8cube.sections['test']._dim1_idx[-1] == 3
+        assert rcm8cube.sections['test']._dim2_idx[-1] == 0
+        assert rcm8cube.sections['test']._dim2_idx[0] == 20
+        assert rcm8cube.sections['test']._dim1_idx[0] == 3
+        assert rcm8cube.sections['test']._dim1_idx[-1] > 3
 
 
 class TestCubesWithManySections:
@@ -781,7 +787,7 @@ class TestSectionFromDataCubeWithStratigraphy:
         assert np.all(self.rcm8cube.sections['test'].trace_idx[:, 0] == 5)
         assert self.rcm8cube.sections['test'].s.size == self.rcm8cube.shape[2]
         assert len(self.rcm8cube.sections['test'].variables) > 0
-        assert self.rcm8cube.sections['test'].y == 5
+        assert self.rcm8cube.sections['test'].distance_idx == 5
 
     def test_withstrat_SectionVariable_basic_math(self):
         s1 = self.rcm8cube.sections['test']['velocity']

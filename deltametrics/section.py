@@ -797,7 +797,7 @@ class StrikeSection(LineSection):
     x : :obj:`int`, optional, deprecated
         The limits of the section. Defaults to the full `dim2`
         domain `width`. Specify as a two-element `tuple` or `list` of `int`,
-        giving the lower and upper bounds of `x` values to span the section.
+        giving the lower and upper bounds of indices to span the section.
 
     **kwargs
         Keyword arguments are passed to `BaseSection.__init__()`. Supported
@@ -832,7 +832,7 @@ class StrikeSection(LineSection):
         >>> plt.show()
 
     Create a `StrikeSection` that is registered to a `DataCube` at
-    specified `idx` index ``=10``, and spans the entire model domain:
+    specified `distance_idx` index ``=10``, and spans the entire model domain:
 
     .. plot::
         :include-source:
@@ -855,15 +855,15 @@ class StrikeSection(LineSection):
         :include-source:
 
         >>> golfcube = dm.sample_data.golf()
-        >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube)
+        >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
         >>> golfstrat.register_section(
-        ...     'strike_half', dm.section.StrikeSection(distance=1500, length=(2000, 5000)))
+        ...     'strike_part', dm.section.StrikeSection(distance=1500, length=(2000, 5000)))
 
-        >>> # show the location and the "velocity" variable
+        >>> # show the location and the "time" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
         >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
-        >>> golfstrat.sections['strike_half'].show_trace('r--', ax=ax[0])
-        >>> golfstrat.sections['strike_half'].show('velocity', ax=ax[1])
+        >>> golfstrat.sections['strike_part'].show_trace('r--', ax=ax[0])
+        >>> golfstrat.sections['strike_part'].show('time', ax=ax[1])
         >>> plt.show()
     """
 
@@ -871,7 +871,8 @@ class StrikeSection(LineSection):
                  y=None, x=None, **kwargs):
         # initialization is handled by the `LineSection` class
         # _compute_section_coords is called by the `BaseSection` class
-        super().__init__('strike', *args,  distance=distance, distance_idx=distance_idx,
+        super().__init__('strike', *args,
+                         distance=distance, distance_idx=distance_idx,
                          length=length, x=x, y=y, **kwargs)
 
     def _compute_section_coords(self):
@@ -939,18 +940,26 @@ class StrikeSection(LineSection):
         return self._length_idx
         
 
-
 class DipSection(LineSection):
     """Dip section object.
 
-    Section oriented along the delta dip (i.e., parallel to inlet channel).
-    Specify the location of the dip section with :obj:`x` and :obj:`y`
-    keyword parameter options.
+    Section oriented parallel to the `dim1` axis. Specify the location of the
+    dip section with :obj:`distance` and :obj:`length` *or* 
+    :obj:`distance_idx` and :obj:`length` keyword parameters.
 
-    .. important::
+    .. plot::
 
-        The `y` and `x` parameters must be specified as cell indices (not
-        actual x and y coordinate values). This is a needed patch.
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section(
+        ...     'dip', dm.section.DipSection(distance=3000))
+        >>> fig, ax = plt.subplots()
+        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.sections['dip'].show_trace('r--', ax=ax)
+        >>> plt.show()
+
+    .. hint::
+
+        Either :obj:`distance` *or* :obj:`distance_idx` must be specified.
 
     Parameters
     ----------
@@ -958,15 +967,30 @@ class DipSection(LineSection):
         The `Cube` object to link for underlying data. This option should be
         ommitted if using the :obj:`register_section` method of a `Cube`.
 
-    x : :obj:`int`, optional
-        The `x` location of the section. This is the distance to locate the
-        section from the domain edge with a channel inlet. Defaults to ``-1``
-        if no value is given, which centers the section along the domain.
+    distance : :obj:`float`, optional
+        Distance *in `dim2` coordinates* from the `dim2` lower domain edge to
+        place the section. The section location will be interpolated to the
+        nearest grid cell. Mutually exclusive with :obj:`distance_idx`.
 
-    y : :obj:`int`, optional
-        The `y` limits for the section. Defaults to the full domain width.
-        Specify as a two-element `tuple` or `list` of `int`, giving the lower
-        and upper bounds of `y` values to span the section.
+    distance_idx : :obj:`int`, optional
+        Distance *in cell indices* from the `dim2` lower domain edge to place
+        the section. Mutually exclusive with :obj:`distance`.
+
+    length : :obj:`tuple` or :obj:`list` of `int` or `float`, optional
+        A two-element tuple specifying the bounding points of the section in
+        the `dim1` axis. Values are treated as cell indices
+        if :obj:`distance_idx` is given and as `dim1` coordinates
+        if :obj:`distance` is given. If no value is supplied, the section is
+        drawn across the entire `dim1` axis (i.e., across the whole domain).
+
+    x : :obj:`int`, optional, deprecated
+        The number of cells in from the `dim2` lower domain edge. If used, the
+        value is internally coerced to :obj:`distance_idx`.
+
+    y : :obj:`int`, optional, deprecated
+        The limits of the section. Defaults to the full `dim1`
+        domain `length`. Specify as a two-element `tuple` or `list` of `int`,
+        giving the lower and upper bounds of indices to span the section.
 
     **kwargs
         Keyword arguments are passed to `BaseSection.__init__()`. Supported
@@ -984,39 +1008,55 @@ class DipSection(LineSection):
     Examples
     --------
 
-    To create a `DipSection` that is registered to a `DataCube` at
-    specified `x` coordinate ``=130``, and spans the entire model domain:
+    Create a `DipSection` that is registered to a `DataCube` at specified
+    `distance` in `dim2` coordinates, and spans the entire model domain:
 
     .. plot::
         :include-source:
 
         >>> golfcube = dm.sample_data.golf()
-        >>> golfcube.register_section('dip', dm.section.DipSection(x=130))
-        >>>
-        >>> # show the location and the "velocity" variable
+        >>> golfcube.register_section('dip', dm.section.DipSection(distance=3500))
+
+        >>> # show the location and the "sandfrac" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
         >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['dip'].show_trace('r--', ax=ax[0])
-        >>> golfcube.sections['dip'].show('velocity', ax=ax[1])
+        >>> golfcube.sections['dip'].show('sandfrac', ax=ax[1])
         >>> plt.show()
 
-    Similarly, create a `DipSection` that is registered to a
-    `StratigraphyCube` at the inlet, which spans only the
-    first 50 cells of the model domain:
+    Create a `DipSection` that is registered to a `DataCube` at
+    specified `distance_idx` index ``=75``, and spans the entire model domain:
 
     .. plot::
         :include-source:
 
         >>> golfcube = dm.sample_data.golf()
-        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(golfcube)
-        >>> sc8cube.register_section(
-        ...     'dip_short', dm.section.DipSection(y=[0, 50]))
+        >>> golfcube.register_section('dip75', dm.section.DipSection(distance_idx=75))
+
+        >>> # show the location and the "sandfrac" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.sections['dip75'].show_trace('r--', ax=ax[0])
+        >>> golfcube.sections['dip75'].show('sandfrac', ax=ax[1])
+        >>> plt.show()
+
+    Create a `DipSection` that is registered to a `StratigraphyCube` at
+    specified `distance` in `dim2` coordinates, and spans only a range in the
+    middle of the domain:
+
+    .. plot::
+        :include-source:
+
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
+        >>> golfstrat.register_section(
+        ...     'dip_part', dm.section.DipSection(distance=4000, length=(500, 1500)))
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
         >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
-        >>> sc8cube.sections['dip_short'].show_trace('r--', ax=ax[0])
-        >>> sc8cube.sections['dip_short'].show('velocity', ax=ax[1])
+        >>> golfstrat.sections['dip_part'].show_trace('r--', ax=ax[0])
+        >>> golfstrat.sections['dip_part'].show('velocity', ax=ax[1])
         >>> plt.show()
     """
 
@@ -1024,9 +1064,9 @@ class DipSection(LineSection):
                  x=None, y=None, **kwargs):
         # initialization is handled by the `LineSection` class
         # _compute_section_coords is called by the `BaseSection` class
-        super().__init__('dip', *args,  distance=distance, distance_idx=distance_idx,
+        super().__init__('dip', *args,
+                         distance=distance, distance_idx=distance_idx,
                          length=length, x=x, y=y, **kwargs)
-
 
     def _compute_section_coords(self):
         """Calculate coordinates of the dip section.
@@ -1091,6 +1131,7 @@ class DipSection(LineSection):
         warnings.warn(
             '`.x` is a deprecated attribute. Use `.distance_idx` instead.')
         return self._distance_idx
+
 
 class CircularSection(BaseSection):
     """Circular section object.
@@ -1190,7 +1231,7 @@ class CircularSection(BaseSection):
         :include-source:
 
         >>> golfcube = dm.sample_data.golf()
-        >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube)
+        >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
         >>> golfstrat.register_section(
         ...     'circular', dm.section.CircularSection(radius_idx=50,
         ...                                            origin_idx=(0, 100)))
@@ -1308,10 +1349,17 @@ class RadialSection(BaseSection):
     nearest integer model domain cells, following the a line-walking algorithm
     (:obj:`~deltametrics.utils.line_to_cells`).
 
-    .. important::
+    .. plot::
 
-        The `origin` parameter must be specified as cell indices (not actual x
-        and y coordinate values). This is a needed patch.
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section(
+        ...     'radial', dm.section.RadialSection(azimuth=65))
+
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots()
+        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.sections['radial'].show_trace('r--', ax=ax)
+        >>> plt.show()
 
     .. important::
 
@@ -1322,9 +1370,9 @@ class RadialSection(BaseSection):
     .. important::
 
         This Section type will only work for deltas with an inlet along the
-        ``y=0`` line. For other delta configurations, specify a radial
-        section by defining two end points and instantiating a `Section` with
-        the :obj:`PathSection`.
+        ``dim1`` lower domain edge. For other delta configurations, specify a
+        radial section by defining two end points and instantiating a
+        `Section` with the :obj:`PathSection`. A patch for this is welcomed!
 
     Parameters
     ----------
@@ -1336,20 +1384,32 @@ class RadialSection(BaseSection):
         The `azimuth` of the section, directed away from the origin. If no
         value is given, the `azimuth` defaults to ``90``.
 
-    origin : :obj:`tuple` or `list` of `int`, optional
-        The `origin` of the radial section. This is the "start" of the radial
-        line. If no value is given, the origin defaults to the center of the
-        x-direction of the model domain, and offsets into the domain a
-        distance of ``y == L0``, if these values can be determined. I.e., the
-        origin defaults to be centered over the channel inlet. If no value is
-        given and these values cannot be determined, the origin defaults to
-        ``(0, 0)``.
+    origin : :obj:`tuple` of `float`, optional
+        The `origin` of the radial section in dimensional coordinates,
+        specified as a two-element tuple ``(dim1, dim2)``. This is the
+        starting point of the radial line. If no value is given, the origin
+        defaults to the center of the x-direction of the model domain, and
+        offsets into the domain a distance of ``y == L0``, if this values can
+        be determined. I.e., the origin defaults to be centered over the
+        channel inlet.
+
+    origin_idx : :obj:`tuple` of `int`, optional
+        The `origin` of the radial section in dimensional coordinates,
+        specified as a two-element tuple ``(dim1, dim2)``. This is the
+        starting point of the radial line. Mutually exclusive
+        with :obj:`origin`.
 
     length : :obj:`float`, `int`, optional
         The length of the section (note this must be given in pixel length).
         If no value is given, the length defaults to the length required to
         reach a model boundary (if a connection to underlying `Cube` exists).
-        Otherwise, length is set to ``1``.
+        If neither :obj:`origin` or :obj:`origin_idx` is specified, `length`
+        is assumed to be in dimensional coordinates.
+
+        .. important::
+
+            length is used as a *guide* for the section length, as the section
+            is approximated to cell indices.
 
     **kwargs
         Keyword arguments are passed to `BaseSection.__init__()`. Supported
@@ -1367,7 +1427,7 @@ class RadialSection(BaseSection):
     Examples
     --------
 
-    To create a `RadialSection` that is registered to a `DataCube` at
+    Create a `RadialSection` that is registered to a `DataCube` at
     specified `origin` coordinate, and spans the entire model domain:
 
     .. plot::
@@ -1383,46 +1443,103 @@ class RadialSection(BaseSection):
         >>> golfcube.sections['radial'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['radial'].show('velocity', ax=ax[1])
         >>> plt.show()
+
+    Create several `RadialSection` objects, spaced out across the domain,
+    connected to a `StratigraphyCube`. Each section should be shorter than
+    the full domain width.
+
+    .. plot::
+        :include-source:
+
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
+        
+        >>> fig, ax = plt.subplots(2, 3, figsize=(9, 3))
+        >>> ax = ax.flatten()
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[1], ticks=True)
+        >>> ax[1].tick_params(labelsize=8)
+
+        >>> azims = np.linspace(0, 180, num=5)
+        >>> idxs = [2, 5, 4, 3, 0]  # indices in the order to draw to match 0-->180
+        >>> for i, (azim, idx) in enumerate(zip(azims, idxs)):
+        ...     sec = dm.section.RadialSection(golfstrat, azimuth=azim, length=4000)
+        ...     sec.show_trace('r--', ax=ax[1])
+        ...     sec.show('time', ax=ax[idx], colorbar=False)
+        ...     ax[idx].text(3000, 0, 'azimuth: {0}'.format(azim), ha='center', fontsize=8)
+        ...     ax[idx].tick_params(labelsize=8)
+        ...     ax[idx].set_ylim(-4, 1)
+
+        >>> plt.show()
     """
-    def __init__(self, *args, azimuth=None, origin=None, length=None,
-                 **kwargs):
+    def __init__(self, *args, azimuth=None,
+                 origin=None, origin_idx=None,
+                 length=None, **kwargs):
+
+        self._azimuth = None
+        self._origin = None
+
+        # process the multiple possible arguments
+        if (not (origin is None)) and (not (origin_idx is None)):
+            raise ValueError(
+                'Cannot specify both `origin` and `origin_idx`.')
+
         self._input_azimuth = azimuth
         self._input_origin = origin
         self._input_length = length
+        self._input_origin_idx = origin_idx
+
         super().__init__('radial', *args, **kwargs)
 
     def _compute_section_coords(self):
 
         # determine the azimuth
         if (self._input_azimuth is None):
-            self.azimuth = 90
+            self._azimuth = 90
         else:
-            self.azimuth = self._input_azimuth
+            self._azimuth = self._input_azimuth
 
-        # determine the origin of the line
-        if (self._input_origin is None):
+        # determine the origin in indices
+        if (self._input_origin is None) and (self._input_origin_idx is None):
+            # if no inputs are provided, try to guess from metadata or land
+            # warnings.warn(
+            #     'Trying to determine the origin, this is unlikely to work '
+            #     'as expected for anything but pyDeltaRCM output data. '
+            #     'Instead, specify the `origin` or `origin_idx` '
+            #     'parameter directly when creating a `CircularSection`.')
             if (self.cube.meta is None):
                 # try and guess the value (should issue a warning?)
+                #   what if no field called 'eta'?? this will fail.
                 land_width = np.minimum(utils.guess_land_width_from_land(
                     self.cube['eta'][-1, :, 0]), 5)
             else:
-                # extract L0 from the cube
-                land_width = self.cube.meta['L0']
-            self.origin = (int(self.cube.shape[2] / 2),
-                           land_width)
+                # extract L0 from the cube metadata
+                land_width = int(self.cube.meta['L0'])
+            
+            # now find the center of the dim2 axis
+            center_dim2 = int(self.cube.shape[2] / 2)
+            # combine into the origin as a (dim1, dim2) point
+            self._origin_idx = (land_width, center_dim2)
+        elif not (self._input_origin is None):
+            # if origin was given in coords
+            idx_dim1 = np.argmin(np.abs(
+                np.array(self.cube.dim1_coords) - self._input_origin[0]))
+            idx_dim2 = np.argmin(np.abs(
+                np.array(self.cube.dim2_coords) - self._input_origin[1]))
+            self._origin_idx = (idx_dim1, idx_dim2)
         else:
-            self.origin = self._input_origin
+            # if origin was given in indices
+            self._origin_idx = self._input_origin_idx
 
         # determine the length of the line to travel
         # find the line of the azimuth
         theta = self.azimuth
         m = np.tan(theta * np.pi / 180)
-        b = self.origin[1] - m * self.origin[0]
+        b = self._origin_idx[0] - m * self._origin_idx[1]
         if (self._input_length is None):
             # if no input
             # find the intersection with an edge
             if self.azimuth <= 90.0 and self.azimuth >= 0:
-                dx = (self.cube.W - self.origin[0])
+                dx = (self.cube.W - self._origin_idx[1])
                 dy = (np.tan(theta * np.pi / 180) * dx)
                 if dy <= self.cube.L:
                     end_y = int(np.minimum(
@@ -1433,10 +1550,10 @@ class RadialSection(BaseSection):
                         (self.cube.L - b) / m, self.cube.W - 1))
                     end_point = (end_x, self.cube.L - 1)
             elif self.azimuth > 90 and self.azimuth <= 180:
-                dx = (self.origin[0])
+                dx = (self._origin_idx[1])
                 dy = (np.tan(theta * np.pi / 180) * dx)
                 if np.abs(dy) <= self.cube.L:
-                    end_y = b
+                    end_y = int(b)
                     end_point = (0, end_y)
                 else:
                     end_x = int(np.maximum((self.cube.L - b) / m,
@@ -1446,15 +1563,69 @@ class RadialSection(BaseSection):
                 raise ValueError('Azimuth must be in range (0, 180).')
         else:
             # if input length
-            _len = self._input_length
+            if not (self._input_origin is None):
+                # if the origin was given as dimensional coords
+                underlying_dx = float(self.cube.dim1_coords[1] -
+                                      self.cube.dim1_coords[0])
+                _length_idx = self._input_length // underlying_dx
+            elif not (self._input_origin_idx is None):
+                # if the origin was given as index coords
+                _length_idx = self._input_length
+            else:
+                # interpret the length value as coordinates
+                underlying_dx = float(self.cube.dim1_coords[1] -
+                                      self.cube.dim1_coords[0])
+                _length_idx = self._input_length // underlying_dx
+
             # use vector math to determine end point len along azimuth
             #   vector is from (0, b) to (origin)
-            vec = np.array([self.origin[0] - 0, self.origin[1] - b])
-            vec_norm = vec / np.sqrt(vec**2)
-            end_point = (self.origin[0] + _len*vec_norm[0],
-                         self.origin[1] + _len*vec_norm[1])
+            if self.azimuth <= 90.0 and self.azimuth >= 0:
+                vec = np.array([self._origin_idx[1] - 0,
+                                self._origin_idx[0] - b])
+            elif self.azimuth > 90 and self.azimuth <= 180:
+                vec = np.array([0 - self._origin_idx[1],
+                                b - self._origin_idx[0]])
+            else:
+                raise ValueError('Azimuth must be in range (0, 180).')
+            vec_norm = (vec / np.sqrt(vec[1]**2 + vec[0]**2))
+            end_point = (int(self._origin_idx[1] + _length_idx*vec_norm[0]),
+                         int(self._origin_idx[0] + _length_idx*vec_norm[1]))
 
-        xy = utils.line_to_cells(self.origin, end_point)
+        # note that origin idx and end point are in x-y cartesian convention!
+        origin_idx_rev = tuple(reversed(self._origin_idx))  # input must be x,y
+        xy = utils.line_to_cells(origin_idx_rev, end_point)
 
         self._dim1_idx = xy[1]
         self._dim2_idx = xy[0]
+
+        self._end_point_idx = tuple(reversed(end_point))
+        self._length = float(np.sqrt(
+            (self.cube.dim1_coords[self._end_point_idx[0]] -
+             self.cube.dim1_coords[self._origin_idx[0]])**2 +
+            (self.cube.dim2_coords[self._end_point_idx[1]] -
+             self.cube.dim2_coords[self._origin_idx[1]])**2))
+        self._origin = (float(self.cube.dim1_coords[self._origin_idx[0]]),
+                        float(self.cube.dim2_coords[self._origin_idx[1]]))
+
+    @property
+    def azimuth(self):
+        """Azimuth of section (degrees).
+        """
+        return self._azimuth
+
+    @property
+    def length(self):
+        """Length of section in dimensional coordinates.
+        """
+        return self._length
+
+    @property
+    def origin(self):
+        """Origin of the section in dimensional coordinates.
+
+        .. hint::
+
+            Returned as a point ``(dim1, dim2)``, so will need to be reversed
+            for plotting in Cartesian coordinates.
+        """
+        return self._origin
