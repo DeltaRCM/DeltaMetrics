@@ -276,9 +276,10 @@ class BaseCube(abc.ABC):
         When the API for instantiation of the different section types is
         settled, we should enable the ability to pass section kwargs to this
         method, and then instantiate the section internally. This avoids the
-        user having to specify ``dm.section.StrikeSection(y=5)`` in the
-        ``register_Section()`` call, and instead can do something like
-        ``rcm8cube.register_section('trial', trace='strike', y=5)``.
+        user having to specify ``dm.section.StrikeSection(distance=2000)`` in
+        the ``register_section()`` call, and instead can do something like
+        ``golf.register_section('trial', trace='strike',
+        distance=2000)``.
         """
 
         if not issubclass(type(SectionInstance), section.BaseSection):
@@ -617,10 +618,10 @@ class StratigraphyCube(BaseCube):
 
         Examples
         --------
-        Create a stratigraphy cube from the example ``rcm8cube``:
+        Create a stratigraphy cube from the example ``golf``:
 
-        >>> rcm8cube = dm.sample_data.rcm8()
-        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.05)
+        >>> golfcube = dm.sample_data.golf()
+        >>> stratcube = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.05)
 
         Parameters
         ----------

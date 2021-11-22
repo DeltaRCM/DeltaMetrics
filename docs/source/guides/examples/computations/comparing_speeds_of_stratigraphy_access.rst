@@ -10,9 +10,9 @@ Keeping data on disk is advantageous for large datasets, but slows down access c
     >>> import time
 
     >>> # set up the cubes
-    >>> rcm8cube = dm.sample_data.golf()
-    >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.05)
-    >>> fs, fe = dm.strat.compute_boxy_stratigraphy_volume(rcm8cube['eta'], rcm8cube['sandfrac'], dz=0.05)
+    >>> golfcube = dm.sample_data.golf()
+    >>> stratcube = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.05)
+    >>> fs, fe = dm.strat.compute_boxy_stratigraphy_volume(golfcube['eta'], golfcube['sandfrac'], dz=0.05)
 
     >>> # time extraction from the frozen cube
     >>> start1 = time.time()
@@ -23,7 +23,7 @@ Keeping data on disk is advantageous for large datasets, but slows down access c
     >>> # time extraction from the underlying DataCube data on disk
     >>> start2 = time.time()
     >>> for _ in range(100):
-    ...     _val = sc8cube['sandfrac'].data[10:20, 31:35, -1:-30:-2]
+    ...     _val = stratcube['sandfrac'].data[10:20, 31:35, -1:-30:-2]
     >>> end2 = time.time()
 
     >>> print("Elapsed time for frozen cube: ", end1-start1, " seconds") #doctest: +SKIP

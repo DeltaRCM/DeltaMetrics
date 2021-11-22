@@ -46,7 +46,7 @@ class NoStratigraphyError(AttributeError):
 
     .. doctest::
 
-        >>> raise utils.NoStratigraphyError(rcm8cube) #doctest: +SKIP
+        >>> raise utils.NoStratigraphyError(golfcube) #doctest: +SKIP
         deltametrics.utils.NoStratigraphyError: 'DataCube' object
         has no preservation or stratigraphy information.
 
@@ -54,7 +54,7 @@ class NoStratigraphyError(AttributeError):
 
     .. doctest::
 
-        >>> raise utils.NoStratigraphyError(rcm8cube, 'strat_attr') #doctest: +SKIP
+        >>> raise utils.NoStratigraphyError(golfcube, 'strat_attr') #doctest: +SKIP
         deltametrics.utils.NoStratigraphyError: 'DataCube' object
         has no attribute 'strat_attr'.
     """

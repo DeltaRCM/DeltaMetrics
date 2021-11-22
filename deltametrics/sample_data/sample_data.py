@@ -57,7 +57,7 @@ def golf():
 
         golf = dm.sample_data.golf()
         nt = 5
-        ts = np.linspace(0, golf['eta'].shape[0]-1, num=nt, dtype=np.int)  # linearly interpolate ts
+        ts = np.linspace(0, golf['eta'].shape[0]-1, num=nt, dtype=np.int)
 
         fig, ax = plt.subplots(1, nt, figsize=(12, 2))
         for i, t in enumerate(ts):
@@ -92,14 +92,21 @@ def rcm8():
     this dataset is slated to be deprecated at some point, in favor of the
     :obj:`golf` dataset.
 
-    If you are learning to use DeltaMetrics or developing new codes or
-    documentation, please use the :obj:`golf` delta dataset.
+    .. important::
+        
+        If you are learning to use DeltaMetrics or developing new codes or
+        documentation, please use the :obj:`golf` delta dataset.
+
+    .. warning:: This cube may be removed in future releases.
 
     .. plot::
 
-        rcm8 = dm.sample_data.rcm8()
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            rcm8 = dm.sample_data.rcm8()
         nt = 5
-        ts = np.linspace(0, rcm8['eta'].shape[0]-1, num=nt, dtype=np.int)  # linearly interpolate ts
+        ts = np.linspace(0, rcm8['eta'].shape[0]-1, num=nt, dtype=np.int)
 
         fig, ax = plt.subplots(1, nt, figsize=(12, 2))
         for i, t in enumerate(ts):
