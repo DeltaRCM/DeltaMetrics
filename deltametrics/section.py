@@ -572,12 +572,15 @@ class PathSection(BaseSection):
     the verticies of the path. All coordinates along the path will be
     included in the section.
 
-    .. important::
+    .. plot::
 
-        The vertex coordinates must be specified as cell indices along `dim1`
-        and `dim2`. That is to sat *not* actual `dim0` and `dim1` coordinate
-        values *and not* x-y cartesian indices (actually y-x indices).
-        Specifying coordinates is is a needed patch.
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section('path', dm.section.PathSection(
+        ...     path_idx=np.array([[3, 50], [17, 65], [10, 130]])))
+        >>> fig, ax = plt.subplots()
+        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.sections['path'].show_trace('r--', ax=ax)
+        >>> plt.show()
 
     Parameters
     ----------
@@ -587,7 +590,13 @@ class PathSection(BaseSection):
 
     path : :obj:`ndarray`
         An `(N, 2)` `ndarray` specifying the `dim1-dim2` pairs of coordinates
-        that define the verticies of the path to extract the section from.
+        in dimensional values, defining the verticies of the path to extract
+        the section from. Mutually exclusive from :obj:`path_idx`.
+
+    path_idx : :obj:`ndarray`
+        An `(N, 2)` `ndarray` specifying the `dim1-dim2` pairs of coordinates
+        in dimension indices, defining the verticies of the path to extract
+        the section from. Mutually exclusive from :obj:`path`.
 
     **kwargs
         Keyword arguments are passed to `BaseSection.__init__()`. Supported
@@ -605,7 +614,7 @@ class PathSection(BaseSection):
     Examples
     --------
 
-    To create a `PathSection` that is registered to a `DataCube` at
+    Create a `PathSection` that is registered to a `DataCube` at
     specified coordinates:
 
     .. plot::
@@ -613,7 +622,24 @@ class PathSection(BaseSection):
 
         >>> golfcube = dm.sample_data.golf()
         >>> golfcube.register_section('path', dm.section.PathSection(
-        ...     path=np.array([[3, 50], [17, 65], [10, 130]])))
+        ...     path=np.array([[2000, 2000], [2000, 6000], [600, 7500]])))
+        >>>
+        >>> # show the location and the "velocity" variable
+        >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
+        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.sections['path'].show_trace('r--', ax=ax[0])
+        >>> golfcube.sections['path'].show('velocity', ax=ax[1])
+        >>> plt.show()
+
+    Create a `PathSection` that is registered to a `DataCube` at
+    specified indices:
+
+    .. plot::
+        :include-source:
+
+        >>> golfcube = dm.sample_data.golf()
+        >>> golfcube.register_section('path', dm.section.PathSection(
+        ...     path_idx=np.array([[3, 50], [17, 65], [10, 130]])))
         >>>
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
