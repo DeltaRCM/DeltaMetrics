@@ -147,9 +147,11 @@ class TestPathSection:
 
     test_path = np.column_stack((np.arange(5, 65, 20),   # dim1 column
                                  np.arange(60, 120, 20)))  # dim2 column
+    test_path2 = np.array([[1000, 3000], [2000, 6500],
+                           [1000, 5500], [3000, 8000]])
 
     def test_without_cube(self):
-        ps = section.PathSection(path=self.test_path)
+        ps = section.PathSection(path_idx=self.test_path)
         assert ps.name is None
         assert ps.path is None
         assert ps.shape is None
@@ -161,28 +163,49 @@ class TestPathSection:
         assert ps.variables is None
         with pytest.raises(AttributeError, match=r'No cube connected.*.'):
             ps['velocity']
+        ps2 = section.PathSection(path=self.test_path2)
+        assert ps2.name is None
+        assert ps2.path is None
+        assert ps2.shape is None
+        assert ps2.cube is None
+        assert ps2.s is None
+        assert np.all(ps2.trace == np.array([[None, None]]))
+        assert ps2._dim1_idx is None
+        assert ps2._dim2_idx is None
+        assert ps2.variables is None
 
     def test_bad_cube(self):
         badcube = ['some', 'list']
         with pytest.raises(TypeError, match=r'Expected type is *.'):
-            _ = section.PathSection(badcube, path=self.test_path)
+            _ = section.PathSection(badcube, path_idx=self.test_path)
 
     def test_standalone_instantiation(self):
         rcm8cube = cube.DataCube(
             golf_path)
-        saps = section.PathSection(rcm8cube, path=self.test_path)
+        saps = section.PathSection(rcm8cube, path_idx=self.test_path)
         assert saps.name == 'path'
         assert saps.cube == rcm8cube
         assert saps.trace.shape[0] > 20
-        assert saps.trace.shape[1] == self.test_path.shape[1]
+        assert saps.trace.shape[1] == 2
         assert len(saps.variables) > 0
+        saps2 = section.PathSection(rcm8cube, path=self.test_path2)
+        assert saps2.name == 'path'
+        assert saps2.cube == rcm8cube
+        assert saps2.trace.shape[0] > 20
+        assert saps2.trace.shape[1] == 2
+        assert len(saps2.variables) > 0
+        with pytest.raises(ValueError, match=r'Cannot specify .*'):
+            _ = section.PathSection(  # both arguments
+                rcm8cube, path_idx=self.test_path, path=self.test_path)
+        with pytest.raises(ValueError, match=r'Must specify .*'):
+            _ = section.PathSection(rcm8cube)  # no arguments
 
     def test_register_section(self):
         rcm8cube = cube.DataCube(
             golf_path)
         rcm8cube.stratigraphy_from('eta')
         rcm8cube.register_section(
-            'test', section.PathSection(path=self.test_path))
+            'test', section.PathSection(path_idx=self.test_path))
         assert rcm8cube.sections['test'].name == 'test'
         assert len(rcm8cube.sections['test'].variables) > 0
         assert isinstance(rcm8cube.sections['test'], section.PathSection)
@@ -191,10 +214,10 @@ class TestPathSection:
         with pytest.warns(UserWarning, match=r'`name` argument supplied .*'):
             rcm8cube.register_section(
                 'test2', section.PathSection(
-                    path=self.test_path, name='trial'))
+                    path_idx=self.test_path, name='trial'))
             assert rcm8cube.sections['test2'].name == 'trial'
         _section = rcm8cube.register_section(
-            'test', section.PathSection(path=self.test_path),
+            'test', section.PathSection(path_idx=self.test_path),
             return_section=True)
         assert isinstance(_section, section.PathSection)
 
@@ -202,7 +225,7 @@ class TestPathSection:
         # test that returned path and trace are the same
         rcm8cube = cube.DataCube(
             golf_path)
-        saps = section.PathSection(rcm8cube, path=self.test_path)
+        saps = section.PathSection(rcm8cube, path_idx=self.test_path)
         _t = saps.trace
         _p = saps.path
         assert np.all(_t == _p)
@@ -213,15 +236,16 @@ class TestPathSection:
             golf_path)
         xy = np.column_stack((np.linspace(10, 90, num=4000, dtype=int),
                               np.linspace(50, 150, num=4000, dtype=int)))
-        saps1 = section.PathSection(rcm8cube, path=xy)
+        saps1 = section.PathSection(rcm8cube, path_idx=xy)
         assert saps1.path.shape != xy.shape
         assert np.all(saps1.trace_idx == np.unique(xy, axis=0))
 
         # test a second case with small line to ensure non-unique removed
-        saps2 = section.PathSection(rcm8cube, path=np.array([[50, 25],
-                                                             [50, 26],
-                                                             [50, 26],
-                                                             [50, 27]]))
+        saps2 = section.PathSection(
+            rcm8cube, path_idx=np.array([[50, 25],
+                                         [50, 26],
+                                         [50, 26],
+                                         [50, 27]]))
         assert saps2.path.shape == (3, 2)
 
 

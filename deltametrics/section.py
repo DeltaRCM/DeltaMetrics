@@ -623,7 +623,7 @@ class PathSection(BaseSection):
         >>> plt.show()
     """
 
-    def __init__(self, *args, path, **kwargs):
+    def __init__(self, *args, path=None, path_idx=None, **kwargs):
         """Instantiate.
 
         Parameters
@@ -638,23 +638,61 @@ class PathSection(BaseSection):
             :obj:`path` must be supplied as a keyword argument.
 
         """
+        if (path is None) and (path_idx is None):
+            raise ValueError(
+                'Must specify `path` or `path_idx`.')
+        #   if both path and idx are given
+        if (not (path is None)) and (not (path_idx is None)):
+            raise ValueError(
+                'Cannot specify both `path` and `path_idx`.')
+
         self._input_path = path
+        self._input_path_idx = path_idx
+
         super().__init__('path', *args, **kwargs)
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section.
         """
+        # note: _path is given as N x dim1,dim2
+        # if input path is given, we need to convert to indices
+        if not (self._input_path is None):
+            _dim1_pts = np.argmin(np.abs(
+                self._input_path[:, 0] -
+                np.tile(self.cube.dim1_coords, (self._input_path.shape[0], 1)).T
+            ), axis=0)
+            _dim2_pts = np.argmin(np.abs(
+                self._input_path[:, 1] -
+                np.tile(self.cube.dim2_coords, (self._input_path.shape[0], 1)).T
+            ), axis=0)
+            _path = np.column_stack((_dim1_pts, _dim2_pts))
+
+        # otherwise, the path must be given as indices
+        else:
+            _path = self._input_path_idx
+
         # convert the points into segments into lists of cells
-        # breakpoint()
-        _segs = utils.coordinates_to_segments(np.fliplr(self._input_path))
+        #    input to utils needs to be xy cartesian order
+        _segs = utils.coordinates_to_segments(np.fliplr(_path))
         _cell = utils.segments_to_cells(_segs)
 
         # determine only unique coordinates along the path
-        self._path = np.unique(_cell, axis=0)
-        self._vertices = np.unique(self._input_path, axis=0)
+        def unsorted_unique(array):
+            """internal utility unsorted version of np.unique
+            https://stackoverflow.com/a/12927009/
+            """
+            uniq, index = np.unique(array, return_index=True, axis=0)
+            return uniq[index.argsort()]
 
-        self._dim1_idx = self._path[:, 1]
-        self._dim2_idx = self._path[:, 0]
+        # store values
+        self._path_idx = unsorted_unique(_cell)
+        self._vertices_idx = unsorted_unique(_path)
+        self._vertices = np.column_stack((
+            self.cube.dim1_coords[_path[:, 0]],
+            self.cube.dim2_coords[_path[:, 1]]))
+
+        self._dim1_idx = self._path_idx[:, 1]
+        self._dim2_idx = self._path_idx[:, 0]
 
     @property
     def path(self):
@@ -663,6 +701,12 @@ class PathSection(BaseSection):
         Returns same as `trace` property.
         """
         return self.trace
+
+    @property
+    def vertices(self):
+        """Vertices defining the path in dimensional coordinates.
+        """
+        return self._vertices
 
 
 class LineSection(BaseSection):
