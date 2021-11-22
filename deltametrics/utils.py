@@ -334,7 +334,8 @@ def line_to_cells(*args):
     elif len(args) == 4:
         x0, y0, x1, y1 = args
     else:
-        raise TypeError
+        raise TypeError(
+            'Length of input must be 1, 2, or 4 but got: {0}'.format(args))
 
     # process the line to cells
     if np.abs(y1 - y0) < np.abs(x1 - x0):
@@ -342,6 +343,7 @@ def line_to_cells(*args):
         if x0 > x1:
             # if the line is trending down (III)
             x, y = _walk_line((x1, y1), (x0, y0))
+            x, y = np.flip(x), np.flip(y)  # flip order
         else:
             # if the line is trending up (I)
             x, y = _walk_line((x0, y0), (x1, y1))
@@ -350,6 +352,7 @@ def line_to_cells(*args):
         if y0 > y1:
             # if the line is trending down (IV)
             y, x = _walk_line((y1, x1), (y0, x0))
+            x, y = np.flip(x), np.flip(y)  # flip order
         else:
             # if the line is trending up (II)
             y, x = _walk_line((y0, x0), (y1, x1))
