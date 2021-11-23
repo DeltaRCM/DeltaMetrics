@@ -4,7 +4,7 @@ import deltametrics as dm
 
 golfcube = dm.sample_data.golf()
 golfcube.stratigraphy_from('eta')
-golfcube.register_section('demo', dm.section.StrikeSection(y=5))
+golfcube.register_section('demo', dm.section.StrikeSection(distance=250))
 
 fig, ax = plt.subplots(4, 1, sharex=True, figsize=(8, 6))
 golfcube.sections['demo'].show('depth', data='spacetime',

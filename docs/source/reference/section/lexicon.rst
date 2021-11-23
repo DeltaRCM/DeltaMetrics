@@ -3,7 +3,7 @@
 
 The `Section` module defines some terms that are used throughout the code and rest of the documentation. 
 
-Most importantly, a Section is defined by a set of coordinates in the x-y plane of a `Cube`.
+Most importantly, a Section is defined by a set of coordinates in the `dim1`-`dim2` plane of a `Cube`.
 
 Therefore, we transform variable definitions when extracting the `Section`, and the coordinate system of the section is defined by the along-section direction :math:`s` and a vertical section coordinate, which is :math:`z` when viewing stratigraphy, and :math:`t` when viewing a spacetime section.
 
@@ -12,7 +12,7 @@ The data that make up the section can view the section as a `spacetime` section 
 .. doctest::
 
     >>> rcm8cube = dm.sample_data.golf()
-    >>> strike = dm.section.StrikeSection(rcm8cube, y=10)
+    >>> strike = dm.section.StrikeSection(rcm8cube, distance_idx=10)
     >>> strike['velocity']
     <xarray.DataArray 'velocity' (time: 101, s: 200)>
     array([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   , 0.2   ],
@@ -64,12 +64,13 @@ We can display the arrays using `matplotlib` to examine the spatiotemporal chang
 .. code::
 
     >>> fig, ax = plt.subplots(2, 1, sharex=True, figsize=(6, 3.5))
-    >>> ax[0].imshow(rcm8cube.sections['demo']['velocity'],
-    ...              origin='lower', cmap=rcm8cube.varset['velocity'].cmap)
+    >>> golfcube.sections['demo'].show('velocity', ax=ax[0])
     >>> ax[0].set_ylabel('$t$ coordinate')
-    >>> ax[1].imshow(rcm8cube.sections['demo']['velocity'].as_preserved(),
-    ...              origin='lower', cmap=rcm8cube.varset['velocity'].cmap)
+
+    >>> golfcube.sections['demo'].show('velocity', data='preserved', ax=ax[1])
     >>> ax[1].set_ylabel('$t$ coordinate')
+    
+    >>> ax[1].set_xlabel('$s$ coordinate')
 
 .. plot:: section/section_lexicon.py
 

@@ -4,17 +4,17 @@ import deltametrics as dm
 
 golfcube = dm.sample_data.golf()
 golfcube.stratigraphy_from('eta')
-golfcube.register_section('demo', dm.section.StrikeSection(y=10))
+golfcube.register_section('demo', dm.section.StrikeSection(distance_idx=10))
 
-fig, ax = plt.subplots(2, 1, sharex=True, figsize=(6, 3.5))
+fig, ax = plt.subplots(2, 1, sharex=True, figsize=(6, 4))
 
-ax[0].imshow(golfcube.sections['demo']['velocity'],
-             origin='lower', cmap=golfcube.varset['velocity'].cmap)
+golfcube.sections['demo'].show('velocity', ax=ax[0])
 ax[0].set_ylabel('$t$ coordinate')
 
-ax[1].imshow(golfcube.sections['demo']['velocity'].strat.as_preserved(),
-             origin='lower', cmap=golfcube.varset['velocity'].cmap)
+golfcube.sections['demo'].show('velocity', data='preserved', ax=ax[1])
 ax[1].set_ylabel('$t$ coordinate')
 
 ax[1].set_xlabel('$s$ coordinate')
+
+plt.tight_layout()
 plt.show()

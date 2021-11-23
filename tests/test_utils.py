@@ -44,7 +44,7 @@ class TestLineToCells:
         assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
         assert ret1.shape[1] == 61
 
-    def test_positive_angle_inputs(self):
+    def test_quadrantI_angle_inputs(self):
         x0, y0, x1, y1 = 10, 10, 60, 92
         ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
         ret2 = utils.line_to_cells((x0, y0), (x1, y1))
@@ -52,8 +52,35 @@ class TestLineToCells:
         ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
         assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
         assert ret1.shape[1] == 83
+        # check line is sorted correctly: p0 --> p1
+        assert np.all(ret1[:, 0] == np.array([x0, y0]))
+        assert np.all(ret1[:, -1] == np.array([x1, y1]))
 
-    def test_negative_angle_inputs(self):
+    def test_quadrantII_angle_inputs(self):
+        x0, y0, x1, y1 = 80, 20, 40, 50
+        ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
+        ret2 = utils.line_to_cells((x0, y0), (x1, y1))
+        ret3 = utils.line_to_cells(x0, y0, x1, y1)
+        ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
+        assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
+        assert ret1.shape[1] == 41
+        # check line is sorted correctly: p0 --> p1
+        assert np.all(ret1[:, 0] == np.array([x0, y0]))
+        assert np.all(ret1[:, -1] == np.array([x1, y1]))
+
+    def test_quadrantIII_angle_inputs(self):
+        x0, y0, x1, y1 = 80, 70, 40, 40
+        ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
+        ret2 = utils.line_to_cells((x0, y0), (x1, y1))
+        ret3 = utils.line_to_cells(x0, y0, x1, y1)
+        ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
+        assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
+        assert ret1.shape[1] == 41
+        # check line is sorted correctly: p0 --> p1
+        assert np.all(ret1[:, 0] == np.array([x0, y0]))
+        assert np.all(ret1[:, -1] == np.array([x1, y1]))
+
+    def test_quadrantIV_angle_inputs(self):
         x0, y0, x1, y1 = 10, 80, 60, 30
         ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
         ret2 = utils.line_to_cells((x0, y0), (x1, y1))
@@ -61,13 +88,15 @@ class TestLineToCells:
         ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
         assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
         assert ret1.shape[1] == 51
+        assert np.all(ret1[:, 0] == np.array([x0, y0]))
+        assert np.all(ret1[:, -1] == np.array([x1, y1]))
 
     def test_bad_inputs(self):
         x0, y0, x1, y1 = 10, 10, 60, 92
-        with pytest.raises(TypeError):
-            ret = utils.line_to_cells(x0, y0, x1, y1, x0, y1)
+        with pytest.raises(TypeError, match=r'Length of input .*'):
+            _ = utils.line_to_cells(x0, y0, x1, y1, x0, y1)
         with pytest.raises(ValueError):
-            ret1 = utils.line_to_cells(
+            _ = utils.line_to_cells(
                 np.array([[x0, y0], [x1, y1], [x0, y1]]))
 
 
