@@ -451,6 +451,9 @@ class TestRadialSection:
         assert sars4.trace.shape[0] == 41  # 2000 // 50 = L // dx == 40
         assert sars4.azimuth == 90
         assert sars4._origin_idx == (4, rcm8cube.W // 2)  # 5000 is center domain
+        with pytest.raises(ValueError, match=r'Cannot specify .*'):
+            _ = section.RadialSection(  # both arguments
+                rcm8cube, origin=(200, 5000), origin_idx=(2, 90))
 
     def test_standalone_instantiation_withmeta(self):
         golfcube = cube.DataCube(

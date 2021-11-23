@@ -460,7 +460,7 @@ class BaseSection(abc.ABC):
             >>> golfcube = dm.sample_data.golf()
             >>> golfcube.stratigraphy_from('eta')
             >>> golfcube.register_section(
-            ...     'demo', dm.section.StrikeSection(y=5))
+            ...     'demo', dm.section.StrikeSection(distance=250))
 
             >>> fig, ax = plt.subplots(4, 1, sharex=True, figsize=(6, 9))
             >>> golfcube.sections['demo'].show('depth', data='spacetime',
@@ -1208,7 +1208,7 @@ class CircularSection(BaseSection):
 
     Section drawn as a circular cut, located a along the arc a specified
     `radius` from specified `origin`.  Specify the location of the circular
-    section with :obj`radius` and :obj:`origin` keyword parameter options.
+    section with `radius` and `origin` keyword parameter options.
     The circular section trace is interpolated to the nearest integer model
     domain cells, following the mid-point circle algorithm
     (:obj:`~deltametrics.utils.circle_to_cells`).
@@ -1224,6 +1224,11 @@ class CircularSection(BaseSection):
         >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
         >>> golfcube.sections['circular'].show_trace('r--', ax=ax)
         >>> plt.show()
+
+    .. warning::
+
+        This section will not work for unequal `dim1` and `dim2` coordinate
+        spacing.
 
     Parameters
     ----------
@@ -1267,11 +1272,6 @@ class CircularSection(BaseSection):
         :obj:`register_section` method of a `Cube` is used to set up the
         section, or the `Cube` is passed as the first positional argument
         during instantiation.
-
-    .. warning::
-
-        This section will not work for unequal `dim1` and `dim2` coordinate
-        spacing.
 
     Examples
     --------
@@ -1414,7 +1414,7 @@ class RadialSection(BaseSection):
 
     Section drawn as a radial cut, located a along the line starting from
     `origin` and proceeding away in direction specified by azimuth. Specify
-    the location of the radial section with :obj`azimuth` and :obj:`origin`
+    the location of the radial section with `azimuth` and `origin`
     keyword parameter options. The radial section trace is interpolated to the
     nearest integer model domain cells, following the a line-walking algorithm
     (:obj:`~deltametrics.utils.line_to_cells`).
