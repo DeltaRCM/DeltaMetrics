@@ -26,13 +26,20 @@
 
    .. autosummary::
    
+      ~DipSection.distance
+      ~DipSection.distance_idx
       ~DipSection.idx_trace
+      ~DipSection.length
+      ~DipSection.length_idx
       ~DipSection.name
       ~DipSection.s
       ~DipSection.shape
       ~DipSection.strat_attr
       ~DipSection.trace
+      ~DipSection.trace_idx
       ~DipSection.variables
+      ~DipSection.x
+      ~DipSection.y
       ~DipSection.z
    
    

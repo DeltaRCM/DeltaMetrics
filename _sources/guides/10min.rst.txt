@@ -128,7 +128,7 @@ For a data cube, sections are most easily instantiated by the :obj:`~deltametric
 
 .. doctest::
 
-    >>> golfcube.register_section('demo', dm.section.StrikeSection(y=10))
+    >>> golfcube.register_section('demo', dm.section.StrikeSection(distance_idx=10))
 
 which can then be accessed via the :obj:`~deltametrics.cube.Cube.sections` attribute of the Cube.
 

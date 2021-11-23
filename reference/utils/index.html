@@ -201,13 +201,13 @@ is given in the error message.</p></li>
 </dl>
 <p class="rubric">Examples</p>
 <p>Without the optional <cite>var</cite> argument:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">utils</span><span class="o">.</span><span class="n">NoStratigraphyError</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">)</span> 
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">utils</span><span class="o">.</span><span class="n">NoStratigraphyError</span><span class="p">(</span><span class="n">golfcube</span><span class="p">)</span> 
 <span class="go">deltametrics.utils.NoStratigraphyError: &#39;DataCube&#39; object</span>
 <span class="go">has no preservation or stratigraphy information.</span>
 </pre></div>
 </div>
 <p>With the <cite>var</cite> argument given as <code class="docutils literal notranslate"><span class="pre">'strat_attr'</span></code>:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">utils</span><span class="o">.</span><span class="n">NoStratigraphyError</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="s1">&#39;strat_attr&#39;</span><span class="p">)</span> 
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">utils</span><span class="o">.</span><span class="n">NoStratigraphyError</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="s1">&#39;strat_attr&#39;</span><span class="p">)</span> 
 <span class="go">deltametrics.utils.NoStratigraphyError: &#39;DataCube&#39; object</span>
 <span class="go">has no attribute &#39;strat_attr&#39;.</span>
 </pre></div>

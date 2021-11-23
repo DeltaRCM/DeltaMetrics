@@ -18,7 +18,7 @@ The sample data cubes can be accessed as, for example:
 .. doctest::
 
     >>> import deltametrics as dm
-    >>> rcm8cube = dm.sample_data.rcm8()
+    >>> golfcube = dm.sample_data.golf()
 
 .. note::
 
@@ -46,7 +46,7 @@ Paths to data files
 	The file path to each sample data cube can be accessed by a call to
 	`sample_data._get_xxxxxx_path()`  for the corresponding data set.
 
-.. doctest::
+.. code::
 
-	>>> dm.sample_data._get_rcm8_path()
-	'.../pyDeltaRCM_Output_8.nc'
+	>>> dm.sample_data._get_golf_path()
+	'<cache-path>/deltametrics/golf.zip.unzip/pyDeltaRCM_output.nc'

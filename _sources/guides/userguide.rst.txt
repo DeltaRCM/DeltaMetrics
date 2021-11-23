@@ -153,7 +153,7 @@ For a data cube, sections are most easily instantiated by the :obj:`~deltametric
 
 .. doctest::
 
-    >>> golfcube.register_section('demo', dm.section.StrikeSection(y=10))
+    >>> golfcube.register_section('demo', dm.section.StrikeSection(distance_idx=10))
 
 which creates a section across a constant y-value ``==10``.
 The path of any `Section` in the ``x-y`` plane can always be accessed via the ``.trace`` attribute.
@@ -183,7 +183,7 @@ are sliced themselves, similarly to the cube.
 
 .. doctest::
 
-    >>> golfcube.register_section('demo', dm.section.StrikeSection(y=10))
+    >>> golfcube.register_section('demo', dm.section.StrikeSection(distance_idx=10))
     >>> golfcube.sections['demo']['velocity']
     <xarray.DataArray 'velocity' (time: 101, s: 200)>
     array([[0.2   , 0.2   , 0.2   , ..., 0.2   , 0.2   , 0.2   ],
@@ -220,7 +220,7 @@ You can also create a standalone section, which is not registered to the cube, b
 
 .. doctest::
 
-    >>> sass = dm.section.StrikeSection(golfcube, y=10)
+    >>> sass = dm.section.StrikeSection(golfcube, distance_idx=10)
     >>> np.all(sass['velocity'] == golfcube.sections['demo']['velocity']) #doctest: +SKIP
     True
 
@@ -292,33 +292,16 @@ All Section types
 -----------------
 
 There are multiple section types available.
-The following are currently implemented.
-
-.. doctest::
-
-    >>> _strike = dm.section.StrikeSection(golfcube, y=18)
-    >>> _path = dm.section.PathSection(golfcube, path=np.column_stack((np.linspace(10, 90, num=4000, dtype=int),
-    ...                                                                np.linspace(50, 150, num=4000, dtype=int))))
-    >>> _circ = dm.section.CircularSection(golfcube, radius=40)
-    >>> _rad = dm.section.RadialSection(golfcube, azimuth=70)
-
-
 The `Section` classes all inherit from the same ``BaseSection`` class, which means they mostly have the same options available to them, and have a common API.
-Each has unique instantiation arguments, though, which must be properly specified.
+Each `Section` requires unique instantiation arguments, though, which must be properly specified.
+The below figure shows each section type available and the `velocity` spacetime data extracted along that section.
 
 .. doctest::
 
-    >>> fig = plt.figure(constrained_layout=True, figsize=(10, 8))
-    >>> spec = gs.GridSpec(ncols=2, nrows=3, figure=fig)
-    >>> ax0 = fig.add_subplot(spec[0, :])
-    >>> axs = [fig.add_subplot(spec[i, j]) for i, j in zip(np.repeat(np.arange(1, 3), 2), np.tile(np.arange(2), (3,)))]
-
-    >>> golfcube.show_plan('eta', t=-1, ax=ax0, ticks=True)
-    >>> for i, s in enumerate([_strike, _path, _circ, _rad]):
-    ...     ax0.plot(s.trace[:,0], s.trace[:,1], 'r--') #doctest: +SKIP
-    ...     s.show('velocity', ax=axs[i]) #doctest: +SKIP
-    ...     axs[i].set_title(s.section_type) #doctest: +SKIP
-    >>> plt.show() #doctest: +SKIP
+    >>> _strike = dm.section.StrikeSection(golfcube, distance=1200)
+    >>> _path = dm.section.PathSection(golfcube, path=np.array([[1400, 2000], [2000, 4000], [3000, 6000]]))
+    >>> _circ = dm.section.CircularSection(golfcube, radius=2000)
+    >>> _rad = dm.section.RadialSection(golfcube, azimuth=70)
 
 .. plot:: guides/userguide_section_type_demos.py
 
@@ -376,7 +359,7 @@ Let’s add a section at the same location as ``golfcube.sections['demo']``.
 
 .. doctest::
 
-    >>> stratcube.register_section('demo', dm.section.StrikeSection(y=10))
+    >>> stratcube.register_section('demo', dm.section.StrikeSection(distance_idx=10))
     >>> stratcube.sections
     {'demo': <deltametrics.section.StrikeSection object at 0x...>}
 

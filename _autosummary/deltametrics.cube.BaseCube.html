@@ -336,9 +336,10 @@ data off-disk as needed.</p>
 <p>When the API for instantiation of the different section types is
 settled, we should enable the ability to pass section kwargs to this
 method, and then instantiate the section internally. This avoids the
-user having to specify <code class="docutils literal notranslate"><span class="pre">dm.section.StrikeSection(y=5)</span></code> in the
-<code class="docutils literal notranslate"><span class="pre">register_Section()</span></code> call, and instead can do something like
-<code class="docutils literal notranslate"><span class="pre">rcm8cube.register_section('trial',</span> <span class="pre">trace='strike',</span> <span class="pre">y=5)</span></code>.</p>
+user having to specify <code class="docutils literal notranslate"><span class="pre">dm.section.StrikeSection(distance=2000)</span></code> in
+the <code class="docutils literal notranslate"><span class="pre">register_section()</span></code> call, and instead can do something like
+<code class="docutils literal notranslate"><span class="pre">golf.register_section('trial',</span> <span class="pre">trace='strike',</span>
+<span class="pre">distance=2000)</span></code>.</p>
 </dd></dl>
 
 <dl class="py property">

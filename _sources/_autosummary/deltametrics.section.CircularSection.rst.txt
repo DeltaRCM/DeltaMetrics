@@ -28,10 +28,13 @@
    
       ~CircularSection.idx_trace
       ~CircularSection.name
+      ~CircularSection.origin
+      ~CircularSection.radius
       ~CircularSection.s
       ~CircularSection.shape
       ~CircularSection.strat_attr
       ~CircularSection.trace
+      ~CircularSection.trace_idx
       ~CircularSection.variables
       ~CircularSection.z
    

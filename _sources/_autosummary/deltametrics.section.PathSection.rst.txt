@@ -33,7 +33,9 @@
       ~PathSection.shape
       ~PathSection.strat_attr
       ~PathSection.trace
+      ~PathSection.trace_idx
       ~PathSection.variables
+      ~PathSection.vertices
       ~PathSection.z
    
    

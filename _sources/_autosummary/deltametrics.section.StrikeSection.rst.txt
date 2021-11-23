@@ -26,13 +26,20 @@
 
    .. autosummary::
    
+      ~StrikeSection.distance
+      ~StrikeSection.distance_idx
       ~StrikeSection.idx_trace
+      ~StrikeSection.length
+      ~StrikeSection.length_idx
       ~StrikeSection.name
       ~StrikeSection.s
       ~StrikeSection.shape
       ~StrikeSection.strat_attr
       ~StrikeSection.trace
+      ~StrikeSection.trace_idx
       ~StrikeSection.variables
+      ~StrikeSection.x
+      ~StrikeSection.y
       ~StrikeSection.z
    
    

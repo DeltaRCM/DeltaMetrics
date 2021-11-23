@@ -297,9 +297,9 @@ data off-disk as needed.</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_DataCube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">DataCubeInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stratigraphy_from</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'eta'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.from_DataCube" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create from a DataCube.</p>
 <p class="rubric">Examples</p>
-<p>Create a stratigraphy cube from the example <code class="docutils literal notranslate"><span class="pre">rcm8cube</span></code>:</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">rcm8</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sc8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">StratigraphyCube</span><span class="o">.</span><span class="n">from_DataCube</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<p>Create a stratigraphy cube from the example <code class="docutils literal notranslate"><span class="pre">golf</span></code>:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stratcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">StratigraphyCube</span><span class="o">.</span><span class="n">from_DataCube</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="field-list simple">
@@ -382,9 +382,10 @@ StratigraphyCube.</p></li>
 <p>When the API for instantiation of the different section types is
 settled, we should enable the ability to pass section kwargs to this
 method, and then instantiate the section internally. This avoids the
-user having to specify <code class="docutils literal notranslate"><span class="pre">dm.section.StrikeSection(y=5)</span></code> in the
-<code class="docutils literal notranslate"><span class="pre">register_Section()</span></code> call, and instead can do something like
-<code class="docutils literal notranslate"><span class="pre">rcm8cube.register_section('trial',</span> <span class="pre">trace='strike',</span> <span class="pre">y=5)</span></code>.</p>
+user having to specify <code class="docutils literal notranslate"><span class="pre">dm.section.StrikeSection(distance=2000)</span></code> in
+the <code class="docutils literal notranslate"><span class="pre">register_section()</span></code> call, and instead can do something like
+<code class="docutils literal notranslate"><span class="pre">golf.register_section('trial',</span> <span class="pre">trace='strike',</span>
+<span class="pre">distance=2000)</span></code>.</p>
 </dd></dl>
 
 <dl class="py property">

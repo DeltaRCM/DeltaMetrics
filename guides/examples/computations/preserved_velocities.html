@@ -82,7 +82,7 @@ With this paired information we can interrogate the velocity of deposits in the 
 
 <span class="c1"># loop through all of the sections defined in _ys</span>
 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_y</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">_ys</span><span class="p">):</span>
-    <span class="n">_s</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">_y</span><span class="p">)</span>
+    <span class="n">_s</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">distance_idx</span><span class="o">=</span><span class="n">_y</span><span class="p">)</span>
     <span class="n">_mall</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">_mstrat</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">pick_velocities</span><span class="p">(</span><span class="n">_s</span><span class="p">)</span>
 
 

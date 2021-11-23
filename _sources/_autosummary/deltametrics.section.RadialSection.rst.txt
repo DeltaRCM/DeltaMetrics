@@ -26,12 +26,16 @@
 
    .. autosummary::
    
+      ~RadialSection.azimuth
       ~RadialSection.idx_trace
+      ~RadialSection.length
       ~RadialSection.name
+      ~RadialSection.origin
       ~RadialSection.s
       ~RadialSection.shape
       ~RadialSection.strat_attr
       ~RadialSection.trace
+      ~RadialSection.trace_idx
       ~RadialSection.variables
       ~RadialSection.z
    
