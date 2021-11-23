@@ -591,12 +591,12 @@ class PathSection(BaseSection):
     path : :obj:`ndarray`
         An `(N, 2)` `ndarray` specifying the `dim1-dim2` pairs of coordinates
         in dimensional values, defining the verticies of the path to extract
-        the section from. Mutually exclusive from :obj:`path_idx`.
+        the section from. Mutually exclusive with `path_idx`.
 
     path_idx : :obj:`ndarray`
         An `(N, 2)` `ndarray` specifying the `dim1-dim2` pairs of coordinates
         in dimension indices, defining the verticies of the path to extract
-        the section from. Mutually exclusive from :obj:`path`.
+        the section from. Mutually exclusive with `path`.
 
     **kwargs
         Keyword arguments are passed to `BaseSection.__init__()`. Supported
@@ -847,11 +847,11 @@ class StrikeSection(LineSection):
     distance : :obj:`float`, optional
         Distance *in `dim1` coordinates* from the `dim1` lower domain edge to
         place the section. The section location will be interpolated to the
-        nearest grid cell. Mutually exclusive with :obj:`distance_idx`.
+        nearest grid cell. Mutually exclusive with `distance_idx`.
 
     distance_idx : :obj:`int`, optional
         Distance *in cell indices* from the `dim1` lower domain edge to place
-        the section. Mutually exclusive with :obj:`distance`.
+        the section. Mutually exclusive with `distance`.
 
     length : :obj:`tuple` or :obj:`list` of `int` or `float`, optional
         A two-element tuple specifying the bounding points of the section in
@@ -1040,11 +1040,11 @@ class DipSection(LineSection):
     distance : :obj:`float`, optional
         Distance *in `dim2` coordinates* from the `dim2` lower domain edge to
         place the section. The section location will be interpolated to the
-        nearest grid cell. Mutually exclusive with :obj:`distance_idx`.
+        nearest grid cell. Mutually exclusive with `distance_idx`.
 
     distance_idx : :obj:`int`, optional
         Distance *in cell indices* from the `dim2` lower domain edge to place
-        the section. Mutually exclusive with :obj:`distance`.
+        the section. Mutually exclusive with `distance`.
 
     length : :obj:`tuple` or :obj:`list` of `int` or `float`, optional
         A two-element tuple specifying the bounding points of the section in
@@ -1248,12 +1248,12 @@ class CircularSection(BaseSection):
     radius_idx : :obj:`float`, `int`, optional
         The `radius` of the section in cell indices. This is the distance to
         locate the section from the :obj:`origin`. Mutually exclusive
-        with :obj:`radius`.
+        with `radius`.
 
     origin_idx : :obj:`tuple` of `int`, optional
         The `origin` of the circular section in dimensional coordinates,
         specified as a two-element tuple ``(dim1, dim2)``. This is the center
-        of the circle. Mutually exclusive with :obj:`origin`.
+        of the circle. Mutually exclusive with `origin`.
 
     **kwargs
         Keyword arguments are passed to `BaseSection.__init__()`. Supported
@@ -1467,7 +1467,7 @@ class RadialSection(BaseSection):
         The `origin` of the radial section in dimensional coordinates,
         specified as a two-element tuple ``(dim1, dim2)``. This is the
         starting point of the radial line. Mutually exclusive
-        with :obj:`origin`.
+        with `origin`.
 
     length : :obj:`float`, `int`, optional
         The length of the section (note this must be given in pixel length).
