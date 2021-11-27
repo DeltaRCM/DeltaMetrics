@@ -1297,7 +1297,7 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
             golf['velocity'][-1, :, :],
             elevation_threshold=0,
             flow_threshold=0.3)
-        sec = dm.section.CircularSection(golf, radius=40)
+        sec = dm.section.CircularSection(golf, radius_idx=40)
 
         # compute the metric
         m, s, w = dm.plan.compute_channel_width(
