@@ -323,9 +323,8 @@ class BaseSection(abc.ABC):
     def __getitem__(self, var):
         """Get a slice of the section.
 
-        Slicing the section instance creates a
-        :obj:`~deltametrics.section.SectionVariable` instance from data for
-        variable ``var``.
+        Slicing the section instance creates an `xarray` `DataArray` instance
+        from data, for variable ``var`` and maintaining the data coordinates.
 
         .. note:: We only support slicing by string.
 
@@ -336,34 +335,25 @@ class BaseSection(abc.ABC):
 
         Returns
         -------
-        SectionVariable : :obj:`~deltametrics.section.SectionVariable` instance
-            SectionVariable instance for variable ``var``.
+        data : :obj:`DataArray`
+            The undelrying data returned as an xarray `DataArray`, maintaining
+            coordinates.
         """
         if isinstance(self.cube, cube.DataCube):
+            _xrDA = xr.DataArray(
+                self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
+                coords={"s": self._s, self._z.dims[0]: self._z},
+                dims=[self._z.dims[0], 's'],
+                name=var,
+                attrs={'slicetype': 'data_section',
+                       'knows_stratigraphy': self.cube._knows_stratigraphy,
+                       'knows_spacetime': True})
             if self.cube._knows_stratigraphy:
-                _xrDA = xr.DataArray(
-                    self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
-                    coords={"s": self._s, self._z.dims[0]: self._z},
-                    dims=[self._z.dims[0], 's'],
-                    name=var,
-                    attrs={'slicetype': 'data_section',
-                           'knows_stratigraphy': True,
-                           'knows_spacetime': True})
                 _xrDA.strat.add_information(
                     _psvd_mask=self.cube.strat_attr.psvd_idx[:, self._dim1_idx, self._dim2_idx],  # noqa: E501
                     _strat_attr=self.cube.strat_attr(
                         'section', self._dim1_idx, self._dim2_idx))
-                return _xrDA
-            else:
-                _xrDA = xr.DataArray(
-                    self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
-                    coords={"s": self._s, self._z.dims[0]: self._z},
-                    dims=[self._z.dims[0], 's'],
-                    name=var,
-                    attrs={'slicetype': 'data_section',
-                           'knows_stratigraphy': False,
-                           'knows_spacetime': True})
-                return _xrDA
+            return _xrDA
         elif isinstance(self.cube, cube.StratigraphyCube):
             _xrDA = xr.DataArray(
                     self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
