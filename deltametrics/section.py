@@ -377,7 +377,7 @@ class BaseSection(abc.ABC):
 
         Method enumerates convenient routines for visualizing sections of data
         and stratigraphy. Includes support for multiple data `style` and
-        mutuple `data` choices as well.
+        multiple `data` choices as well.
 
         .. note::
 
@@ -434,7 +434,7 @@ class BaseSection(abc.ABC):
 
             >>> golfcube = dm.sample_data.golf()
             >>> golfcube.register_section(
-            ...     'demo', dm.section.StrikeSection(y=5))
+            ...     'demo', dm.section.StrikeSection(distance_idx=5))
             >>> golfcube.sections['demo'].show('velocity')
 
         .. plot:: section/section_demo_spacetime.py

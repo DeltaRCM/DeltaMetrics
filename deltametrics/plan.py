@@ -224,11 +224,54 @@ class BasePlanform(abc.ABC):
         pass  ## delete this method!
 
       
-    def show(self, PlanformAttribute, t=-1, ax=None, title=None, ticks=False,
+    def show(self, PlanformAttribute, ax=None, title=None, ticks=False,
              colorbar_label=False):
         """Show the planform.
+
+        Method enumerates convenient routines for visualizing planform data
+        and slices of stratigraphy.
+
+        Parameters
+        ----------
+
+        PlanformAttribute : :obj:`str`, :obj:`PlanformVariableInstance`
+            Which attribute to show. Can be a string for a named `Cube`
+            attribute, or any arbitrary data.
+
+        label : :obj:`bool`, `str`, optional
+            Display a label of the variable name on the plot. Default is
+            False, display nothing. If ``label=True``, the label name from the
+            :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
+            attempted to coerce to `str`, and the literal is diplayed.
+
+        colorbar : :obj:`bool`, optional
+            Whether a colorbar is appended to the axis.
+
+        colorbar_label : :obj:`bool`, `str`, optional
+            Display a label of the variable name along the colorbar. Default is
+            False, display nothing. If ``label=True``, the label name from the
+            :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
+            attempted to coerce to `str`, and the literal is diplayed.
+
+        ax : :obj:`~matplotlib.pyplot.Axes` object, optional
+            A `matplotlib` `Axes` object to plot the section. Optional; if not
+            provided, a call is made to ``plt.gca()`` to get the current (or
+            create a new) `Axes` object.
+
+        Examples
+        --------
+        Display the `eta` and `velocity` planform of a DataCube.
+
+        .. plot::
+            :include-source:
+
+            >>> golfcube = dm.sample_data.golf()
+            >>> planform = dm.plan.DataPlanform(golfcube, idx=70)
+
+            >>> fig, ax = plt.subplots()
+            >>> planform.show('eta', ax=ax[0])
+            >>> planform.show('velocity', ax=ax[1])
         """
-        # _plan = self[var][t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
 
         # process arguments and inputs
         if not ax:
@@ -255,6 +298,7 @@ class BasePlanform(abc.ABC):
                        vmin=_varinfo.vmin,
                        vmax=_varinfo.vmax,
                        extent=_extent)
+
         cb = plot.append_colorbar(im, ax)
         if colorbar_label:
             _colorbar_label = \
