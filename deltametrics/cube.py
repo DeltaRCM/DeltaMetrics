@@ -231,14 +231,29 @@ class BaseCube(abc.ABC):
         """
         return self._plan_set
 
-    def register_plan(self, name, PlanInstance):
+    @property
+    def planforms(self):
+        """`dict` : Set of plan instances.
+
+        Alias to :meth:`plan_set`.
+        """
+        return self._plan_set    
+
+    def register_plan(self, *args, **kwargs):
+        """wrapper, might not really need this."""
+        return self.register_planform(*args, **kwargs)
+
+    def register_planform(self, name, PlanformInstance, return_planform=False):
         """Register a planform to the cube.
         """
-        if not issubclass(type(PlanInstance), plan.BasePlan):
+        if not issubclass(type(PlanformInstance), plan.BasePlanform):
             raise TypeError
         if not type(name) is str:
             raise TypeError
-        self._plan_set[name] = PlanInstance
+        PlanformInstance.connect(self, name=name)  # attach cube
+        self._plan_set[name] = PlanformInstance
+        if return_planform:
+            return self._plan_set[name]
 
     @property
     def section_set(self):
@@ -372,45 +387,35 @@ class BaseCube(abc.ABC):
         _grid = pv.wrap(self[var].data.values)
         _grid.plot()
 
-    def show_plan(self, var, t=-1, ax=None, title=None, ticks=False,
-                  colorbar_label=False):
+    def show_plan(self, *args, **kwargs):
+        # legacy method, ported over to show_planform.
+        self.show_planform(*args, **kwargs)
+
+    def show_planform(self, *args, **kwargs):
         """Show planform image.
-
-        .. warning::
-            NEEDS TO BE PORTED OVER TO WRAP THE .show() METHOD OF PLAN!
         """
+        # parse arguments
+        if len(args) == 0:
+            raise ValueError
+        elif len(args) == 1:
+            PlanformInstance = args[0]
+            SectionAttribute = None
+        elif len(args) == 2:
+            PlanformInstance = args[0]
+            SectionAttribute = args[1]
+        else:
+            raise ValueError('Too many arguments.')
 
-        _plan = self[var][t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
+        # call `show()` from string or by instance
+        if type(PlanformInstance) is str:
+            self._plan_set[PlanformInstance].show(SectionAttribute, **kwargs)
+        else:
+            if not issubclass(type(PlanformInstance), section.BaseSection):
+                raise TypeError('You must pass a Section instance, '
+                                'or a string matching the name of a '
+                                'section registered to the cube.')
+            PlanformInstance.show(**kwargs)
 
-        # get the extent as arbitrary dimensions
-        d0, d1 = _plan.dims
-        d0_arr, d1_arr = _plan[d0], _plan[d1]
-        _extent = [d1_arr[0],                  # dim1, 0
-                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
-                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
-                   d0_arr[0]]                  # dim0, 0
-
-        if not ax:
-            ax = plt.gca()
-
-        im = ax.imshow(_plan,
-                       cmap=self.varset[var].cmap,
-                       norm=self.varset[var].norm,
-                       vmin=self.varset[var].vmin,
-                       vmax=self.varset[var].vmax,
-                       extent=_extent)
-        cb = plot.append_colorbar(im, ax)
-        if colorbar_label:
-            _colorbar_label = \
-                self.varset[var].label if (colorbar_label is True) \
-                else str(colorbar_label)  # use custom if passed
-            cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
-
-        if not ticks:
-            ax.set_xticks([], minor=[])
-            ax.set_yticks([], minor=[])
-        if title:
-            ax.set_title(str(title))
 
     def show_section(self, *args, **kwargs):
         """Show a section.
@@ -436,7 +441,7 @@ class BaseCube(abc.ABC):
 
         # call `show()` from string or by instance
         if type(SectionInstance) is str:
-            self.sections[SectionInstance].show(SectionAttribute, **kwargs)
+            self._section_set[SectionInstance].show(SectionAttribute, **kwargs)
         else:
             if not issubclass(type(SectionInstance), section.BaseSection):
                 raise TypeError('You must pass a Section instance, '

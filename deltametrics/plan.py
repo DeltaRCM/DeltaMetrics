@@ -13,6 +13,7 @@ from numba import njit
 from . import mask
 from . import cube
 from . import section as dm_section
+from . import plot
 from . import utils
 
 
@@ -89,6 +90,9 @@ class BasePlanform(abc.ABC):
         self.name = name  # use the setter to determine the _name
         self._shape = self.cube.shape[1:]
 
+        self._compute_planform_coords()
+        self._compute_planform_attrs()
+
     @property
     def name(self):
         """Planform name.
@@ -128,6 +132,195 @@ class BasePlanform(abc.ABC):
         OAM and MPM respectively.
         """
         return self._composite_array
+
+
+    @abc.abstractmethod
+    def _compute_planform_coords(self):
+        """Should calculate vertical coordinate of the section.
+
+        Sets the value ``self._dim0_idx`` according to
+        the algorithm of a `Planform` initialization.
+
+        .. warning::
+
+            When implementing a new planform type, be sure that
+            ``self._dim0_idx`` is a  *one-dimensional array*, or you will get
+            an improperly shaped Planform array in return.
+        """
+        ...
+
+    def _compute_planform_attrs(self):
+        """Compute attrs
+
+        Compute the along-section coordinate array from dimensions in the
+        cube (`dim1`, `dim2`) definining the section.
+        """
+        # self._trace_idx = np.column_stack((self._dim1_idx, self._dim2_idx))
+        # self._trace = np.column_stack((self.cube._dim2_idx[self._dim2_idx],
+        #                                self.cube._dim1_idx[self._dim1_idx]))
+        
+        # # compute along section distance and place into a DataArray
+        # _s = np.cumsum(np.hstack(
+        #     (0, np.sqrt((self._trace[1:, 0] - self._trace[:-1, 0])**2
+        #      + (self._trace[1:, 1] - self._trace[:-1, 1])**2))))
+        # self._s = xr.DataArray(_s, name='s', dims=['s'], coords={'s': _s})
+
+        # # take z from the underlying cube, should be a DataArray
+        # self._z = self.cube.z
+
+        # # set shape from the coordinates
+        # self._shape = (len(self._z), len(self._s))
+        pass
+
+    def __getitem__(self, var):
+        """Get a slice of the planform.
+
+        Slicing the planform instance creates an `xarray` `DataArray` instance
+        from data for variable ``var``.
+
+        .. note:: We only support slicing by string.
+
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which variable to slice.
+
+        Returns
+        -------
+        data : :obj:`DataArray`
+            The undelrying data returned as an xarray `DataArray`, maintaining
+            coordinates.
+        """
+        if isinstance(self.cube, cube.DataCube):
+            _xrDA = self.cube[var][self._dim0_idx, :, :]
+            _xrDA.attrs = {'slicetype': 'data_planform',
+                           'knows_stratigraphy': self.cube._knows_stratigraphy,
+                           'knows_spacetime': True}
+            if self.cube._knows_stratigraphy:
+                _xrDA.strat.add_information(
+                    _psvd_mask=self.cube.strat_attr.psvd_idx[self._dim0_idx, :, :],  # noqa: E501
+                    _strat_attr=self.cube.strat_attr(
+                        'planform', self._dim0_idx, None))
+            return _xrDA
+        elif isinstance(self.cube, cube.StratigraphyCube):
+            raise NotImplementedError('Not tried yet...')
+            _xrDA = xr.DataArray(
+                    self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
+                    coords={"s": self._s, self._z.dims[0]: self._z},
+                    dims=[self._z.dims[0], 's'],
+                    name=var,
+                    attrs={'slicetype': 'stratigraphy_section',
+                           'knows_stratigraphy': True,
+                           'knows_spacetime': False})
+            return _xrDA
+        elif (self.cube is None):
+            raise AttributeError(
+                'No cube connected. Are you sure you ran `.connect()`?')
+        else:
+            raise TypeError('Unknown Cube type encountered: %s'
+                            % type(self.cube))
+
+    def _show(self, *args, **kwargs):
+        pass  ## delete this method!
+
+      
+    def show(self, PlanformAttribute, t=-1, ax=None, title=None, ticks=False,
+             colorbar_label=False):
+        """Show the planform.
+        """
+        # _plan = self[var][t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
+
+        # process arguments and inputs
+        if not ax:
+            ax = plt.gca()
+
+        # process the planform attribute to a field
+        _varinfo = self.cube.varset[PlanformAttribute] if \
+            issubclass(type(self.cube), cube.BaseCube) else \
+            plot.VariableSet()[PlanformAttribute]
+        PlanformVariableInstance = self[PlanformAttribute]
+
+        # get the extent as arbitrary dimensions
+        d0, d1 = PlanformVariableInstance.dims
+        d0_arr, d1_arr = PlanformVariableInstance[d0], PlanformVariableInstance[d1]
+        _extent = [d1_arr[0],                  # dim1, 0
+                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
+                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
+                   d0_arr[0]]                  # dim0, 0
+
+
+        im = ax.imshow(PlanformVariableInstance,
+                       cmap=_varinfo.cmap,
+                       norm=_varinfo.norm,
+                       vmin=_varinfo.vmin,
+                       vmax=_varinfo.vmax,
+                       extent=_extent)
+        cb = plot.append_colorbar(im, ax)
+        if colorbar_label:
+            _colorbar_label = \
+                self.varset[var].label if (colorbar_label is True) \
+                else str(colorbar_label)  # use custom if passed
+            cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
+
+        if not ticks:
+            ax.set_xticks([], minor=[])
+            ax.set_yticks([], minor=[])
+        if title:
+            ax.set_title(str(title))
+
+
+
+class DataPlanform(BasePlanform):
+
+    def __init__(self, *args, z=None, t=None, idx=None, **kwargs):
+        """
+        Pass z or t or idx. z and t are treated the same, to interpret the coordinate values, and idx is used to get a certain index. ALL taken along dim0.
+        """
+        # if (path is None) and (path_idx is None):
+        #     raise ValueError(
+        #         'Must specify `path` or `path_idx`.')
+        # #   if both path and idx are given
+        # if (not (path is None)) and (not (path_idx is None)):
+        #     raise ValueError(
+        #         'Cannot specify both `path` and `path_idx`.')
+
+        self._input_z = z
+        self._input_t = t
+        self._input_idx = idx
+
+        super().__init__('data', *args, **kwargs)
+
+    def _compute_planform_coords(self):
+        """Should calculate vertical coordinate of the section.
+
+        Sets the value ``self._dim0_idx`` according to
+        the algorithm of a `Planform` initialization.
+
+        .. warning::
+
+            When implementing a new planform type, be sure that
+            ``self._dim0_idx`` is a  *one-dimensional array*, or you will get
+            an improperly shaped Planform array in return.
+        """
+        if (not (self._input_z is None)) and (not (self._input_idx is None)):
+            raise TypeError('Cannot specify both `z` and `idx`.')
+        if (not (self._input_t is None)) and (not (self._input_idx is None)):
+            raise TypeError('Cannot specify both `t` and `idx`.')
+        if (not (self._input_z is None)) and (not (self._input_t is None)):
+            raise TypeError('Cannot specify both `z` and `t`.')
+        
+        # determine the index along dim0 to slice cube
+        if (not (self._input_z is None)) or (not (self._input_t is None)):
+            # z an t are treated the same internally, and either will be
+            # silently used  to interpolate the dim0 coordinates to find the
+            # nearest index
+            dim0_val = z or t
+            self._dim0_idx = np.argmin(np.abs(
+                np.array(self.cube.dim0_coords) - dim0_val))
+        else:
+            # then idx must have been given
+            self._dim0_idx = self._input_idx
+
 
 
 class OpeningAnglePlanform(BasePlanform):
