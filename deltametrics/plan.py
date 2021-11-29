@@ -203,15 +203,10 @@ class BasePlanform(abc.ABC):
                         'planform', self._dim0_idx, None))
             return _xrDA
         elif isinstance(self.cube, cube.StratigraphyCube):
-            raise NotImplementedError('Not tried yet...')
-            _xrDA = xr.DataArray(
-                    self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
-                    coords={"s": self._s, self._z.dims[0]: self._z},
-                    dims=[self._z.dims[0], 's'],
-                    name=var,
-                    attrs={'slicetype': 'stratigraphy_section',
+            _xrDA = self.cube[var][self._dim0_idx, :, :]
+            _xrDA.attrs = {'slicetype': 'stratigraphy_planform',
                            'knows_stratigraphy': True,
-                           'knows_spacetime': False})
+                           'knows_spacetime': False}
             return _xrDA
         elif (self.cube is None):
             raise AttributeError(
@@ -222,7 +217,6 @@ class BasePlanform(abc.ABC):
 
     def _show(self, *args, **kwargs):
         pass  ## delete this method!
-
       
     def show(self, PlanformAttribute, ax=None, title=None, ticks=False,
              colorbar_label=False):
@@ -291,7 +285,6 @@ class BasePlanform(abc.ABC):
                    d0_arr[-1] + d0_arr[1],     # dim0, end + dx
                    d0_arr[0]]                  # dim0, 0
 
-
         im = ax.imshow(PlanformVariableInstance,
                        cmap=_varinfo.cmap,
                        norm=_varinfo.norm,
@@ -302,7 +295,7 @@ class BasePlanform(abc.ABC):
         cb = plot.append_colorbar(im, ax)
         if colorbar_label:
             _colorbar_label = \
-                self.varset[var].label if (colorbar_label is True) \
+                _varinfo.label if (colorbar_label is True) \
                 else str(colorbar_label)  # use custom if passed
             cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
 
@@ -312,6 +305,7 @@ class BasePlanform(abc.ABC):
         if title:
             ax.set_title(str(title))
 
+        return im
 
 
 class DataPlanform(BasePlanform):
@@ -358,13 +352,12 @@ class DataPlanform(BasePlanform):
             # z an t are treated the same internally, and either will be
             # silently used  to interpolate the dim0 coordinates to find the
             # nearest index
-            dim0_val = z or t
+            dim0_val = self._input_z or self._input_t
             self._dim0_idx = np.argmin(np.abs(
                 np.array(self.cube.dim0_coords) - dim0_val))
         else:
             # then idx must have been given
             self._dim0_idx = self._input_idx
-
 
 
 class OpeningAnglePlanform(BasePlanform):
