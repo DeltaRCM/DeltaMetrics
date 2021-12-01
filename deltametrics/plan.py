@@ -1,5 +1,6 @@
 import numpy as np
 import xarray as xr
+import matplotlib.pyplot as plt
 
 from scipy.spatial import ConvexHull
 from shapely.geometry.polygon import Polygon
@@ -55,43 +56,11 @@ class BasePlanform(abc.ABC):
             need will depend on the type of `Planform`.
         """
         # begin unconnected
-        self._x = None
-        self._y = None
         self._shape = None
         self._variables = None
-        self.cube = None
-        self._composite_array = None
 
         self.planform_type = planform_type
         self._name = name
-
-        # if len(args) != 1:
-        #     raise ValueError('Expected single positional argument to \
-        #                      %s instantiation.'
-        #                      % type(self))
-
-        if len(args) > 0:
-            if issubclass(type(args[0]), cube.BaseCube):
-                self.connect(args[0])
-            elif utils.is_ndarray_or_xarray(args[0]):
-                # use first argument as an array to get shape
-                self._shape = args[0].shape
-
-    def connect(self, CubeInstance, name=None):
-        """Connect this Planform instance to a Cube instance.
-        """
-        if not issubclass(type(CubeInstance), cube.BaseCube):
-            raise TypeError('Expected type is subclass of {_exptype}, '
-                            'but received was {_gottype}.'.format(
-                                _exptype=type(cube.BaseCube),
-                                _gottype=type(CubeInstance)))
-        self.cube = CubeInstance
-        self._variables = self.cube.variables
-        self.name = name  # use the setter to determine the _name
-        self._shape = self.cube.shape[1:]
-
-        self._compute_planform_coords()
-        self._compute_planform_attrs()
 
     @property
     def name(self):
@@ -122,55 +91,100 @@ class BasePlanform(abc.ABC):
         """
         return self._shape
 
-    @property
-    def composite_array(self):
-        """Array to extract a contour from when mask-making.
+    def _show(self, field, varinfo, **kwargs):
+        """Internal method for showing a planform.
 
-        This is the array that a contour is extracted from using some threshold
-        value when making land and shoreline masks. This should just be an
-        alias for either the `sea_angles` or the `meanimage` arrays from the
-        OAM and MPM respectively.
+        Each planform may implement it's own method to determine what field to
+        show when called, and different calling options.
+
+        Parameters
+        ----------
+
+        **kwargs
+            Acceptable kwargs are `ax`, `title`, `ticks`, `colorbar_label`.
+            See description for `DataPlanform.show` for more information.
         """
-        return self._composite_array
+        # process arguments and inputs
+        ax = kwargs.pop('ax', None)
+        title = kwargs.pop('title', None)
+        ticks = kwargs.pop('ticks', False)
+        colorbar_label = kwargs.pop('colorbar_label', False)
+        if not ax:
+            ax = plt.gca()
+
+        # get the extent as arbitrary dimensions
+        d0, d1 = field.dims
+        d0_arr, d1_arr = field[d0], field[d1]
+        _extent = [d1_arr[0],                  # dim1, 0
+                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
+                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
+                   d0_arr[0]]                  # dim0, 0
+
+        im = ax.imshow(field,
+                       cmap=varinfo.cmap,
+                       norm=varinfo.norm,
+                       vmin=varinfo.vmin,
+                       vmax=varinfo.vmax,
+                       extent=_extent)
+
+        cb = plot.append_colorbar(im, ax)
+        if colorbar_label:
+            _colorbar_label = \
+                varinfo.label if (colorbar_label is True) \
+                else str(colorbar_label)  # use custom if passed
+            cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
+
+        if not ticks:
+            ax.set_xticks([], minor=[])
+            ax.set_yticks([], minor=[])
+        if title:
+            ax.set_title(str(title))
+
+        return im
 
 
-    @abc.abstractmethod
-    def _compute_planform_coords(self):
-        """Should calculate vertical coordinate of the section.
+class DataPlanform(BasePlanform):
 
-        Sets the value ``self._dim0_idx`` according to
-        the algorithm of a `Planform` initialization.
-
-        .. warning::
-
-            When implementing a new planform type, be sure that
-            ``self._dim0_idx`` is a  *one-dimensional array*, or you will get
-            an improperly shaped Planform array in return.
+    def __init__(self, *args, z=None, t=None, idx=None, **kwargs):
         """
-        ...
-
-    def _compute_planform_attrs(self):
-        """Compute attrs
-
-        Compute the along-section coordinate array from dimensions in the
-        cube (`dim1`, `dim2`) definining the section.
+        Pass z or t or idx. z and t are treated the same, to interpret the
+        coordinate values, and idx is used to get a certain index. ALL taken
+        along dim0.
         """
-        # self._trace_idx = np.column_stack((self._dim1_idx, self._dim2_idx))
-        # self._trace = np.column_stack((self.cube._dim2_idx[self._dim2_idx],
-        #                                self.cube._dim1_idx[self._dim1_idx]))
-        
-        # # compute along section distance and place into a DataArray
-        # _s = np.cumsum(np.hstack(
-        #     (0, np.sqrt((self._trace[1:, 0] - self._trace[:-1, 0])**2
-        #      + (self._trace[1:, 1] - self._trace[:-1, 1])**2))))
-        # self._s = xr.DataArray(_s, name='s', dims=['s'], coords={'s': _s})
+        if (not (z is None)) and (not (idx is None)):
+            raise TypeError('Cannot specify both `z` and `idx`.')
+        if (not (t is None)) and (not (idx is None)):
+            raise TypeError('Cannot specify both `t` and `idx`.')
+        if (not (z is None)) and (not (t is None)):
+            raise TypeError('Cannot specify both `z` and `t`.')
 
-        # # take z from the underlying cube, should be a DataArray
-        # self._z = self.cube.z
+        self._input_z = z
+        self._input_t = t
+        self._input_idx = idx
 
-        # # set shape from the coordinates
-        # self._shape = (len(self._z), len(self._s))
-        pass
+        super().__init__('data', *args, **kwargs)
+
+        if len(args) > 0:
+            if issubclass(type(args[0]), cube.BaseCube):
+                self.connect(args[0])
+            elif utils.is_ndarray_or_xarray(args[0]):
+                # use first argument as an array to get shape
+                self._shape = args[0].shape
+
+    def connect(self, CubeInstance, name=None):
+        """Connect this Planform instance to a Cube instance.
+        """
+        if not issubclass(type(CubeInstance), cube.BaseCube):
+            raise TypeError('Expected type is subclass of {_exptype}, '
+                            'but received was {_gottype}.'.format(
+                                _exptype=type(cube.BaseCube),
+                                _gottype=type(CubeInstance)))
+        self.cube = CubeInstance
+        self._variables = self.cube.variables
+        self.name = name  # use the setter to determine the _name
+        self._shape = self.cube.shape[1:]
+
+        self._compute_planform_coords()
 
     def __getitem__(self, var):
         """Get a slice of the planform.
@@ -214,11 +228,8 @@ class BasePlanform(abc.ABC):
         else:
             raise TypeError('Unknown Cube type encountered: %s'
                             % type(self.cube))
-
-    def _show(self, *args, **kwargs):
-        pass  ## delete this method!
       
-    def show(self, PlanformAttribute, ax=None, title=None, ticks=False,
+    def show(self, var, ax=None, title=None, ticks=False,
              colorbar_label=False):
         """Show the planform.
 
@@ -228,9 +239,9 @@ class BasePlanform(abc.ABC):
         Parameters
         ----------
 
-        PlanformAttribute : :obj:`str`, :obj:`PlanformVariableInstance`
+        var : :obj:`str`
             Which attribute to show. Can be a string for a named `Cube`
-            attribute, or any arbitrary data.
+            attribute.
 
         label : :obj:`bool`, `str`, optional
             Display a label of the variable name on the plot. Default is
@@ -267,66 +278,19 @@ class BasePlanform(abc.ABC):
             >>> planform.show('velocity', ax=ax[1])
         """
 
-        # process arguments and inputs
-        if not ax:
-            ax = plt.gca()
-
         # process the planform attribute to a field
-        _varinfo = self.cube.varset[PlanformAttribute] if \
+        _varinfo = self.cube.varset[var] if \
             issubclass(type(self.cube), cube.BaseCube) else \
-            plot.VariableSet()[PlanformAttribute]
-        PlanformVariableInstance = self[PlanformAttribute]
+            plot.VariableSet()[var]
+        _field = self[var]
 
-        # get the extent as arbitrary dimensions
-        d0, d1 = PlanformVariableInstance.dims
-        d0_arr, d1_arr = PlanformVariableInstance[d0], PlanformVariableInstance[d1]
-        _extent = [d1_arr[0],                  # dim1, 0
-                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
-                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
-                   d0_arr[0]]                  # dim0, 0
-
-        im = ax.imshow(PlanformVariableInstance,
-                       cmap=_varinfo.cmap,
-                       norm=_varinfo.norm,
-                       vmin=_varinfo.vmin,
-                       vmax=_varinfo.vmax,
-                       extent=_extent)
-
-        cb = plot.append_colorbar(im, ax)
-        if colorbar_label:
-            _colorbar_label = \
-                _varinfo.label if (colorbar_label is True) \
-                else str(colorbar_label)  # use custom if passed
-            cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
-
-        if not ticks:
-            ax.set_xticks([], minor=[])
-            ax.set_yticks([], minor=[])
-        if title:
-            ax.set_title(str(title))
+        # call the internal _show method
+        im = self._show(
+            _field, _varinfo,
+            ax=ax, title=title, ticks=ticks,
+            colorbar_label=colorbar_label)
 
         return im
-
-
-class DataPlanform(BasePlanform):
-
-    def __init__(self, *args, z=None, t=None, idx=None, **kwargs):
-        """
-        Pass z or t or idx. z and t are treated the same, to interpret the coordinate values, and idx is used to get a certain index. ALL taken along dim0.
-        """
-        # if (path is None) and (path_idx is None):
-        #     raise ValueError(
-        #         'Must specify `path` or `path_idx`.')
-        # #   if both path and idx are given
-        # if (not (path is None)) and (not (path_idx is None)):
-        #     raise ValueError(
-        #         'Cannot specify both `path` and `path_idx`.')
-
-        self._input_z = z
-        self._input_t = t
-        self._input_idx = idx
-
-        super().__init__('data', *args, **kwargs)
 
     def _compute_planform_coords(self):
         """Should calculate vertical coordinate of the section.
@@ -340,12 +304,6 @@ class DataPlanform(BasePlanform):
             ``self._dim0_idx`` is a  *one-dimensional array*, or you will get
             an improperly shaped Planform array in return.
         """
-        if (not (self._input_z is None)) and (not (self._input_idx is None)):
-            raise TypeError('Cannot specify both `z` and `idx`.')
-        if (not (self._input_t is None)) and (not (self._input_idx is None)):
-            raise TypeError('Cannot specify both `t` and `idx`.')
-        if (not (self._input_z is None)) and (not (self._input_t is None)):
-            raise TypeError('Cannot specify both `z` and `t`.')
         
         # determine the index along dim0 to slice cube
         if (not (self._input_z is None)) or (not (self._input_t is None)):
@@ -360,7 +318,57 @@ class DataPlanform(BasePlanform):
             self._dim0_idx = self._input_idx
 
 
-class OpeningAnglePlanform(BasePlanform):
+class SpecialtyPlanform(BasePlanform):
+    """All specialty planforms should subclass this.
+
+    Specialty planforms are planforms that hold some computation or attribute
+    about the underlying data. As a general rule, anything that is not a
+    DataPlanform is a SpecialtyPlanform.
+    """
+
+    def __init__(self, planform_type, *args, **kwargs):
+
+        super().__init__(planform_type, *args, **kwargs)
+
+        self._default_varinfo = plot.VariableInfo(
+            'data', label='data')
+
+    @property
+    @abc.abstractmethod
+    def data(self):
+        """The public data field. 
+
+        This attribute *must* be implemented as an alias to another attribute.
+        The choice of field is up to the developer.
+        """
+        ...
+
+    def __getitem__(self, slc):
+        """Slice the planform.
+
+        Implements basic slicing for `SpecialtyPlanform` by passing the `slc`
+        to `self.data`. I.e., the returned slice is ``self.data[slc]``.
+        """
+        return self.data[slc]
+
+    def show(self, var=None, ax=None, title=None, ticks=False,
+             colorbar_label=False):
+        if (var is None):
+            _varinfo = self._default_varinfo
+            _field = self.data
+        elif (isinstance(var, str)):
+            _field = self.__getattribute__(var)  # will error if var not attr
+            _varinfo = self.__getattribute__('_'+var+'_varinfo')
+        else:
+            raise TypeError('Bad value for var: {0}'.format(var))
+
+        self._show(
+            _field, _varinfo,
+            ax=ax, title=title, ticks=ticks,
+            colorbar_label=colorbar_label)
+
+
+class OpeningAnglePlanform(SpecialtyPlanform):
     """Planform for handling the Shaw Opening Angle Method.
 
     This `Planform` (called `OAP` for short) is a wrapper/handler for the
@@ -389,11 +397,11 @@ class OpeningAnglePlanform(BasePlanform):
         ...     golfcube['eta'][-1, :, :],
         ...     elevation_threshold=0)
 
-        # extract a mask of area below sea level as the
-        #   inverse of the ElevationMask
-        >>> _below_mask = ~(_EM.mask)
+        >>> # extract a mask of area below sea level as the
+        >>> #   inverse of the ElevationMask
+        >>> below_mask = ~(_EM.mask)
 
-        >>> OAP = dm.plan.OpeningAnglePlanform(_below_mask)
+        >>> OAP = dm.plan.OpeningAnglePlanform(below_mask)
 
     The OAP stores information computed from the
     :func:`shaw_opening_angle_method`. See the two properties of the OAP
@@ -403,11 +411,11 @@ class OpeningAnglePlanform(BasePlanform):
         :context:
 
         fig, ax = plt.subplots(1, 3, figsize=(10, 4))
-        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        golfcube.show_quick('eta', t=-1, ax=ax[0])
         im1 = ax[1].imshow(OAP.below_mask,
-                           cmap='Greys_r', origin='lower')
+                           cmap='Greys_r')
         im2 = ax[2].imshow(OAP.sea_angles,
-                           cmap='jet', origin='lower')
+                           cmap='jet')
         dm.plot.append_colorbar(im2, ax=ax[2])
         ax[0].set_title('input elevation data')
         ax[1].set_title('OAP.below_mask')
@@ -528,6 +536,13 @@ class OpeningAnglePlanform(BasePlanform):
         self._sea_angles = None
         self._below_mask = None
 
+        # set variable info display options
+        self._sea_angles_varinfo = plot.VariableInfo(
+            'sea_angles', cmap=plt.cm.jet, label='opening angle')
+        self._below_mask_varinfo = plot.VariableInfo(
+            'below_mask', cmap=plt.cm.gray, label='where below')
+        self._default_varinfo = self._sea_angles_varinfo
+
         # check for inputs to return or proceed
         if (len(args) == 0):
             _allow_empty = kwargs.pop('allow_empty', False)
@@ -564,13 +579,17 @@ class OpeningAnglePlanform(BasePlanform):
             # now check the type and allocate the arrays as xr.DataArray
             if isinstance(_below_mask, xr.core.dataarray.DataArray):
                 self._below_mask = xr.zeros_like(_below_mask, dtype=bool)
+                self._below_mask.name = 'below_mask'
                 self._sea_angles = xr.zeros_like(_below_mask, dtype=float)
+                self._sea_angles.name = 'sea_angles'
             elif isinstance(_below_mask, np.ndarray):
                 # this will use meshgrid to fill out with dx=1 in shape of array
                 self._below_mask = xr.DataArray(
-                    data=np.zeros(_below_mask.shape, dtype=bool))
+                    data=np.zeros(_below_mask.shape, dtype=bool),
+                    name='below_mask')
                 self._sea_angles = xr.DataArray(
-                    data=np.zeros(_below_mask.shape, dtype=float))
+                    data=np.zeros(_below_mask.shape, dtype=float),
+                    name='sea_angles')
             else:
                 raise TypeError('Invalid type {0}'.format(type(_below_mask)))
 
@@ -650,11 +669,19 @@ class OpeningAnglePlanform(BasePlanform):
 
     @property
     def composite_array(self):
-        """Alias sea angles."""
+        """Alias to `sea_angles`.
+
+        This is the array that a contour is extracted from using some threshold
+        value when making land and shoreline masks. 
+        """
+        return self._sea_angles
+
+    @property
+    def data(self):
         return self._sea_angles
 
 
-class MorphologicalPlanform(BasePlanform):
+class MorphologicalPlanform(SpecialtyPlanform):
     """Planform for handling the morphological method.
 
     .. todo::
@@ -735,6 +762,11 @@ class MorphologicalPlanform(BasePlanform):
         self._elevation_mask = None
         self._max_disk = None
 
+        # set variable info display options
+        self._mean_image_varinfo = plot.VariableInfo(
+            'mean_image', label='mean image')
+        self._default_varinfo = self._mean_image_varinfo
+
         # check for input or allowable emptiness
         if (len(args) == 0):
             _allow_empty = kwargs.pop('allow_empty', False)
@@ -755,10 +787,12 @@ class MorphologicalPlanform(BasePlanform):
         # now check the type and allocate the arrays as xr.DataArray
         if isinstance(self._elevation_mask, xr.core.dataarray.DataArray):
             self._mean_image = xr.zeros_like(self._elevation_mask, dtype=float)
+            self._mean_image.name = 'mean_image'
         elif isinstance(self._elevation_mask, np.ndarray):
             # this will use meshgrid to fill out with dx=1 in shape of array
             self._mean_image = xr.DataArray(
-                data=np.zeros(self._elevation_mask.shape, dtype=float))
+                data=np.zeros(self._elevation_mask.shape, dtype=float),
+                name='mean_image')
         else:
             raise TypeError(
                 'Invalid type {0}'.format(type(self._elevation_mask)))
@@ -805,7 +839,15 @@ class MorphologicalPlanform(BasePlanform):
 
     @property
     def composite_array(self):
-        """Alias the mean image."""
+        """Alias for `mean_image`.
+
+        This is the array that a contour is extracted from using some threshold
+        value when making land and shoreline masks. 
+        """
+        return self._mean_image
+
+    @property
+    def data(self):
         return self._mean_image
 
 
