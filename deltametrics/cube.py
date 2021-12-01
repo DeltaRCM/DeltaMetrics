@@ -244,7 +244,20 @@ class BaseCube(abc.ABC):
         return self.register_planform(*args, **kwargs)
 
     def register_planform(self, name, PlanformInstance, return_planform=False):
-        """Register a planform to the cube.
+        """Register a planform to the :attr:`planform_set`.
+
+        Connect a planform to the cube.
+
+        Parameters
+        ----------
+        name : :obj:`str`
+            The name to register the `Planform`.
+
+        PlanformInstance : :obj:`~deltametrics.planform.BasePlanform` subclass instance
+            The planform instance that will be registered.
+
+        return_planform : :obj:`bool`
+            Whether to return the planform object.
         """
         if not issubclass(type(PlanformInstance), plan.BasePlanform):
             raise TypeError
@@ -270,7 +283,7 @@ class BaseCube(abc.ABC):
         return self._section_set
 
     def register_section(self, name, SectionInstance, return_section=False):
-        """Register a section to the :meth:`section_set`.
+        """Register a section to the :attr:`section_set`.
 
         Connect a section to the cube.
 

@@ -21,39 +21,30 @@ from . import utils
 class BasePlanform(abc.ABC):
     """Base planform object.
 
-    Defines common attributes and methods of a planform object.
-
-    This object should wrap around many of the functions available from
-    :obj:`~deltametrics.mask` and :obj:`~deltametrics.mobility`.
+    Defines common attributes and methods of all planform objects.
     """
 
     def __init__(self, planform_type, *args, name=None):
         """Instantiate for subclasses of BasePlanform.
 
-        The base class instantiation handles setting of the cooridnates of a
-        Planform from the instantiating cube or xarray.
+        The base class instantiation handles setting the `name` attribute of
+        the `Planform`, and defines the internal plotting routine
+        via :obj:`_show`.
 
         Parameters
         ----------
         planform_type : :obj`str`
-            The identifier for the *type* of Planform.
+            String identifying the *type* of `Planform` being instantiated.
 
-        CubeInstance : :obj:`~deltametrics.cube.Cube` subclass, optional
-            Connect to this cube. No connection is made if cube is not
-            provided.
+        *args
+            Arbitrary arguments, passed from the subclass, not used here.
 
         name : :obj:`str`, optional
             An optional name for the planform, helpful for maintaining and
             keeping track of multiple `Planform` objects of the same type.
             This is disctinct from the :obj:`planform_type`. The name is used
-            internally if you use the `register_plan` method of a `Cube`.
-
-        .. note::
-
-            If no arguments are passed, an empty `Planform` not connected to
-            any cube is returned. This cube may need to be manually connected
-            to have any functionality (via the :meth:`connect` method); this
-            need will depend on the type of `Planform`.
+            internally if you use the :obj:`register_planform` method of a
+            `Cube`.
         """
         # begin unconnected
         self._shape = None
@@ -66,7 +57,7 @@ class BasePlanform(abc.ABC):
     def name(self):
         """Planform name.
 
-        Helpful to differentiate multiple Planforms.
+        Helpful to differentiate multiple `Planform` objects.
         """
         return self._name
 
@@ -143,13 +134,38 @@ class BasePlanform(abc.ABC):
         return im
 
 
-class DataPlanform(BasePlanform):
+class Planform(BasePlanform):
+    """Basic Planform object.
+
+    This class is used to slice the `Cube` along the `dim0` axis. The object
+    is akin to the various `Section` classes, but there is only the one way
+    to slice as a Planform. 
+    """
 
     def __init__(self, *args, z=None, t=None, idx=None, **kwargs):
         """
-        Pass z or t or idx. z and t are treated the same, to interpret the
-        coordinate values, and idx is used to get a certain index. ALL taken
-        along dim0.
+        Identify coordinate defining the planform.
+
+        Parameters
+        ----------
+
+        CubeInstance : :obj:`~deltametrics.cube.BaseCube` subclass, optional
+            Connect to this cube. No connection is made if cube is not
+            provided.
+
+        z : :obj:`float`, optional
+
+        t : :obj:`float`, optional
+        
+        idx : :obj:`int`, optional
+
+        Notes
+        -----
+
+        If no positional arguments are passed, an empty `Planform` not
+        connected to any cube is returned. This cube may need to be manually
+        connected to have any functionality (via the :meth:`connect` method);
+        this need will depend on the type of `Planform`.
         """
         if (not (z is None)) and (not (idx is None)):
             raise TypeError('Cannot specify both `z` and `idx`.')
@@ -185,6 +201,31 @@ class DataPlanform(BasePlanform):
         self._shape = self.cube.shape[1:]
 
         self._compute_planform_coords()
+
+    def _compute_planform_coords(self):
+        """Should calculate vertical coordinate of the section.
+
+        Sets the value ``self._dim0_idx`` according to
+        the algorithm of a `Planform` initialization.
+
+        .. warning::
+
+            When implementing a new planform type, be sure that
+            ``self._dim0_idx`` is a  *one-dimensional array*, or you will get
+            an improperly shaped Planform array in return.
+        """
+        
+        # determine the index along dim0 to slice cube
+        if (not (self._input_z is None)) or (not (self._input_t is None)):
+            # z an t are treated the same internally, and either will be
+            # silently used  to interpolate the dim0 coordinates to find the
+            # nearest index
+            dim0_val = self._input_z or self._input_t
+            self._dim0_idx = np.argmin(np.abs(
+                np.array(self.cube.dim0_coords) - dim0_val))
+        else:
+            # then idx must have been given
+            self._dim0_idx = self._input_idx
 
     def __getitem__(self, var):
         """Get a slice of the planform.
@@ -292,31 +333,6 @@ class DataPlanform(BasePlanform):
 
         return im
 
-    def _compute_planform_coords(self):
-        """Should calculate vertical coordinate of the section.
-
-        Sets the value ``self._dim0_idx`` according to
-        the algorithm of a `Planform` initialization.
-
-        .. warning::
-
-            When implementing a new planform type, be sure that
-            ``self._dim0_idx`` is a  *one-dimensional array*, or you will get
-            an improperly shaped Planform array in return.
-        """
-        
-        # determine the index along dim0 to slice cube
-        if (not (self._input_z is None)) or (not (self._input_t is None)):
-            # z an t are treated the same internally, and either will be
-            # silently used  to interpolate the dim0 coordinates to find the
-            # nearest index
-            dim0_val = self._input_z or self._input_t
-            self._dim0_idx = np.argmin(np.abs(
-                np.array(self.cube.dim0_coords) - dim0_val))
-        else:
-            # then idx must have been given
-            self._dim0_idx = self._input_idx
-
 
 class SpecialtyPlanform(BasePlanform):
     """All specialty planforms should subclass this.
@@ -353,6 +369,31 @@ class SpecialtyPlanform(BasePlanform):
 
     def show(self, var=None, ax=None, title=None, ticks=False,
              colorbar_label=False):
+        """
+        Parameters
+        ----------
+
+        
+        label : :obj:`bool`, `str`, optional
+            Display a label of the variable name on the plot. Default is
+            False, display nothing. If ``label=True``, the label name from the
+            :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
+            attempted to coerce to `str`, and the literal is diplayed.
+
+        colorbar : :obj:`bool`, optional
+            Whether a colorbar is appended to the axis.
+
+        colorbar_label : :obj:`bool`, `str`, optional
+            Display a label of the variable name along the colorbar. Default is
+            False, display nothing. If ``label=True``, the label name from the
+            :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
+            attempted to coerce to `str`, and the literal is diplayed.
+
+        ax : :obj:`~matplotlib.pyplot.Axes` object, optional
+            A `matplotlib` `Axes` object to plot the section. Optional; if not
+            provided, a call is made to ``plt.gca()`` to get the current (or
+            create a new) `Axes` object.
+        """
         if (var is None):
             _varinfo = self._default_varinfo
             _field = self.data

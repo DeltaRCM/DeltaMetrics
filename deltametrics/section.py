@@ -154,10 +154,20 @@ class BaseSection(abc.ABC):
 
         Parameters
         ----------
+        section_type : :obj:`str`
+            String identifying the *type* of `Section` being instantiated.
+
         CubeInstance : :obj:`~deltametrics.cube.BaseCube` subclass, optional
             Connect to this cube. No connection is made if cube is not
             provided.
 
+        name : :obj:`str`, optional
+            An optional name for the `Section` object, helpful for maintaining
+            and keeping track of multiple `Section` objects of the same
+            type. This is disctinct from the :obj:`section_type`. The name
+            is used internally if you use the :obj:`register_section` method
+            of a `Cube`. Notes
+        
         Notes
         -----
 
@@ -207,6 +217,10 @@ class BaseSection(abc.ABC):
 
     @property
     def name(self):
+        """Section name.
+
+        Helpful to differentiate multiple `Section` objects.
+        """
         return self._name
 
     @name.setter
