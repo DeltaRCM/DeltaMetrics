@@ -13,6 +13,8 @@
 import os
 import sys
 
+import pyvista
+
 import deltametrics as dm
 
 # -- Project information -----------------------------------------------------
@@ -65,7 +67,6 @@ napoleon_use_rtype = True
 # Autosummary / Automodapi settings
 autosummary_generate = True
 automodapi_inheritance_diagram = False
-# autodoc_default_flags = ['inherited-members', 'members', 'no-private-members']
 autodoc_default_options = {'members': True, 'inherited-members': True,
                            'private-members': False}
 
@@ -75,9 +76,11 @@ import deltametrics as dm
 import numpy as np
 from matplotlib import pyplot as plt
 '''
-doctest_test_doctest_blocks = ''  # empty string disables testing all code in any docstring
 
-## mpl plots
+# empty string disables testing all code in any docstring
+doctest_test_doctest_blocks = ''  
+
+# mpl plots
 plot_basedir = 'pyplots'
 plot_html_show_source_link = False
 plot_formats = ['png', ('hires.png', 300)]
@@ -86,13 +89,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 import deltametrics as dm
 '''
-
-import pyvista
-# necessary when building the sphinx gallery
-pyvista.OFF_SCREEN = True
-
-# Optional - set parameters like theme or window size
-pyvista.set_plot_theme('document')
 
 # img math
 # imgmath_latex_preamble = '\\usepackage{fouriernc}' # newtxsf, mathptmx
@@ -108,4 +104,3 @@ html_theme = 'sphinxdoc'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-# html_static_path = []

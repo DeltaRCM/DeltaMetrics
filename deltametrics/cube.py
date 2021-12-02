@@ -70,13 +70,17 @@ class BaseCube(abc.ABC):
         else:
             raise TypeError('Invalid type for "data": %s' % type(data))
 
-        self._plan_set = {}
+        self._planform_set = {}
         self._section_set = {}
 
         if varset:
             self.varset = varset
         else:
             self.varset = plot.VariableSet()
+
+        # some undocumented aliases
+        self.plans = self._planform_set
+        self.plan_set = self._planform_set
 
     @abc.abstractmethod
     def __getitem__(self, var):
@@ -219,18 +223,10 @@ class BaseCube(abc.ABC):
         return self._variables
 
     @property
-    def plan_set(self):
-        """`dict` : Set of plan instances.
+    def planform_set(self):
+        """:obj:`dict` : Set of planform instances.
         """
-        return self._plan_set
-
-    @property
-    def plans(self):
-        """`dict` : Set of plan instances.
-
-        Alias to :meth:`plan_set`.
-        """
-        return self._plan_set
+        return self._planform_set
 
     @property
     def planforms(self):
@@ -238,7 +234,7 @@ class BaseCube(abc.ABC):
 
         Alias to :meth:`plan_set`.
         """
-        return self._plan_set    
+        return self._planform_set    
 
     def register_plan(self, *args, **kwargs):
         """wrapper, might not really need this."""
@@ -265,9 +261,9 @@ class BaseCube(abc.ABC):
         if not type(name) is str:
             raise TypeError
         PlanformInstance.connect(self, name=name)  # attach cube
-        self._plan_set[name] = PlanformInstance
+        self._planform_set[name] = PlanformInstance
         if return_planform:
-            return self._plan_set[name]
+            return self._planform_set[name]
 
     @property
     def section_set(self):
@@ -388,6 +384,11 @@ class BaseCube(abc.ABC):
     def quick_show(self, var, idx=-1, axis=0, **kwargs):
         """Convenient and quick way to show a slice of the cube by `idx` and `axis`.
 
+        .. hint::
+
+            If neither `idx` or `axis` is specified, a planform view of the
+            last index is shown.
+
         Parameters
         ----------
         var : :obj:`str`
@@ -397,7 +398,7 @@ class BaseCube(abc.ABC):
             Which index along the `axis` to slice data from. Default value is
             ``-1``, the last index along `axis`.
 
-        axis :obj:`int`, optional
+        axis : :obj:`int`, optional
             Which axis of the underlying cube `idx` is specified for. Default
             value is ``0``, the first axis of the cube.
 
@@ -406,11 +407,6 @@ class BaseCube(abc.ABC):
             to :meth:`~deltametrics.plan.Planform.show` if `axis` is ``0``,
             otherwise passed
             to :meth:`~deltametrics.section.BaseSection.show`.
-
-        .. hint::
-
-            If neither `idx` or `axis` is specified, a planform view of the
-            last index is showed.
 
         Examples
         --------
@@ -421,7 +417,7 @@ class BaseCube(abc.ABC):
             >>> golfcube = dm.sample_data.golf()
             >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(
             ...     golfcube, dz=0.1)
-            
+            ...
             >>> fig, ax = plt.subplots(2, 1)
             >>> golfcube.quick_show('eta', ax=ax[0])  # a Planform (axis=0)
             >>> golfstrat.quick_show('eta', idx=100, axis=2, ax=ax[1])  # a DipSection
@@ -470,21 +466,24 @@ class BaseCube(abc.ABC):
         Examples
         --------
 
-        .. plot::
-            :include-source:
+        .. note:: 
+
+            The following code snippets are not set up to actually make the
+            plots in the documentation.
+
+        .. code::
 
             >>> golfcube = dm.sample_data.golf()
             >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(
             ...     golfcube, dz=0.1)
-            >>> 
+            ... 
             >>> fig, ax = plt.subplots()
             >>> golfstrat.show_cube('eta', ax=ax)
 
-        .. plot::
-            :include-source:
+        .. code::
 
             >>> golfcube = dm.sample_data.golf()
-            >>> 
+            ...
             >>> fig, ax = plt.subplots()
             >>> golfcube.show_cube('velocity', style='fence', ax=ax)
         """
@@ -531,6 +530,17 @@ class BaseCube(abc.ABC):
         p.show()
 
     def show_plan(self, *args, **kwargs):
+        """Deprecated. Use :obj:`quick_show` or :obj:`show_planform`.
+
+        .. warning::
+
+            Provides a legacy option to quickly show a planform, from before
+            the `Planform` object was properly implemented. Will be removed
+            in a future release.
+    
+        Parameters
+        ----------
+        """
         # legacy method, ported over to show_planform.
         warnings.warn(
             '`show_plan` is a deprecated method, and has been replaced by two '
@@ -562,7 +572,7 @@ class BaseCube(abc.ABC):
 
         # call `show()` from string or by instance
         if type(PlanformInstance) is str:
-            self._plan_set[PlanformInstance].show(SectionAttribute, **kwargs)
+            self._planform_set[PlanformInstance].show(SectionAttribute, **kwargs)
         else:
             if not issubclass(type(PlanformInstance), section.BaseSection):
                 raise TypeError('You must pass a Section instance, '

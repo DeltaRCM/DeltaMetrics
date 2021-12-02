@@ -452,7 +452,7 @@ class OpeningAnglePlanform(SpecialtyPlanform):
         :context:
 
         fig, ax = plt.subplots(1, 3, figsize=(10, 4))
-        golfcube.quick_show('eta', t=-1, ax=ax[0])
+        golfcube.quick_show('eta', idx=-1, ax=ax[0])
         im1 = ax[1].imshow(OAP.below_mask,
                            cmap='Greys_r')
         im2 = ax[2].imshow(OAP.sea_angles,
@@ -998,9 +998,9 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
 
         # make the plot
         fig, ax = plt.subplots(1, 2, figsize=(6, 3))
-        golf.show_plan('eta', t=15, ax=ax[0])
+        golf.quick_show('eta', idx=15, ax=ax[0])
         ax[0].set_title('roughness = {:.2f}'.format(rgh0))
-        golf.show_plan('eta', t=-1, ax=ax[1])
+        golf.quick_show('eta', idx=-1, ax=ax[1])
         ax[1].set_title('roughness = {:.2f}'.format(rgh1))
         plt.show()
     """
@@ -1105,9 +1105,9 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
 
         # make the plot
         fig, ax = plt.subplots(1, 2, figsize=(6, 3))
-        golf.show_plan('eta', t=15, ax=ax[0])
+        golf.quick_show('eta', idx=15, ax=ax[0])
         ax[0].set_title('length = {:.2f}'.format(len0))
-        golf.show_plan('eta', t=-1, ax=ax[1])
+        golf.quick_show('eta', idx=-1, ax=ax[1])
         ax[1].plot(line1[:, 0], line1[:, 1], 'r-')
         ax[1].set_title('length = {:.2f}'.format(len1))
         plt.show()
@@ -1308,7 +1308,7 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
 
         # make the plot
         fig, ax = plt.subplots()
-        golf.show_plan('eta', t=-1, ticks=True, ax=ax)
+        golf.quick_show('eta', idx=-1, ticks=True, ax=ax)
         ax.set_title('mean = {:.2f}'.format(mean))
         plt.show()
     """

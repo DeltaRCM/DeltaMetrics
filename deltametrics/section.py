@@ -582,7 +582,7 @@ class PathSection(BaseSection):
         >>> golfcube.register_section('path', dm.section.PathSection(
         ...     path_idx=np.array([[3, 50], [17, 65], [10, 130]])))
         >>> fig, ax = plt.subplots()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
         >>> golfcube.sections['path'].show_trace('r--', ax=ax)
         >>> plt.show()
 
@@ -630,7 +630,7 @@ class PathSection(BaseSection):
         >>>
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['path'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['path'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -647,7 +647,7 @@ class PathSection(BaseSection):
         >>>
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['path'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['path'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -834,7 +834,7 @@ class StrikeSection(LineSection):
         >>> golfcube.register_section(
         ...     'strike', dm.section.StrikeSection(distance=1500))
         >>> fig, ax = plt.subplots()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
         >>> golfcube.sections['strike'].show_trace('r--', ax=ax)
         >>> plt.show()
 
@@ -900,7 +900,7 @@ class StrikeSection(LineSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['strike'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['strike'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -916,7 +916,7 @@ class StrikeSection(LineSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['strike'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['strike'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -935,7 +935,7 @@ class StrikeSection(LineSection):
 
         >>> # show the location and the "time" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfstrat.sections['strike_part'].show_trace('r--', ax=ax[0])
         >>> golfstrat.sections['strike_part'].show('time', ax=ax[1])
         >>> plt.show()
@@ -1027,7 +1027,7 @@ class DipSection(LineSection):
         >>> golfcube.register_section(
         ...     'dip', dm.section.DipSection(distance=3000))
         >>> fig, ax = plt.subplots()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
         >>> golfcube.sections['dip'].show_trace('r--', ax=ax)
         >>> plt.show()
 
@@ -1093,7 +1093,7 @@ class DipSection(LineSection):
 
         >>> # show the location and the "sandfrac" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['dip'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['dip'].show('sandfrac', ax=ax[1])
         >>> plt.show()
@@ -1109,7 +1109,7 @@ class DipSection(LineSection):
 
         >>> # show the location and the "sandfrac" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['dip75'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['dip75'].show('sandfrac', ax=ax[1])
         >>> plt.show()
@@ -1128,7 +1128,7 @@ class DipSection(LineSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfstrat.sections['dip_part'].show_trace('r--', ax=ax[0])
         >>> golfstrat.sections['dip_part'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -1225,7 +1225,7 @@ class CircularSection(BaseSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
         >>> golfcube.sections['circular'].show_trace('r--', ax=ax)
         >>> plt.show()
 
@@ -1292,7 +1292,7 @@ class CircularSection(BaseSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['circular'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['circular'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -1312,7 +1312,7 @@ class CircularSection(BaseSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfstrat.sections['circular'].show_trace('r--', ax=ax[0])
         >>> golfstrat.sections['circular'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -1431,7 +1431,7 @@ class RadialSection(BaseSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
         >>> golfcube.sections['radial'].show_trace('r--', ax=ax)
         >>> plt.show()
 
@@ -1513,7 +1513,7 @@ class RadialSection(BaseSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['radial'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['radial'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -1530,7 +1530,7 @@ class RadialSection(BaseSection):
         
         >>> fig, ax = plt.subplots(2, 3, figsize=(9, 3))
         >>> ax = ax.flatten()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[1], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[1], ticks=True)
         >>> ax[1].tick_params(labelsize=8)
 
         >>> azims = np.linspace(0, 180, num=5)

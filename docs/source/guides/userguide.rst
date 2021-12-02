@@ -162,7 +162,7 @@ We can plot the trace on top the the final bed elevation to see where the sectio
 .. doctest::
 
     >>> fig, ax = plt.subplots()
-    >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+    >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
     >>> ax.plot(golfcube.sections['demo'].trace[:,0],
     ...         golfcube.sections['demo'].trace[:,1], 'r--') #doctest: +SKIP
     >>> plt.show() #doctest: +SKIP
@@ -398,7 +398,7 @@ values. This might be done by subclassing ``xarray`` rather than
     >>> elev_idx = (np.abs(stratcube.z - -2)).argmin()  # find nearest idx to -2 m
 
     >>> fig, ax = plt.subplots(figsize=(5, 3))
-    >>> stratcube.show_plan('sandfrac', elev_idx, ticks=True)
+    >>> stratcube.quick_show('sandfrac', idx=elev_idx, ticks=True)
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/userguide_stratigraphy_planform_slice.py
@@ -525,7 +525,7 @@ See the :doc:`reference page for each mask type </reference/mask/index>` if you 
     ax0 = fig.add_subplot(spec[0, :])
     axs = [fig.add_subplot(spec[i, j]) for i, j in zip(np.repeat(
         np.arange(1, 4), 2), np.tile(np.arange(2), (4,)))]
-    maskcube.show_plan('eta', t=-1, ax=ax0)
+    maskcube.quick_show('eta', idx=-1, ax=ax0)
 
     for i, m in enumerate([land_mask, wet_mask, channel_mask,
                            centerline_mask, edge_mask, shore_mask]):
