@@ -1,6 +1,7 @@
 import os
 import copy
 import abc
+import warnings
 
 import numpy as np
 import xarray as xr
@@ -384,25 +385,165 @@ class BaseCube(abc.ABC):
         else:
             return self[var].load()
 
-    def show_cube(self, var, t=-1, x=-1, y=-1, ax=None):
-        """Show the cube in a 3d axis.
+    def quick_show(self, var, idx=-1, axis=0, **kwargs):
+        """Convenient and quick way to show a slice of the cube by `idx` and `axis`.
 
-        3d visualization via `pyvista`.
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which variable to show from the underlying dataset.
 
-        .. warning::
-            Implementation is crude and should be revisited.
+        idx : :obj:`int`, optional
+            Which index along the `axis` to slice data from. Default value is
+            ``-1``, the last index along `axis`.
+
+        axis :obj:`int`, optional
+            Which axis of the underlying cube `idx` is specified for. Default
+            value is ``0``, the first axis of the cube.
+
+        **kwargs
+            Keyword arguments are passed
+            to :meth:`~deltametrics.plan.Planform.show` if `axis` is ``0``,
+            otherwise passed
+            to :meth:`~deltametrics.section.BaseSection.show`.
+
+        .. hint::
+
+            If neither `idx` or `axis` is specified, a planform view of the
+            last index is showed.
+
+        Examples
+        --------
+
+        .. plot::
+            :include-source:
+
+            >>> golfcube = dm.sample_data.golf()
+            >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(
+            ...     golfcube, dz=0.1)
+            
+            >>> fig, ax = plt.subplots(2, 1)
+            >>> golfcube.quick_show('eta', ax=ax[0])  # a Planform (axis=0)
+            >>> golfstrat.quick_show('eta', idx=100, axis=2, ax=ax[1])  # a DipSection
+            >>> plt.show()
+        """
+        if axis == 0:
+            # this is a planform slice
+            _obj = plan.Planform(self, idx=idx)
+        elif axis == 1:
+            # this is a Strike section
+            _obj = section.StrikeSection(self, distance_idx=idx)
+        elif axis == 2:
+            # this is a Dip section
+            _obj = section.DipSection(self, distance_idx=idx)
+        else:
+            raise ValueError(
+                'Invalid `axis` specified: {0}'.format(axis))
+
+        # use the object to handle the showing
+        returned = _obj.show(var, **kwargs)
+        return returned
+
+    def show_cube(self, var, style='mesh', ve=200, ax=None):
+        """Show the cube in a 3D axis.
+
+        .. important:: requires `pyvista` package for 3d visualization.
+
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which variable to show from the underlying dataset.
+
+        style : :obj:`str`, optional
+            Style to show `cube`. Default is `'mesh'`, which gives a 3D
+            volumetric view. Other supported option is `'fence'`, which gives
+            a fence diagram with one slice in each cube dimension.
+
+        ve : :obj:`float`
+            Vertical exaggeration. Default is ``200``.
+
+        ax : :obj:`~matplotlib.pyplot.Axes` object, optional
+            A `matplotlib` `Axes` object to plot the section. Optional; if not
+            provided, a call is made to ``plt.gca()`` to get the current (or
+            create a new) `Axes` object.
+
+        Examples
+        --------
+
+        .. plot::
+            :include-source:
+
+            >>> golfcube = dm.sample_data.golf()
+            >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(
+            ...     golfcube, dz=0.1)
+            >>> 
+            >>> fig, ax = plt.subplots()
+            >>> golfstrat.show_cube('eta', ax=ax)
+
+        .. plot::
+            :include-source:
+
+            >>> golfcube = dm.sample_data.golf()
+            >>> 
+            >>> fig, ax = plt.subplots()
+            >>> golfcube.show_cube('velocity', style='fence', ax=ax)
         """
         try:
             import pyvista as pv
         except ImportError:
-            ImportError('3d plotting dependency, pyvista, was not found.')
+            ImportError(
+                '3d plotting dependency, pyvista, was not found.')
+        except ModuleNotFoundError:
+            ModuleNotFoundError(
+                '3d plotting dependency, pyvista, was not found.')
+        except Exception as e:
+            raise e
 
-        _grid = pv.wrap(self[var].data.values)
-        _grid.plot()
+        if not ax:
+            ax = plt.gca()
+
+        _data = np.array(self[var])
+        _data = _data.transpose((2, 1, 0))
+
+        mesh = pv.UniformGrid(_data.shape)
+        mesh[var] = _data.ravel(order='F')
+        mesh.spacing = (self.dim2_coords[1],
+                        self.dim1_coords[1],
+                        ve/self.dim1_coords[1])
+        mesh.active_scalars_name = var
+
+        p = pv.Plotter()
+        p.add_mesh(mesh.outline(), color="k")
+        if style == 'mesh':
+
+            threshed = mesh.threshold([-np.inf, np.inf], all_scalars=True)
+            p.add_mesh(threshed, cmap=self.varset[var].cmap)
+
+        elif style == 'fence':
+            # todo, improve this to manually create the sections so you can 
+            #   do more than three slices
+            slices = mesh.slice_orthogonal()
+            p.add_mesh(slices, cmap=self.varset[var].cmap)
+
+        else:
+            raise ValueError('Bad value for style: {0}'.format(style))
+    
+        p.show()
 
     def show_plan(self, *args, **kwargs):
         # legacy method, ported over to show_planform.
-        self.show_planform(*args, **kwargs)
+        warnings.warn(
+            '`show_plan` is a deprecated method, and has been replaced by two '
+            'alternatives. To quickly show a planform slice of a cube, you '
+            'can use `quick_show()` with a similar API. The `show_planform` '
+            'method implements more features, but requires instantiating a '
+            '`Planform` object first. Passing arguments to `quick_show`.')
+        # pass `t` arg to `idx` for legacy
+        if 't' in kwargs.keys():
+            idx = kwargs.pop('t')
+            kwargs['idx'] = idx
+
+        self.quick_show(*args, **kwargs)
 
     def show_planform(self, *args, **kwargs):
         """Show planform image.
@@ -428,7 +569,6 @@ class BaseCube(abc.ABC):
                                 'or a string matching the name of a '
                                 'section registered to the cube.')
             PlanformInstance.show(**kwargs)
-
 
     def show_section(self, *args, **kwargs):
         """Show a section.

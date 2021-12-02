@@ -87,6 +87,13 @@ from matplotlib import pyplot as plt
 import deltametrics as dm
 '''
 
+import pyvista
+# necessary when building the sphinx gallery
+pyvista.OFF_SCREEN = True
+
+# Optional - set parameters like theme or window size
+pyvista.set_plot_theme('document')
+
 # img math
 # imgmath_latex_preamble = '\\usepackage{fouriernc}' # newtxsf, mathptmx
 

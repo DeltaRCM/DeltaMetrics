@@ -452,7 +452,7 @@ class OpeningAnglePlanform(SpecialtyPlanform):
         :context:
 
         fig, ax = plt.subplots(1, 3, figsize=(10, 4))
-        golfcube.show_quick('eta', t=-1, ax=ax[0])
+        golfcube.quick_show('eta', t=-1, ax=ax[0])
         im1 = ax[1].imshow(OAP.below_mask,
                            cmap='Greys_r')
         im2 = ax[2].imshow(OAP.sea_angles,
