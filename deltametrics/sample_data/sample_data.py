@@ -77,6 +77,57 @@ def tdb12():
     raise NotImplementedError
 
 
+def _get_aeolian_path():
+    aeolian_path = REGISTRY.fetch('swanson_aeolian_expt1.nc')
+    return aeolian_path
+
+
+def aeolian():
+    """An aeolian dune field dataset.
+
+    This is a synthetic delta dataset generated from the Swanson et al.,
+    2017 "A Surface Model for Aeolian Dune Topography" numerical model. The
+    data have been subsetted, only keeping the first 500 saved timesteps, and
+    formatted into a netCDF file.
+
+    Swanson, T., Mohrig, D., Kocurek, G. et al. A Surface Model for Aeolian
+    Dune Topography. Math Geosci 49, 635–655
+    (2017). https://doi.org/10.1007/s11004-016-9654-x
+
+    dataset reference: https://doi.org/10.6084/m9.figshare.17118827.v1
+
+    Details:
+        * default simualtion parameters were used.
+        * only the first 500 timesteps of the simulation were recorded into
+          the netcdf file.
+        * the ordering for "easting" and "northing" coordinates in the netCDF
+          file is opposite from the paper---the data are the same, but the
+          source region is along the second axis; thus the display is
+          different from the original paper.
+        * simulation used the model code included as a supplement to the paper
+          found here:
+          https://static-content.springer.com/esm/art:10.1007/s11004-016-9654-x/MediaObjects/11004_2016_9654_MOESM5_ESM.txt
+        * simulation was executed on 12/02/2021 with Matlab R2021a on Ubuntu
+          20.04.
+
+    .. plot::
+
+        aeolian = dm.sample_data.aeolian()
+        nt = 5
+        ts = np.linspace(0, aeolian['eta'].shape[0]-1, num=nt, dtype=np.int)
+
+        fig, ax = plt.subplots(1, nt, figsize=(7, 5))
+        for i, t in enumerate(ts):
+            ax[i].imshow(aeolian['eta'][t, :, :], vmin=-4, vmax=5)
+            ax[i].set_title('t = ' + str(t))
+            ax[i].axes.get_xaxis().set_ticks([])
+            ax[i].axes.get_yaxis().set_ticks([])
+        plt.show()
+    """
+    aeolian_path = _get_aeolian_path()
+    return cube.DataCube(aeolian_path)
+
+
 def _get_rcm8_path():
     rcm8_path = REGISTRY.fetch('pyDeltaRCM_Output_8.nc')
     return rcm8_path
