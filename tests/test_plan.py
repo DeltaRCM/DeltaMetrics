@@ -71,6 +71,19 @@ class TestPlanform:
         with pytest.raises(TypeError, match=r'Cannot .* `z` and `t`.'):
             _ = plan.Planform(golfcube, t=3e6, z=5e6)
 
+    def test_Planform_slicing(self):
+        # make the planforms
+        golfcube = cube.DataCube(golf_path)
+        golfcubestrat = cube.DataCube(golf_path)
+        golfcubestrat.stratigraphy_from('eta')
+        golfstrat = cube.StratigraphyCube.from_DataCube(golfcube)
+        plnfrm1 = plan.Planform(golfcube, idx=-1)
+        plnfrm2 = plan.Planform(golfcubestrat, z=-2)
+        plnfrm3 = plan.Planform(golfstrat, z=-6)  # note should be deep enough for no nans
+        assert np.all(plnfrm1['eta'] == golfcube['eta'][-1, :, :])
+        assert np.all(plnfrm2['time'] == golfcubestrat['time'][plnfrm2.idx, :, :])
+        assert np.all(plnfrm3['time'] == golfstrat['time'][plnfrm3.idx, :, :])
+
 
 class TestOpeningAnglePlanform:
 
