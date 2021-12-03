@@ -71,12 +71,66 @@ on 10/14/2021, at the University of Texas at Austin.</p>
 <p>Run was computed with pyDeltaRCM v2.1.0. See log file for complete
 information on system and model configuration.</p>
 <p>Data available at Zenodo, <a class="reference external" href="https://doi.org/10.5281/zenodo.4456143">https://doi.org/10.5281/zenodo.4456143</a>.</p>
-<p>Version history:
-v1.1: 10.5281/zenodo.5570962
-v1.0: 10.5281/zenodo.4456144</p>
+<dl class="simple">
+<dt>Version history:</dt><dd><ul class="simple">
+<li><p>v1.1: 10.5281/zenodo.5570962</p></li>
+<li><p>v1.0: 10.5281/zenodo.4456144</p></li>
+</ul>
+</dd>
+</dl>
 <p>(<a class="reference external" href="../../reference/sample_data/index-1.png">png</a>, <a class="reference external" href="../../reference/sample_data/index-1.hires.png">hires.png</a>)</p>
 <figure class="align-default">
 <img alt="../../_images/index-12.png" class="plot-directive" src="../../_images/index-12.png" />
+</figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deltametrics.sample_data.aeolian">
+<span class="sig-prename descclassname"><span class="pre">deltametrics.sample_data.</span></span><span class="sig-name descname"><span class="pre">aeolian</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.sample_data.aeolian" title="Permalink to this definition">¶</a></dt>
+<dd><p>An aeolian dune field dataset.</p>
+<p>This is a synthetic delta dataset generated from the Swanson et al.,
+2017 “A Surface Model for Aeolian Dune Topography” numerical model. The
+data have been subsetted, only keeping the first 500 saved timesteps, and
+formatted into a netCDF file.</p>
+<p>Swanson, T., Mohrig, D., Kocurek, G. et al. A Surface Model for Aeolian
+Dune Topography. Math Geosci 49, 635–655
+(2017). <a class="reference external" href="https://doi.org/10.1007/s11004-016-9654-x">https://doi.org/10.1007/s11004-016-9654-x</a></p>
+<p>Dataset reference: <a class="reference external" href="https://doi.org/10.6084/m9.figshare.17118827.v1">https://doi.org/10.6084/m9.figshare.17118827.v1</a></p>
+<dl class="simple">
+<dt>Details:</dt><dd><ul class="simple">
+<li><p>default simualtion parameters were used.</p></li>
+<li><p>only the first 500 timesteps of the simulation were recorded into
+the netcdf file.</p></li>
+<li><p>the <em>ordering</em> for “easting” and “northing” coordinates in the
+netCDF file is opposite from the paper—that is the source region
+is along the second axis, i.e., <code class="docutils literal notranslate"><span class="pre">dim1[source_regiom]==0</span></code>. The
+display of this dataset is thus different from the original
+paper, <em>but the data are the same</em>.</p></li>
+<li><p>simulation used the model code included as a supplement to the paper
+found here:
+<a class="reference external" href="https://static-content.springer.com/esm/art%3A10.1007%2Fs11004-016-9654-x/MediaObjects/11004_2016_9654_MOESM5_ESM.txt">https://static-content.springer.com/esm/art%3A10.1007%2Fs11004-016-9654-x/MediaObjects/11004_2016_9654_MOESM5_ESM.txt</a></p></li>
+<li><p>simulation was executed on 12/02/2021 with Matlab R2021a on Ubuntu
+20.04.</p></li>
+</ul>
+</dd>
+</dl>
+<p>(<a class="reference external" href="../../reference/sample_data/index-2.png">png</a>, <a class="reference external" href="../../reference/sample_data/index-2.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../../_images/index-22.png" class="plot-directive" src="../../_images/index-22.png" />
+</figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deltametrics.sample_data.landsat">
+<span class="sig-prename descclassname"><span class="pre">deltametrics.sample_data.</span></span><span class="sig-name descname"><span class="pre">landsat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.sample_data.landsat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Landsat image dataset.</p>
+<p>This is a set of satellite images from the Landsat 5 satellite, collected
+over the Krishna River delta, India. The dataset includes annual-composite
+scenes from four different years (<cite>[1995, 2000, 2005, 2010]</cite>) and includes
+data collected from four bands (<cite>[‘Red’, ‘Green’, ‘Blue’, ‘NIR’]</cite>).</p>
+<p>(<a class="reference external" href="../../reference/sample_data/index-3.png">png</a>, <a class="reference external" href="../../reference/sample_data/index-3.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../../_images/index-31.png" class="plot-directive" src="../../_images/index-31.png" />
 </figure>
 </dd></dl>
 
@@ -99,23 +153,9 @@ documentation, please use the <a class="reference internal" href="#deltametrics.
 <p class="admonition-title">Warning</p>
 <p>This cube may be removed in future releases.</p>
 </div>
-<p>(<a class="reference external" href="../../reference/sample_data/index-2.png">png</a>, <a class="reference external" href="../../reference/sample_data/index-2.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../../reference/sample_data/index-4.png">png</a>, <a class="reference external" href="../../reference/sample_data/index-4.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../../_images/index-22.png" class="plot-directive" src="../../_images/index-22.png" />
-</figure>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="deltametrics.sample_data.landsat">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.sample_data.</span></span><span class="sig-name descname"><span class="pre">landsat</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.sample_data.landsat" title="Permalink to this definition">¶</a></dt>
-<dd><p>Landsat image dataset.</p>
-<p>This is a set of satellite images from the Landsat 5 satellite, collected
-over the Krishna River delta, India. The dataset includes annual-composite
-scenes from four different years (<cite>[1995, 2000, 2005, 2010]</cite>) and includes
-data collected from four bands (<cite>[‘Red’, ‘Green’, ‘Blue’, ‘NIR’]</cite>).</p>
-<p>(<a class="reference external" href="../../reference/sample_data/index-3.png">png</a>, <a class="reference external" href="../../reference/sample_data/index-3.hires.png">hires.png</a>)</p>
-<figure class="align-default">
-<img alt="../../_images/index-31.png" class="plot-directive" src="../../_images/index-31.png" />
+<img alt="../../_images/index-41.png" class="plot-directive" src="../../_images/index-41.png" />
 </figure>
 </dd></dl>
 
