@@ -21,6 +21,56 @@ simple_shore_array = np.array([[3, 3, 4, 4, 4, 4, 4, 3, 3, 3],
                                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]).T
 simple_shore[simple_shore_array[:, 0], simple_shore_array[:, 1]] = 1
 
+golf_path = _get_golf_path()
+
+
+class TestPlanform:
+
+    def test_Planform_without_cube(self):
+        plfrm = plan.Planform(idx=-1)
+        assert plfrm.name is None
+        assert plfrm._input_z is None
+        assert plfrm._input_t is None
+        assert plfrm._input_idx is -1
+        assert plfrm.shape is None
+        assert plfrm.cube is None
+        assert plfrm._dim0_idx is None
+        assert plfrm.variables is None
+        with pytest.raises(AttributeError, match=r'No cube connected.*.'):
+            plfrm['velocity']
+
+    def test_Planform_bad_cube(self):
+        badcube = ['some', 'list']
+        with pytest.raises(TypeError, match=r'Expected type is *.'):
+            _ = plan.Planform(badcube, idx=12)
+
+    def test_Planform_idx(self):
+        golfcube = cube.DataCube(golf_path)
+        plnfrm = plan.Planform(golfcube, idx=40)
+        assert plnfrm.name == 'data'
+        assert plnfrm.idx == 40
+        assert plnfrm.cube == golfcube
+        assert len(plnfrm.variables) > 0
+
+    def test_Planform_z_t_thesame(self):
+        golfcube = cube.DataCube(golf_path)
+        plnfrm = plan.Planform(golfcube, t=3e6)
+        plnfrm2 = plan.Planform(golfcube, z=3e6)
+        assert plnfrm.name == 'data'
+        assert plnfrm.idx == 6
+        assert plnfrm.idx == plnfrm2.idx
+        assert plnfrm.cube == golfcube
+        assert len(plnfrm.variables) > 0
+
+    def test_Planform_idx_z_t_mutual_exclusive(self):
+        golfcube = cube.DataCube(golf_path)
+        with pytest.raises(TypeError, match=r'Cannot .* `z` and `idx`.'):
+            _ = plan.Planform(golfcube, z=5e6, idx=30)
+        with pytest.raises(TypeError, match=r'Cannot .* `t` and `idx`.'):
+            _ = plan.Planform(golfcube, t=3e6, idx=30)
+        with pytest.raises(TypeError, match=r'Cannot .* `z` and `t`.'):
+            _ = plan.Planform(golfcube, t=3e6, z=5e6)
+
 
 class TestOpeningAnglePlanform:
 

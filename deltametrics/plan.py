@@ -174,6 +174,9 @@ class Planform(BasePlanform):
         if (not (z is None)) and (not (t is None)):
             raise TypeError('Cannot specify both `z` and `t`.')
 
+        self.cube = None
+        self._dim0_idx = None
+
         self._input_z = z
         self._input_t = t
         self._input_idx = idx
@@ -181,11 +184,21 @@ class Planform(BasePlanform):
         super().__init__('data', *args, **kwargs)
 
         if len(args) > 0:
-            if issubclass(type(args[0]), cube.BaseCube):
-                self.connect(args[0])
-            elif utils.is_ndarray_or_xarray(args[0]):
-                # use first argument as an array to get shape
-                self._shape = args[0].shape
+            self.connect(args[0])
+        else:
+            pass
+
+    @property
+    def variables(self):
+        """List of variables.
+        """
+        return self._variables
+
+    @property
+    def idx(self):
+        """Index into underlying Cube along axis 0.
+        """
+        return self._dim0_idx
 
     def connect(self, CubeInstance, name=None):
         """Connect this Planform instance to a Cube instance.
