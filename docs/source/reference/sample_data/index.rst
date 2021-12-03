@@ -34,8 +34,9 @@ Example data cubes
 ------------------
 
 .. autofunction:: golf
-.. autofunction:: rcm8
+.. autofunction:: aeolian
 .. autofunction:: landsat
+.. autofunction:: rcm8
 
 
 Paths to data files

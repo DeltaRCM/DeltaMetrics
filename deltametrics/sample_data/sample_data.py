@@ -50,8 +50,8 @@ def golf():
     Data available at Zenodo, https://doi.org/10.5281/zenodo.4456143.
 
     Version history:
-    v1.1: 10.5281/zenodo.5570962
-    v1.0: 10.5281/zenodo.4456144
+      * v1.1: 10.5281/zenodo.5570962
+      * v1.0: 10.5281/zenodo.4456144
 
     .. plot::
 
@@ -65,8 +65,8 @@ def golf():
             ax[i].set_title('t = ' + str(t))
             ax[i].axes.get_xaxis().set_ticks([])
             ax[i].axes.get_yaxis().set_ticks([])
-        ax[0].set_ylabel('y-direction')
-        ax[0].set_xlabel('x-direction')
+        ax[0].set_ylabel('dim1 direction')
+        ax[0].set_xlabel('dim2 direction')
         plt.show()
     """
     golf_path = _get_golf_path()
@@ -94,21 +94,22 @@ def aeolian():
     Dune Topography. Math Geosci 49, 635–655
     (2017). https://doi.org/10.1007/s11004-016-9654-x
 
-    dataset reference: https://doi.org/10.6084/m9.figshare.17118827.v1
+    Dataset reference: https://doi.org/10.6084/m9.figshare.17118827.v1
 
     Details:
-        * default simualtion parameters were used.
-        * only the first 500 timesteps of the simulation were recorded into
-          the netcdf file.
-        * the ordering for "easting" and "northing" coordinates in the netCDF
-          file is opposite from the paper---the data are the same, but the
-          source region is along the second axis; thus the display is
-          different from the original paper.
-        * simulation used the model code included as a supplement to the paper
-          found here:
-          https://static-content.springer.com/esm/art:10.1007/s11004-016-9654-x/MediaObjects/11004_2016_9654_MOESM5_ESM.txt
-        * simulation was executed on 12/02/2021 with Matlab R2021a on Ubuntu
-          20.04.
+      * default simualtion parameters were used.
+      * only the first 500 timesteps of the simulation were recorded into
+        the netcdf file.
+      * the *ordering* for "easting" and "northing" coordinates in the
+        netCDF file is opposite from the paper---that is the source region
+        is along the second axis, i.e., ``dim1[source_regiom]==0``. The
+        display of this dataset is thus different from the original
+        paper, *but the data are the same*.
+      * simulation used the model code included as a supplement to the paper
+        found here:
+        https://static-content.springer.com/esm/art%3A10.1007%2Fs11004-016-9654-x/MediaObjects/11004_2016_9654_MOESM5_ESM.txt
+      * simulation was executed on 12/02/2021 with Matlab R2021a on Ubuntu
+        20.04.
 
     .. plot::
 
@@ -116,12 +117,14 @@ def aeolian():
         nt = 5
         ts = np.linspace(0, aeolian['eta'].shape[0]-1, num=nt, dtype=np.int)
 
-        fig, ax = plt.subplots(1, nt, figsize=(7, 5))
+        fig, ax = plt.subplots(1, nt, figsize=(8, 4))
         for i, t in enumerate(ts):
-            ax[i].imshow(aeolian['eta'][t, :, :], vmin=-4, vmax=5)
+            ax[i].imshow(aeolian['eta'][t, :, :], vmin=-5, vmax=7)
             ax[i].set_title('t = ' + str(t))
             ax[i].axes.get_xaxis().set_ticks([])
             ax[i].axes.get_yaxis().set_ticks([])
+        ax[0].set_ylabel('northing')
+        ax[0].set_xlabel('easting')
         plt.show()
     """
     aeolian_path = _get_aeolian_path()
