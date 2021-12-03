@@ -1,6 +1,7 @@
 
 import abc
 import os
+import copy
 from warnings import warn
 
 import xarray as xr
@@ -181,11 +182,11 @@ class NetCDFIO(BaseIO):
 
         # try to find if coordinates have been preconfigured
         _coords_list = list(_dataset.coords)
-        if set(['time', 'x', 'y']).issubset(set(_coords_list)):
+        if len(_coords_list) == 3:
             # the coordinates are preconfigured
             self.dataset = _dataset.set_coords(_coords_list)
-            self.dims = list(self.dataset.dims)
             self.coords = list(self.dataset.coords)
+            self.dims = copy.deepcopy(self.coords)
         elif set(['total_time', 'length', 'width']).issubset(set(_dataset.dims.keys())):
             # the coordinates are not set, but there are matching arrays
             # this is a legacy option, so issue a warning here
