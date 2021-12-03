@@ -444,8 +444,7 @@ class BaseCube(abc.ABC):
                 'Invalid `axis` specified: {0}'.format(axis))
 
         # use the object to handle the showing
-        returned = _obj.show(var, **kwargs)
-        return returned
+        _obj.show(var, **kwargs)
 
     def show_cube(self, var, style='mesh', ve=200, ax=None):
         """Show the cube in a 3D axis.
