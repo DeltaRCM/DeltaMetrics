@@ -1,5 +1,6 @@
 import pytest
 import re
+import unittest.mock as mock
 
 import numpy as np
 import xarray as xr
@@ -8,6 +9,7 @@ from deltametrics import cube
 
 from deltametrics import plot
 from deltametrics import section
+from deltametrics import plan
 from deltametrics import utils
 from deltametrics.sample_data import _get_golf_path, _get_rcm8_path, _get_landsat_path
 
@@ -28,7 +30,7 @@ class TestDataCubeNoStratigraphy:
         golf = cube.DataCube(golf_path)
         assert golf._data_path == golf_path
         assert golf.dataio.type == 'netcdf'
-        assert golf._plan_set == {}
+        assert golf._planform_set == {}
         assert golf._section_set == {}
         assert type(golf.varset) is plot.VariableSet
 
@@ -96,6 +98,12 @@ class TestDataCubeNoStratigraphy:
         assert golf.sections is golf.section_set
         assert len(golf.sections.keys()) == 1
         assert 'testsection' in golf.sections.keys()
+        with pytest.raises(TypeError, match=r'`SectionInstance` .*'):
+            golf.register_section('fail1', 'astring')
+        with pytest.raises(TypeError, match=r'`SectionInstance` .*'):
+            golf.register_section('fail2', 22)
+        with pytest.raises(TypeError, match=r'`name` .*'):
+            golf.register_section(22, section.StrikeSection(distance_idx=10))
 
     def test_sections_slice_op(self):
         golf = cube.DataCube(golf_path)
@@ -105,6 +113,30 @@ class TestDataCubeNoStratigraphy:
         assert 'testsection' in golf.sections.keys()
         slc = golf.sections['testsection']
         assert issubclass(type(slc), section.BaseSection)
+
+    def test_register_planform(self):
+        golf = cube.DataCube(golf_path)
+        golf.stratigraphy_from('eta', dz=0.1)
+        golf.register_planform(
+            'testplanform', plan.Planform(idx=10))
+        assert golf.planforms is golf.planform_set
+        assert len(golf.planforms.keys()) == 1
+        assert 'testplanform' in golf.planforms.keys()
+        with pytest.raises(TypeError, match=r'`PlanformInstance` .*'):
+            golf.register_planform('fail1', 'astring')
+        with pytest.raises(TypeError, match=r'`PlanformInstance` .*'):
+            golf.register_planform('fail2', 22)
+        with pytest.raises(TypeError, match=r'`name` .*'):
+            golf.register_planform(22, plan.Planform(idx=10))
+
+    def test_planforms_slice_op(self):
+        golf = cube.DataCube(golf_path)
+        golf.stratigraphy_from('eta', dz=0.1)
+        golf.register_planform(
+            'testplanform', plan.Planform(idx=10))
+        assert 'testplanform' in golf.planforms.keys()
+        slc = golf.planforms['testplanform']
+        assert issubclass(type(slc), plan.BasePlanform)
 
     def test_nostratigraphy_default(self):
         golf = cube.DataCube(golf_path)
@@ -130,7 +162,7 @@ class TestDataCubeNoStratigraphy:
     def test_fixeddatacube_init_variables(self):
         assert type(self.fixeddatacube.variables) is list
 
-    def test_fixeddatacube_init_plan_set(self):
+    def test_fixeddatacube_init_planform_set(self):
         assert type(self.fixeddatacube.plan_set) is dict
 
     def test_fixeddatacube_init_plans(self):
@@ -187,6 +219,58 @@ class TestDataCubeNoStratigraphy:
         with pytest.raises(utils.NoStratigraphyError):
             _ = sc['velocity'].strat.as_preserved()
 
+    def test_show_section_mocked_BaseSection_show(self):
+        golf = cube.DataCube(golf_path)
+        golf.register_section(
+            'displaysection', section.StrikeSection(distance_idx=10))
+        golf.sections['displaysection'].show = mock.MagicMock()
+        mocked = golf.sections['displaysection'].show
+        # no arguments is an error
+        with pytest.raises(TypeError, match=r'.* missing 2 .*'):
+            golf.show_section()
+        # one argument is an error
+        with pytest.raises(TypeError, match=r'.* missing 1 .*'):
+            golf.show_section('displaysection')
+        # three arguments is an error
+        with pytest.raises(TypeError, match=r'.* takes 3 .*'):
+            golf.show_section('one', 'two', 'three')
+        # two arguments passes to BaseSection.show()
+        golf.show_section('displaysection', 'eta')
+        assert mocked.call_count == 1
+        # kwargs should be passed along to BaseSection.show
+        golf.show_section('displaysection', 'eta', ax=100)
+        assert mocked.call_count == 2
+        mocked.assert_called_with('eta', ax=100)
+        # first arg must be a string
+        with pytest.raises(TypeError, match=r'`name` was not .*'):
+            golf.show_section(1, 'two')
+
+    def test_show_planform_mocked_Planform_show(self):
+        golf = cube.DataCube(golf_path)
+        golf.register_planform(
+            'displayplan', plan.Planform(idx=-1))
+        golf.planforms['displayplan'].show = mock.MagicMock()
+        mocked = golf.planforms['displayplan'].show
+        # no arguments is an error
+        with pytest.raises(TypeError, match=r'.* missing 2 .*'):
+            golf.show_planform()
+        # one argument is an error
+        with pytest.raises(TypeError, match=r'.* missing 1 .*'):
+            golf.show_planform('displayplan')
+        # three arguments is an error
+        with pytest.raises(TypeError, match=r'.* takes 3 .*'):
+            golf.show_planform('one', 'two', 'three')
+        # two arguments passes to BaseSection.show()
+        golf.show_planform('displayplan', 'eta')
+        assert mocked.call_count == 1
+        # kwargs should be passed along to BaseSection.show
+        golf.show_planform('displayplan', 'eta', ax=100)
+        assert mocked.call_count == 2
+        mocked.assert_called_with('eta', ax=100)
+        # first arg must be a string
+        with pytest.raises(TypeError, match=r'`name` was not .*'):
+            golf.show_planform(1, 'two')
+
 
 class TestDataCubeWithStratigraphy:
 
@@ -223,17 +307,17 @@ class TestDataCubeWithStratigraphy:
             self.fixeddatacube.variables = {
                 'is': True, 'a': True, 'dict': True}
 
-    def test_fixeddatacube_set_plan_set_list(self):
+    def test_fixeddatacube_set_planform_set_list(self):
         with pytest.raises(AttributeError):
-            self.fixeddatacube.plan_set = ['is', 'a', 'list']
+            self.fixeddatacube.planform_set = ['is', 'a', 'list']
 
-    def test_fixeddatacube_set_plan_set_dict(self):
+    def test_fixeddatacube_set_planform_set_dict(self):
         with pytest.raises(AttributeError):
-            self.fixeddatacube.plan_set = {'is': True, 'a': True, 'dict': True}
+            self.fixeddatacube.planform_set = {'is': True, 'a': True, 'dict': True}
 
     def test_fixeddatacube_set_plans(self):
         with pytest.raises(AttributeError):
-            self.fixeddatacube.plans = 10
+            self.fixeddatacube.planforms = 10
 
     def test_fixeddatacube_set_section_set_list(self):
         with pytest.raises(AttributeError):
@@ -310,7 +394,7 @@ class TestLegacyPyDeltaRCMCube:
             rcm8cube = cube.DataCube(rcm8_path)
         assert rcm8cube._data_path == rcm8_path
         assert rcm8cube.dataio.type == 'netcdf'
-        assert rcm8cube._plan_set == {}
+        assert rcm8cube._planform_set == {}
         assert rcm8cube._section_set == {}
         assert type(rcm8cube.varset) is plot.VariableSet
 
@@ -343,7 +427,7 @@ class TestLandsatCube:
             hdfcube = cube.DataCube(hdf_path)
         assert hdfcube._data_path == hdf_path
         assert hdfcube.dataio.type == 'hdf5'
-        assert hdfcube._plan_set == {}
+        assert hdfcube._planform_set == {}
         assert hdfcube._section_set == {}
         assert type(hdfcube.varset) is plot.VariableSet
 

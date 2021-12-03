@@ -257,9 +257,13 @@ class BaseCube(abc.ABC):
             Whether to return the planform object.
         """
         if not issubclass(type(PlanformInstance), plan.BasePlanform):
-            raise TypeError
-        if not type(name) is str:
-            raise TypeError
+            raise TypeError(
+                '`PlanformInstance` was not a `Planform`. '
+                'Instead, was: {0}'.format(type(PlanformInstance)))
+        if not isinstance(name, str):
+            raise TypeError(
+                '`name` was not a string. '
+                'Instead, was: {0}'.format(type(name)))
         PlanformInstance.connect(self, name=name)  # attach cube
         self._planform_set[name] = PlanformInstance
         if return_planform:
@@ -306,11 +310,14 @@ class BaseCube(abc.ABC):
         ``golf.register_section('trial', trace='strike',
         distance=2000)``.
         """
-
         if not issubclass(type(SectionInstance), section.BaseSection):
-            raise TypeError
-        if not type(name) is str:
-            raise TypeError
+            raise TypeError(
+                '`SectionInstance` was not a `Section`. '
+                'Instead, was: {0}'.format(type(SectionInstance)))
+        if not isinstance(name, str):
+            raise TypeError(
+                '`name` was not a string. '
+                'Instead, was: {0}'.format(type(name)))
         SectionInstance.connect(self, name=name)  # attach cube
         self._section_set[name] = SectionInstance
         if return_section:
@@ -555,62 +562,55 @@ class BaseCube(abc.ABC):
 
         self.quick_show(*args, **kwargs)
 
-    def show_planform(self, *args, **kwargs):
-        """Show planform image.
+    def show_planform(self, name, variable, **kwargs):
+        """Show a registered planform by name and variable.
+
+        Call a registered planform by name and variable.
+
+        Parameters
+        ----------
+        name : :obj:`str`
+            The name of the registered planform.
+
+        variable : :obj:`str`
+            The varaible name to show.
+
+        **kwargs
+            Keyword arguments passed
+            to :meth:`~deltametrics.plan.Planform.show`.
         """
-        # parse arguments
-        if len(args) == 0:
-            raise ValueError
-        elif len(args) == 1:
-            PlanformInstance = args[0]
-            SectionAttribute = None
-        elif len(args) == 2:
-            PlanformInstance = args[0]
-            SectionAttribute = args[1]
+        # call `show()` from string
+        if isinstance(name, str):
+            self._planform_set[name].show(variable, **kwargs)
         else:
-            raise ValueError('Too many arguments.')
+            raise TypeError(
+                '`name` was not a string, '
+                'was {0}'.format(type(name)))
 
-        # call `show()` from string or by instance
-        if type(PlanformInstance) is str:
-            self._planform_set[PlanformInstance].show(SectionAttribute, **kwargs)
-        else:
-            if not issubclass(type(PlanformInstance), section.BaseSection):
-                raise TypeError('You must pass a Section instance, '
-                                'or a string matching the name of a '
-                                'section registered to the cube.')
-            PlanformInstance.show(**kwargs)
+    def show_section(self, name, variable, **kwargs):
+        """Show a registered section by name and variable.
 
-    def show_section(self, *args, **kwargs):
-        """Show a section.
+        Call a registered section by name and variable.
 
-        Can be called by name if section is already registered, or pass a
-        fresh section instance and it will be connected.
+        Parameters
+        ----------
+        name : :obj:`str`
+            The name of the registered section.
 
-        Wraps the Section's :meth:`~deltametrics.section.BaseSection.show`
-        method.
+        variable : :obj:`str`
+            The varaible name to show.
+
+        **kwargs
+            Keyword arguments passed
+            to :meth:`~deltametrics.section.BaseSection.show`.
         """
-
-        # parse arguments
-        if len(args) == 0:
-            raise ValueError
-        elif len(args) == 1:
-            SectionInstance = args[0]
-            SectionAttribute = None
-        elif len(args) == 2:
-            SectionInstance = args[0]
-            SectionAttribute = args[1]
+        # call `show()` from string
+        if isinstance(name, str):
+            self._section_set[name].show(variable, **kwargs)
         else:
-            raise ValueError('Too many arguments.')
-
-        # call `show()` from string or by instance
-        if type(SectionInstance) is str:
-            self._section_set[SectionInstance].show(SectionAttribute, **kwargs)
-        else:
-            if not issubclass(type(SectionInstance), section.BaseSection):
-                raise TypeError('You must pass a Section instance, '
-                                'or a string matching the name of a '
-                                'section registered to the cube.')
-            SectionInstance.show(**kwargs)
+            raise TypeError(
+                '`name` was not a string, '
+                'was {0}'.format(type(name)))
 
 
 class DataCube(BaseCube):
