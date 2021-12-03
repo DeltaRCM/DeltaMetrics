@@ -90,6 +90,11 @@ class BasePlanform(abc.ABC):
 
         Parameters
         ----------
+        field : :obj:`DataArray`
+            The data to show.
+
+        varinfo : :obj:`VariableInfo`
+            A :obj:`VariableInfo` instance describing how to color `field`.
 
         **kwargs
             Acceptable kwargs are `ax`, `title`, `ticks`, `colorbar_label`.
