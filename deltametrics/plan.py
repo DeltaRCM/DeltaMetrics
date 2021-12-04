@@ -330,11 +330,12 @@ class Planform(BasePlanform):
             :include-source:
 
             >>> golfcube = dm.sample_data.golf()
-            >>> planform = dm.plan.DataPlanform(golfcube, idx=70)
+            >>> planform = dm.plan.Planform(golfcube, idx=70)
 
             >>> fig, ax = plt.subplots()
             >>> planform.show('eta', ax=ax[0])
             >>> planform.show('velocity', ax=ax[1])
+            >>> plt.show()
         """
 
         # process the planform attribute to a field

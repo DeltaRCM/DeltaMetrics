@@ -14,6 +14,15 @@ Planform types
 
 .. currentmodule:: deltametrics.plan
 
+.. rubric:: Basic data Planform
+
+.. autosummary::
+    :toctree: ../../_autosummary
+
+    Planform
+
+.. rubric:: Specialty Planforms
+
 .. autosummary::
     :toctree: ../../_autosummary
 
