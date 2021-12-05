@@ -206,7 +206,7 @@ Specialty Planform objects
 
 A slice of the `Cube` is a basic `Planform`, but often there are some analyses we wish to compute on a `Planform`, that may have multiple steps and sets of derived values we want to keep track of.
 DeltaMetrics has several specialty planform objects that make this easier.
-These specialty calculations are beyond the scope of this basic user guide, find more information on the :doc:`Planform API reference page <reference/plan/index>`.
+These specialty calculations are beyond the scope of this basic user guide, find more information on the :doc:`Planform API reference page <../reference/plan/index>`.
 
 
 Manipulating Section data

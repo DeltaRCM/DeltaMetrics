@@ -97,14 +97,17 @@ class BasePlanform(abc.ABC):
             A :obj:`VariableInfo` instance describing how to color `field`.
 
         **kwargs
-            Acceptable kwargs are `ax`, `title`, `ticks`, `colorbar_label`.
-            See description for `DataPlanform.show` for more information.
+            Acceptable kwargs are `ax`, `title`, `ticks`, `colorbar`,
+            `colorbar_label`. See description for `DataPlanform.show` for
+            more information.
         """
         # process arguments and inputs
         ax = kwargs.pop('ax', None)
         title = kwargs.pop('title', None)
         ticks = kwargs.pop('ticks', False)
+        colorbar = kwargs.pop('colorbar', True)
         colorbar_label = kwargs.pop('colorbar_label', False)
+        
         if not ax:
             ax = plt.gca()
 
@@ -123,12 +126,13 @@ class BasePlanform(abc.ABC):
                        vmax=varinfo.vmax,
                        extent=_extent)
 
-        cb = plot.append_colorbar(im, ax)
-        if colorbar_label:
-            _colorbar_label = \
-                varinfo.label if (colorbar_label is True) \
-                else str(colorbar_label)  # use custom if passed
-            cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
+        if colorbar:
+            cb = plot.append_colorbar(im, ax)
+            if colorbar_label:
+                _colorbar_label = \
+                    varinfo.label if (colorbar_label is True) \
+                    else str(colorbar_label)  # use custom if passed
+                cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
 
         if not ticks:
             ax.set_xticks([], minor=[])
@@ -289,7 +293,7 @@ class Planform(BasePlanform):
                             % type(self.cube))
       
     def show(self, var, ax=None, title=None, ticks=False,
-             colorbar_label=False):
+             colorbar=True, colorbar_label=False):
         """Show the planform.
 
         Method enumerates convenient routines for visualizing planform data
@@ -297,7 +301,6 @@ class Planform(BasePlanform):
 
         Parameters
         ----------
-
         var : :obj:`str`
             Which attribute to show. Can be a string for a named `Cube`
             attribute.
@@ -331,13 +334,12 @@ class Planform(BasePlanform):
 
             >>> golfcube = dm.sample_data.golf()
             >>> planform = dm.plan.Planform(golfcube, idx=70)
-
-            >>> fig, ax = plt.subplots()
+            ... 
+            >>> fig, ax = plt.subplots(1, 2)
             >>> planform.show('eta', ax=ax[0])
             >>> planform.show('velocity', ax=ax[1])
             >>> plt.show()
         """
-
         # process the planform attribute to a field
         _varinfo = self.cube.varset[var] if \
             issubclass(type(self.cube), cube.BaseCube) else \
@@ -348,21 +350,65 @@ class Planform(BasePlanform):
         im = self._show(
             _field, _varinfo,
             ax=ax, title=title, ticks=ticks,
-            colorbar_label=colorbar_label)
+            colorbar=colorbar, colorbar_label=colorbar_label)
 
         return im
 
 
 class SpecialtyPlanform(BasePlanform):
-    """All specialty planforms should subclass this.
+    """A base class for All specialty planforms.
+
+    .. hint:: All specialty planforms should subclass.
 
     Specialty planforms are planforms that hold some computation or attribute
-    about the underlying data. As a general rule, anything that is not a
-    DataPlanform is a SpecialtyPlanform.
+    *about* some underlying data, rather than the actual data. As a general
+    rule, anything that is not a DataPlanform is a SpecialtyPlanform.
+
+    This base class implements a slicing method (it slices the `data` field),
+    and a `show` method for displaying the planform (it displays the `data`
+    field).
+
+    .. rubric:: Developer Notes
+
+    All subclassing objects must implement:
+      * a property named `data` that points to some field (i.e., an attribute
+        of the planform) that best characterizes the Planform. For example,
+        the OAP planform `data` property points to the `sea_angles` field. 
+
+    All subclassing objects should consider implementing:
+      * the `show` method takes (optionally) a string argument specifying the
+        field to display, which can match any attriute of the
+        `SpecialtyPlanform`. If no argument is passed to `show`, the `data`
+        field is displayed. A :obj:`VariableInfo` object
+        `self._default_varinfo` is created on instantiating a subclass, which
+        will be used to style the displayed field. You can add different
+        `VariableInfo` objects with the name matching any other field of the
+        planform to use that style instead; for example, OAP implements
+        `self._sea_angles_varinfo`, which is used if the `sea_angles` field
+        is specified to :meth:`show`.
+      * The `self._default_varinfo` can be overwritten in a subclass
+        (after ``super().__init__``) to style the `show` default field
+        (`data`) a certain way. For example, OAP sets ``self._default_varinfo
+        = self._sea_angles_varinfo``.
     """
 
     def __init__(self, planform_type, *args, **kwargs):
+        """Initialize the SpecialtyPlanform.
 
+        BaseClass, only called by subclassing methods. This `__init__` method
+        calls the `BasePlanform.__init__`.
+
+        Parameters
+        ----------
+        planform_type : :obj:`str`
+            A string specifying the type of planform being created.
+
+        *args
+            Passed to `BasePlanform.__init__`.
+
+        *kwargs
+            Passed to `BasePlanform.__init__`.
+        """
         super().__init__(planform_type, *args, **kwargs)
 
         self._default_varinfo = plot.VariableInfo(
@@ -387,11 +433,19 @@ class SpecialtyPlanform(BasePlanform):
         return self.data[slc]
 
     def show(self, var=None, ax=None, title=None, ticks=False,
-             colorbar_label=False):
-        """
+             colorbar=True, colorbar_label=False):
+        """Show the planform.
+
+        Display a field of the planform, called by attribute name.
+
         Parameters
         ----------
-
+        var : :obj:`str`
+            Which field to show. Must be an attribute of the planform. `show`
+            will look for another attribute describing
+            the :obj:`VariableInfo` for that attribute named
+            ``self._<var>_varinfo`` and use that to style the plot, if
+            found. If this `VariableInfo` is not found, the default is used.
         
         label : :obj:`bool`, `str`, optional
             Display a label of the variable name on the plot. Default is
@@ -418,14 +472,18 @@ class SpecialtyPlanform(BasePlanform):
             _field = self.data
         elif (isinstance(var, str)):
             _field = self.__getattribute__(var)  # will error if var not attr
-            _varinfo = self.__getattribute__('_'+var+'_varinfo')
+            _expected_varinfo = '_' + var + '_varinfo'
+            if hasattr(self, _expected_varinfo):
+                _varinfo = self.__getattribute__(_expected_varinfo)
+            else:
+                _varinfo = self._default_varinfo
         else:
-            raise TypeError('Bad value for var: {0}'.format(var))
+            raise TypeError('Bad value for `var`: {0}'.format(var))
 
         self._show(
             _field, _varinfo,
             ax=ax, title=title, ticks=ticks,
-            colorbar_label=colorbar_label)
+            colorbar=colorbar, colorbar_label=colorbar_label)
 
 
 class OpeningAnglePlanform(SpecialtyPlanform):
