@@ -1,5 +1,6 @@
 import numpy as np
 import xarray as xr
+import matplotlib.pyplot as plt
 
 from scipy.spatial import ConvexHull
 from shapely.geometry.polygon import Polygon
@@ -13,87 +14,50 @@ from numba import njit
 from . import mask
 from . import cube
 from . import section as dm_section
+from . import plot
 from . import utils
 
 
 class BasePlanform(abc.ABC):
     """Base planform object.
 
-    Defines common attributes and methods of a planform object.
-
-    This object should wrap around many of the functions available from
-    :obj:`~deltametrics.mask` and :obj:`~deltametrics.mobility`.
+    Defines common attributes and methods of all planform objects.
     """
 
     def __init__(self, planform_type, *args, name=None):
         """Instantiate for subclasses of BasePlanform.
 
-        The base class instantiation handles setting of the cooridnates of a
-        Planform from the instantiating cube or xarray.
+        The base class instantiation handles setting the `name` attribute of
+        the `Planform`, and defines the internal plotting routine
+        via :obj:`_show`.
 
         Parameters
         ----------
         planform_type : :obj`str`
-            The identifier for the *type* of Planform.
+            String identifying the *type* of `Planform` being instantiated.
 
-        CubeInstance : :obj:`~deltametrics.cube.Cube` subclass, optional
-            Connect to this cube. No connection is made if cube is not
-            provided.
+        *args
+            Arbitrary arguments, passed from the subclass, not used here.
 
         name : :obj:`str`, optional
             An optional name for the planform, helpful for maintaining and
             keeping track of multiple `Planform` objects of the same type.
             This is disctinct from the :obj:`planform_type`. The name is used
-            internally if you use the `register_plan` method of a `Cube`.
-
-        .. note::
-
-            If no arguments are passed, an empty `Planform` not connected to
-            any cube is returned. This cube may need to be manually connected
-            to have any functionality (via the :meth:`connect` method); this
-            need will depend on the type of `Planform`.
+            internally if you use the :obj:`register_planform` method of a
+            `Cube`.
         """
         # begin unconnected
-        self._x = None
-        self._y = None
         self._shape = None
         self._variables = None
-        self.cube = None
-        self._composite_array = None
 
         self.planform_type = planform_type
         self._name = name
-
-        # if len(args) != 1:
-        #     raise ValueError('Expected single positional argument to \
-        #                      %s instantiation.'
-        #                      % type(self))
-
-        if len(args) > 0:
-            if issubclass(type(args[0]), cube.BaseCube):
-                self.connect(args[0])
-            elif utils.is_ndarray_or_xarray(args[0]):
-                # use first argument as an array to get shape
-                self._shape = args[0].shape
-
-    def connect(self, CubeInstance, name=None):
-        """Connect this Planform instance to a Cube instance.
-        """
-        if not issubclass(type(CubeInstance), cube.BaseCube):
-            raise TypeError('Expected type is subclass of {_exptype}, '
-                            'but received was {_gottype}.'.format(
-                                _exptype=type(cube.BaseCube),
-                                _gottype=type(CubeInstance)))
-        self.cube = CubeInstance
-        self._variables = self.cube.variables
-        self.name = name  # use the setter to determine the _name
-        self._shape = self.cube.shape[1:]
 
     @property
     def name(self):
         """Planform name.
 
-        Helpful to differentiate multiple Planforms.
+        Helpful to differentiate multiple `Planform` objects.
         """
         return self._name
 
@@ -118,19 +82,411 @@ class BasePlanform(abc.ABC):
         """
         return self._shape
 
-    @property
-    def composite_array(self):
-        """Array to extract a contour from when mask-making.
+    def _show(self, field, varinfo, **kwargs):
+        """Internal method for showing a planform.
 
-        This is the array that a contour is extracted from using some threshold
-        value when making land and shoreline masks. This should just be an
-        alias for either the `sea_angles` or the `meanimage` arrays from the
-        OAM and MPM respectively.
+        Each planform may implement it's own method to determine what field to
+        show when called, and different calling options.
+
+        Parameters
+        ----------
+        field : :obj:`DataArray`
+            The data to show.
+
+        varinfo : :obj:`VariableInfo`
+            A :obj:`VariableInfo` instance describing how to color `field`.
+
+        **kwargs
+            Acceptable kwargs are `ax`, `title`, `ticks`, `colorbar`,
+            `colorbar_label`. See description for `DataPlanform.show` for
+            more information.
         """
-        return self._composite_array
+        # process arguments and inputs
+        ax = kwargs.pop('ax', None)
+        title = kwargs.pop('title', None)
+        ticks = kwargs.pop('ticks', False)
+        colorbar = kwargs.pop('colorbar', True)
+        colorbar_label = kwargs.pop('colorbar_label', False)
+        
+        if not ax:
+            ax = plt.gca()
+
+        # get the extent as arbitrary dimensions
+        d0, d1 = field.dims
+        d0_arr, d1_arr = field[d0], field[d1]
+        _extent = [d1_arr[0],                  # dim1, 0
+                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
+                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
+                   d0_arr[0]]                  # dim0, 0
+
+        im = ax.imshow(field,
+                       cmap=varinfo.cmap,
+                       norm=varinfo.norm,
+                       vmin=varinfo.vmin,
+                       vmax=varinfo.vmax,
+                       extent=_extent)
+
+        if colorbar:
+            cb = plot.append_colorbar(im, ax)
+            if colorbar_label:
+                _colorbar_label = \
+                    varinfo.label if (colorbar_label is True) \
+                    else str(colorbar_label)  # use custom if passed
+                cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
+
+        if not ticks:
+            ax.set_xticks([], minor=[])
+            ax.set_yticks([], minor=[])
+        if title:
+            ax.set_title(str(title))
+
+        return im
 
 
-class OpeningAnglePlanform(BasePlanform):
+class Planform(BasePlanform):
+    """Basic Planform object.
+
+    This class is used to slice the `Cube` along the `dim0` axis. The object
+    is akin to the various `Section` classes, but there is only the one way
+    to slice as a Planform. 
+    """
+
+    def __init__(self, *args, z=None, t=None, idx=None, **kwargs):
+        """
+        Identify coordinate defining the planform.
+
+        Parameters
+        ----------
+
+        CubeInstance : :obj:`~deltametrics.cube.BaseCube` subclass, optional
+            Connect to this cube. No connection is made if cube is not
+            provided.
+
+        z : :obj:`float`, optional
+
+        t : :obj:`float`, optional
+        
+        idx : :obj:`int`, optional
+
+        Notes
+        -----
+
+        If no positional arguments are passed, an empty `Planform` not
+        connected to any cube is returned. This cube may need to be manually
+        connected to have any functionality (via the :meth:`connect` method);
+        this need will depend on the type of `Planform`.
+        """
+        if (not (z is None)) and (not (idx is None)):
+            raise TypeError('Cannot specify both `z` and `idx`.')
+        if (not (t is None)) and (not (idx is None)):
+            raise TypeError('Cannot specify both `t` and `idx`.')
+        if (not (z is None)) and (not (t is None)):
+            raise TypeError('Cannot specify both `z` and `t`.')
+
+        self.cube = None
+        self._dim0_idx = None
+
+        self._input_z = z
+        self._input_t = t
+        self._input_idx = idx
+
+        super().__init__('data', *args, **kwargs)
+
+        if len(args) > 0:
+            self.connect(args[0])
+        else:
+            pass
+
+    @property
+    def variables(self):
+        """List of variables.
+        """
+        return self._variables
+
+    @property
+    def idx(self):
+        """Index into underlying Cube along axis 0.
+        """
+        return self._dim0_idx
+
+    def connect(self, CubeInstance, name=None):
+        """Connect this Planform instance to a Cube instance.
+        """
+        if not issubclass(type(CubeInstance), cube.BaseCube):
+            raise TypeError('Expected type is subclass of {_exptype}, '
+                            'but received was {_gottype}.'.format(
+                                _exptype=type(cube.BaseCube),
+                                _gottype=type(CubeInstance)))
+        self.cube = CubeInstance
+        self._variables = self.cube.variables
+        self.name = name  # use the setter to determine the _name
+        self._shape = self.cube.shape[1:]
+
+        self._compute_planform_coords()
+
+    def _compute_planform_coords(self):
+        """Should calculate vertical coordinate of the section.
+
+        Sets the value ``self._dim0_idx`` according to
+        the algorithm of a `Planform` initialization.
+
+        .. warning::
+
+            When implementing a new planform type, be sure that
+            ``self._dim0_idx`` is a  *one-dimensional array*, or you will get
+            an improperly shaped Planform array in return.
+        """
+        
+        # determine the index along dim0 to slice cube
+        if (not (self._input_z is None)) or (not (self._input_t is None)):
+            # z an t are treated the same internally, and either will be
+            # silently used  to interpolate the dim0 coordinates to find the
+            # nearest index
+            dim0_val = self._input_z or self._input_t
+            self._dim0_idx = np.argmin(np.abs(
+                np.array(self.cube.dim0_coords) - dim0_val))
+        else:
+            # then idx must have been given
+            self._dim0_idx = self._input_idx
+
+    def __getitem__(self, var):
+        """Get a slice of the planform.
+
+        Slicing the planform instance creates an `xarray` `DataArray` instance
+        from data for variable ``var``.
+
+        .. note:: We only support slicing by string.
+
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which variable to slice.
+
+        Returns
+        -------
+        data : :obj:`DataArray`
+            The undelrying data returned as an xarray `DataArray`, maintaining
+            coordinates.
+        """
+        if isinstance(self.cube, cube.DataCube):
+            _xrDA = self.cube[var][self._dim0_idx, :, :]
+            _xrDA.attrs = {'slicetype': 'data_planform',
+                           'knows_stratigraphy': self.cube._knows_stratigraphy,
+                           'knows_spacetime': True}
+            if self.cube._knows_stratigraphy:
+                _xrDA.strat.add_information(
+                    _psvd_mask=self.cube.strat_attr.psvd_idx[self._dim0_idx, :, :],  # noqa: E501
+                    _strat_attr=self.cube.strat_attr(
+                        'planform', self._dim0_idx, None))
+            return _xrDA
+        elif isinstance(self.cube, cube.StratigraphyCube):
+            _xrDA = self.cube[var][self._dim0_idx, :, :]
+            _xrDA.attrs = {'slicetype': 'stratigraphy_planform',
+                           'knows_stratigraphy': True,
+                           'knows_spacetime': False}
+            return _xrDA
+        elif (self.cube is None):
+            raise AttributeError(
+                'No cube connected. Are you sure you ran `.connect()`?')
+        else:
+            raise TypeError('Unknown Cube type encountered: %s'
+                            % type(self.cube))
+      
+    def show(self, var, ax=None, title=None, ticks=False,
+             colorbar=True, colorbar_label=False):
+        """Show the planform.
+
+        Method enumerates convenient routines for visualizing planform data
+        and slices of stratigraphy.
+
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which attribute to show. Can be a string for a named `Cube`
+            attribute.
+
+        label : :obj:`bool`, `str`, optional
+            Display a label of the variable name on the plot. Default is
+            False, display nothing. If ``label=True``, the label name from the
+            :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
+            attempted to coerce to `str`, and the literal is diplayed.
+
+        colorbar : :obj:`bool`, optional
+            Whether a colorbar is appended to the axis.
+
+        colorbar_label : :obj:`bool`, `str`, optional
+            Display a label of the variable name along the colorbar. Default is
+            False, display nothing. If ``label=True``, the label name from the
+            :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
+            attempted to coerce to `str`, and the literal is diplayed.
+
+        ax : :obj:`~matplotlib.pyplot.Axes` object, optional
+            A `matplotlib` `Axes` object to plot the section. Optional; if not
+            provided, a call is made to ``plt.gca()`` to get the current (or
+            create a new) `Axes` object.
+
+        Examples
+        --------
+        Display the `eta` and `velocity` planform of a DataCube.
+
+        .. plot::
+            :include-source:
+
+            >>> golfcube = dm.sample_data.golf()
+            >>> planform = dm.plan.Planform(golfcube, idx=70)
+            ... 
+            >>> fig, ax = plt.subplots(1, 2)
+            >>> planform.show('eta', ax=ax[0])
+            >>> planform.show('velocity', ax=ax[1])
+            >>> plt.show()
+        """
+        # process the planform attribute to a field
+        _varinfo = self.cube.varset[var] if \
+            issubclass(type(self.cube), cube.BaseCube) else \
+            plot.VariableSet()[var]
+        _field = self[var]
+
+        # call the internal _show method
+        im = self._show(
+            _field, _varinfo,
+            ax=ax, title=title, ticks=ticks,
+            colorbar=colorbar, colorbar_label=colorbar_label)
+
+        return im
+
+
+class SpecialtyPlanform(BasePlanform):
+    """A base class for All specialty planforms.
+
+    .. hint:: All specialty planforms should subclass.
+
+    Specialty planforms are planforms that hold some computation or attribute
+    *about* some underlying data, rather than the actual data. As a general
+    rule, anything that is not a DataPlanform is a SpecialtyPlanform.
+
+    This base class implements a slicing method (it slices the `data` field),
+    and a `show` method for displaying the planform (it displays the `data`
+    field).
+
+    .. rubric:: Developer Notes
+
+    All subclassing objects must implement:
+      * a property named `data` that points to some field (i.e., an attribute
+        of the planform) that best characterizes the Planform. For example,
+        the OAP planform `data` property points to the `sea_angles` field. 
+
+    All subclassing objects should consider implementing:
+      * the `show` method takes (optionally) a string argument specifying the
+        field to display, which can match any attriute of the
+        `SpecialtyPlanform`. If no argument is passed to `show`, the `data`
+        field is displayed. A :obj:`VariableInfo` object
+        `self._default_varinfo` is created on instantiating a subclass, which
+        will be used to style the displayed field. You can add different
+        `VariableInfo` objects with the name matching any other field of the
+        planform to use that style instead; for example, OAP implements
+        `self._sea_angles_varinfo`, which is used if the `sea_angles` field
+        is specified to :meth:`show`.
+      * The `self._default_varinfo` can be overwritten in a subclass
+        (after ``super().__init__``) to style the `show` default field
+        (`data`) a certain way. For example, OAP sets ``self._default_varinfo
+        = self._sea_angles_varinfo``.
+    """
+
+    def __init__(self, planform_type, *args, **kwargs):
+        """Initialize the SpecialtyPlanform.
+
+        BaseClass, only called by subclassing methods. This `__init__` method
+        calls the `BasePlanform.__init__`.
+
+        Parameters
+        ----------
+        planform_type : :obj:`str`
+            A string specifying the type of planform being created.
+
+        *args
+            Passed to `BasePlanform.__init__`.
+
+        *kwargs
+            Passed to `BasePlanform.__init__`.
+        """
+        super().__init__(planform_type, *args, **kwargs)
+
+        self._default_varinfo = plot.VariableInfo(
+            'data', label='data')
+
+    @property
+    @abc.abstractmethod
+    def data(self):
+        """The public data field. 
+
+        This attribute *must* be implemented as an alias to another attribute.
+        The choice of field is up to the developer.
+        """
+        ...
+
+    def __getitem__(self, slc):
+        """Slice the planform.
+
+        Implements basic slicing for `SpecialtyPlanform` by passing the `slc`
+        to `self.data`. I.e., the returned slice is ``self.data[slc]``.
+        """
+        return self.data[slc]
+
+    def show(self, var=None, ax=None, title=None, ticks=False,
+             colorbar=True, colorbar_label=False):
+        """Show the planform.
+
+        Display a field of the planform, called by attribute name.
+
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which field to show. Must be an attribute of the planform. `show`
+            will look for another attribute describing
+            the :obj:`VariableInfo` for that attribute named
+            ``self._<var>_varinfo`` and use that to style the plot, if
+            found. If this `VariableInfo` is not found, the default is used.
+        
+        label : :obj:`bool`, `str`, optional
+            Display a label of the variable name on the plot. Default is
+            False, display nothing. If ``label=True``, the label name from the
+            :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
+            attempted to coerce to `str`, and the literal is diplayed.
+
+        colorbar : :obj:`bool`, optional
+            Whether a colorbar is appended to the axis.
+
+        colorbar_label : :obj:`bool`, `str`, optional
+            Display a label of the variable name along the colorbar. Default is
+            False, display nothing. If ``label=True``, the label name from the
+            :obj:`~deltametrics.plot.VariableSet` is used. Other arguments are
+            attempted to coerce to `str`, and the literal is diplayed.
+
+        ax : :obj:`~matplotlib.pyplot.Axes` object, optional
+            A `matplotlib` `Axes` object to plot the section. Optional; if not
+            provided, a call is made to ``plt.gca()`` to get the current (or
+            create a new) `Axes` object.
+        """
+        if (var is None):
+            _varinfo = self._default_varinfo
+            _field = self.data
+        elif (isinstance(var, str)):
+            _field = self.__getattribute__(var)  # will error if var not attr
+            _expected_varinfo = '_' + var + '_varinfo'
+            if hasattr(self, _expected_varinfo):
+                _varinfo = self.__getattribute__(_expected_varinfo)
+            else:
+                _varinfo = self._default_varinfo
+        else:
+            raise TypeError('Bad value for `var`: {0}'.format(var))
+
+        self._show(
+            _field, _varinfo,
+            ax=ax, title=title, ticks=ticks,
+            colorbar=colorbar, colorbar_label=colorbar_label)
+
+
+class OpeningAnglePlanform(SpecialtyPlanform):
     """Planform for handling the Shaw Opening Angle Method.
 
     This `Planform` (called `OAP` for short) is a wrapper/handler for the
@@ -159,11 +515,11 @@ class OpeningAnglePlanform(BasePlanform):
         ...     golfcube['eta'][-1, :, :],
         ...     elevation_threshold=0)
 
-        # extract a mask of area below sea level as the
-        #   inverse of the ElevationMask
-        >>> _below_mask = ~(_EM.mask)
+        >>> # extract a mask of area below sea level as the
+        >>> #   inverse of the ElevationMask
+        >>> below_mask = ~(_EM.mask)
 
-        >>> OAP = dm.plan.OpeningAnglePlanform(_below_mask)
+        >>> OAP = dm.plan.OpeningAnglePlanform(below_mask)
 
     The OAP stores information computed from the
     :func:`shaw_opening_angle_method`. See the two properties of the OAP
@@ -173,11 +529,11 @@ class OpeningAnglePlanform(BasePlanform):
         :context:
 
         fig, ax = plt.subplots(1, 3, figsize=(10, 4))
-        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        golfcube.quick_show('eta', idx=-1, ax=ax[0])
         im1 = ax[1].imshow(OAP.below_mask,
-                           cmap='Greys_r', origin='lower')
+                           cmap='Greys_r')
         im2 = ax[2].imshow(OAP.sea_angles,
-                           cmap='jet', origin='lower')
+                           cmap='jet')
         dm.plot.append_colorbar(im2, ax=ax[2])
         ax[0].set_title('input elevation data')
         ax[1].set_title('OAP.below_mask')
@@ -298,6 +654,13 @@ class OpeningAnglePlanform(BasePlanform):
         self._sea_angles = None
         self._below_mask = None
 
+        # set variable info display options
+        self._sea_angles_varinfo = plot.VariableInfo(
+            'sea_angles', cmap=plt.cm.jet, label='opening angle')
+        self._below_mask_varinfo = plot.VariableInfo(
+            'below_mask', cmap=plt.cm.gray, label='where below')
+        self._default_varinfo = self._sea_angles_varinfo
+
         # check for inputs to return or proceed
         if (len(args) == 0):
             _allow_empty = kwargs.pop('allow_empty', False)
@@ -334,13 +697,17 @@ class OpeningAnglePlanform(BasePlanform):
             # now check the type and allocate the arrays as xr.DataArray
             if isinstance(_below_mask, xr.core.dataarray.DataArray):
                 self._below_mask = xr.zeros_like(_below_mask, dtype=bool)
+                self._below_mask.name = 'below_mask'
                 self._sea_angles = xr.zeros_like(_below_mask, dtype=float)
+                self._sea_angles.name = 'sea_angles'
             elif isinstance(_below_mask, np.ndarray):
                 # this will use meshgrid to fill out with dx=1 in shape of array
                 self._below_mask = xr.DataArray(
-                    data=np.zeros(_below_mask.shape, dtype=bool))
+                    data=np.zeros(_below_mask.shape, dtype=bool),
+                    name='below_mask')
                 self._sea_angles = xr.DataArray(
-                    data=np.zeros(_below_mask.shape, dtype=float))
+                    data=np.zeros(_below_mask.shape, dtype=float),
+                    name='sea_angles')
             else:
                 raise TypeError('Invalid type {0}'.format(type(_below_mask)))
 
@@ -420,11 +787,19 @@ class OpeningAnglePlanform(BasePlanform):
 
     @property
     def composite_array(self):
-        """Alias sea angles."""
+        """Alias to `sea_angles`.
+
+        This is the array that a contour is extracted from using some threshold
+        value when making land and shoreline masks. 
+        """
+        return self._sea_angles
+
+    @property
+    def data(self):
         return self._sea_angles
 
 
-class MorphologicalPlanform(BasePlanform):
+class MorphologicalPlanform(SpecialtyPlanform):
     """Planform for handling the morphological method.
 
     .. todo::
@@ -505,6 +880,11 @@ class MorphologicalPlanform(BasePlanform):
         self._elevation_mask = None
         self._max_disk = None
 
+        # set variable info display options
+        self._mean_image_varinfo = plot.VariableInfo(
+            'mean_image', label='mean image')
+        self._default_varinfo = self._mean_image_varinfo
+
         # check for input or allowable emptiness
         if (len(args) == 0):
             _allow_empty = kwargs.pop('allow_empty', False)
@@ -525,10 +905,12 @@ class MorphologicalPlanform(BasePlanform):
         # now check the type and allocate the arrays as xr.DataArray
         if isinstance(self._elevation_mask, xr.core.dataarray.DataArray):
             self._mean_image = xr.zeros_like(self._elevation_mask, dtype=float)
+            self._mean_image.name = 'mean_image'
         elif isinstance(self._elevation_mask, np.ndarray):
             # this will use meshgrid to fill out with dx=1 in shape of array
             self._mean_image = xr.DataArray(
-                data=np.zeros(self._elevation_mask.shape, dtype=float))
+                data=np.zeros(self._elevation_mask.shape, dtype=float),
+                name='mean_image')
         else:
             raise TypeError(
                 'Invalid type {0}'.format(type(self._elevation_mask)))
@@ -575,7 +957,15 @@ class MorphologicalPlanform(BasePlanform):
 
     @property
     def composite_array(self):
-        """Alias the mean image."""
+        """Alias for `mean_image`.
+
+        This is the array that a contour is extracted from using some threshold
+        value when making land and shoreline masks. 
+        """
+        return self._mean_image
+
+    @property
+    def data(self):
         return self._mean_image
 
 
@@ -685,9 +1075,9 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
 
         # make the plot
         fig, ax = plt.subplots(1, 2, figsize=(6, 3))
-        golf.show_plan('eta', t=15, ax=ax[0])
+        golf.quick_show('eta', idx=15, ax=ax[0])
         ax[0].set_title('roughness = {:.2f}'.format(rgh0))
-        golf.show_plan('eta', t=-1, ax=ax[1])
+        golf.quick_show('eta', idx=-1, ax=ax[1])
         ax[1].set_title('roughness = {:.2f}'.format(rgh1))
         plt.show()
     """
@@ -792,9 +1182,9 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
 
         # make the plot
         fig, ax = plt.subplots(1, 2, figsize=(6, 3))
-        golf.show_plan('eta', t=15, ax=ax[0])
+        golf.quick_show('eta', idx=15, ax=ax[0])
         ax[0].set_title('length = {:.2f}'.format(len0))
-        golf.show_plan('eta', t=-1, ax=ax[1])
+        golf.quick_show('eta', idx=-1, ax=ax[1])
         ax[1].plot(line1[:, 0], line1[:, 1], 'r-')
         ax[1].set_title('length = {:.2f}'.format(len1))
         plt.show()
@@ -995,7 +1385,7 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
 
         # make the plot
         fig, ax = plt.subplots()
-        golf.show_plan('eta', t=-1, ticks=True, ax=ax)
+        golf.quick_show('eta', idx=-1, ticks=True, ax=ax)
         ax.set_title('mean = {:.2f}'.format(mean))
         plt.show()
     """

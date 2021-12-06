@@ -98,9 +98,9 @@ of the Cube at the fortieth (40th) timestep:
     >>> import matplotlib.pyplot as plt
 
     >>> fig, ax = plt.subplots(1, 3)
-    >>> golfcube.show_plan('eta', t=40, ax=ax[0])
-    >>> golfcube.show_plan('velocity', t=40, ax=ax[1], ticks=True)
-    >>> golfcube.show_plan('sandfrac', t=40, ax=ax[2])
+    >>> golfcube.quick_show('eta', idx=40, ax=ax[0])
+    >>> golfcube.quick_show('velocity', idx=40, ax=ax[1], ticks=True)
+    >>> golfcube.quick_show('sandfrac', idx=40, ax=ax[2])
     >>> plt.show() #doctest: +SKIP
 
 .. plot:: guides/10min_three_plans.py

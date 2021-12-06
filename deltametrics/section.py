@@ -154,10 +154,20 @@ class BaseSection(abc.ABC):
 
         Parameters
         ----------
+        section_type : :obj:`str`
+            String identifying the *type* of `Section` being instantiated.
+
         CubeInstance : :obj:`~deltametrics.cube.BaseCube` subclass, optional
             Connect to this cube. No connection is made if cube is not
             provided.
 
+        name : :obj:`str`, optional
+            An optional name for the `Section` object, helpful for maintaining
+            and keeping track of multiple `Section` objects of the same
+            type. This is disctinct from the :obj:`section_type`. The name
+            is used internally if you use the :obj:`register_section` method
+            of a `Cube`. Notes
+        
         Notes
         -----
 
@@ -207,6 +217,10 @@ class BaseSection(abc.ABC):
 
     @property
     def name(self):
+        """Section name.
+
+        Helpful to differentiate multiple `Section` objects.
+        """
         return self._name
 
     @name.setter
@@ -323,9 +337,8 @@ class BaseSection(abc.ABC):
     def __getitem__(self, var):
         """Get a slice of the section.
 
-        Slicing the section instance creates a
-        :obj:`~deltametrics.section.SectionVariable` instance from data for
-        variable ``var``.
+        Slicing the section instance creates an `xarray` `DataArray` instance
+        from data, for variable ``var`` and maintaining the data coordinates.
 
         .. note:: We only support slicing by string.
 
@@ -336,34 +349,25 @@ class BaseSection(abc.ABC):
 
         Returns
         -------
-        SectionVariable : :obj:`~deltametrics.section.SectionVariable` instance
-            SectionVariable instance for variable ``var``.
+        data : :obj:`DataArray`
+            The undelrying data returned as an xarray `DataArray`, maintaining
+            coordinates.
         """
         if isinstance(self.cube, cube.DataCube):
+            _xrDA = xr.DataArray(
+                self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
+                coords={"s": self._s, self._z.dims[0]: self._z},
+                dims=[self._z.dims[0], 's'],
+                name=var,
+                attrs={'slicetype': 'data_section',
+                       'knows_stratigraphy': self.cube._knows_stratigraphy,
+                       'knows_spacetime': True})
             if self.cube._knows_stratigraphy:
-                _xrDA = xr.DataArray(
-                    self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
-                    coords={"s": self._s, self._z.dims[0]: self._z},
-                    dims=[self._z.dims[0], 's'],
-                    name=var,
-                    attrs={'slicetype': 'data_section',
-                           'knows_stratigraphy': True,
-                           'knows_spacetime': True})
                 _xrDA.strat.add_information(
                     _psvd_mask=self.cube.strat_attr.psvd_idx[:, self._dim1_idx, self._dim2_idx],  # noqa: E501
                     _strat_attr=self.cube.strat_attr(
                         'section', self._dim1_idx, self._dim2_idx))
-                return _xrDA
-            else:
-                _xrDA = xr.DataArray(
-                    self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
-                    coords={"s": self._s, self._z.dims[0]: self._z},
-                    dims=[self._z.dims[0], 's'],
-                    name=var,
-                    attrs={'slicetype': 'data_section',
-                           'knows_stratigraphy': False,
-                           'knows_spacetime': True})
-                return _xrDA
+            return _xrDA
         elif isinstance(self.cube, cube.StratigraphyCube):
             _xrDA = xr.DataArray(
                     self.cube[var].data[:, self._dim1_idx, self._dim2_idx],
@@ -387,7 +391,7 @@ class BaseSection(abc.ABC):
 
         Method enumerates convenient routines for visualizing sections of data
         and stratigraphy. Includes support for multiple data `style` and
-        mutuple `data` choices as well.
+        multiple `data` choices as well.
 
         .. note::
 
@@ -444,7 +448,7 @@ class BaseSection(abc.ABC):
 
             >>> golfcube = dm.sample_data.golf()
             >>> golfcube.register_section(
-            ...     'demo', dm.section.StrikeSection(y=5))
+            ...     'demo', dm.section.StrikeSection(distance_idx=5))
             >>> golfcube.sections['demo'].show('velocity')
 
         .. plot:: section/section_demo_spacetime.py
@@ -578,7 +582,7 @@ class PathSection(BaseSection):
         >>> golfcube.register_section('path', dm.section.PathSection(
         ...     path_idx=np.array([[3, 50], [17, 65], [10, 130]])))
         >>> fig, ax = plt.subplots()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
         >>> golfcube.sections['path'].show_trace('r--', ax=ax)
         >>> plt.show()
 
@@ -626,7 +630,7 @@ class PathSection(BaseSection):
         >>>
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['path'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['path'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -643,7 +647,7 @@ class PathSection(BaseSection):
         >>>
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['path'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['path'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -830,7 +834,7 @@ class StrikeSection(LineSection):
         >>> golfcube.register_section(
         ...     'strike', dm.section.StrikeSection(distance=1500))
         >>> fig, ax = plt.subplots()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
         >>> golfcube.sections['strike'].show_trace('r--', ax=ax)
         >>> plt.show()
 
@@ -896,7 +900,7 @@ class StrikeSection(LineSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['strike'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['strike'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -912,7 +916,7 @@ class StrikeSection(LineSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['strike'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['strike'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -931,7 +935,7 @@ class StrikeSection(LineSection):
 
         >>> # show the location and the "time" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfstrat.sections['strike_part'].show_trace('r--', ax=ax[0])
         >>> golfstrat.sections['strike_part'].show('time', ax=ax[1])
         >>> plt.show()
@@ -1023,7 +1027,7 @@ class DipSection(LineSection):
         >>> golfcube.register_section(
         ...     'dip', dm.section.DipSection(distance=3000))
         >>> fig, ax = plt.subplots()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
         >>> golfcube.sections['dip'].show_trace('r--', ax=ax)
         >>> plt.show()
 
@@ -1089,7 +1093,7 @@ class DipSection(LineSection):
 
         >>> # show the location and the "sandfrac" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['dip'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['dip'].show('sandfrac', ax=ax[1])
         >>> plt.show()
@@ -1105,7 +1109,7 @@ class DipSection(LineSection):
 
         >>> # show the location and the "sandfrac" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['dip75'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['dip75'].show('sandfrac', ax=ax[1])
         >>> plt.show()
@@ -1124,7 +1128,7 @@ class DipSection(LineSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfstrat.sections['dip_part'].show_trace('r--', ax=ax[0])
         >>> golfstrat.sections['dip_part'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -1221,7 +1225,7 @@ class CircularSection(BaseSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
         >>> golfcube.sections['circular'].show_trace('r--', ax=ax)
         >>> plt.show()
 
@@ -1288,7 +1292,7 @@ class CircularSection(BaseSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['circular'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['circular'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -1308,7 +1312,7 @@ class CircularSection(BaseSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfstrat.sections['circular'].show_trace('r--', ax=ax[0])
         >>> golfstrat.sections['circular'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -1427,7 +1431,7 @@ class RadialSection(BaseSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
         >>> golfcube.sections['radial'].show_trace('r--', ax=ax)
         >>> plt.show()
 
@@ -1509,7 +1513,7 @@ class RadialSection(BaseSection):
 
         >>> # show the location and the "velocity" variable
         >>> fig, ax = plt.subplots(2, 1, figsize=(8, 4))
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[0], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[0], ticks=True)
         >>> golfcube.sections['radial'].show_trace('r--', ax=ax[0])
         >>> golfcube.sections['radial'].show('velocity', ax=ax[1])
         >>> plt.show()
@@ -1526,7 +1530,7 @@ class RadialSection(BaseSection):
         
         >>> fig, ax = plt.subplots(2, 3, figsize=(9, 3))
         >>> ax = ax.flatten()
-        >>> golfcube.show_plan('eta', t=-1, ax=ax[1], ticks=True)
+        >>> golfcube.quick_show('eta', idx=-1, ax=ax[1], ticks=True)
         >>> ax[1].tick_params(labelsize=8)
 
         >>> azims = np.linspace(0, 180, num=5)

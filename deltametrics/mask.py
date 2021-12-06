@@ -351,7 +351,7 @@ class ElevationMask(ThresholdValueMask):
             elevation_threshold=0)
 
         fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        golfcube.quick_show('eta', idx=-1, ax=ax[0])
         emsk.show(ax=ax[1])
         plt.show()
     """
@@ -470,7 +470,7 @@ class ChannelMask(BaseMask):
             flow_threshold=0.3)
 
         fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        golfcube.quick_show('eta', idx=-1, ax=ax[0])
         cmsk.show(ax=ax[1])
         plt.show()
 
@@ -541,7 +541,7 @@ class ChannelMask(BaseMask):
                 emsk, fmsk)
 
             fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-            golfcube.show_plan('eta', t=-1, ax=ax[0])
+            golfcube.quick_show('eta', idx=-1, ax=ax[0])
             cmsk.show(ax=ax[1])
             plt.show()
 
@@ -718,7 +718,7 @@ class WetMask(BaseMask):
             elevation_threshold=0)
 
         fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        golfcube.quick_show('eta', idx=-1, ax=ax[0])
         wmsk.show(ax=ax[1])
         plt.show()
 
@@ -936,7 +936,7 @@ class LandMask(BaseMask):
             elevation_threshold=0)
 
         fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        golfcube.quick_show('eta', idx=-1, ax=ax[0])
         lmsk.show(ax=ax[1])
         plt.show()
 
@@ -1184,7 +1184,7 @@ class ShorelineMask(BaseMask):
             elevation_threshold=0)
 
         fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        golfcube.quick_show('eta', idx=-1, ax=ax[0])
         smsk.show(ax=ax[1])
         plt.show()
 
@@ -1507,7 +1507,7 @@ class EdgeMask(BaseMask):
             elevation_threshold=0)
 
         fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        golfcube.quick_show('eta', idx=-1, ax=ax[0])
         edgmsk.show(ax=ax[1])
         plt.show()
 
@@ -1749,7 +1749,7 @@ class CenterlineMask(BaseMask):
             flow_threshold=0.3)
 
         fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-        golfcube.show_plan('eta', t=-1, ax=ax[0])
+        golfcube.quick_show('eta', idx=-1, ax=ax[0])
         cntmsk.show(ax=ax[1])
         plt.show()
 

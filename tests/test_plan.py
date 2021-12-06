@@ -1,10 +1,9 @@
 import pytest
-
-import sys
-import os
+import unittest.mock as mock
 
 import numpy as np
 import xarray as xr
+import matplotlib.pyplot as plt
 
 from deltametrics.sample_data import _get_rcm8_path, _get_golf_path
 
@@ -20,6 +19,119 @@ simple_land[4, 2:7] = 1
 simple_shore_array = np.array([[3, 3, 4, 4, 4, 4, 4, 3, 3, 3],
                                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]).T
 simple_shore[simple_shore_array[:, 0], simple_shore_array[:, 1]] = 1
+
+golf_path = _get_golf_path()
+
+
+class TestPlanform:
+
+    def test_Planform_without_cube(self):
+        plfrm = plan.Planform(idx=-1)
+        assert plfrm.name is None
+        assert plfrm._input_z is None
+        assert plfrm._input_t is None
+        assert plfrm._input_idx is -1
+        assert plfrm.shape is None
+        assert plfrm.cube is None
+        assert plfrm._dim0_idx is None
+        assert plfrm.variables is None
+        with pytest.raises(AttributeError, match=r'No cube connected.*.'):
+            plfrm['velocity']
+
+    def test_Planform_bad_cube(self):
+        badcube = ['some', 'list']
+        with pytest.raises(TypeError, match=r'Expected type is *.'):
+            _ = plan.Planform(badcube, idx=12)
+
+    def test_Planform_idx(self):
+        golfcube = cube.DataCube(golf_path)
+        plnfrm = plan.Planform(golfcube, idx=40)
+        assert plnfrm.name == 'data'
+        assert plnfrm.idx == 40
+        assert plnfrm.cube == golfcube
+        assert len(plnfrm.variables) > 0
+
+    def test_Planform_z_t_thesame(self):
+        golfcube = cube.DataCube(golf_path)
+        plnfrm = plan.Planform(golfcube, t=3e6)
+        plnfrm2 = plan.Planform(golfcube, z=3e6)
+        assert plnfrm.name == 'data'
+        assert plnfrm.idx == 6
+        assert plnfrm.idx == plnfrm2.idx
+        assert plnfrm.cube == golfcube
+        assert len(plnfrm.variables) > 0
+
+    def test_Planform_idx_z_t_mutual_exclusive(self):
+        golfcube = cube.DataCube(golf_path)
+        with pytest.raises(TypeError, match=r'Cannot .* `z` and `idx`.'):
+            _ = plan.Planform(golfcube, z=5e6, idx=30)
+        with pytest.raises(TypeError, match=r'Cannot .* `t` and `idx`.'):
+            _ = plan.Planform(golfcube, t=3e6, idx=30)
+        with pytest.raises(TypeError, match=r'Cannot .* `z` and `t`.'):
+            _ = plan.Planform(golfcube, t=3e6, z=5e6)
+
+    def test_Planform_slicing(self):
+        # make the planforms
+        golfcube = cube.DataCube(golf_path)
+        golfcubestrat = cube.DataCube(golf_path)
+        golfcubestrat.stratigraphy_from('eta', dz=0.1)
+        golfstrat = cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
+        plnfrm1 = plan.Planform(golfcube, idx=-1)
+        plnfrm2 = plan.Planform(golfcubestrat, z=-2)
+        plnfrm3 = plan.Planform(golfstrat, z=-6)  # note should be deep enough for no nans
+        assert np.all(plnfrm1['eta'] == golfcube['eta'][-1, :, :])
+        assert np.all(plnfrm2['time'] == golfcubestrat['time'][plnfrm2.idx, :, :])
+        assert np.all(plnfrm3['time'] == golfstrat['time'][plnfrm3.idx, :, :])
+
+    def test_Planform_private_show(self):
+        """Doesn't actually check the plots,
+        just checks that the function runs.
+        """
+        # make the planforms
+        golfcube = cube.DataCube(golf_path)
+        plnfrm = plan.Planform(golfcube, idx=-1)
+        _field = plnfrm['eta']
+        _varinfo = golfcube.varset['eta']
+        # with axis
+        fig, ax = plt.subplots()
+        plnfrm._show(_field, _varinfo, ax=ax)
+        plt.close()
+        # without axis
+        fig, ax = plt.subplots()
+        plnfrm._show(_field, _varinfo)
+        plt.close()
+        # with colorbar_label
+        fig, ax = plt.subplots(1, 2)
+        plnfrm._show(_field, _varinfo, ax=ax[0], colorbar_label='test')
+        plnfrm._show(_field, _varinfo, ax=ax[1], colorbar_label=True)
+        plt.close()
+        # with ticks
+        fig, ax = plt.subplots()
+        plnfrm._show(_field, _varinfo, ax=ax, ticks=True)
+        plt.close()
+        # with title
+        fig, ax = plt.subplots()
+        plnfrm._show(_field, _varinfo, ax=ax, title='some title')
+        plt.close()
+
+    def test_Planform_public_show(self):
+        golfcube = cube.DataCube(golf_path)
+        plnfrm = plan.Planform(golfcube, idx=-1)
+        plnfrm._show = mock.MagicMock()
+        # test with ax
+        fig, ax = plt.subplots()
+        plnfrm.show('time', ax=ax)
+        plt.close()
+        assert plnfrm._show.call_count == 1
+        # check that all bogus args are passed to _show
+        plnfrm.show('time', ax=100, title=101, ticks=102, colorbar_label=103)
+        assert plnfrm._show.call_count == 2
+        # hacky method to pull out the keyword calls only
+        kw_calls = plnfrm._show.mock_calls[1][2:][0]
+        assert kw_calls['ax'] == 100
+        assert kw_calls['title'] == 101
+        assert kw_calls['ticks'] == 102
+        assert kw_calls['colorbar_label'] == 103
 
 
 class TestOpeningAnglePlanform:
@@ -100,6 +212,40 @@ class TestOpeningAnglePlanform:
     def test_notcube_error(self):
         with pytest.raises(TypeError):
             plan.OpeningAnglePlanform(self.golfcube['eta'][-1, :, :].data)
+
+    def test_show_and_errors(self):
+        oap = plan.OpeningAnglePlanform.from_elevation_data(
+            self.golfcube['eta'][-1, :, :],
+            elevation_threshold=0)
+        oap._show = mock.MagicMock()  # mock the private
+        # test with defaults
+        oap.show()
+        assert oap._show.call_count == 1
+        _field_called = oap._show.mock_calls[0][1][0]
+        _varinfo_called = oap._show.mock_calls[0][1][1]
+        assert _field_called is oap._sea_angles  # default
+        assert _varinfo_called is oap._default_varinfo  # default
+        # test that different field uses different varinfo
+        oap.show('below_mask')
+        assert oap._show.call_count == 2
+        _field_called = oap._show.mock_calls[1][1][0]
+        _varinfo_called = oap._show.mock_calls[1][1][1]
+        assert _field_called is oap._below_mask
+        assert _varinfo_called is oap._below_mask_varinfo
+        # test that a nonexisting field throws error
+        with pytest.raises(AttributeError, match=r".* no attribute 'nonexisting'"):
+            oap.show('nonexisting')
+        # test that a existing field, nonexisting varinfo uses default
+        oap.existing = None  # just that it exists
+        oap.show('existing')
+        assert oap._show.call_count == 3
+        _field_called = oap._show.mock_calls[2][1][0]
+        _varinfo_called = oap._show.mock_calls[2][1][1]
+        assert _field_called is oap.existing  # default
+        assert _varinfo_called is oap._default_varinfo  # default
+        # test that bad value raises error
+        with pytest.raises(TypeError, match=r'Bad value .*'):
+            oap.show(1000)
 
 
 class TestMorphologicalPlanform:

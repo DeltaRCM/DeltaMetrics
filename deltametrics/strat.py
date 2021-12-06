@@ -384,8 +384,8 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
             strat_attr['s_sp'] = _j[_psvd_idx]  # along-sect coord, sparse
             strat_attr['z_sp'] = _i[_psvd_idx]  # vert coord, sparse
 
-        elif _dir == 'plan':
-            raise NotImplementedError
+        elif (_dir == 'plan') or (_dir == 'planform'):
+            pass
             # cannot be done without interpolation for mesh strata.
             # should be possible for boxy stratigraphy?
         else:
