@@ -106,7 +106,7 @@ during instantiation.</p>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># show the location and the &quot;velocity&quot; variable</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">quick_show</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;strike&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show_trace</span><span class="p">(</span><span class="s1">&#39;r--&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;strike&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -124,7 +124,7 @@ specified <cite>distance_idx</cite> index <code class="docutils literal notransl
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># show the location and the &quot;velocity&quot; variable</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">quick_show</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;strike&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show_trace</span><span class="p">(</span><span class="s1">&#39;r--&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;strike&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -145,7 +145,7 @@ middle of the domain:</p>
 </div>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># show the location and the &quot;time&quot; variable</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">quick_show</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfstrat</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;strike_part&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show_trace</span><span class="p">(</span><span class="s1">&#39;r--&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfstrat</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;strike_part&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -211,8 +211,8 @@ differ in which direction the line is drawn.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.StrikeSection.length_idx" title="deltametrics.section.StrikeSection.length_idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">length_idx</span></code></a></p></td>
 <td><p>Bounding <cite>dim2</cite> indices of section.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.StrikeSection.name" title="deltametrics.section.StrikeSection.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Section name.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.StrikeSection.s" title="deltametrics.section.StrikeSection.s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s</span></code></a></p></td>
 <td><p>Along-section coordinate.</p></td>
@@ -247,9 +247,8 @@ differ in which direction the line is drawn.</p>
 <dt class="sig sig-object py" id="deltametrics.section.StrikeSection.__getitem__">
 <span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.StrikeSection.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a slice of the section.</p>
-<p>Slicing the section instance creates a
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">SectionVariable</span></code> instance from data for
-variable <code class="docutils literal notranslate"><span class="pre">var</span></code>.</p>
+<p>Slicing the section instance creates an <cite>xarray</cite> <cite>DataArray</cite> instance
+from data, for variable <code class="docutils literal notranslate"><span class="pre">var</span></code> and maintaining the data coordinates.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>We only support slicing by string.</p>
@@ -259,10 +258,11 @@ variable <code class="docutils literal notranslate"><span class="pre">var</span>
 <dd class="field-odd"><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to slice.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>SectionVariable</strong> – SectionVariable instance for variable <code class="docutils literal notranslate"><span class="pre">var</span></code>.</p>
+<dd class="field-even"><p><strong>data</strong> – The undelrying data returned as an xarray <cite>DataArray</cite>, maintaining
+coordinates.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SectionVariable</span></code> instance</p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataArray</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -304,6 +304,13 @@ variable <code class="docutils literal notranslate"><span class="pre">var</span>
 </dd></dl>
 
 <dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.section.StrikeSection.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#deltametrics.section.StrikeSection.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Section name.</p>
+<p>Helpful to differentiate multiple <cite>Section</cite> objects.</p>
+</dd></dl>
+
+<dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.section.StrikeSection.s">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">s</span></span><a class="headerlink" href="#deltametrics.section.StrikeSection.s" title="Permalink to this definition">¶</a></dt>
 <dd><p>Along-section coordinate.</p>
@@ -322,7 +329,7 @@ variable <code class="docutils literal notranslate"><span class="pre">var</span>
 <dd><p>Show the section.</p>
 <p>Method enumerates convenient routines for visualizing sections of data
 and stratigraphy. Includes support for multiple data <cite>style</cite> and
-mutuple <cite>data</cite> choices as well.</p>
+multiple <cite>data</cite> choices as well.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The colors for <cite>style=’lines’</cite> are determined from the left-end
@@ -363,7 +370,7 @@ create a new) <cite>Axes</cite> object.</p></li>
 <p><em>Example 1:</em> Display the <cite>velocity</cite> spacetime section of a DataCube.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">distance_idx</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">)</span>
 </pre></div>
 </div>

@@ -76,78 +76,146 @@ For example, access variables as:
     >>> golfcube['eta'].shape
     (101, 100, 200)
 
-Let’s examine the timeseries of bed elevations by taking slices out of the ``'eta'`` variable, at various indicies (``t``) along the 0th dimension.
+Examine a timeseries of bed elevation by taking slices out of the ``eta`` variable; we can slice the underlying data directly with an index, the same as a `numpy` array.
+Remember that `time` is ordered along the 0th dimension.
 
-.. doctest::
+.. plot::
+    :context: reset
 
+    >>> golfcube = dm.sample_data.golf()
+
+.. plot::
+    :include-source:
+    :context:
+
+    >>> # set up indices to slice the cube
     >>> nt = 5
-    >>> ts = np.linspace(0, golfcube['eta'].shape[0]-1, num=nt, dtype=int)  # linearly interpolate ts
-
+    >>> t_idxs = np.linspace(0, golfcube.shape[0]-1, num=nt, dtype=int)  # linearly interpolate t_idxs
+    ... 
+    >>> # make the plot
     >>> fig, ax = plt.subplots(1, nt, figsize=(12, 2))
-    >>> for i, t in enumerate(ts):
-    ...     ax[i].imshow(golfcube['eta'][t, :, :], vmin=-2, vmax=0.5) #doctest: +SKIP
-    ...     ax[i].set_title('t = ' + str(t)) #doctest: +SKIP
-    ...     ax[i].axes.get_xaxis().set_ticks([]) #doctest: +SKIP
-    ...     ax[i].axes.get_yaxis().set_ticks([]) #doctest: +SKIP
-    >>> ax[0].set_ylabel('y-direction') #doctest: +SKIP
-    >>> ax[0].set_xlabel('x-direction') #doctest: +SKIP
-    >>> plt.show() #doctest: +SKIP
-
-.. plot:: guides/userguide_bed_timeseries.py
+    >>> for i, idx in enumerate(t_idxs):
+    ...     ax[i].imshow(golfcube['eta'][idx, :, :], vmin=-2, vmax=0.5)  # show the slice
+    ...     ax[i].set_title('idx = {0}'.format(idx))
+    ...     ax[i].set_xticks([])
+    ...     ax[i].set_yticks([])
+    >>> ax[0].set_ylabel('dim1 \n direction')
+    >>> ax[0].set_xlabel('dim2 direction')
+    >>> plt.show()
 
 .. note::
 
-    The 0th dimension of the cube is the *time* dimension, and the 1st and 2nd dimensions are the `y` and `x` dimensions of the model domain, respectively. The `x` dimension is the *cross-channel* dimension, Implementations using non-standard data should permute datasets to match this convention.
+    The 0th dimension of the cube must be the *time* dimension, and the 1st and 2nd dimensions represent the spatial dimensions of the data domain, but can have any arbitrary "name" for the dimensions. For example, from *pyDeltaRCM* the 1st and 2nd dimensions are named `x` and `y` respectively (`x` is considered a downstream coordinate in that model). In `DeltaMetrics`, we refer to these spatial dimensions as `dim1` and `dim2`, because they may have any name.
 
-The CubeVariable supports arbitrary math (using `xarray` for fast computations via CubeVariable.data syntax).
+The CubeVariable supports arbitrary math (using `xarray`).
 For example:
 
-.. doctest::
+.. plot::
+    :include-source:
+    :context: close-figs
 
     >>> # compute the change in bed elevation between the last two intervals above
-    >>> diff_time = golfcube['eta'][ts[-1], ...] - golfcube['eta'][ts[-2], ...]
-
+    >>> diff_time = golfcube['eta'][t_idxs[-1], :, :] - golfcube['eta'][t_idxs[-2], :, :]
+    >>> max_delta = abs(diff_time).max()
+    ... 
+    >>> # make the plot
     >>> fig, ax = plt.subplots(figsize=(5, 3))
-    >>> im = ax.imshow(diff_time, cmap='RdBu', vmax=abs(diff_time).max(), vmin=-abs(diff_time).max())
+    >>> im = ax.imshow(
+    ...     diff_time, cmap='RdBu',
+    ...     vmax=max_delta,
+    ...     vmin=-max_delta)
     >>> cb = dm.plot.append_colorbar(im, ax)  # a convenience function
-    >>> plt.show() #doctest: +SKIP
-
-.. plot:: guides/userguide_bed_elevation_change.py
+    >>> plt.show()
 
 
 Manipulating Planform data
 ##########################
 
-In addition to indexing directly, slices across the `time` dimension of the cube are referred to as "Planform" cuts.
+In addition to indexing directly, slices along the `Cube` time dimension can be explicitly created as `Planform` objects.
+This is helpful for organizing an analysis where you want to repeatedly access data from a particular point in time.
 
-TODO
+Planform slices
+---------------
+
+Create a `Planform` of the last time index from the cube.
+The data returned from the planform are an `xarray` `DataArray`, so you can continue to perform arbitrary math on the data.
+
+.. doctest::
+
+    >>> final = dm.plan.Planform(golfcube, idx=-1)
+    >>> final.shape
+    (100, 200)
+    >>> final['eta']
+    <xarray.DataArray 'eta' (x: 100, y: 200)>
+    array([[ 0.015 ,  0.015 ,  0.015 , ...,  0.015 ,  0.015 ,  0.015 ],
+           [ 0.0075,  0.0075,  0.0075, ...,  0.0075,  0.0075,  0.0075],
+           [ 0.    ,  0.    ,  0.    , ...,  0.    ,  0.    ,  0.    ],
+           ...,
+           [-2.    , -2.    , -2.    , ..., -2.    , -2.    , -2.    ],
+           [-2.    , -2.    , -2.    , ..., -2.    , -2.    , -2.    ],
+           [-2.    , -2.    , -2.    , ..., -2.    , -2.    , -2.    ]],
+          dtype=float32)
+    Coordinates:
+        time     float32 5e+07
+      * x        (x) float32 0.0 50.0 100.0 150.0 ... 4.85e+03 4.9e+03 4.95e+03
+      * y        (y) float32 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03
+    Attributes:
+        slicetype:           data_planform
+        knows_stratigraphy:  False
+        knows_spacetime:     True
+
+.. plot::
+    :context: close-figs
+
+    >>> final = dm.plan.Planform(golfcube, idx=-1)
+
+You can visualize the data yourself, or use the built-in `show()` method of a `Planform`.
+
+.. plot::
+    :include-source:
+    :context:
+
+    >>> fig, ax = plt.subplots(1, 2, figsize=(7, 3))
+    >>> ax[0].imshow(final['velocity'])   # display directly
+    >>> final.show('velocity', ax=ax[1])  # use the built-in show()
+    >>> plt.show()
+
+.. hint::
+
+    Do `Planform` objects seems too simple? They are! The basic `Planform` allows us to have an API consistent with the more complicated `Section` data (introduced below), and have a flexible standard to extend into "specialty" planforms.
+
+    Want to just slice the data directly as ``golfcube['eta'][-1, :, :]``? Go ahead and do what works for you!
+
+It is often helpful to associate a `Planform` with a `Cube`, to keep track of planform data from multiple points in time, or from multiple cubes. 
+Use the :meth:`~deltametrics.cube.DataCube.register_planform` method when instantiating the `Planform`, or pass the object as an argument later.
+
+.. doctest::
+    
+    >>> golfcube.register_planform('fifty', dm.plan.Planform(idx=50))
+
+Any registered `Planform` can then be accessed via the :obj:`~deltametrics.cube.DataCube.planforms` attribute of the Cube (returns a `dict`).
+
+.. doctest::
+
+    >>> golfcube.planforms['fifty']
+    <deltametrics.plan.Planform object at 0x...>
 
 
-Default Colors in DeltaMetrics
-##############################
+Specialty Planform objects
+--------------------------
 
-You may have noticed the beautiful colors above, and be wondering: "how are the colors set?"
-We use a custom object (:obj:`~deltametrics.plot.VariableSet`) to define common plotting properties for all plots.
-The `VariableSet` supports all kinds of other controls, such as custom colormaps for any variable, addition of new defined variables, fixed color limits, color normalizations, and more.
-You can also use these attributes of the `VariableSet` in your own plotting routines.
-
-See the :ref:`default colors in DeltaMetrics here <default_styling>` for more information.
-
-Additionally, there are a :doc:`number of plotting routines <../reference/plot/index>` that are helpful in visualizations.
+A slice of the `Cube` is a basic `Planform`, but often there are some analyses we wish to compute on a `Planform`, that may have multiple steps and sets of derived values we want to keep track of.
+DeltaMetrics has several specialty planform objects that make this easier.
+These specialty calculations are beyond the scope of this basic user guide, find more information on the :doc:`Planform API reference page <../reference/plan/index>`.
 
 
 Manipulating Section data
 #########################
 
-We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
-In DeltaMetrics, we refer to this preserved history as the "stratigraphy", and we provide a number of convenient routines for computing stratigraphy and analyzing the deposits.
-
-Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created.
-We must directly tell the Cube instance to compute stratigraphy by specifying which variable contains the bed elevation history, because this history dictates preservation.
-
-Mainly, the API works by registering a section of a specified type, and
-assigning it a name (“demo” below). Registered sections are accessed via
-the ``sections`` attribute of the cube:
+Similar to `Planform` slices, we can make cuts *across* the `Cube` time dimension with `Section` objects. 
+Most often, it's best to use the API to register a section of a specified type to an underlying data cube and
+assigning it a name (“demo” below).
+Registered sections are accessed via the ``sections`` attribute of the cube:
 
 For a data cube, sections are most easily instantiated by the :obj:`~deltametrics.cube.Cube.register_section` method:
 
@@ -162,7 +230,7 @@ We can plot the trace on top the the final bed elevation to see where the sectio
 .. doctest::
 
     >>> fig, ax = plt.subplots()
-    >>> golfcube.show_plan('eta', t=-1, ax=ax, ticks=True)
+    >>> golfcube.quick_show('eta', idx=-1, ax=ax, ticks=True)
     >>> ax.plot(golfcube.sections['demo'].trace[:,0],
     ...         golfcube.sections['demo'].trace[:,1], 'r--') #doctest: +SKIP
     >>> plt.show() #doctest: +SKIP
@@ -224,21 +292,25 @@ You can also create a standalone section, which is not registered to the cube, b
     >>> np.all(sass['velocity'] == golfcube.sections['demo']['velocity']) #doctest: +SKIP
     True
 
+
 .. _userguide_quick_stratigraphy:
 
 "Quick" stratigraphy
 --------------------
 
-We have implemented support for rapid stratigraphy computation for visualization, and preserved-time statistics.
-These quick stratigraphy computations create a mesh of preserved elevations and fill this matrix with values sliced out of the ``t-x-y`` data.
+We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
+In DeltaMetrics, we refer to this preserved history as the "stratigraphy", and we provide a number of convenient routines for computing stratigraphy and analyzing deposits.
 
-Notably, the full "boxy" stratigraphy computation is also quite fast.
-More on that below.
-Compute the quick stratigraphy as:
+Importantly, stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created.
+We must directly tell the Cube instance to compute stratigraphy by specifying which variable contains the bed elevation history, because this history dictates preservation.
+We have implemented support for rapid stratigraphy computation for visualization, and preserved-time statistics.
+These quick stratigraphy computations create a mesh of preserved elevations and fill this matrix with values sliced out of the underlying data.
+
+Compute "quick stratigraphy" as:
 
 .. doctest::
 
-    >>> golfcube.stratigraphy_from('eta')
+    >>> golfcube.stratigraphy_from('eta', dz=0.1)
 
 Now, the ``DataCube`` has knowledge of stratigraphy, which we can further use to visualize preservation within the spacetime, or visualize as an actual stratigraphic slice.
 
@@ -304,6 +376,19 @@ The below figure shows each section type available and the `velocity` spacetime 
     >>> _rad = dm.section.RadialSection(golfcube, azimuth=70)
 
 .. plot:: guides/userguide_section_type_demos.py
+
+
+Default Colors in DeltaMetrics
+##############################
+
+You may have noticed the beautiful colors above, and be wondering: "how are the colors set?"
+We use a custom object (:obj:`~deltametrics.plot.VariableSet`) to define common plotting properties for all plots.
+The `VariableSet` supports all kinds of other controls, such as custom colormaps for any variable, addition of new defined variables, fixed color limits, color normalizations, and more.
+You can also use these attributes of the `VariableSet` in your own plotting routines.
+
+See the :ref:`default colors in DeltaMetrics here <default_styling>` for more information.
+
+Additionally, there are a :doc:`number of plotting routines <../reference/plot/index>` that are helpful in visualizations.
 
 
 Computing and Manipulating Stratigraphy
@@ -388,20 +473,27 @@ Similar to the demonstration above, each variable (property) of the underlying c
 
 .. plot:: guides/userguide_all_vars_stratigraphy.py
 
-The stratigraphy cube allows us to slice planform slabs of stratigraphy
-too. We are working on a method to more easily slice by elevation
-values. This might be done by subclassing ``xarray`` rather than
-``numpy`` for basic data arrays.
+.. _userguide_stratigraphy_planforms:
 
-.. doctest::
+The stratigraphy cube allows us to slice `Planform` stratigraphy too.
+Specify `z` as the elevation of the planform slice:
 
-    >>> elev_idx = (np.abs(stratcube.z - -2)).argmin()  # find nearest idx to -2 m
+.. plot::
+    :context: reset
 
-    >>> fig, ax = plt.subplots(figsize=(5, 3))
-    >>> stratcube.show_plan('sandfrac', elev_idx, ticks=True)
-    >>> plt.show() #doctest: +SKIP
+    >>> golfcube = dm.sample_data.golf()
+    >>> stratcube = dm.cube.StratigraphyCube.from_DataCube(
+    ...     golfcube, dz=0.05)
 
-.. plot:: guides/userguide_stratigraphy_planform_slice.py
+.. plot::
+    :include-source:
+    :context:
+
+    >>> minus2_slice = dm.plan.Planform(stratcube, z=-2)
+
+    >>> fig, ax = plt.subplots()
+    >>> minus2_slice.show('sandfrac', ticks=True, ax=ax)
+    >>> plt.show()
 
 
 Frozen stratigraphy volumes
@@ -525,7 +617,7 @@ See the :doc:`reference page for each mask type </reference/mask/index>` if you 
     ax0 = fig.add_subplot(spec[0, :])
     axs = [fig.add_subplot(spec[i, j]) for i, j in zip(np.repeat(
         np.arange(1, 4), 2), np.tile(np.arange(2), (4,)))]
-    maskcube.show_plan('eta', t=-1, ax=ax0)
+    maskcube.quick_show('eta', idx=-1, ax=ax0)
 
     for i, m in enumerate([land_mask, wet_mask, channel_mask,
                            centerline_mask, edge_mask, shore_mask]):

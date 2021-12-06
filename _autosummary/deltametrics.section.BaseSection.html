@@ -60,8 +60,16 @@
 <dd><p>Identify coordinates defining the section.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>CubeInstance</strong> (<a class="reference internal" href="deltametrics.cube.BaseCube.html#deltametrics.cube.BaseCube" title="deltametrics.cube.BaseCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseCube</span></code></a> subclass, optional) – Connect to this cube. No connection is made if cube is not
-provided.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>section_type</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – String identifying the <em>type</em> of <cite>Section</cite> being instantiated.</p></li>
+<li><p><strong>CubeInstance</strong> (<a class="reference internal" href="deltametrics.cube.BaseCube.html#deltametrics.cube.BaseCube" title="deltametrics.cube.BaseCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseCube</span></code></a> subclass, optional) – Connect to this cube. No connection is made if cube is not
+provided.</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – An optional name for the <cite>Section</cite> object, helpful for maintaining
+and keeping track of multiple <cite>Section</cite> objects of the same
+type. This is disctinct from the <code class="xref py py-obj docutils literal notranslate"><span class="pre">section_type</span></code>. The name
+is used internally if you use the <code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code> method
+of a <cite>Cube</cite>. Notes</p></li>
+</ul>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -101,8 +109,8 @@ any functionality (via the <a class="reference internal" href="#deltametrics.sec
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.BaseSection.idx_trace" title="deltametrics.section.BaseSection.idx_trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">idx_trace</span></code></a></p></td>
 <td><p>Alias for <cite>self.trace_idx</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></p></td>
-<td><p></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.BaseSection.name" title="deltametrics.section.BaseSection.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<td><p>Section name.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.BaseSection.s" title="deltametrics.section.BaseSection.s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s</span></code></a></p></td>
 <td><p>Along-section coordinate.</p></td>
@@ -131,9 +139,8 @@ any functionality (via the <a class="reference internal" href="#deltametrics.sec
 <dt class="sig sig-object py" id="deltametrics.section.BaseSection.__getitem__">
 <span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.BaseSection.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a slice of the section.</p>
-<p>Slicing the section instance creates a
-<code class="xref py py-obj docutils literal notranslate"><span class="pre">SectionVariable</span></code> instance from data for
-variable <code class="docutils literal notranslate"><span class="pre">var</span></code>.</p>
+<p>Slicing the section instance creates an <cite>xarray</cite> <cite>DataArray</cite> instance
+from data, for variable <code class="docutils literal notranslate"><span class="pre">var</span></code> and maintaining the data coordinates.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>We only support slicing by string.</p>
@@ -143,10 +150,11 @@ variable <code class="docutils literal notranslate"><span class="pre">var</span>
 <dd class="field-odd"><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to slice.</p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><strong>SectionVariable</strong> – SectionVariable instance for variable <code class="docutils literal notranslate"><span class="pre">var</span></code>.</p>
+<dd class="field-even"><p><strong>data</strong> – The undelrying data returned as an xarray <cite>DataArray</cite>, maintaining
+coordinates.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SectionVariable</span></code> instance</p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataArray</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -161,6 +169,13 @@ variable <code class="docutils literal notranslate"><span class="pre">var</span>
 <dt class="sig sig-object py" id="deltametrics.section.BaseSection.idx_trace">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">idx_trace</span></span><a class="headerlink" href="#deltametrics.section.BaseSection.idx_trace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for <cite>self.trace_idx</cite>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.section.BaseSection.name">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#deltametrics.section.BaseSection.name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Section name.</p>
+<p>Helpful to differentiate multiple <cite>Section</cite> objects.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -182,7 +197,7 @@ variable <code class="docutils literal notranslate"><span class="pre">var</span>
 <dd><p>Show the section.</p>
 <p>Method enumerates convenient routines for visualizing sections of data
 and stratigraphy. Includes support for multiple data <cite>style</cite> and
-mutuple <cite>data</cite> choices as well.</p>
+multiple <cite>data</cite> choices as well.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The colors for <cite>style=’lines’</cite> are determined from the left-end
@@ -223,7 +238,7 @@ create a new) <cite>Axes</cite> object.</p></li>
 <p><em>Example 1:</em> Display the <cite>velocity</cite> spacetime section of a DataCube.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">distance_idx</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">)</span>
 </pre></div>
 </div>

@@ -14,9 +14,9 @@
    .. autosummary::
    
       ~MorphologicalPlanform.__init__
-      ~MorphologicalPlanform.connect
       ~MorphologicalPlanform.from_elevation_data
       ~MorphologicalPlanform.from_mask
+      ~MorphologicalPlanform.show
    
    
 
@@ -28,6 +28,7 @@
    
       ~MorphologicalPlanform.all_images
       ~MorphologicalPlanform.composite_array
+      ~MorphologicalPlanform.data
       ~MorphologicalPlanform.mean_image
       ~MorphologicalPlanform.name
       ~MorphologicalPlanform.shape

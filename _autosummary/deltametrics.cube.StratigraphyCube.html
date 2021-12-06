@@ -94,23 +94,32 @@ supplied, a new default VariableSet instance is created.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.from_DataCube" title="deltametrics.cube.StratigraphyCube.from_DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_DataCube</span></code></a>(DataCubeInstance[, ...])</p></td>
 <td><p>Create from a DataCube.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.read" title="deltametrics.cube.StratigraphyCube.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>(variables)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.quick_show" title="deltametrics.cube.StratigraphyCube.quick_show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quick_show</span></code></a>(var[, idx, axis])</p></td>
+<td><p>Convenient and quick way to show a slice of the cube by <cite>idx</cite> and <cite>axis</cite>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.read" title="deltametrics.cube.StratigraphyCube.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>(variables)</p></td>
 <td><p>Read variable into memory.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.register_plan" title="deltametrics.cube.StratigraphyCube.register_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_plan</span></code></a>(name, PlanInstance)</p></td>
-<td><p>Register a planform to the cube.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.register_plan" title="deltametrics.cube.StratigraphyCube.register_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_plan</span></code></a>(*args, **kwargs)</p></td>
+<td><p>wrapper, might not really need this.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.register_planform" title="deltametrics.cube.StratigraphyCube.register_planform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_planform</span></code></a>(name, PlanformInstance[, ...])</p></td>
+<td><p>Register a planform to the <a class="reference internal" href="#deltametrics.cube.StratigraphyCube.planform_set" title="deltametrics.cube.StratigraphyCube.planform_set"><code class="xref py py-attr docutils literal notranslate"><span class="pre">planform_set</span></code></a>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.register_section" title="deltametrics.cube.StratigraphyCube.register_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code></a>(name, SectionInstance[, ...])</p></td>
-<td><p>Register a section to the <a class="reference internal" href="#deltametrics.cube.StratigraphyCube.section_set" title="deltametrics.cube.StratigraphyCube.section_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_set()</span></code></a>.</p></td>
+<td><p>Register a section to the <a class="reference internal" href="#deltametrics.cube.StratigraphyCube.section_set" title="deltametrics.cube.StratigraphyCube.section_set"><code class="xref py py-attr docutils literal notranslate"><span class="pre">section_set</span></code></a>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_cube" title="deltametrics.cube.StratigraphyCube.show_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_cube</span></code></a>(var[, t, x, y, ax])</p></td>
-<td><p>Show the cube in a 3d axis.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_cube" title="deltametrics.cube.StratigraphyCube.show_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_cube</span></code></a>(var[, style, ve, ax])</p></td>
+<td><p>Show the cube in a 3D axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_plan" title="deltametrics.cube.StratigraphyCube.show_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_plan</span></code></a>(var[, t, ax, title, ticks, ...])</p></td>
-<td><p>Show planform image.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_plan" title="deltametrics.cube.StratigraphyCube.show_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_plan</span></code></a>(*args, **kwargs)</p></td>
+<td><p>Deprecated.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_section" title="deltametrics.cube.StratigraphyCube.show_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_section</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Show a section.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_planform" title="deltametrics.cube.StratigraphyCube.show_planform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_planform</span></code></a>(name, variable, **kwargs)</p></td>
+<td><p>Show a registered planform by name and variable.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_section" title="deltametrics.cube.StratigraphyCube.show_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_section</span></code></a>(name, variable, **kwargs)</p></td>
+<td><p>Show a registered section by name and variable.</p></td>
 </tr>
 </tbody>
 </table>
@@ -154,10 +163,10 @@ supplied, a new default VariableSet instance is created.</p></li>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.plan_set" title="deltametrics.cube.StratigraphyCube.plan_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plan_set</span></code></a></p></td>
-<td><p>Set of plan instances.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.planform_set" title="deltametrics.cube.StratigraphyCube.planform_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">planform_set</span></code></a></p></td>
+<td><p>Set of planform instances.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.plans" title="deltametrics.cube.StratigraphyCube.plans"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plans</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.planforms" title="deltametrics.cube.StratigraphyCube.planforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">planforms</span></code></a></p></td>
 <td><p>Set of plan instances.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.section_set" title="deltametrics.cube.StratigraphyCube.section_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_set</span></code></a></p></td>
@@ -325,9 +334,21 @@ StratigraphyCube.</p></li>
 </dd></dl>
 
 <dl class="py property">
-<dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.plan_set">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plan_set</span></span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.plan_set" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.planform_set">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">planform_set</span></span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.planform_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set of planform instances.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.planforms">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">planforms</span></span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.planforms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of plan instances.</p>
+<p>Alias to <code class="xref py py-meth docutils literal notranslate"><span class="pre">plan_set()</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type</dt>
 <dd class="field-odd"><p><cite>dict</cite></p>
@@ -335,16 +356,45 @@ StratigraphyCube.</p></li>
 </dl>
 </dd></dl>
 
-<dl class="py property">
-<dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.plans">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">plans</span></span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.plans" title="Permalink to this definition">¶</a></dt>
-<dd><p>Set of plan instances.</p>
-<p>Alias to <a class="reference internal" href="#deltametrics.cube.StratigraphyCube.plan_set" title="deltametrics.cube.StratigraphyCube.plan_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plan_set()</span></code></a>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.quick_show">
+<span class="sig-name descname"><span class="pre">quick_show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.quick_show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convenient and quick way to show a slice of the cube by <cite>idx</cite> and <cite>axis</cite>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>If neither <cite>idx</cite> or <cite>axis</cite> is specified, a planform view of the
+last index is shown.</p>
+</div>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><cite>dict</cite></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to show from the underlying dataset.</p></li>
+<li><p><strong>idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Which index along the <cite>axis</cite> to slice data from. Default value is
+<code class="docutils literal notranslate"><span class="pre">-1</span></code>, the last index along <cite>axis</cite>.</p></li>
+<li><p><strong>axis</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Which axis of the underlying cube <cite>idx</cite> is specified for. Default
+value is <code class="docutils literal notranslate"><span class="pre">0</span></code>, the first axis of the cube.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments are passed
+to <a class="reference internal" href="deltametrics.plan.Planform.html#deltametrics.plan.Planform.show" title="deltametrics.plan.Planform.show"><code class="xref py py-meth docutils literal notranslate"><span class="pre">show()</span></code></a> if <cite>axis</cite> is <code class="docutils literal notranslate"><span class="pre">0</span></code>,
+otherwise passed
+to <a class="reference internal" href="deltametrics.section.BaseSection.html#deltametrics.section.BaseSection.show" title="deltametrics.section.BaseSection.show"><code class="xref py py-meth docutils literal notranslate"><span class="pre">show()</span></code></a>.</p></li>
+</ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfstrat</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">StratigraphyCube</span><span class="o">.</span><span class="n">from_DataCube</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">golfcube</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">quick_show</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># a Planform (axis=0)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfstrat</span><span class="o">.</span><span class="n">quick_show</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># a DipSection</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-cube-StratigraphyCube-1.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-cube-StratigraphyCube-1.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../_images/deltametrics-cube-StratigraphyCube-1.png" class="plot-directive" src="../_images/deltametrics-cube-StratigraphyCube-1.png" />
+</figure>
 </dd></dl>
 
 <dl class="py method">
@@ -360,14 +410,30 @@ StratigraphyCube.</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.register_plan">
-<span class="sig-name descname"><span class="pre">register_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PlanInstance</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.register_plan" title="Permalink to this definition">¶</a></dt>
-<dd><p>Register a planform to the cube.</p>
+<span class="sig-name descname"><span class="pre">register_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.register_plan" title="Permalink to this definition">¶</a></dt>
+<dd><p>wrapper, might not really need this.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.register_planform">
+<span class="sig-name descname"><span class="pre">register_planform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">PlanformInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_planform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.register_planform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a planform to the <a class="reference internal" href="#deltametrics.cube.StratigraphyCube.planform_set" title="deltametrics.cube.StratigraphyCube.planform_set"><code class="xref py py-attr docutils literal notranslate"><span class="pre">planform_set</span></code></a>.</p>
+<p>Connect a planform to the cube.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The name to register the <cite>Planform</cite>.</p></li>
+<li><p><strong>PlanformInstance</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePlanform</span></code> subclass instance) – The planform instance that will be registered.</p></li>
+<li><p><strong>return_planform</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to return the planform object.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.register_section">
 <span class="sig-name descname"><span class="pre">register_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">SectionInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.register_section" title="Permalink to this definition">¶</a></dt>
-<dd><p>Register a section to the <a class="reference internal" href="#deltametrics.cube.StratigraphyCube.section_set" title="deltametrics.cube.StratigraphyCube.section_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_set()</span></code></a>.</p>
+<dd><p>Register a section to the <a class="reference internal" href="#deltametrics.cube.StratigraphyCube.section_set" title="deltametrics.cube.StratigraphyCube.section_set"><code class="xref py py-attr docutils literal notranslate"><span class="pre">section_set</span></code></a>.</p>
 <p>Connect a section to the cube.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -419,33 +485,92 @@ the <code class="docutils literal notranslate"><span class="pre">register_sectio
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.show_cube">
-<span class="sig-name descname"><span class="pre">show_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.show_cube" title="Permalink to this definition">¶</a></dt>
-<dd><p>Show the cube in a 3d axis.</p>
-<p>3d visualization via <cite>pyvista</cite>.</p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Implementation is crude and should be revisited.</p>
+<span class="sig-name descname"><span class="pre">show_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mesh'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.show_cube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the cube in a 3D axis.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>requires <cite>pyvista</cite> package for 3d visualization.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to show from the underlying dataset.</p></li>
+<li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Style to show <cite>cube</cite>. Default is <cite>‘mesh’</cite>, which gives a 3D
+volumetric view. Other supported option is <cite>‘fence’</cite>, which gives
+a fence diagram with one slice in each cube dimension.</p></li>
+<li><p><strong>ve</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – Vertical exaggeration. Default is <code class="docutils literal notranslate"><span class="pre">200</span></code>.</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Axes</span></code> object, optional) – A <cite>matplotlib</cite> <cite>Axes</cite> object to plot the section. Optional; if not
+provided, a call is made to <code class="docutils literal notranslate"><span class="pre">plt.gca()</span></code> to get the current (or
+create a new) <cite>Axes</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The following code snippets are not set up to actually make the
+plots in the documentation.</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfstrat</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">StratigraphyCube</span><span class="o">.</span><span class="n">from_DataCube</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">golfcube</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfstrat</span><span class="o">.</span><span class="n">show_cube</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">show_cube</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s1">&#39;fence&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+</pre></div>
 </div>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.show_plan">
-<span class="sig-name descname"><span class="pre">show_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.show_plan" title="Permalink to this definition">¶</a></dt>
-<dd><p>Show planform image.</p>
+<span class="sig-name descname"><span class="pre">show_plan</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.show_plan" title="Permalink to this definition">¶</a></dt>
+<dd><p>Deprecated. Use <a class="reference internal" href="#deltametrics.cube.StratigraphyCube.quick_show" title="deltametrics.cube.StratigraphyCube.quick_show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">quick_show</span></code></a> or <a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_planform" title="deltametrics.cube.StratigraphyCube.show_planform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_planform</span></code></a>.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>NEEDS TO BE PORTED OVER TO WRAP THE .show() METHOD OF PLAN!</p>
+<p>Provides a legacy option to quickly show a planform, from before
+the <cite>Planform</cite> object was properly implemented. Will be removed
+in a future release.</p>
 </div>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.show_planform">
+<span class="sig-name descname"><span class="pre">show_planform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.show_planform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show a registered planform by name and variable.</p>
+<p>Call a registered planform by name and variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The name of the registered planform.</p></li>
+<li><p><strong>variable</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The varaible name to show.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments passed
+to <a class="reference internal" href="deltametrics.plan.Planform.html#deltametrics.plan.Planform.show" title="deltametrics.plan.Planform.show"><code class="xref py py-meth docutils literal notranslate"><span class="pre">show()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.cube.StratigraphyCube.show_section">
-<span class="sig-name descname"><span class="pre">show_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.show_section" title="Permalink to this definition">¶</a></dt>
-<dd><p>Show a section.</p>
-<p>Can be called by name if section is already registered, or pass a
-fresh section instance and it will be connected.</p>
-<p>Wraps the Section’s <a class="reference internal" href="deltametrics.section.BaseSection.html#deltametrics.section.BaseSection.show" title="deltametrics.section.BaseSection.show"><code class="xref py py-meth docutils literal notranslate"><span class="pre">show()</span></code></a>
-method.</p>
+<span class="sig-name descname"><span class="pre">show_section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.StratigraphyCube.show_section" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show a registered section by name and variable.</p>
+<p>Call a registered section by name and variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The name of the registered section.</p></li>
+<li><p><strong>variable</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The varaible name to show.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments passed
+to <a class="reference internal" href="deltametrics.section.BaseSection.html#deltametrics.section.BaseSection.show" title="deltametrics.section.BaseSection.show"><code class="xref py py-meth docutils literal notranslate"><span class="pre">show()</span></code></a>.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">

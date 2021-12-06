@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.plan.MorphologicalPlanform" href="deltametrics.plan.MorphologicalPlanform.html" />
-    <link rel="prev" title="Planview operations" href="../reference/plan/index.html" /> 
+    <link rel="prev" title="deltametrics.plan.Planform" href="deltametrics.plan.Planform.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -31,7 +31,7 @@
           <a href="deltametrics.plan.MorphologicalPlanform.html" title="deltametrics.plan.MorphologicalPlanform"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../reference/plan/index.html" title="Planview operations"
+          <a href="deltametrics.plan.Planform.html" title="deltametrics.plan.Planform"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
@@ -69,10 +69,12 @@ elevation data (i.e., from an <a class="reference internal" href="deltametrics.m
 <span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p># extract a mask of area below sea level as the
-#   inverse of the ElevationMask
-&gt;&gt;&gt; _below_mask = ~(_EM.mask)</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">OAP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">OpeningAnglePlanform</span><span class="p">(</span><span class="n">_below_mask</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># extract a mask of area below sea level as the</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1">#   inverse of the ElevationMask</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">below_mask</span> <span class="o">=</span> <span class="o">~</span><span class="p">(</span><span class="n">_EM</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">OAP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">OpeningAnglePlanform</span><span class="p">(</span><span class="n">below_mask</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The OAP stores information computed from the
@@ -103,20 +105,20 @@ elevation data (i.e., from an <a class="reference internal" href="deltametrics.m
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.__init__" title="deltametrics.plan.OpeningAnglePlanform.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Init.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.connect" title="deltametrics.plan.OpeningAnglePlanform.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(CubeInstance[, name])</p></td>
-<td><p>Connect this Planform instance to a Cube instance.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask" title="deltametrics.plan.OpeningAnglePlanform.from_ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_ElevationMask</span></code></a>(ElevationMask, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask" title="deltametrics.plan.OpeningAnglePlanform.from_ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_ElevationMask</span></code></a>(ElevationMask, **kwargs)</p></td>
 <td><p>Create an <cite>OpeningAnglePlanform</cite> from an <cite>ElevationMask</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_arrays" title="deltametrics.plan.OpeningAnglePlanform.from_arrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_arrays</span></code></a>(*args)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_arrays" title="deltametrics.plan.OpeningAnglePlanform.from_arrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_arrays</span></code></a>(*args)</p></td>
 <td><p>Create directly from arrays.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_elevation_data" title="deltametrics.plan.OpeningAnglePlanform.from_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_elevation_data</span></code></a>(elevation_data, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_elevation_data" title="deltametrics.plan.OpeningAnglePlanform.from_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_elevation_data</span></code></a>(elevation_data, **kwargs)</p></td>
 <td><p>Create an <cite>OpeningAnglePlanform</cite> from elevation data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_mask" title="deltametrics.plan.OpeningAnglePlanform.from_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_mask</span></code></a>(UnknownMask, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_mask" title="deltametrics.plan.OpeningAnglePlanform.from_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_mask</span></code></a>(UnknownMask, **kwargs)</p></td>
 <td><p>Wraps <a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask" title="deltametrics.plan.OpeningAnglePlanform.from_ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_ElevationMask</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.show" title="deltametrics.plan.OpeningAnglePlanform.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>([var, ax, title, ticks, colorbar, ...])</p></td>
+<td><p>Show the planform.</p></td>
 </tr>
 </tbody>
 </table>
@@ -131,19 +133,30 @@ elevation data (i.e., from an <a class="reference internal" href="deltametrics.m
 <td><p>Mask for below sea level pixels.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.composite_array" title="deltametrics.plan.OpeningAnglePlanform.composite_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">composite_array</span></code></a></p></td>
-<td><p>Alias sea angles.</p></td>
+<td><p>Alias to <cite>sea_angles</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.name" title="deltametrics.plan.OpeningAnglePlanform.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.data" title="deltametrics.plan.OpeningAnglePlanform.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<td><p>The public data field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.name" title="deltametrics.plan.OpeningAnglePlanform.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
 <td><p>Planform name.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.sea_angles" title="deltametrics.plan.OpeningAnglePlanform.sea_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sea_angles</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.sea_angles" title="deltametrics.plan.OpeningAnglePlanform.sea_angles"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sea_angles</span></code></a></p></td>
 <td><p>Maximum opening angle view of the sea from a pixel.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.shape" title="deltametrics.plan.OpeningAnglePlanform.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.shape" title="deltametrics.plan.OpeningAnglePlanform.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Planform shape.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slice the planform.</p>
+<p>Implements basic slicing for <cite>SpecialtyPlanform</cite> by passing the <cite>slc</cite>
+to <cite>self.data</cite>. I.e., the returned slice is <code class="docutils literal notranslate"><span class="pre">self.data[slc]</span></code>.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.below_mask">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">below_mask</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.below_mask" title="Permalink to this definition">¶</a></dt>
@@ -155,13 +168,17 @@ elevation data (i.e., from an <a class="reference internal" href="deltametrics.m
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.composite_array">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">composite_array</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.composite_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias sea angles.</p>
+<dd><p>Alias to <cite>sea_angles</cite>.</p>
+<p>This is the array that a contour is extracted from using some threshold
+value when making land and shoreline masks.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.connect">
-<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CubeInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connect this Planform instance to a Cube instance.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The public data field.</p>
+<p>This attribute <em>must</em> be implemented as an alias to another attribute.
+The choice of field is up to the developer.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -245,7 +262,7 @@ turn used to create the <cite>OpeningAnglePlanform</cite>.</p>
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.name">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Planform name.</p>
-<p>Helpful to differentiate multiple Planforms.</p>
+<p>Helpful to differentiate multiple <cite>Planform</cite> objects.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -261,6 +278,36 @@ turn used to create the <cite>OpeningAnglePlanform</cite>.</p>
 <dd><p>Planform shape.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the planform.</p>
+<p>Display a field of the planform, called by attribute name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which field to show. Must be an attribute of the planform. <cite>show</cite>
+will look for another attribute describing
+the <code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableInfo</span></code> for that attribute named
+<code class="docutils literal notranslate"><span class="pre">self._&lt;var&gt;_varinfo</span></code> and use that to style the plot, if
+found. If this <cite>VariableInfo</cite> is not found, the default is used.</p></li>
+<li><p><strong>label</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, <cite>str</cite>, optional) – Display a label of the variable name on the plot. Default is
+False, display nothing. If <code class="docutils literal notranslate"><span class="pre">label=True</span></code>, the label name from the
+<a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a> is used. Other arguments are
+attempted to coerce to <cite>str</cite>, and the literal is diplayed.</p></li>
+<li><p><strong>colorbar</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether a colorbar is appended to the axis.</p></li>
+<li><p><strong>colorbar_label</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, <cite>str</cite>, optional) – Display a label of the variable name along the colorbar. Default is
+False, display nothing. If <code class="docutils literal notranslate"><span class="pre">label=True</span></code>, the label name from the
+<a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a> is used. Other arguments are
+attempted to coerce to <cite>str</cite>, and the literal is diplayed.</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Axes</span></code> object, optional) – A <cite>matplotlib</cite> <cite>Axes</cite> object to plot the section. Optional; if not
+provided, a call is made to <code class="docutils literal notranslate"><span class="pre">plt.gca()</span></code> to get the current (or
+create a new) <cite>Axes</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -273,8 +320,8 @@ turn used to create the <cite>OpeningAnglePlanform</cite>.</p>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="../reference/plan/index.html"
-                        title="previous chapter">Planview operations</a></p>
+  <p class="topless"><a href="deltametrics.plan.Planform.html"
+                        title="previous chapter">deltametrics.plan.Planform</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="deltametrics.plan.MorphologicalPlanform.html"
                         title="next chapter">deltametrics.plan.MorphologicalPlanform</a></p>
@@ -309,7 +356,7 @@ turn used to create the <cite>OpeningAnglePlanform</cite>.</p>
           <a href="deltametrics.plan.MorphologicalPlanform.html" title="deltametrics.plan.MorphologicalPlanform"
              >next</a> |</li>
         <li class="right" >
-          <a href="../reference/plan/index.html" title="Planview operations"
+          <a href="deltametrics.plan.Planform.html" title="deltametrics.plan.Planform"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>

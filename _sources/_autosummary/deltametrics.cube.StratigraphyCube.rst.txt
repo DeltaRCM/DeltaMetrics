@@ -16,11 +16,14 @@
       ~StratigraphyCube.__init__
       ~StratigraphyCube.export_frozen_variable
       ~StratigraphyCube.from_DataCube
+      ~StratigraphyCube.quick_show
       ~StratigraphyCube.read
       ~StratigraphyCube.register_plan
+      ~StratigraphyCube.register_planform
       ~StratigraphyCube.register_section
       ~StratigraphyCube.show_cube
       ~StratigraphyCube.show_plan
+      ~StratigraphyCube.show_planform
       ~StratigraphyCube.show_section
    
    
@@ -42,8 +45,8 @@
       ~StratigraphyCube.dim1_coords
       ~StratigraphyCube.dim2_coords
       ~StratigraphyCube.meta
-      ~StratigraphyCube.plan_set
-      ~StratigraphyCube.plans
+      ~StratigraphyCube.planform_set
+      ~StratigraphyCube.planforms
       ~StratigraphyCube.section_set
       ~StratigraphyCube.sections
       ~StratigraphyCube.shape

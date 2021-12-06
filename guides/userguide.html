@@ -103,68 +103,124 @@ For example, access variables as:</p>
 <span class="go">(101, 100, 200)</span>
 </pre></div>
 </div>
-<p>Let’s examine the timeseries of bed elevations by taking slices out of the <code class="docutils literal notranslate"><span class="pre">'eta'</span></code> variable, at various indicies (<code class="docutils literal notranslate"><span class="pre">t</span></code>) along the 0th dimension.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">nt</span> <span class="o">=</span> <span class="mi">5</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">nt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># linearly interpolate ts</span>
-
+<p>Examine a timeseries of bed elevation by taking slices out of the <code class="docutils literal notranslate"><span class="pre">eta</span></code> variable; we can slice the underlying data directly with an index, the same as a <cite>numpy</cite> array.
+Remember that <cite>time</cite> is ordered along the 0th dimension.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># set up indices to slice the cube</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nt</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">golfcube</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">nt</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>  <span class="c1"># linearly interpolate t_idxs</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># make the plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nt</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ts</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">t</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span> 
-<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;t = &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">))</span> 
-<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">get_xaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span> 
-<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">get_yaxis</span><span class="p">()</span><span class="o">.</span><span class="n">set_ticks</span><span class="p">([])</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;y-direction&#39;</span><span class="p">)</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x-direction&#39;</span><span class="p">)</span> 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">t_idxs</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">vmin</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># show the slice</span>
+<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;idx = </span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">idx</span><span class="p">))</span>
+<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([])</span>
+<span class="gp">... </span>    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;dim1 </span><span class="se">\n</span><span class="s1"> direction&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;dim2 direction&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../pyplots/guides/userguide_bed_timeseries.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_bed_timeseries.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../guides/userguide-2.png">png</a>, <a class="reference external" href="../guides/userguide-2.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../_images/userguide_bed_timeseries.png" class="plot-directive" src="../_images/userguide_bed_timeseries.png" />
+<img alt="../_images/userguide-2.png" class="plot-directive" src="../_images/userguide-2.png" />
 </figure>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The 0th dimension of the cube is the <em>time</em> dimension, and the 1st and 2nd dimensions are the <cite>y</cite> and <cite>x</cite> dimensions of the model domain, respectively. The <cite>x</cite> dimension is the <em>cross-channel</em> dimension, Implementations using non-standard data should permute datasets to match this convention.</p>
+<p>The 0th dimension of the cube must be the <em>time</em> dimension, and the 1st and 2nd dimensions represent the spatial dimensions of the data domain, but can have any arbitrary “name” for the dimensions. For example, from <em>pyDeltaRCM</em> the 1st and 2nd dimensions are named <cite>x</cite> and <cite>y</cite> respectively (<cite>x</cite> is considered a downstream coordinate in that model). In <cite>DeltaMetrics</cite>, we refer to these spatial dimensions as <cite>dim1</cite> and <cite>dim2</cite>, because they may have any name.</p>
 </div>
-<p>The CubeVariable supports arbitrary math (using <cite>xarray</cite> for fast computations via CubeVariable.data syntax).
+<p>The CubeVariable supports arbitrary math (using <cite>xarray</cite>).
 For example:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># compute the change in bed elevation between the last two intervals above</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">diff_time</span> <span class="o">=</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">-</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">ts</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span>
-
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># compute the change in bed elevation between the last two intervals above</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">diff_time</span> <span class="o">=</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">t_idxs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">-</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">t_idxs</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="p">:,</span> <span class="p">:]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">max_delta</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">diff_time</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># make the plot</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">diff_time</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu&#39;</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">diff_time</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">vmin</span><span class="o">=-</span><span class="nb">abs</span><span class="p">(</span><span class="n">diff_time</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">diff_time</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;RdBu&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">vmax</span><span class="o">=</span><span class="n">max_delta</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">vmin</span><span class="o">=-</span><span class="n">max_delta</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">cb</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">append_colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span>  <span class="c1"># a convenience function</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../pyplots/guides/userguide_bed_elevation_change.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_bed_elevation_change.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../guides/userguide-3.png">png</a>, <a class="reference external" href="../guides/userguide-3.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../_images/userguide_bed_elevation_change.png" class="plot-directive" src="../_images/userguide_bed_elevation_change.png" />
+<img alt="../_images/userguide-3.png" class="plot-directive" src="../_images/userguide-3.png" />
 </figure>
 </section>
 <section id="manipulating-planform-data">
 <h2>Manipulating Planform data<a class="headerlink" href="#manipulating-planform-data" title="Permalink to this headline">¶</a></h2>
-<p>In addition to indexing directly, slices across the <cite>time</cite> dimension of the cube are referred to as “Planform” cuts.</p>
-<p>TODO</p>
+<p>In addition to indexing directly, slices along the <cite>Cube</cite> time dimension can be explicitly created as <cite>Planform</cite> objects.
+This is helpful for organizing an analysis where you want to repeatedly access data from a particular point in time.</p>
+<section id="planform-slices">
+<h3>Planform slices<a class="headerlink" href="#planform-slices" title="Permalink to this headline">¶</a></h3>
+<p>Create a <cite>Planform</cite> of the last time index from the cube.
+The data returned from the planform are an <cite>xarray</cite> <cite>DataArray</cite>, so you can continue to perform arbitrary math on the data.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">final</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">Planform</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">final</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(100, 200)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">final</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span>
+<span class="go">&lt;xarray.DataArray &#39;eta&#39; (x: 100, y: 200)&gt;</span>
+<span class="go">array([[ 0.015 ,  0.015 ,  0.015 , ...,  0.015 ,  0.015 ,  0.015 ],</span>
+<span class="go">       [ 0.0075,  0.0075,  0.0075, ...,  0.0075,  0.0075,  0.0075],</span>
+<span class="go">       [ 0.    ,  0.    ,  0.    , ...,  0.    ,  0.    ,  0.    ],</span>
+<span class="go">       ...,</span>
+<span class="go">       [-2.    , -2.    , -2.    , ..., -2.    , -2.    , -2.    ],</span>
+<span class="go">       [-2.    , -2.    , -2.    , ..., -2.    , -2.    , -2.    ],</span>
+<span class="go">       [-2.    , -2.    , -2.    , ..., -2.    , -2.    , -2.    ]],</span>
+<span class="go">      dtype=float32)</span>
+<span class="go">Coordinates:</span>
+<span class="go">    time     float32 5e+07</span>
+<span class="go">  * x        (x) float32 0.0 50.0 100.0 150.0 ... 4.85e+03 4.9e+03 4.95e+03</span>
+<span class="go">  * y        (y) float32 0.0 50.0 100.0 150.0 ... 9.85e+03 9.9e+03 9.95e+03</span>
+<span class="go">Attributes:</span>
+<span class="go">    slicetype:           data_planform</span>
+<span class="go">    knows_stratigraphy:  False</span>
+<span class="go">    knows_spacetime:     True</span>
+</pre></div>
+</div>
+<p>You can visualize the data yourself, or use the built-in <cite>show()</cite> method of a <cite>Planform</cite>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">final</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">])</span>   <span class="c1"># display directly</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">final</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># use the built-in show()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../guides/userguide-5.png">png</a>, <a class="reference external" href="../guides/userguide-5.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../_images/userguide-5.png" class="plot-directive" src="../_images/userguide-5.png" />
+</figure>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Do <cite>Planform</cite> objects seems too simple? They are! The basic <cite>Planform</cite> allows us to have an API consistent with the more complicated <cite>Section</cite> data (introduced below), and have a flexible standard to extend into “specialty” planforms.</p>
+<p>Want to just slice the data directly as <code class="docutils literal notranslate"><span class="pre">golfcube['eta'][-1,</span> <span class="pre">:,</span> <span class="pre">:]</span></code>? Go ahead and do what works for you!</p>
+</div>
+<p>It is often helpful to associate a <cite>Planform</cite> with a <cite>Cube</cite>, to keep track of planform data from multiple points in time, or from multiple cubes.
+Use the <a class="reference internal" href="../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube.register_planform" title="deltametrics.cube.DataCube.register_planform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">register_planform()</span></code></a> method when instantiating the <cite>Planform</cite>, or pass the object as an argument later.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">register_planform</span><span class="p">(</span><span class="s1">&#39;fifty&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">Planform</span><span class="p">(</span><span class="n">idx</span><span class="o">=</span><span class="mi">50</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Any registered <cite>Planform</cite> can then be accessed via the <a class="reference internal" href="../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube.planforms" title="deltametrics.cube.DataCube.planforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">planforms</span></code></a> attribute of the Cube (returns a <cite>dict</cite>).</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">planforms</span><span class="p">[</span><span class="s1">&#39;fifty&#39;</span><span class="p">]</span>
+<span class="go">&lt;deltametrics.plan.Planform object at 0x...&gt;</span>
+</pre></div>
+</div>
 </section>
-<section id="default-colors-in-deltametrics">
-<h2>Default Colors in DeltaMetrics<a class="headerlink" href="#default-colors-in-deltametrics" title="Permalink to this headline">¶</a></h2>
-<p>You may have noticed the beautiful colors above, and be wondering: “how are the colors set?”
-We use a custom object (<a class="reference internal" href="../_autosummary/deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a>) to define common plotting properties for all plots.
-The <cite>VariableSet</cite> supports all kinds of other controls, such as custom colormaps for any variable, addition of new defined variables, fixed color limits, color normalizations, and more.
-You can also use these attributes of the <cite>VariableSet</cite> in your own plotting routines.</p>
-<p>See the <a class="reference internal" href="../reference/plot/index.html#default-styling"><span class="std std-ref">default colors in DeltaMetrics here</span></a> for more information.</p>
-<p>Additionally, there are a <a class="reference internal" href="../reference/plot/index.html"><span class="doc">number of plotting routines</span></a> that are helpful in visualizations.</p>
+<section id="specialty-planform-objects">
+<h3>Specialty Planform objects<a class="headerlink" href="#specialty-planform-objects" title="Permalink to this headline">¶</a></h3>
+<p>A slice of the <cite>Cube</cite> is a basic <cite>Planform</cite>, but often there are some analyses we wish to compute on a <cite>Planform</cite>, that may have multiple steps and sets of derived values we want to keep track of.
+DeltaMetrics has several specialty planform objects that make this easier.
+These specialty calculations are beyond the scope of this basic user guide, find more information on the <a class="reference internal" href="../reference/plan/index.html"><span class="doc">Planform API reference page</span></a>.</p>
+</section>
 </section>
 <section id="manipulating-section-data">
 <h2>Manipulating Section data<a class="headerlink" href="#manipulating-section-data" title="Permalink to this headline">¶</a></h2>
-<p>We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
-In DeltaMetrics, we refer to this preserved history as the “stratigraphy”, and we provide a number of convenient routines for computing stratigraphy and analyzing the deposits.</p>
-<p>Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created.
-We must directly tell the Cube instance to compute stratigraphy by specifying which variable contains the bed elevation history, because this history dictates preservation.</p>
-<p>Mainly, the API works by registering a section of a specified type, and
-assigning it a name (“demo” below). Registered sections are accessed via
-the <code class="docutils literal notranslate"><span class="pre">sections</span></code> attribute of the cube:</p>
+<p>Similar to <cite>Planform</cite> slices, we can make cuts <em>across</em> the <cite>Cube</cite> time dimension with <cite>Section</cite> objects.
+Most often, it’s best to use the API to register a section of a specified type to an underlying data cube and
+assigning it a name (“demo” below).
+Registered sections are accessed via the <code class="docutils literal notranslate"><span class="pre">sections</span></code> attribute of the cube:</p>
 <p>For a data cube, sections are most easily instantiated by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code> method:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span><span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">distance_idx</span><span class="o">=</span><span class="mi">10</span><span class="p">))</span>
 </pre></div>
@@ -173,7 +229,7 @@ the <code class="docutils literal notranslate"><span class="pre">sections</span>
 The path of any <cite>Section</cite> in the <code class="docutils literal notranslate"><span class="pre">x-y</span></code> plane can always be accessed via the <code class="docutils literal notranslate"><span class="pre">.trace</span></code> attribute.
 We can plot the trace on top the the final bed elevation to see where the section will be located.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">quick_show</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">trace</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span>
 <span class="gp">... </span>        <span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">trace</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;r--&#39;</span><span class="p">)</span> 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
@@ -232,12 +288,14 @@ are sliced themselves, similarly to the cube.</p>
 </div>
 <section id="quick-stratigraphy">
 <span id="userguide-quick-stratigraphy"></span><h3>“Quick” stratigraphy<a class="headerlink" href="#quick-stratigraphy" title="Permalink to this headline">¶</a></h3>
-<p>We have implemented support for rapid stratigraphy computation for visualization, and preserved-time statistics.
-These quick stratigraphy computations create a mesh of preserved elevations and fill this matrix with values sliced out of the <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code> data.</p>
-<p>Notably, the full “boxy” stratigraphy computation is also quite fast.
-More on that below.
-Compute the quick stratigraphy as:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
+<p>We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
+In DeltaMetrics, we refer to this preserved history as the “stratigraphy”, and we provide a number of convenient routines for computing stratigraphy and analyzing deposits.</p>
+<p>Importantly, stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created.
+We must directly tell the Cube instance to compute stratigraphy by specifying which variable contains the bed elevation history, because this history dictates preservation.
+We have implemented support for rapid stratigraphy computation for visualization, and preserved-time statistics.
+These quick stratigraphy computations create a mesh of preserved elevations and fill this matrix with values sliced out of the underlying data.</p>
+<p>Compute “quick stratigraphy” as:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Now, the <code class="docutils literal notranslate"><span class="pre">DataCube</span></code> has knowledge of stratigraphy, which we can further use to visualize preservation within the spacetime, or visualize as an actual stratigraphic slice.</p>
@@ -301,6 +359,15 @@ The below figure shows each section type available and the <cite>velocity</cite>
 <img alt="../_images/userguide_section_type_demos.png" class="plot-directive" src="../_images/userguide_section_type_demos.png" />
 </figure>
 </section>
+</section>
+<section id="default-colors-in-deltametrics">
+<h2>Default Colors in DeltaMetrics<a class="headerlink" href="#default-colors-in-deltametrics" title="Permalink to this headline">¶</a></h2>
+<p>You may have noticed the beautiful colors above, and be wondering: “how are the colors set?”
+We use a custom object (<a class="reference internal" href="../_autosummary/deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a>) to define common plotting properties for all plots.
+The <cite>VariableSet</cite> supports all kinds of other controls, such as custom colormaps for any variable, addition of new defined variables, fixed color limits, color normalizations, and more.
+You can also use these attributes of the <cite>VariableSet</cite> in your own plotting routines.</p>
+<p>See the <a class="reference internal" href="../reference/plot/index.html#default-styling"><span class="std std-ref">default colors in DeltaMetrics here</span></a> for more information.</p>
+<p>Additionally, there are a <a class="reference internal" href="../reference/plot/index.html"><span class="doc">number of plotting routines</span></a> that are helpful in visualizations.</p>
 </section>
 <section id="computing-and-manipulating-stratigraphy">
 <h2>Computing and Manipulating Stratigraphy<a class="headerlink" href="#computing-and-manipulating-stratigraphy" title="Permalink to this headline">¶</a></h2>
@@ -373,20 +440,19 @@ Note that sections are <em>not</em> inherited from the <code class="docutils lit
 <figure class="align-default">
 <img alt="../_images/userguide_all_vars_stratigraphy.png" class="plot-directive" src="../_images/userguide_all_vars_stratigraphy.png" />
 </figure>
-<p>The stratigraphy cube allows us to slice planform slabs of stratigraphy
-too. We are working on a method to more easily slice by elevation
-values. This might be done by subclassing <code class="docutils literal notranslate"><span class="pre">xarray</span></code> rather than
-<code class="docutils literal notranslate"><span class="pre">numpy</span></code> for basic data arrays.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">elev_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">stratcube</span><span class="o">.</span><span class="n">z</span> <span class="o">-</span> <span class="o">-</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>  <span class="c1"># find nearest idx to -2 m</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">stratcube</span><span class="o">.</span><span class="n">show_plan</span><span class="p">(</span><span class="s1">&#39;sandfrac&#39;</span><span class="p">,</span> <span class="n">elev_idx</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span> 
+<p id="userguide-stratigraphy-planforms">The stratigraphy cube allows us to slice <cite>Planform</cite> stratigraphy too.
+Specify <cite>z</cite> as the elevation of the planform slice:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">minus2_slice</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">Planform</span><span class="p">(</span><span class="n">stratcube</span><span class="p">,</span> <span class="n">z</span><span class="o">=-</span><span class="mi">2</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../pyplots/guides/userguide_stratigraphy_planform_slice.png">png</a>, <a class="reference external" href="../pyplots/guides/userguide_stratigraphy_planform_slice.hires.png">hires.png</a>)</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">minus2_slice</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;sandfrac&#39;</span><span class="p">,</span> <span class="n">ticks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../guides/userguide-7.png">png</a>, <a class="reference external" href="../guides/userguide-7.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../_images/userguide_stratigraphy_planform_slice.png" class="plot-directive" src="../_images/userguide_stratigraphy_planform_slice.png" />
+<img alt="../_images/userguide-7.png" class="plot-directive" src="../_images/userguide-7.png" />
 </figure>
 <section id="frozen-stratigraphy-volumes">
 <h3>Frozen stratigraphy volumes<a class="headerlink" href="#frozen-stratigraphy-volumes" title="Permalink to this headline">¶</a></h3>
@@ -479,9 +545,9 @@ See the <a class="reference internal" href="../reference/mask/index.html"><span 
     <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../guides/userguide-3.png">png</a>, <a class="reference external" href="../guides/userguide-3.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../guides/userguide-10.png">png</a>, <a class="reference external" href="../guides/userguide-10.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../_images/userguide-3.png" class="plot-directive" src="../_images/userguide-3.png" />
+<img alt="../_images/userguide-10.png" class="plot-directive" src="../_images/userguide-10.png" />
 </figure>
 </section>
 </section>
@@ -499,13 +565,17 @@ See the <a class="reference internal" href="../reference/mask/index.html"><span 
 <li><a class="reference internal" href="#examples">Examples</a></li>
 <li><a class="reference internal" href="#setting-up-your-coding-environment">Setting up your coding environment</a></li>
 <li><a class="reference internal" href="#create-and-manipulate-a-datacube">Create and manipulate a “DataCube”</a></li>
-<li><a class="reference internal" href="#manipulating-planform-data">Manipulating Planform data</a></li>
-<li><a class="reference internal" href="#default-colors-in-deltametrics">Default Colors in DeltaMetrics</a></li>
+<li><a class="reference internal" href="#manipulating-planform-data">Manipulating Planform data</a><ul>
+<li><a class="reference internal" href="#planform-slices">Planform slices</a></li>
+<li><a class="reference internal" href="#specialty-planform-objects">Specialty Planform objects</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#manipulating-section-data">Manipulating Section data</a><ul>
 <li><a class="reference internal" href="#quick-stratigraphy">“Quick” stratigraphy</a></li>
 <li><a class="reference internal" href="#all-section-types">All Section types</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#default-colors-in-deltametrics">Default Colors in DeltaMetrics</a></li>
 <li><a class="reference internal" href="#computing-and-manipulating-stratigraphy">Computing and Manipulating Stratigraphy</a><ul>
 <li><a class="reference internal" href="#frozen-stratigraphy-volumes">Frozen stratigraphy volumes</a></li>
 </ul>

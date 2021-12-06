@@ -73,14 +73,14 @@ operations may just do less.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.__init__" title="deltametrics.plan.MorphologicalPlanform.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Initialize the MP.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.connect" title="deltametrics.plan.MorphologicalPlanform.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(CubeInstance[, name])</p></td>
-<td><p>Connect this Planform instance to a Cube instance.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.from_elevation_data" title="deltametrics.plan.MorphologicalPlanform.from_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_elevation_data</span></code></a>(elevation_data, ...)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.from_elevation_data" title="deltametrics.plan.MorphologicalPlanform.from_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_elevation_data</span></code></a>(elevation_data, ...)</p></td>
 <td><p>Create a <cite>MorphologicalPlanform</cite> from elevation data.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.from_mask" title="deltametrics.plan.MorphologicalPlanform.from_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_mask</span></code></a>(UnknownMask, max_disk, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.from_mask" title="deltametrics.plan.MorphologicalPlanform.from_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_mask</span></code></a>(UnknownMask, max_disk, **kwargs)</p></td>
 <td><p>Static method for creating a MorphologicalPlanform from a mask.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.show" title="deltametrics.plan.MorphologicalPlanform.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>([var, ax, title, ticks, colorbar, ...])</p></td>
+<td><p>Show the planform.</p></td>
 </tr>
 </tbody>
 </table>
@@ -95,19 +95,30 @@ operations may just do less.</p>
 <td><p>3-D array of all binary closed arrays.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.composite_array" title="deltametrics.plan.MorphologicalPlanform.composite_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">composite_array</span></code></a></p></td>
-<td><p>Alias the mean image.</p></td>
+<td><p>Alias for <cite>mean_image</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.mean_image" title="deltametrics.plan.MorphologicalPlanform.mean_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_image</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.data" title="deltametrics.plan.MorphologicalPlanform.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<td><p>The public data field.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.mean_image" title="deltametrics.plan.MorphologicalPlanform.mean_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_image</span></code></a></p></td>
 <td><p>Average of all binary closing arrays.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.name" title="deltametrics.plan.MorphologicalPlanform.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.name" title="deltametrics.plan.MorphologicalPlanform.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
 <td><p>Planform name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.shape" title="deltametrics.plan.MorphologicalPlanform.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.shape" title="deltametrics.plan.MorphologicalPlanform.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Planform shape.</p></td>
 </tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slice the planform.</p>
+<p>Implements basic slicing for <cite>SpecialtyPlanform</cite> by passing the <cite>slc</cite>
+to <cite>self.data</cite>. I.e., the returned slice is <code class="docutils literal notranslate"><span class="pre">self.data[slc]</span></code>.</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.all_images">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_images</span></span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.all_images" title="Permalink to this definition">¶</a></dt>
@@ -117,13 +128,17 @@ operations may just do less.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.composite_array">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">composite_array</span></span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.composite_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Alias the mean image.</p>
+<dd><p>Alias for <cite>mean_image</cite>.</p>
+<p>This is the array that a contour is extracted from using some threshold
+value when making land and shoreline masks.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.connect">
-<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CubeInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Connect this Planform instance to a Cube instance.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.data">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>The public data field.</p>
+<p>This attribute <em>must</em> be implemented as an alias to another attribute.
+The choice of field is up to the developer.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -178,13 +193,43 @@ turn used to create the <cite>MorphologicalPlanform</cite>.</p></li>
 <dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.name">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Planform name.</p>
-<p>Helpful to differentiate multiple Planforms.</p>
+<p>Helpful to differentiate multiple <cite>Planform</cite> objects.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.shape">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.shape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Planform shape.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.show">
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the planform.</p>
+<p>Display a field of the planform, called by attribute name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which field to show. Must be an attribute of the planform. <cite>show</cite>
+will look for another attribute describing
+the <code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableInfo</span></code> for that attribute named
+<code class="docutils literal notranslate"><span class="pre">self._&lt;var&gt;_varinfo</span></code> and use that to style the plot, if
+found. If this <cite>VariableInfo</cite> is not found, the default is used.</p></li>
+<li><p><strong>label</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, <cite>str</cite>, optional) – Display a label of the variable name on the plot. Default is
+False, display nothing. If <code class="docutils literal notranslate"><span class="pre">label=True</span></code>, the label name from the
+<a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a> is used. Other arguments are
+attempted to coerce to <cite>str</cite>, and the literal is diplayed.</p></li>
+<li><p><strong>colorbar</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether a colorbar is appended to the axis.</p></li>
+<li><p><strong>colorbar_label</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, <cite>str</cite>, optional) – Display a label of the variable name along the colorbar. Default is
+False, display nothing. If <code class="docutils literal notranslate"><span class="pre">label=True</span></code>, the label name from the
+<a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a> is used. Other arguments are
+attempted to coerce to <cite>str</cite>, and the literal is diplayed.</p></li>
+<li><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Axes</span></code> object, optional) – A <cite>matplotlib</cite> <cite>Axes</cite> object to plot the section. Optional; if not
+provided, a call is made to <code class="docutils literal notranslate"><span class="pre">plt.gca()</span></code> to get the current (or
+create a new) <cite>Axes</cite> object.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

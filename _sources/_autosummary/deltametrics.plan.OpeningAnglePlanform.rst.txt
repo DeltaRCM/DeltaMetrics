@@ -14,11 +14,11 @@
    .. autosummary::
    
       ~OpeningAnglePlanform.__init__
-      ~OpeningAnglePlanform.connect
       ~OpeningAnglePlanform.from_ElevationMask
       ~OpeningAnglePlanform.from_arrays
       ~OpeningAnglePlanform.from_elevation_data
       ~OpeningAnglePlanform.from_mask
+      ~OpeningAnglePlanform.show
    
    
 
@@ -30,6 +30,7 @@
    
       ~OpeningAnglePlanform.below_mask
       ~OpeningAnglePlanform.composite_array
+      ~OpeningAnglePlanform.data
       ~OpeningAnglePlanform.name
       ~OpeningAnglePlanform.sea_angles
       ~OpeningAnglePlanform.shape

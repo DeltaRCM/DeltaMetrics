@@ -15,11 +15,14 @@
    
       ~BaseCube.__init__
       ~BaseCube.export_frozen_variable
+      ~BaseCube.quick_show
       ~BaseCube.read
       ~BaseCube.register_plan
+      ~BaseCube.register_planform
       ~BaseCube.register_section
       ~BaseCube.show_cube
       ~BaseCube.show_plan
+      ~BaseCube.show_planform
       ~BaseCube.show_section
    
    
@@ -41,8 +44,8 @@
       ~BaseCube.dim1_coords
       ~BaseCube.dim2_coords
       ~BaseCube.meta
-      ~BaseCube.plan_set
-      ~BaseCube.plans
+      ~BaseCube.planform_set
+      ~BaseCube.planforms
       ~BaseCube.section_set
       ~BaseCube.sections
       ~BaseCube.shape

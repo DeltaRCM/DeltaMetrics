@@ -15,11 +15,14 @@
    
       ~DataCube.__init__
       ~DataCube.export_frozen_variable
+      ~DataCube.quick_show
       ~DataCube.read
       ~DataCube.register_plan
+      ~DataCube.register_planform
       ~DataCube.register_section
       ~DataCube.show_cube
       ~DataCube.show_plan
+      ~DataCube.show_planform
       ~DataCube.show_section
       ~DataCube.stratigraphy_from
    
@@ -43,8 +46,8 @@
       ~DataCube.dim1_coords
       ~DataCube.dim2_coords
       ~DataCube.meta
-      ~DataCube.plan_set
-      ~DataCube.plans
+      ~DataCube.planform_set
+      ~DataCube.planforms
       ~DataCube.section_set
       ~DataCube.sections
       ~DataCube.shape
