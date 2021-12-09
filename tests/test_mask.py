@@ -846,10 +846,10 @@ class TestLandMask:
 
         # some comparisons to check that things are similar (loose checks!)
         assert mfem.shape == self._ElevationMask.shape
-        assert mfem._mask.sum() == pytest.approx(landmask._mask.sum(), rel=1)
-        assert (mfem._mask.sum()/mfem._mask.size == 
-                pytest.approx(landmask._mask.sum()/landmask._mask.size, abs=1))
-        assert mfem._mask.sum() > self._ElevationMask._mask.sum()
+        assert float(mfem._mask.sum()) == pytest.approx(float(landmask._mask.sum()), rel=1)
+        assert (float(mfem._mask.sum() / mfem._mask.size) == 
+                pytest.approx(float(landmask._mask.sum()/landmask._mask.size), abs=1))
+        assert float(mfem._mask.sum()) > float(self._ElevationMask._mask.sum())
 
     def test_method_MPM(self):
         mfem = mask.LandMask(golfcube['eta'][-1, :, :],

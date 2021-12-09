@@ -1,10 +1,15 @@
 import pytest
 
 import os
+import time
+import glob
+import pathlib
+
 import numpy as np
 
 from deltametrics import utils
 from deltametrics import mobility as mob
+from deltametrics import sample_data
 
 
 class TestNoStratigraphyError:
@@ -221,7 +226,7 @@ def test_format_table_float():
     assert _fnum == '15.1'
 
 
-def test_format_table_float():
+def test_format_table_int():
     _val = int(5)
     _fnum = utils.format_table(_val)
     assert _fnum == '5'
@@ -237,13 +242,25 @@ def test_format_table_float():
 
 @pytest.mark.xfail(raises=ImportError,
                    reason='pyDeltaRCM is not a required dependency')
-def test_time_from_log(tmp_path):
+def test_time_from_log_new(tmp_path):
     """Generate run+logfile and then read runtime from it."""
     from pyDeltaRCM.model import DeltaModel
     delta = DeltaModel(out_dir=str(tmp_path))  # init delta to make log file
+    time.sleep(1)
     delta.finalize()  # finalize and end log file
     log_path = os.path.join(tmp_path, os.listdir(tmp_path)[0])  # path to log
     elapsed_time = utils.runtime_from_log(log_path)
+    # elapsed time should exceed 0, but exact time will vary
+    assert isinstance(elapsed_time, float)
+    assert elapsed_time > 0
+
+
+def test_time_from_log_sampledataset(tmp_path):
+    golfpath = pathlib.PurePath(sample_data._get_golf_path())
+    # find the log file there
+    found = glob.glob(os.path.join(golfpath.parent, '*.log'))
+    assert len(found) == 1
+    elapsed_time = utils.runtime_from_log(found[0])
     # elapsed time should exceed 0, but exact time will vary
     assert isinstance(elapsed_time, float)
     assert elapsed_time > 0

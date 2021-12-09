@@ -11,8 +11,8 @@ from deltametrics.sample_data import _get_rcm8_path
 
 
 rcm8_path = _get_rcm8_path()
-rcm8cube = cube.DataCube(rcm8_path)
-
+with pytest.warns(UserWarning):
+    rcm8cube = cube.DataCube(rcm8_path)
 
 # define some masks once up top
 chmask = []

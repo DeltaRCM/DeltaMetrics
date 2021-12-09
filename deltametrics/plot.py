@@ -864,8 +864,8 @@ def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
     return coll.PatchCollection(pl, match_original=True)
 
 
-def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
-                                              show_strata=True,
+def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
+                                              ax=None, show_strata=True,
                                               label_strata=False):
     """1d elevation to stratigraphy.
 
@@ -890,12 +890,21 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
     ----------
     e : :obj:`ndarray`
         Elevation data as a 1D array.
+    
+    z : :obj:`ndarray`, optional
+        Vertical coordinates for stratigraphy, in meters. Optional, and
+        mutually exclusive with :obj:`dz` and :obj:`nz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
 
     dz : :obj:`float`, optional
-        Vertical grid resolution.
+        Vertical resolution of stratigraphy, in meters. Optional, and mutually
+        exclusive with :obj:`z` and :obj:`nz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
 
-    z : :obj:`ndarray`, optional
-        Vertical grid. Must specify ``dz=None`` to use this option.
+    nz : :obj:`int`, optional
+        Number of intervals for vertical coordinates of stratigraphy.
+        Optional, and mutually exclusive with :obj:`z` and :obj:`dz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
 
     ax : :obj:`matplotlib.pyplot.axes`, optional
         Axes to plot into. A figure and axes is created, if not given.
@@ -917,7 +926,7 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
     t = np.arange(e.shape[0])  # x-axis time array
     t3 = np.expand_dims(t, axis=(1, 2))  # 3d time, for slicing
 
-    z = strat._determine_strat_coordinates(e, dz=dz, z=z)  # vert coordinates
+    z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
     s, p = strat._compute_elevation_to_preservation(e)  # strat, preservation
     sc, dc = strat._compute_preservation_to_cube(s, z)
     lst = np.argmin(s < s[-1])  # last elevation
