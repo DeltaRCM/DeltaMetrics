@@ -1,4 +1,5 @@
 import numpy as np
+import xarray as xr
 
 import colorsys
 
@@ -1145,7 +1146,7 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
         elevation_data = golfcube['eta'][-1, :, :]
 
         fig, ax = plt.subplots()
-        dm.plot.aerial_view( elevation_data, ax=ax)
+        dm.plot.aerial_view(elevation_data, ax=ax)
         plt.show()
 
     """
@@ -1157,11 +1158,23 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
     n = kwargs.pop('n', 1)
     carto_cm, carto_norm = cartographic_colormap(H_SL=0, h=h, n=n)
 
+    # get the extent to plot
+    if isinstance(elevation_data, xr.core.dataarray.DataArray):
+        d0, d1 = elevation_data.dims
+        d0_arr, d1_arr = elevation_data[d0], elevation_data[d1]
+        _extent = [d1_arr[0],                  # dim1, 0
+                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
+                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
+                   d0_arr[0]]                  # dim0, 0
+    else:
+        _extent = [0, elevation_data.shape[1],
+                   elevation_data.shape[0], 0]
+
     # plot the data
     im = ax.imshow(
         elevation_data - datum,
-        origin='lower',
-        cmap=carto_cm, norm=carto_norm, **kwargs)
+        cmap=carto_cm, norm=carto_norm,
+        extent=_extent,**kwargs)
 
     cb = append_colorbar(im, ax, **colorbar_kw)
     if not ticks:
@@ -1225,7 +1238,7 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
 
         fig, ax = plt.subplots(1, 3, figsize=(8, 3))
         for axi in ax.ravel():
-            dm.plot.aerial_view( elevation_data, ax=axi)
+            dm.plot.aerial_view(elevation_data, ax=axi)
 
         dm.plot.overlay_sparse_array(
             sparse_data, ax=ax[0])  # default clip is (None, 90)
@@ -1251,6 +1264,18 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
     else:
         cmap = cmap
 
+    # get the extent to plot
+    if isinstance(sparse_array, xr.core.dataarray.DataArray):
+        d0, d1 = sparse_array.dims
+        d0_arr, d1_arr = sparse_array[d0], sparse_array[d1]
+        _extent = [d1_arr[0],                  # dim1, 0
+                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
+                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
+                   d0_arr[0]]                  # dim0, 0
+    else:
+        _extent = [0, sparse_array.shape[1],
+                   sparse_array.shape[0], 0]
+
     # process the clip fields
     if alpha_clip[0]:
         amin = np.nanpercentile(sparse_array, alpha_clip[0])
@@ -1273,6 +1298,7 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
     colors = cmap(colors)
     colors[..., -1] = alphas
 
-    im = ax.imshow(colors, origin='lower')
+    im = ax.imshow(
+        colors, extent=_extent)
 
     return im
