@@ -70,7 +70,7 @@ def golf():
         plt.show()
     """
     golf_path = _get_golf_path()
-    return cube.DataCube(golf_path, coordinates={'x': 'y', 'y': 'x'})
+    return cube.DataCube(golf_path)
 
 
 def tdb12():

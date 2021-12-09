@@ -551,9 +551,7 @@ class TestRadialSection:
 
 class TestCubesWithManySections:
 
-    rcm8cube = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+    rcm8cube = cube.DataCube(golf_path)
     sc8cube = cube.StratigraphyCube.from_DataCube(
         rcm8cube,
         dz=0.1)
@@ -619,9 +617,7 @@ class TestCubesWithManySections:
 # Cubes and strat
 class TestSectionFromDataCubeNoStratigraphy:
 
-    rcm8cube_nostrat = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+    rcm8cube_nostrat = cube.DataCube(golf_path)
     rcm8cube_nostrat.register_section('test', section.StrikeSection(distance_idx=5))
 
     def test_nostrat_getitem_explicit(self):
@@ -754,9 +750,7 @@ class TestSectionFromDataCubeNoStratigraphy:
 
 class TestSectionFromDataCubeWithStratigraphy:
 
-    rcm8cube = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+    rcm8cube = cube.DataCube(golf_path)
     rcm8cube.stratigraphy_from('eta', dz=0.1)
     rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
 
@@ -895,9 +889,7 @@ class TestSectionFromDataCubeWithStratigraphy:
 
 class TestSectionFromStratigraphyCube:
 
-    rcm8cube = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+    rcm8cube = cube.DataCube(golf_path)
     sc8cube = cube.StratigraphyCube.from_DataCube(
         rcm8cube, dz=0.1)
     rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
@@ -1023,9 +1015,7 @@ class TestSectionFromStratigraphyCube:
 
 class TestSectionVariableNoStratigraphy:
 
-    rcm8cube = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+    rcm8cube = cube.DataCube(golf_path)
     rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
     dsv = rcm8cube.sections['test']['velocity']
 
@@ -1055,9 +1045,7 @@ class TestSectionVariableNoStratigraphy:
 
 class TestSectionVariableWithStratigraphy:
 
-    rcm8cube = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+    rcm8cube = cube.DataCube(golf_path)
     rcm8cube.stratigraphy_from('eta', dz=0.1)
     rcm8cube.register_section('test', section.StrikeSection(distance_idx=5))
     dsv = rcm8cube.sections['test']['velocity']
@@ -1083,9 +1071,7 @@ class TestSectionVariableWithStratigraphy:
 
 class TestSectionVariableStratigraphyCube:
 
-    rcm8cube = cube.DataCube(
-        golf_path,
-        coordinates={'x': 'y', 'y': 'x'})
+    rcm8cube = cube.DataCube(golf_path)
     sc8cube = cube.StratigraphyCube.from_DataCube(
         rcm8cube, dz=0.1)
     sc8cube.register_section('test', section.StrikeSection(distance_idx=5))

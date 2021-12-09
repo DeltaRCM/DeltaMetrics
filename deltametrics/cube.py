@@ -33,7 +33,7 @@ class BaseCube(abc.ABC):
 
     """
 
-    def __init__(self, data, read=[], varset=None, coordinates={}):
+    def __init__(self, data, read=[], varset=None):
         """Initialize the BaseCube.
 
         Parameters
@@ -57,7 +57,7 @@ class BaseCube(abc.ABC):
             # handle a path to netCDF file
             self._data_path = data
             self._connect_to_file(data_path=data)
-            self._read_meta_from_file(coordinates)
+            self._read_meta_from_file()
         elif type(data) is dict:
             # handle a dict, arrays set up already, make an io class to wrap it
             self._data_path = None
@@ -66,7 +66,7 @@ class BaseCube(abc.ABC):
             # handle initializing one cube type from another
             self._data_path = data.data_path
             self._dataio = data._dataio
-            self._read_meta_from_file(coordinates)
+            self._read_meta_from_file()
         else:
             raise TypeError('Invalid type for "data": %s' % type(data))
 
@@ -106,29 +106,12 @@ class BaseCube(abc.ABC):
             raise ValueError(
                 'Invalid file extension for "data_path": %s' % data_path)
 
-    def _read_meta_from_file(self, coordinates):
+    def _read_meta_from_file(self):
         """Read metadata information from variables in file.
 
         This method is used internally to gather some useful info for
         navigating the variable trees in the stored files.
-
-        Parameters
-        ----------
-        coordinates : :obj:`dict`
-
-            A dictionary describing *substitutions* to make for coordinates in
-            the underlying dataset with coordinates in DeltaMetrics.
-            Dictionary may be empty (default), in which case we connect the
-            `x` coordinate in DeltaMetrics to the `x` coordinate in the
-            underlying data file, and similarly for `y`. If the underlying
-            data file uses a different convention, for example `x` means
-            downstream rather than left-right, you can specify this by
-            passing a `key-value` pair describing the `value` in the
-            underlying data file that corresponds to the DeltaMetrics `key`.
         """
-        default_coordinates = {'x': 'x', 'y': 'y'}
-        default_coordinates.update(coordinates)
-        self.coordinates = copy.deepcopy(default_coordinates)
         self._coords = self._dataio.known_coords
         self._variables = self._dataio.known_variables
 
@@ -619,8 +602,7 @@ class DataCube(BaseCube):
     number of attached attributes (grain size, mud frac, elevation).
     """
 
-    def __init__(self, data, read=[], varset=None, stratigraphy_from=None,
-                 coordinates={}):
+    def __init__(self, data, read=[], varset=None, stratigraphy_from=None):
         """Initialize the BaseCube.
 
         Parameters
@@ -649,7 +631,7 @@ class DataCube(BaseCube):
             with the :meth:`~deltametrics.cube.DataCube.stratigraphy_from`
             method.
         """
-        super().__init__(data, read, varset, coordinates)
+        super().__init__(data, read, varset)
 
         # set up the grid for time
         _, self._T, _ = np.meshgrid(
@@ -735,6 +717,11 @@ class DataCube(BaseCube):
             <deltametrics.strat.BoxyStratigraphyAttributes>`. Additional
             keyword arguments are passed to stratigraphy attribute
             initializers.
+
+        **kwargs
+            Keyword arguments passed to stratigraphy initialization. Can
+            include specification for vertical resolution in `Boxy` case,
+            see :obj:_determine_strat_coordinates`.
         """
         if style == 'mesh':
             self.strat_attr = \
@@ -802,9 +789,10 @@ class StratigraphyCube(BaseCube):
             elevation data. Typically, this is ``'eta'`` in pyDeltaRCM model
             outputs.
 
-        dz : :obj:`float`, optional
-            Vertical interval (i.e., resolution) for stratigraphy in new
-            StratigraphyCube.
+        **kwargs
+            Keyword arguments passed to stratigraphy initialization. Can
+            include specification for vertical resolution in `Boxy` case,
+            see :obj:_determine_strat_coordinates`.
 
         Returns
         -------
@@ -813,11 +801,10 @@ class StratigraphyCube(BaseCube):
         """
         return StratigraphyCube(DataCubeInstance,
                                 stratigraphy_from=stratigraphy_from,
-                                coordinates=DataCubeInstance.coordinates,
                                 dz=dz, z=z, nz=nz)
 
     def __init__(self, data, read=[], varset=None,
-                 stratigraphy_from=None, coordinates={},
+                 stratigraphy_from=None,
                  dz=None, z=None, nz=None):
         """Initialize the StratigraphicCube.
 
@@ -842,7 +829,7 @@ class StratigraphyCube(BaseCube):
             to style this cube similarly to another cube. If no argument is
             supplied, a new default VariableSet instance is created.
         """
-        super().__init__(data, read, varset, coordinates)
+        super().__init__(data, read, varset)
         if isinstance(data, str):
             raise NotImplementedError('Precomputed NetCDF?')
         elif isinstance(data, np.ndarray):

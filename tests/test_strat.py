@@ -10,7 +10,7 @@ from deltametrics.sample_data import _get_golf_path
 
 
 golf_path = _get_golf_path()
-golfcube = cube.DataCube(golf_path, coordinates={'x': 'y', 'y': 'x'})
+golfcube = cube.DataCube(golf_path)
 
 
 class TestComputeBoxyStratigraphyVolume:

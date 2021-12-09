@@ -546,14 +546,20 @@ def _points_in_polygon(points, polygon):
 
 
 def runtime_from_log(logname):
-    """Calculate the model runtime from the logfile.
+    """Calculate the model runtime from a logfile.
 
-    Uses the timestamps in the logfile to compute the model runtime.
+    Uses the timestamps in a logfile to compute model runtime.
+
+    .. important::
+
+        This function was written to work with the log files output from
+        `pyDeltaRCM`, it may work for other log files, if the start of each
+        line is a formatted timestamp: ``%Y-%m-%d %H:%M:%S``. 
 
     Parameters
     ----------
     logname : :obj:`str:`
-        Path to the model logfile that you wish to get the runtime for
+        Path to the model logfile that you wish to get the runtime for.
 
     Returns
     -------
