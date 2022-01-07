@@ -1713,3 +1713,104 @@ class TestGeometricMask:
         gmsk = mask.GeometricMask(arr)
         with pytest.raises(ValueError):
             gmsk.angular(0, np.pi/2)
+
+
+class TestDepositMask:
+    """Tests associated with the mask.CenterlineMask class."""
+
+    def test_default_tolerance_no_background(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        depositmask = mask.DepositMask(
+            golfcube['eta'][-1, :, :])
+
+        compval = (0 + depositmask._elevation_tolerance)
+
+        # make assertions
+        assert depositmask._elevation_tolerance == 0.1  # check default
+        assert depositmask._mask.data.sum() == (golfcube['eta'][-1, :, :] > compval).data.sum()
+
+        assert depositmask._input_flag == 'array'
+        assert depositmask.mask_type == 'deposit'
+        assert depositmask._mask.dtype == bool
+
+    def test_default_tolerance_background_array(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        depositmask = mask.DepositMask(
+            golfcube['eta'][-1, :, :],
+            background_value=golfcube['eta'][0, :, :])
+
+        with pytest.raises(TypeError):
+            # fails without specifying key name
+            _ = mask.DepositMask(
+                golfcube['eta'][-1, :, :],
+                golfcube['eta'][0, :, :])
+
+        # make assertions
+        assert depositmask._elevation_tolerance == 0.1  # check default
+
+        assert depositmask._input_flag == 'array'
+        assert depositmask.mask_type == 'deposit'
+        assert depositmask._mask.dtype == bool
+
+    def test_default_tolerance_background_float(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        depositmask = mask.DepositMask(
+            golfcube['eta'][-1, :, :],
+            background_value=-1)
+
+        with pytest.raises(TypeError):
+            # fails without specifying key name
+            _ = mask.DepositMask(
+                golfcube['eta'][-1, :, :],
+                -1)
+
+        compval = (-1 + depositmask._elevation_tolerance)
+
+        assert depositmask._mask.data.sum() == (golfcube['eta'][-1, :, :] > compval).data.sum()
+        assert depositmask._elevation_tolerance == 0.1  # check default
+
+        assert depositmask._input_flag == 'array'
+        assert depositmask.mask_type == 'deposit'
+        assert depositmask._mask.dtype == bool
+
+    def test_elevation_tolerance_background_array(self):
+        defaultdepositmask = mask.DepositMask(
+            golfcube['eta'][-1, :, :],
+            background_value=golfcube['eta'][0, :, :])
+
+        depositmask = mask.DepositMask(
+            golfcube['eta'][-1, :, :],
+            background_value=golfcube['eta'][0, :, :],
+            elevation_tolerance=1)
+
+        assert depositmask._input_flag == 'array'
+        assert depositmask.mask_type == 'deposit'
+        assert depositmask._mask.dtype == bool
+        assert depositmask._elevation_tolerance == 1  # check NOT default
+        assert defaultdepositmask._mask.sum() > depositmask._mask.sum()
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_cube(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        depositmask = mask.DepositMask(rcm8cube, t=-1)
+        # make assertions
+        assert depositmask._input_flag == 'cube'
+        assert depositmask.mask_type == 'deposit'
+        assert depositmask._mask.dtype == bool
+
+    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
+                       reason='Have not implemented pathway.')
+    def test_default_vals_cubewithmeta(self):
+        """Test that instantiation works for an array."""
+        # define the mask
+        depositmask = mask.DepositMask(golfcube, t=-1)
+        # make assertions
+        assert depositmask._input_flag == 'cube'
+        assert depositmask.mask_type == 'deposit'
+        assert depositmask._mask.dtype == bool
+   

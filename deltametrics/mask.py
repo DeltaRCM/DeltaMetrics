@@ -2374,14 +2374,15 @@ class DepositMask(BaseMask):
     .. plot::
         :include-source:
 
-        golfcube = dm.sample_data.golf()
+        >>> golfcube = dm.sample_data.golf()
 
-        deposit_mask = dm.mask.DepositMask(
-        golfcube['eta'][-1, :, :], golfcube['eta'][0, :, :])
+        >>> deposit_mask = dm.mask.DepositMask(
+        >>> golfcube['eta'][-1, :, :], golfcube['eta'][0, :, :])
 
-        fig, ax = plt.subplots()
-        deposit_mask.show(ax=ax)
-        plt.show()
+        >>> fig, ax = plt.subplots(1, 2)
+        >>> golfcube.quick_show('eta', ax=ax[0])
+        >>> deposit_mask.show(ax=ax[1])
+        >>> plt.show()
 
     """
     @staticmethod
@@ -2404,14 +2405,15 @@ class DepositMask(BaseMask):
         # set directly
         raise NotImplementedError
 
-    def __init__(self, *args, elevation_tolerance=0.1, **kwargs):
+    def __init__(self, *args, background_value=0,
+                 elevation_tolerance=0.1, **kwargs):
         """Initialize the DepositMask
         
         This is a straightforward mask, simply checking where the
         `elevation` is greater than the `background_value`, outside
         some tolerance:
             
-            .. code:: np.abs(elevation - background_value) > elevation_tolerance
+            .. code:: np.abs(elevation - background_value) > elevation_tolerance   # noqa: E501
         
         However, using the mask provides benefits of array tracking and
         various integrations with other masks and functions.
@@ -2421,33 +2423,50 @@ class DepositMask(BaseMask):
         elevation : :obj:`DataArray` or :obj:`ndarray`
             Elevation data at the time of interest, i.e., the deposit surface.
         
-        background_value : :obj:`DataArray` or :obj:`ndarray` or `float`
+        background_value : :obj:`DataArray` or :obj:`ndarray` or `float`, optional
             Either a float or array-like object specifying the values to use
             as the background basin, i.e., the inital basin underlying the
-            deposit. Used to determine where sediment has deposited.
+            deposit. Used to determine where sediment has deposited. Default
+            value is to use ``0``, which may have unexpected results for
+            determining the deposit.
         
         elevation_tolerance : :obj:`float`, optional
             Elevation tolerance for whether a location is labeled as a
             deposit. Default value is ``0.1``.
 
         **kwargs
-            Could be background_value, if not passed as *args[1].
-            
+            Could be background_value, if not passed as ``*args[1]``.
         """
-        
         super().__init__('deposit', *args, **kwargs)
         
-        if len(args) == 1:
-            # passed only the current eta, look in kwargs for an
-            # background_value
-            #    default is 0, otherwise
-            background_value = kwargs.pop('background_value', 0)
-            
-        elif len(args) >= 2:
-            # passed a background value as argument
-            elevation_array = args[0]
-            background_value = args[1]
-            
+        # temporary storage of args as needed for processing
+        if self._input_flag is None:
+            # do nothing, will need to call ._compute_mask later
+            return
+
+        elif self._input_flag == 'cube':
+            raise NotImplementedError
+            # _tval = kwargs.pop('t', -1)
+            # _eta = args[0]['eta'][_tval, :, :]
+            # _flow = args[0]['velocity'][_tval, :, :]
+            # need to convert these fields to proper masks
+
+        elif self._input_flag == 'mask':
+            # this pathway should allow someone to specify a combination of
+            # elevation mask, landmask, and velocity mask to make the new mask.
+            raise NotImplementedError
+
+        elif self._input_flag == 'array':
+            if len(args) > 1:
+                raise TypeError
+            else:
+                # passed only the current eta
+                elevation_array = args[0]
+
+        else:
+            raise ValueError(
+                'Invalid _input_flag. Did you modify this attribute?')
+  
         # process background_value into an array
         if utils.is_ndarray_or_xarray(background_value):
             background_array = np.array(background_value)  # strip xarray
@@ -2463,7 +2482,7 @@ class DepositMask(BaseMask):
     def _compute_mask(self, elevation_array, background_array):
         """Compute the deposit mask.
         """
-        deposit = (np.abs(elevation_array - background_array) >
+        deposit = ((elevation_array - background_array) >
                    self._elevation_tolerance)
         self._mask[:] = deposit
         
