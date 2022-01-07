@@ -2359,3 +2359,111 @@ class GeometricMask(BaseMask):
     def _compute_mask(self):
         """Does Nothing!"""
         pass
+
+
+class DepositMask(BaseMask):
+    """Create a `DepositMask` from an array.
+
+    This is a Mask for where any sediment has been deposited.
+    
+    Examples
+    --------
+
+    Make a mask for the final time of the simulation.
+
+    .. plot::
+        :include-source:
+
+        golfcube = dm.sample_data.golf()
+
+        deposit_mask = dm.mask.DepositMask(
+        golfcube['eta'][-1, :, :], golfcube['eta'][0, :, :])
+
+        fig, ax = plt.subplots()
+        deposit_mask.show(ax=ax)
+        plt.show()
+
+    """
+    @staticmethod
+    def from_array(_arr):
+        """Create a `DepositMask` from an array.
+
+        .. note::
+
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
+
+        Parameters
+        ----------
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        # set directly
+        raise NotImplementedError
+
+    def __init__(self, *args, elevation_tolerance=0.1, **kwargs):
+        """Initialize the DepositMask
+        
+        This is a straightforward mask, simply checking where the
+        `elevation` is greater than the `background_value`, outside
+        some tolerance:
+            
+            .. code:: np.abs(elevation - background_value) > elevation_tolerance
+        
+        However, using the mask provides benefits of array tracking and
+        various integrations with other masks and functions.
+        
+        Parameters
+        ----------
+        elevation : :obj:`DataArray` or :obj:`ndarray`
+            Elevation data at the time of interest, i.e., the deposit surface.
+        
+        background_value : :obj:`DataArray` or :obj:`ndarray` or `float`
+            Either a float or array-like object specifying the values to use
+            as the background basin, i.e., the inital basin underlying the
+            deposit. Used to determine where sediment has deposited.
+        
+        elevation_tolerance : :obj:`float`, optional
+            Elevation tolerance for whether a location is labeled as a
+            deposit. Default value is ``0.1``.
+
+        **kwargs
+            Could be background_value, if not passed as *args[1].
+            
+        """
+        
+        super().__init__('deposit', *args, **kwargs)
+        
+        if len(args) == 1:
+            # passed only the current eta, look in kwargs for an
+            # background_value
+            #    default is 0, otherwise
+            background_value = kwargs.pop('background_value', 0)
+            
+        elif len(args) >= 2:
+            # passed a background value as argument
+            elevation_array = args[0]
+            background_value = args[1]
+            
+        # process background_value into an array
+        if utils.is_ndarray_or_xarray(background_value):
+            background_array = np.array(background_value)  # strip xarray
+        else:
+            background_array = np.ones(self._shape) * background_value
+            
+        # grab other kwargs
+        self._elevation_tolerance = elevation_tolerance    
+            
+        # compute
+        self._compute_mask(elevation_array, background_array)
+            
+    def _compute_mask(self, elevation_array, background_array):
+        """Compute the deposit mask.
+        """
+        deposit = (np.abs(elevation_array - background_array) >
+                   self._elevation_tolerance)
+        self._mask[:] = deposit
+        
