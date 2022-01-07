@@ -9,7 +9,7 @@ Guide to developers!
 Installation
 ------------
 
-You should use your local installation for development. 
+You should use your local installation for development.
 
 First, fork the repository to your own account on GitHub.
 Then, clone your fork to your local machine:
@@ -23,6 +23,7 @@ and then ``cd`` into the directory and install editable copy.
 .. code:: console
 
     $ cd DeltaMetrics
+    $ pip install -r requirements.txt
     $ pip install -e .
 
 Check that your installation worked by running the tests.

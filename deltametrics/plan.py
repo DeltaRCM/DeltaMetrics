@@ -107,7 +107,7 @@ class BasePlanform(abc.ABC):
         ticks = kwargs.pop('ticks', False)
         colorbar = kwargs.pop('colorbar', True)
         colorbar_label = kwargs.pop('colorbar_label', False)
-        
+
         if not ax:
             ax = plt.gca()
 
@@ -148,7 +148,7 @@ class Planform(BasePlanform):
 
     This class is used to slice the `Cube` along the `dim0` axis. The object
     is akin to the various `Section` classes, but there is only the one way
-    to slice as a Planform. 
+    to slice as a Planform.
     """
 
     def __init__(self, *args, z=None, t=None, idx=None, **kwargs):
@@ -165,7 +165,7 @@ class Planform(BasePlanform):
         z : :obj:`float`, optional
 
         t : :obj:`float`, optional
-        
+
         idx : :obj:`int`, optional
 
         Notes
@@ -236,7 +236,7 @@ class Planform(BasePlanform):
             ``self._dim0_idx`` is a  *one-dimensional array*, or you will get
             an improperly shaped Planform array in return.
         """
-        
+
         # determine the index along dim0 to slice cube
         if (not (self._input_z is None)) or (not (self._input_t is None)):
             # z an t are treated the same internally, and either will be
@@ -291,7 +291,7 @@ class Planform(BasePlanform):
         else:
             raise TypeError('Unknown Cube type encountered: %s'
                             % type(self.cube))
-      
+
     def show(self, var, ax=None, title=None, ticks=False,
              colorbar=True, colorbar_label=False):
         """Show the planform.
@@ -334,7 +334,7 @@ class Planform(BasePlanform):
 
             >>> golfcube = dm.sample_data.golf()
             >>> planform = dm.plan.Planform(golfcube, idx=70)
-            ... 
+            ...
             >>> fig, ax = plt.subplots(1, 2)
             >>> planform.show('eta', ax=ax[0])
             >>> planform.show('velocity', ax=ax[1])
@@ -373,7 +373,7 @@ class SpecialtyPlanform(BasePlanform):
     All subclassing objects must implement:
       * a property named `data` that points to some field (i.e., an attribute
         of the planform) that best characterizes the Planform. For example,
-        the OAP planform `data` property points to the `sea_angles` field. 
+        the OAP planform `data` property points to the `sea_angles` field.
 
     All subclassing objects should consider implementing:
       * the `show` method takes (optionally) a string argument specifying the
@@ -417,7 +417,7 @@ class SpecialtyPlanform(BasePlanform):
     @property
     @abc.abstractmethod
     def data(self):
-        """The public data field. 
+        """The public data field.
 
         This attribute *must* be implemented as an alias to another attribute.
         The choice of field is up to the developer.
@@ -446,7 +446,7 @@ class SpecialtyPlanform(BasePlanform):
             the :obj:`VariableInfo` for that attribute named
             ``self._<var>_varinfo`` and use that to style the plot, if
             found. If this `VariableInfo` is not found, the default is used.
-        
+
         label : :obj:`bool`, `str`, optional
             Display a label of the variable name on the plot. Default is
             False, display nothing. If ``label=True``, the label name from the
@@ -790,7 +790,7 @@ class OpeningAnglePlanform(SpecialtyPlanform):
         """Alias to `sea_angles`.
 
         This is the array that a contour is extracted from using some threshold
-        value when making land and shoreline masks. 
+        value when making land and shoreline masks.
         """
         return self._sea_angles
 
@@ -914,7 +914,7 @@ class MorphologicalPlanform(SpecialtyPlanform):
         else:
             raise TypeError(
                 'Invalid type {0}'.format(type(self._elevation_mask)))
-        
+
         # see if the inlet width is provided, if not see if cube is avail
         if (len(args) > 1):
             if isinstance(args[1], (int, float)):
@@ -960,7 +960,7 @@ class MorphologicalPlanform(SpecialtyPlanform):
         """Alias for `mean_image`.
 
         This is the array that a contour is extracted from using some threshold
-        value when making land and shoreline masks. 
+        value when making land and shoreline masks.
         """
         return self._mean_image
 
@@ -1191,7 +1191,7 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     """
     # check if mask or already array
     if isinstance(shore_mask, mask.ShorelineMask):
-        shore_mask = shore_mask.mask 
+        shore_mask = shore_mask.mask
         _sm = shore_mask.values
         _dx = float(shore_mask[shore_mask.dims[0]][1] -
                     shore_mask[shore_mask.dims[0]][0])
@@ -1730,7 +1730,7 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
             'Input for `channelmask` was wrong type: {}.'.format(
                 type(channelmask)))
 
-    # get channel stars and ends
+    # get channel starts and ends
     _channelstarts, _channelends = \
         _get_channel_starts_and_ends(channelmask, section_trace)
 
@@ -1751,6 +1751,12 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
 
 def _get_channel_starts_and_ends(channelmask, section_trace):
     """Get channel start and end coordinates (internal function).
+
+    This function is used when calculating both channel widths and depths to
+    get the start and end locations for channels along a given section trace.
+    These indices are returned to the width/depth functions to ensure the
+    computation of channel properties along a given section trace takes place
+    over pixels identified as channel pixels (per the channel mask) only.
 
     .. important::
 
@@ -1845,7 +1851,7 @@ def compute_channel_depth(channelmask, depth, section=None,
             'Input for `channelmask` was wrong type: {}.'.format(
                 type(channelmask)))
 
-    # get channel stars and ends
+    # get channel starts and ends
     _channelstarts, _channelends = \
         _get_channel_starts_and_ends(channelmask, section_trace)
 
