@@ -2365,6 +2365,11 @@ class DepositMask(BaseMask):
     """Create a `DepositMask` from an array.
 
     This is a Mask for where any sediment has been deposited.
+
+    .. note::
+
+        This class might be improved by reimplementing as a subclass of
+        `ThresholdValueMask`.
     
     Examples
     --------
@@ -2375,10 +2380,10 @@ class DepositMask(BaseMask):
         :include-source:
 
         >>> golfcube = dm.sample_data.golf()
-
         >>> deposit_mask = dm.mask.DepositMask(
-        >>> golfcube['eta'][-1, :, :], golfcube['eta'][0, :, :])
-
+        ...     golfcube['eta'][-1, :, :],
+        ...     background_value=golfcube['eta'][0, :, :])
+        >>>
         >>> fig, ax = plt.subplots(1, 2)
         >>> golfcube.quick_show('eta', ax=ax[0])
         >>> deposit_mask.show(ax=ax[1])
@@ -2413,7 +2418,9 @@ class DepositMask(BaseMask):
         `elevation` is greater than the `background_value`, outside
         some tolerance:
             
-            .. code:: np.abs(elevation - background_value) > elevation_tolerance   # noqa: E501
+        .. code::
+
+            np.abs(elevation - background_value) > elevation_tolerance   # noqa: E501
         
         However, using the mask provides benefits of array tracking and
         various integrations with other masks and functions.
