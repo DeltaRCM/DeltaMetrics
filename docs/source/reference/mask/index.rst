@@ -29,4 +29,5 @@ Mask types
     CenterlineMask
     BaseMask
     ThresholdValueMask
+    DepositMask
     GeometricMask
