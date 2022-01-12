@@ -1,9 +1,11 @@
+import os
 import numpy as np
 import xarray as xr
 from scipy import optimize
 import time
 import datetime
-
+import shutil
+from netCDF4 import Dataset
 from numba import njit
 
 
@@ -549,12 +551,12 @@ def runtime_from_log(logname):
 
     Parameters
     ----------
-    logname : :obj:`str:`
+    logname : `str`
         Path to the model logfile that you wish to get the runtime for
 
     Returns
     -------
-    runtime : :obj:`float`
+    runtime : `float`
         Float of the model runtime in seconds.
     """
     with open(logname) as f:
@@ -567,3 +569,42 @@ def runtime_from_log(logname):
         t2 = time.mktime(t_end)
         te = datetime.timedelta(seconds=t2-t1)
     return te.total_seconds()
+
+
+def rename_netcdf_dims(nc_file_path, dim_dict, copy=True):
+    """Rename the dimensions of a netCDF file.
+
+    This is a utility function that renames the dimensions of a netCDF file.
+
+    Useful if you have wrongly named the dimensions of your model output file
+    and wish to convert them to the expected 'time', 'x', and 'y' coordinates.
+
+    Parameters
+    ----------
+    nc_file_path : `str`
+        Path to the netcdf file you are going to rename the dimensions of
+
+    dim_dict : `dict`
+        Dictionary where key:value pairs are
+        'old dimension name':'new dimension name'
+
+    copy : `bool`, optional
+        Optional argument that either copies and preserves the old netcdf file
+        (default behavior), or if set to False, will simply overwrite the
+        original netcdf file with new dimension names.
+
+    """
+    # do copying if needed
+    if copy is True:
+        try:
+            nc_file_path = str(nc_file_path)
+            fpath, fname = os.path.split(nc_file_path)
+        except Exception:
+            raise TypeError('Input for nc_file_path was not a string.')
+        shutil.copyfile(nc_file_path, os.path.join(fpath, 'old_' + fname))
+
+    # then open file and do the dimension renaming
+    nc = Dataset(nc_file_path, 'r+')
+    for k, v in dim_dict.items():
+        nc.renameDimension(k, v)
+    nc.close()

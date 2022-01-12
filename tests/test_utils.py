@@ -2,9 +2,11 @@ import pytest
 
 import os
 import numpy as np
+from netCDF4 import Dataset
 
 from deltametrics import utils
 from deltametrics import mobility as mob
+import utilities
 
 
 class TestNoStratigraphyError:
@@ -218,3 +220,33 @@ def test_time_from_log(tmp_path):
     # elapsed time should exceed 0, but exact time will vary
     assert isinstance(elapsed_time, float)
     assert elapsed_time > 0
+
+
+def test_renaming_netcdf_dims(tmp_path):
+    """Test the renaming of a netcdf file dimensions."""
+    dummy_nc = utilities.create_dimensional_netcdf(tmp_path)  # dim = 'dim'
+    # rename dimension to something else w/o copy
+    utils.rename_netcdf_dims(dummy_nc, {'dim': 'new_dim'}, copy=False)
+    renamed_nc = Dataset(dummy_nc, 'r')
+    # assertions
+    assert 'new_dim' in renamed_nc.dimensions
+    assert ('dim' in renamed_nc.dimensions) is False
+    assert len(os.listdir(os.path.join(tmp_path, 'netcdf_files'))) == 1
+    # close nc file
+    renamed_nc.close()
+    # rename with copy
+    utils.rename_netcdf_dims(dummy_nc, {'new_dim': 'newer_dim'}, copy=True)
+    renamed_nc = Dataset(dummy_nc, 'r')
+    old_nc = Dataset(
+        os.path.join(tmp_path, 'netcdf_files', 'old_' + dummy_nc.name), 'r')
+    # assertions
+    assert 'newer_dim' in renamed_nc.dimensions
+    assert ('new_dim' in renamed_nc.dimensions) is False
+    assert ('dim' in renamed_nc.dimensions) is False
+    assert len(os.listdir(os.path.join(tmp_path, 'netcdf_files'))) == 2
+    assert 'new_dim' in old_nc.dimensions
+    assert ('dim' in old_nc.dimensions) is False
+    assert ('newer_dim' in old_nc.dimensions) is False
+    # close nc files
+    renamed_nc.close()
+    old_nc.close()
