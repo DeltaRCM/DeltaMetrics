@@ -1,4 +1,5 @@
 import abc
+import warnings
 
 import numpy as np
 import xarray as xr
@@ -34,7 +35,7 @@ def compute_compensation(line1, line2):
     pass
 
 
-def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
+def compute_boxy_stratigraphy_volume(elev, prop, z=None, dz=None, nz=None,
                                      return_cube=False):
     """Process t-x-y data volume to boxy stratigraphy volume.
 
@@ -56,20 +57,40 @@ def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
     prop : :obj:`ndarray`
         The `t-x-y` ndarry of property data to process into the stratigraphy.
 
-    dz : :obj:`float`
-        Vertical resolution of stratigraphy, in meters.
+    z : :obj:`ndarray`, optional
+        Vertical coordinates for stratigraphy, in meters. Optional, and
+        mutually exclusive with :obj:`dz` and :obj:`nz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
+
+    dz : :obj:`float`, optional
+        Vertical resolution of stratigraphy, in meters. Optional, and mutually
+        exclusive with :obj:`z` and :obj:`nz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
+
+    nz : :obj:`int`, optional
+        Number of intervals for vertical coordinates of stratigraphy.
+        Optional, and mutually exclusive with :obj:`z` and :obj:`dz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
 
     return_cube : :obj:`boolean`, optional
         Whether to return the stratigraphy as a
         :obj:`~deltametrics.cube.FrozenStratigraphyCube` instance. Default is
         to return an `ndarray` and :obj:`elevations` `ndarray`.
 
+        .. warning:: not implemented!
+
     Returns
     -------
-    stratigraphy :
+    stratigraphy_cube : :obj:`~deltametrics.cube.StratigraphyCube`
+        Not Implemented.
 
-    elevations :
+    stratigraphy : :obj:`ndarray`
+        A `z-x-y` `ndarray` with data from `prop` placed into voxels to fill
+        stratigraphy.
 
+    elevations : :obj:`ndarray`
+        A `z-x-y` `ndarray` with elevations for each voxel in the stratigraphy
+        array.
     """
     # verify dimensions
     if elev.shape != prop.shape:
@@ -79,14 +100,14 @@ def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
 
     # compute preservation from low-level funcs
     strata, _ = _compute_elevation_to_preservation(elev)
-    z = _determine_strat_coordinates(elev, dz=dz, z=z)
+    z = _determine_strat_coordinates(elev, z=z, dz=dz, nz=nz)
     strata_coords, data_coords = _compute_preservation_to_cube(strata, z=z)
 
     # copy data out and into the stratigraphy based on coordinates
     nx, ny = strata.shape[1:]
     stratigraphy = np.full((len(z), nx, ny), np.nan)  # preallocate nans
-    _cut = prop.data.values[data_coords[:, 0], data_coords[:, 1],
-                            data_coords[:, 2]]
+    _cut = prop.values[data_coords[:, 0], data_coords[:, 1],
+                       data_coords[:, 2]]
     stratigraphy[strata_coords[:, 0],
                  strata_coords[:, 1],
                  strata_coords[:, 2]] = _cut
@@ -99,7 +120,7 @@ def compute_boxy_stratigraphy_volume(elev, prop, dz=None, z=None,
         return stratigraphy, elevations
 
 
-def compute_boxy_stratigraphy_coordinates(elev, dz=None, z=None,
+def compute_boxy_stratigraphy_coordinates(elev, z=None, dz=None, nz=None,
                                           return_cube=False,
                                           return_strata=False):
     """Process t-x-y data volume to boxy stratigraphy coordinates.
@@ -115,19 +136,57 @@ def compute_boxy_stratigraphy_coordinates(elev, dz=None, z=None,
     elev : :obj:`ndarray`
         The `t-x-y` ndarry of elevation data to determine stratigraphy.
 
-    prop : :obj:`ndarray`
-        The `t-x-y` ndarry of property data to process into the stratigraphy.
+    z : :obj:`ndarray`, optional
+        Vertical coordinates for stratigraphy, in meters. Optional, and
+        mutually exclusive with :obj:`dz` and :obj:`nz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
 
-    dz : :obj:`float`
-        Vertical resolution of stratigraphy, in meters.
+    dz : :obj:`float`, optional
+        Vertical resolution of stratigraphy, in meters. Optional, and mutually
+        exclusive with :obj:`z` and :obj:`nz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
+
+    nz : :obj:`int`, optional
+        Number of intervals for vertical coordinates of stratigraphy.
+        Optional, and mutually exclusive with :obj:`z` and :obj:`dz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
+
+    return_cube : :obj:`boolean`, optional
+        Whether to return the stratigraphy as a
+        :obj:`~deltametrics.cube.FrozenStratigraphyCube` instance. Default is
+        `False`, do not return a cube.
+
+        .. warning:: not implemented!
+
+    return_strata : :obj:`boolean`, optional
+        Whether to return the stratigraphy elevations, as returned from
+        internal computations in :obj:`_compute_elevation_to_preservation`.
+        Default is `False`, do not return strata. 
 
     Returns
     -------
-    stratigraphy_cube :
+    stratigraphy_cube : :obj:`~deltametrics.cube.StratigraphyCube`
+        Not Implemented.
+
+    strata_coords : :obj:`ndarray`
+        An `N x 3` array of `z-x-y` coordinates where information is preserved
+        in the boxy stratigraphy. Rows in `strat_coords` correspond with rows
+        in `data_coords`. See :obj:`_compute_preservation_to_cube` for
+        computation implementation.
+
+    data_coords : :obj:`ndarray`
+        An `N x 3` array of `t-x-y` coordinates where information is to be
+        extracted from the data array. Rows in `data_coords` correspond with
+        rows in `strat_coords`.  See :obj:`_compute_preservation_to_cube` for
+        computation implementation.
+
+    strata : :obj:`ndarray`
+        A `t-x-y` `ndarry` of stratal surface elevations. Returned as third
+        argument only if `return_strata=True`.
     """
     # compute preservation from low-level funcs
     strata, _ = _compute_elevation_to_preservation(elev)
-    z = _determine_strat_coordinates(elev, dz=dz, z=z)
+    z = _determine_strat_coordinates(elev, z=z, dz=dz, nz=nz)
     strata_coords, data_coords = _compute_preservation_to_cube(strata, z=z)
 
     if return_cube:
@@ -249,10 +308,24 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
 
         elev :
             elevation t-x-y array to compute from
+
+        Keyword arguments
+        -----------------
+        load : :obj:`bool`, optional
+            Whether to load the eta array into memory before computation. For
+            especially large data files, `load` should be `False` to keep the
+            file on disk; note on-disk computation is considerably slower.
         """
         super().__init__('mesh')
 
-        _eta = elev.data.copy()
+        # load or read eta field
+        load = kwargs.pop('load', True)
+        if load:
+            _eta = np.array(elev)
+        else:
+            _eta = elev
+
+        # make computation
         _strata, _psvd = _compute_elevation_to_preservation(_eta)
         _psvd[0, ...] = True
         self.strata = _strata
@@ -272,9 +345,9 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
                                   *_eta.shape[1:]), np.nan)
         for i in np.arange(_eta.shape[1]):
             for j in np.arange(_eta.shape[2]):
-                self.psvd_vxl_eta[0:self.psvd_vxl_cnt[i, j], i, j] = _eta.data[
+                self.psvd_vxl_eta[0:self.psvd_vxl_cnt[i, j], i, j] = _eta[
                     self.psvd_idx[:, i, j], i, j].copy()
-                self.psvd_flld[0:self.psvd_vxl_cnt[i, j], i, j] = _eta.data[
+                self.psvd_flld[0:self.psvd_vxl_cnt[i, j], i, j] = _eta[
                     self.psvd_idx[:, i, j], i, j].copy()
                 self.psvd_flld[self.psvd_vxl_cnt[i, j]:, i, j] = self.psvd_flld[  # noqa: E501
                     self.psvd_vxl_cnt[i, j] - 1, i, j]
@@ -311,8 +384,8 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
             strat_attr['s_sp'] = _j[_psvd_idx]  # along-sect coord, sparse
             strat_attr['z_sp'] = _i[_psvd_idx]  # vert coord, sparse
 
-        elif _dir == 'plan':
-            raise NotImplementedError
+        elif (_dir == 'plan') or (_dir == 'planform'):
+            pass
             # cannot be done without interpolation for mesh strata.
             # should be possible for boxy stratigraphy?
         else:
@@ -525,8 +598,12 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
 
     .. note::
 
-        At least one of the optional parameters must be supplied. Precedence
-        when multiple arguments are supplied is `z`, `dz`, `nz`.
+        If none of the optional parameters is supplied, then a default value
+        is used of `dz=0.1`.
+
+    .. important::
+        
+        Precedence when multiple arguments are supplied is `z`, `dz`, `nz`.
 
     Parameters
     ----------
@@ -535,20 +612,30 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
         where elevation is expected to along the zeroth axis.
 
     z : :obj:`ndarray`, optional
-        Array of Z values to use, returned unchanged if supplied.
+        Array of Z values to use for bounding intervals (i.e., points in `z`),
+        returned unchanged if supplied.
 
     dz : :obj:`float`, optional
         Interval in created Z array. Z array is created as
         ``np.arange(np.min(elev), np.max(elev)+dz, step=dz)``.
 
     nz : :obj:`int`, optional
-        Number of intervals in `z`. Z array is created as
-        ``np.linspace(np.min(elev), np.max(elev), num=nz, endpoint=True)``.
+        Number of *intervals* in `z`, that is, the number of points in `z` is
+        `nz+1`. Z array is created as ``np.linspace(np.min(elev), np.max
+        (elev), num=nz, endpoint=True)``.
     """
+    # if nothing is supplied
     if (dz is None) and (z is None) and (nz is None):
-        raise ValueError('You must specify "z", "dz", or "nz.')
+        warnings.warn(
+            UserWarning('No specification for stratigraphy spacing '
+                        'was supplied. Default is to use `dz=0.1`'))
+        # set the default option when nothing is supplied
+        dz = 0.1
 
+    # set up an error message to use in a few places
     _valerr = ValueError('"dz" or "nz" cannot be zero or negative.')
+    
+    # process to find the option to set up z
     if not (z is None):
         if np.isscalar(z):
             raise ValueError('"z" must be a numpy array.')
@@ -564,6 +651,6 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
             raise _valerr
         max_dos = np.max(elev.data)
         min_dos = np.min(elev.data)
-        return np.linspace(min_dos, max_dos, num=nz, endpoint=True)
+        return np.linspace(min_dos, max_dos, num=nz+1, endpoint=True)
     else:
         raise RuntimeError('No coordinates determined. Check inputs.')

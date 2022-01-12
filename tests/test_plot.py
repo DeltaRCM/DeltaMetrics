@@ -10,10 +10,10 @@ from deltametrics import plot
 from deltametrics import cube
 from deltametrics import section
 from deltametrics import utils
-from deltametrics.sample_data import _get_rcm8_path
+from deltametrics.sample_data import _get_golf_path
 
 
-rcm8_path = _get_rcm8_path()
+golf_path = _get_golf_path()
 
 
 class TestVariableInfo:
@@ -249,21 +249,21 @@ class TestSODTTST:
         _e = np.random.randint(0, 10, size=(50,))
         fig, ax = plt.subplots()
         plot.show_one_dimensional_trajectory_to_strata(
-            _e, ax=ax)
+            _e, ax=ax, dz=0.1)
         plt.close()
 
     def test_sodttst_makes_labeled_strata(self):
         _e = np.random.randint(0, 10, size=(50,))
         fig, ax = plt.subplots()
         plot.show_one_dimensional_trajectory_to_strata(
-            _e, ax=ax, label_strata=False)
+            _e, ax=ax, dz=0.1, label_strata=False)
         plt.close()
 
     def test_sodttst_makes_plot_lims_positives(self):
         _e = np.array([0, 1, 4, 5, 4, 10])
         fig, ax = plt.subplots()
         plot.show_one_dimensional_trajectory_to_strata(
-            _e, ax=ax)
+            _e, ax=ax, dz=0.1)
         assert ax.get_ylim() == (0, 12)
         plt.close()
 
@@ -271,7 +271,7 @@ class TestSODTTST:
         _e = np.array([10, -1, -4, -5, -4, -10])
         fig, ax = plt.subplots()
         plot.show_one_dimensional_trajectory_to_strata(
-            _e, ax=ax)
+            _e, ax=ax, dz=0.1)
         assert ax.get_ylim() == (-12, 12)
         plt.close()
 
@@ -279,7 +279,7 @@ class TestSODTTST:
         _e = np.array([-1, -1, -4, -5, -4, -10])
         fig, ax = plt.subplots()
         plot.show_one_dimensional_trajectory_to_strata(
-            _e, ax=ax)
+            _e, ax=ax, dz=0.1)
         assert ax.get_ylim() == (-12, 0)
         plt.close()
 
@@ -287,56 +287,56 @@ class TestSODTTST:
         _e = np.array([-1, -1, -1, -1, -1, -1])
         fig, ax = plt.subplots()
         plot.show_one_dimensional_trajectory_to_strata(
-            _e, ax=ax)
+            _e, ax=ax, dz=0.1)
         assert ax.get_ylim() == (-1.2, 0)
         plt.close()
 
     def test_sodttst_makes_plot_sample_data(self):
-        rcm8_path = os.path.join(
-            os.path.dirname(__file__), '..', 'deltametrics',
-            'sample_data', 'files', 'pyDeltaRCM_Output_8.nc')
-        rcm8cube = cube.DataCube(rcm8_path)
+        rcm8cube = cube.DataCube(golf_path)
         locs = np.array([[48, 152], [8, 63], [14, 102],
-                         [92, 218], [102, 168], [26, 114],
-                         [62, 135], [61, 201], [65, 193],
+                         [92, 118], [92, 168], [26, 114],
+                         [62, 135], [61, 171], [65, 193],
                          [23, 175]])
         for i in range(10):
             _e = rcm8cube['eta'][:, locs[i, 0], locs[i, 1]]
             fig, ax = plt.subplots()
             plot.show_one_dimensional_trajectory_to_strata(
-                _e, ax=ax)
+                _e, ax=ax, dz=0.1)
             plt.close()
 
     def test_sodttst_makes_plot_no_ax(self):
         _e = np.random.randint(0, 10, size=(50,))
-        plot.show_one_dimensional_trajectory_to_strata(_e)
+        plot.show_one_dimensional_trajectory_to_strata(_e, dz=0.1)
         plt.close()
 
     def test_sodttst_makes_plot_3d_column(self):
         _e = np.random.randint(0, 10, size=(50, 1, 1))
-        plot.show_one_dimensional_trajectory_to_strata(_e)
+        plot.show_one_dimensional_trajectory_to_strata(_e, dz=0.1)
         plt.close()
 
     def test_sodttst_makes_plot_2d_column_error(self):
         _e = np.random.randint(0, 10, size=(50, 100, 1))
         with pytest.raises(ValueError, match=r'Elevation data "e" must *.'):
-            plot.show_one_dimensional_trajectory_to_strata(_e)
+            plot.show_one_dimensional_trajectory_to_strata(_e, dz=0.1)
         plt.close()
 
 
 class TestGetDisplayArrays:
 
-    rcm8cube_nostrat = cube.DataCube(rcm8_path)
-    rcm8cube_nostrat.register_section('test', section.StrikeSection(y=5))
+    rcm8cube_nostrat = cube.DataCube(golf_path)
+    rcm8cube_nostrat.register_section(
+        'test', section.StrikeSection(distance_idx=5))
     dsv_nostrat = rcm8cube_nostrat.sections['test']['velocity']
 
-    rcm8cube = cube.DataCube(rcm8_path)
-    rcm8cube.stratigraphy_from('eta')
-    rcm8cube.register_section('test', section.StrikeSection(y=5))
+    rcm8cube = cube.DataCube(golf_path)
+    rcm8cube.stratigraphy_from('eta', dz=0.1)
+    rcm8cube.register_section(
+        'test', section.StrikeSection(distance_idx=5))
     dsv = rcm8cube.sections['test']['velocity']
 
-    sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube)
-    sc8cube.register_section('test', section.StrikeSection(y=5))
+    sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.1)
+    sc8cube.register_section(
+        'test', section.StrikeSection(distance_idx=5))
     ssv = sc8cube.sections['test']['velocity']
 
     def test_dsv_nostrat_get_display_arrays_spacetime(self):
@@ -365,7 +365,7 @@ class TestGetDisplayArrays:
         _data, _X, _Y = plot.get_display_arrays(self.dsv,
                                                 data='preserved')
         assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
-        assert np.any(~_data._mask)  # check that some are False
+        assert np.any(np.isnan(_data))  # check that some are False
 
     def test_dsv_get_display_arrays_stratigraphy(self):
         _data, _X, _Y = plot.get_display_arrays(self.dsv,
@@ -405,17 +405,20 @@ class TestGetDisplayArrays:
 
 class TestGetDisplayLines:
 
-    rcm8cube_nostrat = cube.DataCube(rcm8_path)
-    rcm8cube_nostrat.register_section('test', section.StrikeSection(y=5))
+    rcm8cube_nostrat = cube.DataCube(golf_path)
+    rcm8cube_nostrat.register_section(
+        'test', section.StrikeSection(distance_idx=5))
     dsv_nostrat = rcm8cube_nostrat.sections['test']['velocity']
 
-    rcm8cube = cube.DataCube(rcm8_path)
-    rcm8cube.stratigraphy_from('eta')
-    rcm8cube.register_section('test', section.StrikeSection(y=5))
+    rcm8cube = cube.DataCube(golf_path)
+    rcm8cube.stratigraphy_from('eta', dz=0.1)
+    rcm8cube.register_section(
+        'test', section.StrikeSection(distance_idx=5))
     dsv = rcm8cube.sections['test']['velocity']
 
-    sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube)
-    sc8cube.register_section('test', section.StrikeSection(y=5))
+    sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.1)
+    sc8cube.register_section(
+        'test', section.StrikeSection(distance_idx=5))
     ssv = sc8cube.sections['test']['velocity']
 
     def test_dsv_nostrat_get_display_lines_spacetime(self):
@@ -479,17 +482,20 @@ class TestGetDisplayLines:
 
 class TestGetDisplayLimits:
 
-    rcm8cube_nostrat = cube.DataCube(rcm8_path)
-    rcm8cube_nostrat.register_section('test', section.StrikeSection(y=5))
+    rcm8cube_nostrat = cube.DataCube(golf_path)
+    rcm8cube_nostrat.register_section(
+        'test', section.StrikeSection(distance_idx=5))
     dsv_nostrat = rcm8cube_nostrat.sections['test']['velocity']
 
-    rcm8cube = cube.DataCube(rcm8_path)
-    rcm8cube.stratigraphy_from('eta')
-    rcm8cube.register_section('test', section.StrikeSection(y=5))
+    rcm8cube = cube.DataCube(golf_path)
+    rcm8cube.stratigraphy_from('eta', dz=0.1)
+    rcm8cube.register_section(
+        'test', section.StrikeSection(distance_idx=5))
     dsv = rcm8cube.sections['test']['velocity']
 
-    sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube)
-    sc8cube.register_section('test', section.StrikeSection(y=5))
+    sc8cube = cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.1)
+    sc8cube.register_section(
+        'test', section.StrikeSection(distance_idx=5))
     ssv = sc8cube.sections['test']['velocity']
 
     def test_dsv_nostrat_get_display_limits_spacetime(self):
@@ -544,7 +550,7 @@ class TestGetDisplayLimits:
 class TestColorMapFunctions:
     # note, no plotting, just boundaries and values checking
 
-    rcm8cube = cube.DataCube(rcm8_path)
+    rcm8cube = cube.DataCube(golf_path)
 
     def test_cartographic_SL0_defaults(self):
         H_SL = 0

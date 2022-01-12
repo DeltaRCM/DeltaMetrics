@@ -10,10 +10,6 @@ All classes inherit from :obj:`BaseSection`, and redefine methods and attributes
 
 The classes are defined in ``deltametrics.section``. 
 
-
-.. include:: lexicon.rst
-
-
 Section types
 ==============
 
@@ -30,12 +26,7 @@ Section types
     BaseSection
 
 
-Section returns
-===============
+Information about Sections
+==========================
 
-.. autosummary:: 
-    :toctree: ../../_autosummary
-
-    DataSectionVariable
-    StratigraphySectionVariable
-    BaseSectionVariable
+.. include:: lexicon.rst

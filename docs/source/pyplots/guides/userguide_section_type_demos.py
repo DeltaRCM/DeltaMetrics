@@ -1,22 +1,31 @@
 import matplotlib.gridspec as gs
 
-rcm8cube = dm.sample_data.rcm8()
-rcm8cube.stratigraphy_from('eta')
-rcm8cube.register_section('demo', dm.section.StrikeSection(y=10))
+golfcube = dm.sample_data.golf()
 
-_strike = dm.section.StrikeSection(rcm8cube, y=18)
-__path = np.column_stack((np.linspace(50, 150, num=4000, dtype=np.int),
-                          np.linspace(10, 90, num=4000, dtype=np.int)))
-_path = dm.section.PathSection(rcm8cube, path=__path)
+_strike = dm.section.StrikeSection(
+    golfcube, distance=1200)
+_dip = dm.section.DipSection(
+    golfcube, distance=3000)
+_path = dm.section.PathSection(
+    golfcube, path=np.array([[1400, 2000], [2000, 4000], [3000, 6000]]))
+_circ = dm.section.CircularSection(
+    golfcube, radius=2000)
+_rad = dm.section.RadialSection(
+    golfcube, azimuth=70)
 
-fig = plt.figure(constrained_layout=True, figsize=(10, 8))
-spec = gs.GridSpec(ncols=2, nrows=3, figure=fig)
+fig = plt.figure(constrained_layout=False, figsize=(10, 9))
+spec = gs.GridSpec(ncols=2, nrows=4, figure=fig, wspace=0.3, hspace=0.4,
+                   left=0.1, right=0.9, top=0.95, bottom=0.05,
+                   height_ratios=[1.5, 1, 1, 1])
 ax0 = fig.add_subplot(spec[0, :])
 axs = [fig.add_subplot(spec[i, j]) for i, j in zip(
-    np.repeat(np.arange(1, 3), 2), np.tile(np.arange(2), (3,)))]
+    np.repeat(np.arange(1, 4), 2), np.tile(np.arange(2), (4,)))]
 
-rcm8cube.show_plan('eta', t=-1, ax=ax0, ticks=True)
-for i, s in enumerate([_strike, _path]):
-    ax0.plot(s.trace[:, 0], s.trace[:, 1], 'r--')
+t10cmap = plt.cm.get_cmap('tab10')
+golfcube.quick_show('eta', idx=-1, ax=ax0, ticks=True)
+for i, s in enumerate([_strike, _dip, _path, _circ, _rad]):
+    s.show_trace('--', color=t10cmap(i), ax=ax0)
     s.show('velocity', ax=axs[i])
-    axs[i].set_title(s.section_type)
+    axs[i].set_title(s.section_type, color=t10cmap(i))
+
+fig.delaxes(axs[-1])

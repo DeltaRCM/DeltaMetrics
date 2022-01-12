@@ -1,6 +1,7 @@
 import os
 import copy
 import abc
+import warnings
 
 import numpy as np
 import xarray as xr
@@ -13,72 +14,6 @@ from . import plan
 from . import section
 from . import strat
 from . import plot
-
-
-@xr.register_dataarray_accessor("cubevar")
-class CubeVariable():
-    """Slice of a Cube.
-
-    Slicing an :obj:`~deltametrics.cube.Cube` returns an object of this type.
-    The ``CubeVariable`` is an accessor of the `xarray.DataArray` class,
-    enabling additional functions to be added to the object, while retaining
-    the `xarray` object and it's native functionality under
-    ``CubeVariable.data``.
-
-    .. warning::
-        You probably should not instantiate objects of this type directly.
-
-    Examples
-    --------
-    .. doctest::
-
-        >>> import deltametrics as dm
-        >>> rcm8cube = dm.sample_data.rcm8()
-
-        >>> type(rcm8cube['velocity'])
-        <class 'deltametrics.cube.CubeVariable'>
-
-        >>> type(rcm8cube['velocity'].data)
-        <class 'xarray.DataArray'>
-
-        >>> rcm8cube['velocity'].variable
-        'velocity'
-    """
-
-    def __init__(self, xarray_obj):
-        """Initialize the ``CubeVariable`` object."""
-        self.data = xarray_obj
-
-    def initialize(self, **kwargs):
-        """Initialize with `**kwargs`."""
-        self.shape = self.data.shape
-        self.ndim = len(self.shape)
-        variable = kwargs.pop('variable', None)
-        self.variable = variable
-        coords = kwargs.pop('coords', None)
-        if not coords:
-            self.t, self.x, self.y = [np.arange(itm) for itm in self.shape]
-        else:
-            self.t, self.x, self.y = coords['t'], coords['x'], coords['y']
-
-    def as_frozen(self):
-        """Export variable values as a `numpy.ndarray`."""
-        return self.data.values
-
-    def __getitem__(self, slc):
-        """Get items from the underlying data.
-
-        Takes a numpy slicing style and slices data from the underlying data.
-        Note that the underlying data is stored in an :obj:`xarray.DataArray`,
-        and this method returns a :obj:`xarray.DataArray`.
-
-        Parameters
-        ----------
-        slc : a `numpy` slice
-            A valid `numpy` style slice. For example, :code:`[10, ...]`.
-            Dimension validation is not performed before slicing.
-        """
-        return self.data[slc]
 
 
 class BaseCube(abc.ABC):
@@ -135,13 +70,17 @@ class BaseCube(abc.ABC):
         else:
             raise TypeError('Invalid type for "data": %s' % type(data))
 
-        self._plan_set = {}
+        self._planform_set = {}
         self._section_set = {}
 
         if varset:
             self.varset = varset
         else:
             self.varset = plot.VariableSet()
+
+        # some undocumented aliases
+        self.plans = self._planform_set
+        self.plan_set = self._planform_set
 
     @abc.abstractmethod
     def __getitem__(self, var):
@@ -175,17 +114,31 @@ class BaseCube(abc.ABC):
         """
         self._coords = self._dataio.known_coords
         self._variables = self._dataio.known_variables
+
+        # process the dimensions into attributes
+        if len(self._dataio.dims) > 0:
+            d0, d1, d2 = self._dataio.dims
+        else:
+            # try taking a slice of the dataset to get the coordinates
+            d0, d1, d2 = self.dataio[self._dataio.known_variables[0]].dims
+        self._dim0_idx = self._dataio.dataset[d0]
+
         # if x is 2-D then we assume x and y are mesh grid values
-        if np.ndim(self._dataio['x']) == 2:
-            self._X = self._dataio['x']  # mesh grid of x values of cube
-            self._Y = self._dataio['y']  # mesh grid of y values of cube
-            self._x = np.copy(self._X[0, :].squeeze())  # array of xval of cube
-            self._y = np.copy(self._Y[:, 0].squeeze())  # array of yval of cube
+        if np.ndim(self._dataio[d1]) == 2:
+            self._dim1_idx = self._dataio.dataset[d1][:, 0].squeeze()
+            self._dim2_idx = self._dataio.dataset[d2][0, :].squeeze()
         # if x is 1-D we do mesh-gridding
-        elif np.ndim(self._dataio['x']) == 1:
-            self._x = self._dataio['x']  # array of xval of cube
-            self._y = self._dataio['y']  # array of yval of cube
-            self._X, self._Y = np.meshgrid(self._x, self._y)  # mesh grids x&y
+        elif np.ndim(self._dataio[d1]) == 1:
+            self._dim1_idx = self._dataio.dataset[d1]
+            self._dim2_idx = self._dataio.dataset[d2]
+
+        # assign values to dimensions of cube
+        self._dim0_coords = self._t = self._dim0_idx
+        self._dim1_coords = self._dim1_idx
+        self._dim2_coords = self._dim2_idx
+
+        # DEVELOPER NOTE: can we remvoe the _dimX_idx altogether and just use
+        # the _dimX_coords arrays?
 
     def read(self, variables):
         """Read variable into memory.
@@ -253,27 +206,51 @@ class BaseCube(abc.ABC):
         return self._variables
 
     @property
-    def plan_set(self):
-        """`dict` : Set of plan instances.
+    def planform_set(self):
+        """:obj:`dict` : Set of planform instances.
         """
-        return self._plan_set
+        return self._planform_set
 
     @property
-    def plans(self):
+    def planforms(self):
         """`dict` : Set of plan instances.
 
         Alias to :meth:`plan_set`.
         """
-        return self._plan_set
+        return self._planform_set    
 
-    def register_plan(self, name, PlanInstance):
-        """Register a planform to the cube.
+    def register_plan(self, *args, **kwargs):
+        """wrapper, might not really need this."""
+        return self.register_planform(*args, **kwargs)
+
+    def register_planform(self, name, PlanformInstance, return_planform=False):
+        """Register a planform to the :attr:`planform_set`.
+
+        Connect a planform to the cube.
+
+        Parameters
+        ----------
+        name : :obj:`str`
+            The name to register the `Planform`.
+
+        PlanformInstance : :obj:`~deltametrics.planform.BasePlanform` subclass instance
+            The planform instance that will be registered.
+
+        return_planform : :obj:`bool`
+            Whether to return the planform object.
         """
-        if not issubclass(type(PlanInstance), plan.BasePlan):
-            raise TypeError
-        if not type(name) is str:
-            raise TypeError
-        self._plan_set[name] = PlanInstance
+        if not issubclass(type(PlanformInstance), plan.BasePlanform):
+            raise TypeError(
+                '`PlanformInstance` was not a `Planform`. '
+                'Instead, was: {0}'.format(type(PlanformInstance)))
+        if not isinstance(name, str):
+            raise TypeError(
+                '`name` was not a string. '
+                'Instead, was: {0}'.format(type(name)))
+        PlanformInstance.connect(self, name=name)  # attach cube
+        self._planform_set[name] = PlanformInstance
+        if return_planform:
+            return self._planform_set[name]
 
     @property
     def section_set(self):
@@ -290,7 +267,7 @@ class BaseCube(abc.ABC):
         return self._section_set
 
     def register_section(self, name, SectionInstance, return_section=False):
-        """Register a section to the :meth:`section_set`.
+        """Register a section to the :attr:`section_set`.
 
         Connect a section to the cube.
 
@@ -311,39 +288,41 @@ class BaseCube(abc.ABC):
         When the API for instantiation of the different section types is
         settled, we should enable the ability to pass section kwargs to this
         method, and then instantiate the section internally. This avoids the
-        user having to specify ``dm.section.StrikeSection(y=5)`` in the
-        ``register_Section()`` call, and instead can do something like
-        ``rcm8cube.register_section('trial', trace='strike', y=5)``.
+        user having to specify ``dm.section.StrikeSection(distance=2000)`` in
+        the ``register_section()`` call, and instead can do something like
+        ``golf.register_section('trial', trace='strike',
+        distance=2000)``.
         """
-
         if not issubclass(type(SectionInstance), section.BaseSection):
-            raise TypeError
-        if not type(name) is str:
-            raise TypeError
+            raise TypeError(
+                '`SectionInstance` was not a `Section`. '
+                'Instead, was: {0}'.format(type(SectionInstance)))
+        if not isinstance(name, str):
+            raise TypeError(
+                '`name` was not a string. '
+                'Instead, was: {0}'.format(type(name)))
         SectionInstance.connect(self, name=name)  # attach cube
         self._section_set[name] = SectionInstance
         if return_section:
             return self._section_set[name]
 
     @property
-    def x(self):
-        """x-direction coordinate."""
-        return self._x
+    def dim0_coords(self):
+        """Coordinates along the first dimension of `cube`.
+        """
+        return self.z
 
     @property
-    def X(self):
-        """x-direction mesh."""
-        return self._X
+    def dim1_coords(self):
+        """Coordinates along the second dimension of `cube`.
+        """
+        return self._dim1_coords
 
     @property
-    def y(self):
-        """y-direction coordinate."""
-        return self._y
-
-    @property
-    def Y(self):
-        """y-direction mesh."""
-        return self._Y
+    def dim2_coords(self):
+        """Coordinates along the third dimension of `cube`.
+        """
+        return self._dim2_coords
 
     @property
     @abc.abstractmethod
@@ -390,96 +369,230 @@ class BaseCube(abc.ABC):
         if return_cube:
             raise NotImplementedError
         else:
-            return self[var].data
+            return self[var].load()
 
-    def show_cube(self, var, t=-1, x=-1, y=-1, ax=None):
-        """Show the cube in a 3d axis.
+    def quick_show(self, var, idx=-1, axis=0, **kwargs):
+        """Convenient and quick way to show a slice of the cube by `idx` and `axis`.
 
-        3d visualization via `pyvista`.
+        .. hint::
 
-        .. warning::
-            Implementation is crude and should be revisited.
+            If neither `idx` or `axis` is specified, a planform view of the
+            last index is shown.
+
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which variable to show from the underlying dataset.
+
+        idx : :obj:`int`, optional
+            Which index along the `axis` to slice data from. Default value is
+            ``-1``, the last index along `axis`.
+
+        axis : :obj:`int`, optional
+            Which axis of the underlying cube `idx` is specified for. Default
+            value is ``0``, the first axis of the cube.
+
+        **kwargs
+            Keyword arguments are passed
+            to :meth:`~deltametrics.plan.Planform.show` if `axis` is ``0``,
+            otherwise passed
+            to :meth:`~deltametrics.section.BaseSection.show`.
+
+        Examples
+        --------
+
+        .. plot::
+            :include-source:
+
+            >>> golfcube = dm.sample_data.golf()
+            >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(
+            ...     golfcube, dz=0.1)
+            ...
+            >>> fig, ax = plt.subplots(2, 1)
+            >>> golfcube.quick_show('eta', ax=ax[0])  # a Planform (axis=0)
+            >>> golfstrat.quick_show('eta', idx=100, axis=2, ax=ax[1])  # a DipSection
+            >>> plt.show()
+        """
+        if axis == 0:
+            # this is a planform slice
+            _obj = plan.Planform(self, idx=idx)
+        elif axis == 1:
+            # this is a Strike section
+            _obj = section.StrikeSection(self, distance_idx=idx)
+        elif axis == 2:
+            # this is a Dip section
+            _obj = section.DipSection(self, distance_idx=idx)
+        else:
+            raise ValueError(
+                'Invalid `axis` specified: {0}'.format(axis))
+
+        # use the object to handle the showing
+        _obj.show(var, **kwargs)
+
+    def show_cube(self, var, style='mesh', ve=200, ax=None):
+        """Show the cube in a 3D axis.
+
+        .. important:: requires `pyvista` package for 3d visualization.
+
+        Parameters
+        ----------
+        var : :obj:`str`
+            Which variable to show from the underlying dataset.
+
+        style : :obj:`str`, optional
+            Style to show `cube`. Default is `'mesh'`, which gives a 3D
+            volumetric view. Other supported option is `'fence'`, which gives
+            a fence diagram with one slice in each cube dimension.
+
+        ve : :obj:`float`
+            Vertical exaggeration. Default is ``200``.
+
+        ax : :obj:`~matplotlib.pyplot.Axes` object, optional
+            A `matplotlib` `Axes` object to plot the section. Optional; if not
+            provided, a call is made to ``plt.gca()`` to get the current (or
+            create a new) `Axes` object.
+
+        Examples
+        --------
+
+        .. note:: 
+
+            The following code snippets are not set up to actually make the
+            plots in the documentation.
+
+        .. code::
+
+            >>> golfcube = dm.sample_data.golf()
+            >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(
+            ...     golfcube, dz=0.1)
+            ... 
+            >>> fig, ax = plt.subplots()
+            >>> golfstrat.show_cube('eta', ax=ax)
+
+        .. code::
+
+            >>> golfcube = dm.sample_data.golf()
+            ...
+            >>> fig, ax = plt.subplots()
+            >>> golfcube.show_cube('velocity', style='fence', ax=ax)
         """
         try:
             import pyvista as pv
         except ImportError:
-            ImportError('3d plotting dependency, pyvista, was not found.')
-
-        _grid = pv.wrap(self[var].data.values)
-        _grid.plot()
-
-    def show_plan(self, var, t=-1, ax=None, title=None, ticks=False,
-                  colorbar_label=False):
-        """Show planform image.
-
-        .. warning::
-            NEEDS TO BE PORTED OVER TO WRAP THE .show() METHOD OF PLAN!
-        """
-
-        _plan = self[var].data[t]  # REPLACE WITH OBJECT RETURNED FROM PLAN
+            ImportError(
+                '3d plotting dependency, pyvista, was not found.')
+        except ModuleNotFoundError:
+            ModuleNotFoundError(
+                '3d plotting dependency, pyvista, was not found.')
+        except Exception as e:
+            raise e
 
         if not ax:
             ax = plt.gca()
 
-        im = ax.imshow(_plan,
-                       cmap=self.varset[var].cmap,
-                       norm=self.varset[var].norm,
-                       vmin=self.varset[var].vmin,
-                       vmax=self.varset[var].vmax)
-        cb = plot.append_colorbar(im, ax)
-        if colorbar_label:
-            _colorbar_label = \
-                self.varset[var].label if (colorbar_label is True) \
-                else str(colorbar_label)  # use custom if passed
-            cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
+        _data = np.array(self[var])
+        _data = _data.transpose((2, 1, 0))
 
-        if not ticks:
-            ax.set_xticks([], minor=[])
-            ax.set_yticks([], minor=[])
-        if title:
-            ax.set_title(str(title))
+        mesh = pv.UniformGrid(_data.shape)
+        mesh[var] = _data.ravel(order='F')
+        mesh.spacing = (self.dim2_coords[1],
+                        self.dim1_coords[1],
+                        ve/self.dim1_coords[1])
+        mesh.active_scalars_name = var
 
-        # read from metadata if available
-        if self.meta is not None:
-            ax.set_ylim(self.x[0] / self.meta['dx'],
-                        self.x[-1] / self.meta['dx'])
-            ax.set_xlim(self.y[0] / self.meta['dx'],
-                        self.y[-1] / self.meta['dx'])
+        p = pv.Plotter()
+        p.add_mesh(mesh.outline(), color="k")
+        if style == 'mesh':
+
+            threshed = mesh.threshold([-np.inf, np.inf], all_scalars=True)
+            p.add_mesh(threshed, cmap=self.varset[var].cmap)
+
+        elif style == 'fence':
+            # todo, improve this to manually create the sections so you can 
+            #   do more than three slices
+            slices = mesh.slice_orthogonal()
+            p.add_mesh(slices, cmap=self.varset[var].cmap)
+
         else:
-            ax.set_xlim(self.x[0], self.x[-1])
-            ax.set_ylim(self.y[0], self.y[-1])
+            raise ValueError('Bad value for style: {0}'.format(style))
+    
+        p.show()
 
-    def show_section(self, *args, **kwargs):
-        """Show a section.
+    def show_plan(self, *args, **kwargs):
+        """Deprecated. Use :obj:`quick_show` or :obj:`show_planform`.
 
-        Can be called by name if section is already registered, or pass a
-        fresh section instance and it will be connected.
+        .. warning::
 
-        Wraps the Section's :meth:`~deltametrics.section.BaseSection.show`
-        method.
+            Provides a legacy option to quickly show a planform, from before
+            the `Planform` object was properly implemented. Will be removed
+            in a future release.
+    
+        Parameters
+        ----------
         """
+        # legacy method, ported over to show_planform.
+        warnings.warn(
+            '`show_plan` is a deprecated method, and has been replaced by two '
+            'alternatives. To quickly show a planform slice of a cube, you '
+            'can use `quick_show()` with a similar API. The `show_planform` '
+            'method implements more features, but requires instantiating a '
+            '`Planform` object first. Passing arguments to `quick_show`.')
+        # pass `t` arg to `idx` for legacy
+        if 't' in kwargs.keys():
+            idx = kwargs.pop('t')
+            kwargs['idx'] = idx
 
-        # parse arguments
-        if len(args) == 0:
-            raise ValueError
-        elif len(args) == 1:
-            SectionInstance = args[0]
-            SectionAttribute = None
-        elif len(args) == 2:
-            SectionInstance = args[0]
-            SectionAttribute = args[1]
-        else:
-            raise ValueError('Too many arguments.')
+        self.quick_show(*args, **kwargs)
 
-        # call `show()` from string or by instance
-        if type(SectionInstance) is str:
-            self.sections[SectionInstance].show(SectionAttribute, **kwargs)
+    def show_planform(self, name, variable, **kwargs):
+        """Show a registered planform by name and variable.
+
+        Call a registered planform by name and variable.
+
+        Parameters
+        ----------
+        name : :obj:`str`
+            The name of the registered planform.
+
+        variable : :obj:`str`
+            The varaible name to show.
+
+        **kwargs
+            Keyword arguments passed
+            to :meth:`~deltametrics.plan.Planform.show`.
+        """
+        # call `show()` from string
+        if isinstance(name, str):
+            self._planform_set[name].show(variable, **kwargs)
         else:
-            if not issubclass(type(SectionInstance), section.BaseSection):
-                raise TypeError('You must pass a Section instance, '
-                                'or a string matching the name of a '
-                                'section registered to the cube.')
-            SectionInstance.show(**kwargs)
+            raise TypeError(
+                '`name` was not a string, '
+                'was {0}'.format(type(name)))
+
+    def show_section(self, name, variable, **kwargs):
+        """Show a registered section by name and variable.
+
+        Call a registered section by name and variable.
+
+        Parameters
+        ----------
+        name : :obj:`str`
+            The name of the registered section.
+
+        variable : :obj:`str`
+            The varaible name to show.
+
+        **kwargs
+            Keyword arguments passed
+            to :meth:`~deltametrics.section.BaseSection.show`.
+        """
+        # call `show()` from string
+        if isinstance(name, str):
+            self._section_set[name].show(variable, **kwargs)
+        else:
+            raise TypeError(
+                '`name` was not a string, '
+                'was {0}'.format(type(name)))
 
 
 class DataCube(BaseCube):
@@ -520,8 +633,9 @@ class DataCube(BaseCube):
         """
         super().__init__(data, read, varset)
 
-        self._t = np.array(self._dataio['time'], copy=True)
-        _, self._T, _ = np.meshgrid(self.y, self.t, self.x)
+        # set up the grid for time
+        _, self._T, _ = np.meshgrid(
+            self.dim1_coords, self.dim0_coords, self.dim2_coords)
 
         # get shape from a variable that is not x, y, or time
         i = 0
@@ -534,6 +648,14 @@ class DataCube(BaseCube):
                 i = len(self.variables)
 
         self._H, self._L, self._W = self[_var].data.shape
+
+        # set up dimension and coordinate fields for when slices of the cube
+        # are made
+        self._view_dimensions = self._dataio.dims
+        self._view_coordinates = copy.deepcopy({
+            self._view_dimensions[0]: self.dim0_coords,
+            self._view_dimensions[1]: self.dim1_coords,
+            self._view_dimensions[2]: self.dim2_coords})
 
         self._knows_stratigraphy = False
 
@@ -558,23 +680,20 @@ class DataCube(BaseCube):
         """
         if var in self._coords:
             # ensure coords can be called by cube[var]
-            _coords = {}
-            _coords['t'] = self.T
-            _coords['x'] = self.X
-            _coords['y'] = self.Y
             if var == 'time':  # special case for time
                 _t = np.expand_dims(self.dataio.dataset['time'].values,
                                     axis=(1, 2))
-                _xrt = xr.DataArray(np.tile(_t, (1, *self.shape[1:])))
-                _obj = _xrt.cubevar
+                _xrt = xr.DataArray(
+                    np.tile(_t, (1, *self.shape[1:])),
+                    coords=self._view_coordinates,
+                    dims=self._view_dimensions)
+                _obj = _xrt
             else:
-                _obj = self._dataio.dataset[var].cubevar
-            _obj.initialize(variable=var, coords=_coords)
+                _obj = self._dataio.dataset[var]
             return _obj
 
         elif var in self._variables:
-            _obj = self._dataio.dataset[var].cubevar
-            _obj.initialize(variable=var)
+            _obj = self._dataio.dataset[var]
             return _obj
 
         else:
@@ -598,6 +717,11 @@ class DataCube(BaseCube):
             <deltametrics.strat.BoxyStratigraphyAttributes>`. Additional
             keyword arguments are passed to stratigraphy attribute
             initializers.
+
+        **kwargs
+            Keyword arguments passed to stratigraphy initialization. Can
+            include specification for vertical resolution in `Boxy` case,
+            see :obj:_determine_strat_coordinates`.
         """
         if style == 'mesh':
             self.strat_attr = \
@@ -642,15 +766,16 @@ class StratigraphyCube(BaseCube):
 
     """
     @staticmethod
-    def from_DataCube(DataCubeInstance, stratigraphy_from='eta', dz=0.1):
+    def from_DataCube(DataCubeInstance, stratigraphy_from='eta',
+                      dz=None, z=None, nz=None):
         """Create from a DataCube.
 
         Examples
         --------
-        Create a stratigraphy cube from the example ``rcm8cube``:
+        Create a stratigraphy cube from the example ``golf``:
 
-        >>> rcm8cube = dm.sample_data.rcm8()
-        >>> sc8cube = dm.cube.StratigraphyCube.from_DataCube(rcm8cube, dz=0.05)
+        >>> golfcube = dm.sample_data.golf()
+        >>> stratcube = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.05)
 
         Parameters
         ----------
@@ -664,9 +789,10 @@ class StratigraphyCube(BaseCube):
             elevation data. Typically, this is ``'eta'`` in pyDeltaRCM model
             outputs.
 
-        dz : :obj:`float`, optional
-            Vertical interval (i.e., resolution) for stratigraphy in new
-            StratigraphyCube.
+        **kwargs
+            Keyword arguments passed to stratigraphy initialization. Can
+            include specification for vertical resolution in `Boxy` case,
+            see :obj:_determine_strat_coordinates`.
 
         Returns
         -------
@@ -675,10 +801,11 @@ class StratigraphyCube(BaseCube):
         """
         return StratigraphyCube(DataCubeInstance,
                                 stratigraphy_from=stratigraphy_from,
-                                dz=dz)
+                                dz=dz, z=z, nz=nz)
 
     def __init__(self, data, read=[], varset=None,
-                 stratigraphy_from=None, dz=None):
+                 stratigraphy_from=None,
+                 dz=None, z=None, nz=None):
         """Initialize the StratigraphicCube.
 
         Any instantiation pathway must configure :obj:`z`, :obj:`H`, :obj:`L`,
@@ -712,16 +839,24 @@ class StratigraphyCube(BaseCube):
             _elev = copy.deepcopy(data[stratigraphy_from])
 
             # set up coordinates of the array
-            self._z = strat._determine_strat_coordinates(_elev.data, dz=dz)
+            _z = strat._determine_strat_coordinates(
+                _elev.data, dz=dz, z=z, nz=nz)
+            self._z = xr.DataArray(_z, name='z', dims=['z'], coords={'z': _z})
             self._H = len(self.z)
             self._L, self._W = _elev.shape[1:]
             self._Z = np.tile(self.z, (self.W, self.L, 1)).T
 
             _out = strat.compute_boxy_stratigraphy_coordinates(
-                _elev, z=self.z, return_strata=True)
+                _elev, z=_z, return_strata=True)
             self.strata_coords, self.data_coords, self.strata = _out
         else:
             raise TypeError('No other input types implemented yet.')
+
+        self._view_dimensions = ['z', *data._dataio.dims[1:]]
+        self._view_coordinates = copy.deepcopy({
+            self._view_dimensions[0]: self._z,
+            self._view_dimensions[1]: self.dim1_coords,
+            self._view_dimensions[2]: self.dim2_coords})
 
     def __getitem__(self, var):
         """Return the variable.
@@ -747,18 +882,25 @@ class StratigraphyCube(BaseCube):
             _var = np.tile(_t, (1, *self.shape[1:]))
         elif var in self._variables:
             _arr = np.full(self.shape, np.nan)
-            _var = np.array(self.dataio[var], copy=True)
+            # _var = np.array(self.dataio[var], copy=True)
+            _var = self.dataio[var]
         else:
             raise AttributeError('No variable of {cube} named {var}'.format(
                                  cube=str(self), var=var))
 
         # the following lines apply the data to stratigraphy mapping
-        _cut = _var[self.data_coords[:, 0], self.data_coords[:, 1],
-                    self.data_coords[:, 2]]
+        if isinstance(_var, xr.core.dataarray.DataArray):
+            _vardata = _var.data
+        else:
+            _vardata = _var
+        _cut = _vardata[self.data_coords[:, 0], self.data_coords[:, 1],
+                        self.data_coords[:, 2]]
         _arr[self.strata_coords[:, 0], self.strata_coords[:, 1],
              self.strata_coords[:, 2]] = _cut
-        _obj = xr.DataArray(_arr).cubevar
-        _obj.initialize(variable=var)
+        _obj = xr.DataArray(
+            _arr,
+            coords=self._view_coordinates,
+            dims=self._view_dimensions)
         return _obj
 
     @property

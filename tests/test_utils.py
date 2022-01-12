@@ -1,11 +1,16 @@
 import pytest
 
 import os
+import time
+import glob
+import pathlib
+
 import numpy as np
 from netCDF4 import Dataset
 
 from deltametrics import utils
 from deltametrics import mobility as mob
+from deltametrics import sample_data
 import utilities
 
 
@@ -46,7 +51,7 @@ class TestLineToCells:
         assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
         assert ret1.shape[1] == 61
 
-    def test_positive_angle_inputs(self):
+    def test_quadrantI_angle_inputs(self):
         x0, y0, x1, y1 = 10, 10, 60, 92
         ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
         ret2 = utils.line_to_cells((x0, y0), (x1, y1))
@@ -54,8 +59,35 @@ class TestLineToCells:
         ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
         assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
         assert ret1.shape[1] == 83
+        # check line is sorted correctly: p0 --> p1
+        assert np.all(ret1[:, 0] == np.array([x0, y0]))
+        assert np.all(ret1[:, -1] == np.array([x1, y1]))
 
-    def test_negative_angle_inputs(self):
+    def test_quadrantII_angle_inputs(self):
+        x0, y0, x1, y1 = 80, 20, 40, 50
+        ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
+        ret2 = utils.line_to_cells((x0, y0), (x1, y1))
+        ret3 = utils.line_to_cells(x0, y0, x1, y1)
+        ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
+        assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
+        assert ret1.shape[1] == 41
+        # check line is sorted correctly: p0 --> p1
+        assert np.all(ret1[:, 0] == np.array([x0, y0]))
+        assert np.all(ret1[:, -1] == np.array([x1, y1]))
+
+    def test_quadrantIII_angle_inputs(self):
+        x0, y0, x1, y1 = 80, 70, 40, 40
+        ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
+        ret2 = utils.line_to_cells((x0, y0), (x1, y1))
+        ret3 = utils.line_to_cells(x0, y0, x1, y1)
+        ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
+        assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
+        assert ret1.shape[1] == 41
+        # check line is sorted correctly: p0 --> p1
+        assert np.all(ret1[:, 0] == np.array([x0, y0]))
+        assert np.all(ret1[:, -1] == np.array([x1, y1]))
+
+    def test_quadrantIV_angle_inputs(self):
         x0, y0, x1, y1 = 10, 80, 60, 30
         ret1 = utils.line_to_cells(np.array([[x0, y0], [x1, y1]]))
         ret2 = utils.line_to_cells((x0, y0), (x1, y1))
@@ -63,13 +95,15 @@ class TestLineToCells:
         ret1, ret2, ret3 = np.vstack(ret1), np.vstack(ret2), np.vstack(ret3)
         assert (np.all(ret1 == ret2) and np.all(ret1 == ret3))
         assert ret1.shape[1] == 51
+        assert np.all(ret1[:, 0] == np.array([x0, y0]))
+        assert np.all(ret1[:, -1] == np.array([x1, y1]))
 
     def test_bad_inputs(self):
         x0, y0, x1, y1 = 10, 10, 60, 92
-        with pytest.raises(TypeError):
-            ret = utils.line_to_cells(x0, y0, x1, y1, x0, y1)
+        with pytest.raises(TypeError, match=r'Length of input .*'):
+            _ = utils.line_to_cells(x0, y0, x1, y1, x0, y1)
         with pytest.raises(ValueError):
-            ret1 = utils.line_to_cells(
+            _ = utils.line_to_cells(
                 np.array([[x0, y0], [x1, y1], [x0, y1]]))
 
 
@@ -194,7 +228,7 @@ def test_format_table_float():
     assert _fnum == '15.1'
 
 
-def test_format_table_float():
+def test_format_table_int():
     _val = int(5)
     _fnum = utils.format_table(_val)
     assert _fnum == '5'
@@ -210,13 +244,25 @@ def test_format_table_float():
 
 @pytest.mark.xfail(raises=ImportError,
                    reason='pyDeltaRCM is not a required dependency')
-def test_time_from_log(tmp_path):
+def test_time_from_log_new(tmp_path):
     """Generate run+logfile and then read runtime from it."""
     from pyDeltaRCM.model import DeltaModel
     delta = DeltaModel(out_dir=str(tmp_path))  # init delta to make log file
+    time.sleep(1)
     delta.finalize()  # finalize and end log file
     log_path = os.path.join(tmp_path, os.listdir(tmp_path)[0])  # path to log
     elapsed_time = utils.runtime_from_log(log_path)
+    # elapsed time should exceed 0, but exact time will vary
+    assert isinstance(elapsed_time, float)
+    assert elapsed_time > 0
+
+
+def test_time_from_log_sampledataset(tmp_path):
+    golfpath = pathlib.PurePath(sample_data._get_golf_path())
+    # find the log file there
+    found = glob.glob(os.path.join(golfpath.parent, '*.log'))
+    assert len(found) == 1
+    elapsed_time = utils.runtime_from_log(found[0])
     # elapsed time should exceed 0, but exact time will vary
     assert isinstance(elapsed_time, float)
     assert elapsed_time > 0

@@ -1,4 +1,5 @@
 import numpy as np
+import xarray as xr
 
 import colorsys
 
@@ -480,7 +481,7 @@ class VariableSet(object):
             combined = np.vstack((greys(np.linspace(0.3, 0.6, 2)),
                                   oranges(np.linspace(0.2, 0.8, 6))))
             ntgcmap = colors.ListedColormap(combined, name='net_to_gross')
-            ntgcmap.set_bad("white")
+            ntgcmap.set_bad("white", alpha=0)
             self._net_to_gross = VariableInfo('net_to_gross',
                                               cmap=ntgcmap,
                                               label='net-to-gross')
@@ -528,16 +529,16 @@ def cartographic_colormap(H_SL=0.0, h=4.5, n=1.0):
     .. plot::
         :include-source:
 
-        rcm8cube = dm.sample_data.cube.rcm8()
+        golfcube = dm.sample_data.golf()
 
         cmap0, norm0 = dm.plot.cartographic_colormap(H_SL=0)
         cmap1, norm1 = dm.plot.cartographic_colormap(H_SL=0, h=5, n=0.5)
 
         fig, ax = plt.subplots(1, 2, figsize=(10, 4))
-        im0 = ax[0].imshow(rcm8cube['eta'][-1, ...], origin='lower',
+        im0 = ax[0].imshow(golfcube['eta'][-1, ...], origin='lower',
                        cmap=cmap0, norm=norm0)
         cb0 = dm.plot.append_colorbar(im0, ax[0])
-        im1 = ax[1].imshow(rcm8cube['eta'][-1, ...], origin='lower',
+        im1 = ax[1].imshow(golfcube['eta'][-1, ...], origin='lower',
                        cmap=cmap1, norm=norm1)
         cb1 = dm.plot.append_colorbar(im1, ax[1])
         plt.show()
@@ -630,35 +631,37 @@ def get_display_arrays(VarInst, data=None):
         x-coordinates and 3) display y-coordinates.
     """
     # # #  SectionVariables  # # #
-    if issubclass(type(VarInst), section.BaseSectionVariable):
+    if VarInst.slicetype == 'data_section':
         # #  DataSection  # #
-        if isinstance(VarInst, section.DataSectionVariable):
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                return VarInst, VarInst._S, VarInst._Z
-            elif data in VarInst._preserved_names:
-                return VarInst.as_preserved(), VarInst._S, VarInst._Z
-            elif data in VarInst._stratigraphy_names:
-                _sp = VarInst.as_stratigraphy()
-                _den = _sp.toarray().view(section.DataSectionVariable)
-                _arr_Y = VarInst.strat_attr['psvd_flld'][:_sp.shape[0], ...]
-                _arr_X = np.tile(VarInst._s, (_sp.shape[0], 1))
-                return _den[1:, 1:], _arr_X, _arr_Y
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
-        # #  StratigraphySection  # #
-        elif isinstance(VarInst, section.StratigraphySectionVariable):
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._preserved_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._stratigraphy_names:
-                return VarInst, VarInst._S, VarInst._Z
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
+        data = data or 'spacetime'
+        if data in VarInst.strat._spacetime_names:
+            _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+            return VarInst.values, _S, _Z
+        elif data in VarInst.strat._preserved_names:
+            VarInst.strat._check_knows_spacetime()
+            _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+            return VarInst.strat.as_preserved(), _S, _Z
+        elif data in VarInst.strat._stratigraphy_names:
+            _sp = VarInst.strat.as_stratigraphy()
+            _den = _sp.toarray()  # .view(section.DataSectionVariable)
+            _arr_Y = VarInst.strat.strat_attr['psvd_flld'][:_sp.shape[0], ...]
+            _arr_X = np.tile(VarInst['s'], (_sp.shape[0], 1))
+            return _den[1:, 1:], _arr_X, _arr_Y
         else:
-            raise TypeError
+            raise ValueError('Bad data argument: %s' % str(data))
+
+    elif VarInst.slicetype == 'stratigraphy_section':
+        # #  StratigraphySection  # #
+        data = data or 'stratigraphy'
+        if data in VarInst.strat._spacetime_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._preserved_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._stratigraphy_names:
+            _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+            return VarInst, _S, _Z
+        else:
+            raise ValueError('Bad data argument: %s' % str(data))
 
     # # #  PlanformVariables  # # #
     elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
@@ -700,46 +703,45 @@ def get_display_lines(VarInst, data=None):
         dimension of the array.
     """
     # # #  SectionVariables  # # #
-    if issubclass(type(VarInst), section.BaseSectionVariable):
+    if VarInst.slicetype == 'data_section':
         # #  DataSection  # #
-        if isinstance(VarInst, section.DataSectionVariable):
-            def _reshape_long(X):
-                # util for reshaping s- and z-values appropriately
-                return np.vstack((X[:, :-1].flatten(),
-                                  X[:, 1:].flatten())).T.reshape(-1, 2, 1)
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                z = _reshape_long(VarInst._Z)
-                vals = VarInst[:, :-1]
-            elif data in VarInst._preserved_names:
-                z = _reshape_long(VarInst._Z)
-                vals = VarInst.as_preserved()[:, :-1]
-            elif data in VarInst._stratigraphy_names:
-                VarInst._check_knows_stratigraphy()  # need to check explicitly
-                z = _reshape_long(np.copy(VarInst.strat_attr['strata']))
-                vals = VarInst[:, :-1]
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
-            s = _reshape_long(VarInst._S)
-            segments = np.concatenate([s, z], axis=2)
-            if data in VarInst._stratigraphy_names:
-                # flip = draw late to early
-                vals = np.fliplr(np.flipud(vals))
-                segments = np.flipud(segments)
-            return vals, segments
-        # #  StratigraphySection  # #
-        elif isinstance(VarInst, section.StratigraphySectionVariable):
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._preserved_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._stratigraphy_names:
-                raise NotImplementedError  # not sure best implementation
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
+        def _reshape_long(X):
+            # util for reshaping s- and z-values appropriately
+            return np.vstack((X[:, :-1].flatten(),
+                              X[:, 1:].flatten())).T.reshape(-1, 2, 1)
+        data = data or 'spacetime'
+        _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+        if data in VarInst.strat._spacetime_names:
+            z = _reshape_long(_Z)
+            vals = VarInst[:, :-1]
+        elif data in VarInst.strat._preserved_names:
+            z = _reshape_long(_Z)
+            vals = VarInst.strat.as_preserved()[:, :-1]
+        elif data in VarInst.strat._stratigraphy_names:
+            VarInst.strat._check_knows_stratigraphy()  # need to check explicitly
+            z = _reshape_long(np.copy(VarInst.strat.strat_attr['strata']))
+            vals = VarInst[:, :-1]
         else:
-            raise TypeError
+            raise ValueError('Bad data argument: %s' % str(data))
+        s = _reshape_long(_S)
+        segments = np.concatenate([s, z], axis=2)
+        if data in VarInst.strat._stratigraphy_names:
+            # flip = draw late to early
+            vals = np.fliplr(np.flipud(vals))
+            segments = np.flipud(segments)
+        return np.array(vals), segments
+
+    elif VarInst.slicetype == 'stratigraphy_section':
+        # #  StratigraphySection  # #
+        data = data or 'stratigraphy'
+        if data in VarInst.strat._spacetime_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._preserved_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._stratigraphy_names:
+            raise NotImplementedError  # not sure best implementation
+        else:
+            raise ValueError('Bad data argument: %s' % str(data))
 
     # # #  PlanformVariables  # # #
     elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
@@ -748,7 +750,7 @@ def get_display_lines(VarInst, data=None):
         raise TypeError('Invaid "VarInst" type: %s' % type(VarInst))
 
 
-def get_display_limits(VarInst, data=None):
+def get_display_limits(VarInst, data=None, factor=1.5):
     """Get limits to resize the display of Variables.
 
     Function takes as argument a `VariableInstance` from a `Section` or
@@ -768,6 +770,9 @@ def get_display_limits(VarInst, data=None):
         :obj:`get_display_lines`. Supported options are `'spacetime'`,
         `'preserved'`, and `'stratigraphy'`.
 
+    factor : :obj:`float`, optional
+        Factor to extend vertical limits upward for stratigraphic sections.
+
     Returns
     -------
     xmin, xmax, ymin, ymax : :obj:`float`
@@ -775,40 +780,38 @@ def get_display_limits(VarInst, data=None):
         ``ax.set_xlim((xmin, xmax))``.
     """
     # # #  SectionVariables  # # #
-    if issubclass(type(VarInst), section.BaseSectionVariable):
+    if VarInst.slicetype == 'data_section':
         # #  DataSection  # #
-        if isinstance(VarInst, section.DataSectionVariable):
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                return np.min(VarInst._S), np.max(VarInst._S), \
-                    np.min(VarInst._Z), np.max(VarInst._Z)
-            elif data in VarInst._preserved_names:
-                VarInst._check_knows_stratigraphy()  # need to check explicitly
-                return np.min(VarInst._S), np.max(VarInst._S), \
-                    np.min(VarInst._Z), np.max(VarInst._Z)
-            elif data in VarInst._stratigraphy_names:
-                VarInst._check_knows_stratigraphy()  # need to check explicitly
-                _strata = np.copy(VarInst.strat_attr['strata'])
-                return np.min(VarInst._S), np.max(VarInst._S), \
-                    np.min(_strata), np.max(_strata) * 1.5
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
-
-        # #  StratigraphySection  # #
-        elif isinstance(VarInst, section.StratigraphySectionVariable):
-            data = data or VarInst._default_data
-            if data in VarInst._spacetime_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._preserved_names:
-                VarInst._check_knows_spacetime()  # always False
-            elif data in VarInst._stratigraphy_names:
-                return np.min(VarInst._S), np.max(VarInst._S), \
-                    np.min(VarInst._Z), np.max(VarInst._Z) * 1.5
-            else:
-                raise ValueError('Bad data argument: %s' % str(data))
-
+        data = data or 'spacetime'
+        _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+        if data in VarInst.strat._spacetime_names:
+            return np.min(_S), np.max(_S), \
+                np.min(_Z), np.max(_Z)
+        elif data in VarInst.strat._preserved_names:
+            VarInst.strat._check_knows_stratigraphy()  # need to check explicitly
+            return np.min(_S), np.max(_S), \
+                np.min(_Z), np.max(_Z)
+        elif data in VarInst.strat._stratigraphy_names:
+            VarInst.strat._check_knows_stratigraphy()  # need to check explicitly
+            _strata = np.copy(VarInst.strat.strat_attr['strata'])
+            return np.min(_S), np.max(_S), \
+                np.min(_strata), np.max(_strata) * factor
         else:
-            raise TypeError
+            raise ValueError('Bad data argument: %s' % str(data))
+
+    elif VarInst.slicetype == 'stratigraphy_section':
+        # #  StratigraphySection  # #
+        data = data or 'stratigraphy'
+        _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+        if data in VarInst.strat._spacetime_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._preserved_names:
+            VarInst.strat._check_knows_spacetime()  # always False
+        elif data in VarInst.strat._stratigraphy_names:
+            return np.min(_S), np.max(_S), \
+                np.min(_Z), np.max(_Z) * factor
+        else:
+            raise ValueError('Bad data argument: %s' % str(data))
 
     # # #  PlanformVariables  # # #
     elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
@@ -861,8 +864,8 @@ def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
     return coll.PatchCollection(pl, match_original=True)
 
 
-def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
-                                              show_strata=True,
+def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
+                                              ax=None, show_strata=True,
                                               label_strata=False):
     """1d elevation to stratigraphy.
 
@@ -887,12 +890,21 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
     ----------
     e : :obj:`ndarray`
         Elevation data as a 1D array.
+    
+    z : :obj:`ndarray`, optional
+        Vertical coordinates for stratigraphy, in meters. Optional, and
+        mutually exclusive with :obj:`dz` and :obj:`nz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
 
     dz : :obj:`float`, optional
-        Vertical grid resolution.
+        Vertical resolution of stratigraphy, in meters. Optional, and mutually
+        exclusive with :obj:`z` and :obj:`nz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
 
-    z : :obj:`ndarray`, optional
-        Vertical grid. Must specify ``dz=None`` to use this option.
+    nz : :obj:`int`, optional
+        Number of intervals for vertical coordinates of stratigraphy.
+        Optional, and mutually exclusive with :obj:`z` and :obj:`dz`,
+        see :obj:`_determine_strat_coordinates` for complete description.
 
     ax : :obj:`matplotlib.pyplot.axes`, optional
         Axes to plot into. A figure and axes is created, if not given.
@@ -914,7 +926,7 @@ def show_one_dimensional_trajectory_to_strata(e, dz=0.05, z=None, ax=None,
     t = np.arange(e.shape[0])  # x-axis time array
     t3 = np.expand_dims(t, axis=(1, 2))  # 3d time, for slicing
 
-    z = strat._determine_strat_coordinates(e, dz=dz, z=z)  # vert coordinates
+    z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
     s, p = strat._compute_elevation_to_preservation(e)  # strat, preservation
     sc, dc = strat._compute_preservation_to_cube(s, z)
     lst = np.argmin(s < s[-1])  # last elevation
@@ -1143,7 +1155,7 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
         elevation_data = golfcube['eta'][-1, :, :]
 
         fig, ax = plt.subplots()
-        dm.plot.aerial_view( elevation_data, ax=ax)
+        dm.plot.aerial_view(elevation_data, ax=ax)
         plt.show()
 
     """
@@ -1155,11 +1167,23 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
     n = kwargs.pop('n', 1)
     carto_cm, carto_norm = cartographic_colormap(H_SL=0, h=h, n=n)
 
+    # get the extent to plot
+    if isinstance(elevation_data, xr.core.dataarray.DataArray):
+        d0, d1 = elevation_data.dims
+        d0_arr, d1_arr = elevation_data[d0], elevation_data[d1]
+        _extent = [d1_arr[0],                  # dim1, 0
+                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
+                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
+                   d0_arr[0]]                  # dim0, 0
+    else:
+        _extent = [0, elevation_data.shape[1],
+                   elevation_data.shape[0], 0]
+
     # plot the data
     im = ax.imshow(
         elevation_data - datum,
-        origin='lower',
-        cmap=carto_cm, norm=carto_norm, **kwargs)
+        cmap=carto_cm, norm=carto_norm,
+        extent=_extent,**kwargs)
 
     cb = append_colorbar(im, ax, **colorbar_kw)
     if not ticks:
@@ -1223,7 +1247,7 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
 
         fig, ax = plt.subplots(1, 3, figsize=(8, 3))
         for axi in ax.ravel():
-            dm.plot.aerial_view( elevation_data, ax=axi)
+            dm.plot.aerial_view(elevation_data, ax=axi)
 
         dm.plot.overlay_sparse_array(
             sparse_data, ax=ax[0])  # default clip is (None, 90)
@@ -1249,6 +1273,18 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
     else:
         cmap = cmap
 
+    # get the extent to plot
+    if isinstance(sparse_array, xr.core.dataarray.DataArray):
+        d0, d1 = sparse_array.dims
+        d0_arr, d1_arr = sparse_array[d0], sparse_array[d1]
+        _extent = [d1_arr[0],                  # dim1, 0
+                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
+                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
+                   d0_arr[0]]                  # dim0, 0
+    else:
+        _extent = [0, sparse_array.shape[1],
+                   sparse_array.shape[0], 0]
+
     # process the clip fields
     if alpha_clip[0]:
         amin = np.nanpercentile(sparse_array, alpha_clip[0])
@@ -1271,6 +1307,7 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
     colors = cmap(colors)
     colors[..., -1] = alphas
 
-    im = ax.imshow(colors, origin='lower')
+    im = ax.imshow(
+        colors, extent=_extent)
 
     return im

@@ -7,27 +7,38 @@ import numpy as np
 import xarray as xr
 
 from deltametrics import io
-from deltametrics.sample_data import _get_rcm8_path, _get_landsat_path
+from deltametrics.sample_data import _get_rcm8_path, _get_golf_path, _get_landsat_path
 import utilities
 
 
 rcm8_path = _get_rcm8_path()
+golf_path = _get_golf_path()
 hdf_path = _get_landsat_path()
 
 
 def test_netcdf_io_init():
-    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    netcdf_io = io.NetCDFIO(golf_path, 'netcdf')
+    assert netcdf_io.type == 'netcdf'
+    assert len(netcdf_io._in_memory_data.keys()) == 0
+
+
+def test_netcdf_io_init_legacy():
+    # should raise two warnings
+    with pytest.warns(UserWarning, match=r'Coordinates for .*'):
+        netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    with pytest.warns(UserWarning, match=r'No associated .*'):
+        netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
     assert netcdf_io.type == 'netcdf'
     assert len(netcdf_io._in_memory_data.keys()) == 0
 
 
 def test_netcdf_io_keys():
-    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
-    assert len(netcdf_io.keys) == 11
+    netcdf_io = io.NetCDFIO(golf_path, 'netcdf')
+    assert len(netcdf_io.keys) > 3
 
 
 def test_netcdf_io_nomemory():
-    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    netcdf_io = io.NetCDFIO(golf_path, 'netcdf')
     dataset_size = sys.getsizeof(netcdf_io.dataset)
     inmemory_size = sys.getsizeof(netcdf_io._in_memory_data)
 
@@ -46,7 +57,7 @@ def test_netcdf_io_nomemory():
 
 @pytest.mark.xfail()
 def test_netcdf_io_intomemory_direct():
-    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    netcdf_io = io.NetCDFIO(golf_path, 'netcdf')
     dataset_size = sys.getsizeof(netcdf_io.dataset)
     inmemory_size = sys.getsizeof(netcdf_io._in_memory_data)
 
@@ -66,7 +77,7 @@ def test_netcdf_io_intomemory_direct():
 
 @pytest.mark.xfail()
 def test_netcdf_io_intomemory_read():
-    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    netcdf_io = io.NetCDFIO(golf_path, 'netcdf')
     dataset_size = sys.getsizeof(netcdf_io.dataset)
     inmemory_size = sys.getsizeof(netcdf_io._in_memory_data)
 
@@ -86,13 +97,15 @@ def test_netcdf_io_intomemory_read():
 
 
 def test_hdf5_io_init():
-    netcdf_io = io.NetCDFIO(hdf_path, 'hdf5')
+    with pytest.warns(UserWarning, match=r'No associated .*'):
+        netcdf_io = io.NetCDFIO(hdf_path, 'hdf5')
     assert netcdf_io.type == 'hdf5'
     assert len(netcdf_io._in_memory_data.keys()) == 0
 
 
 def test_hdf5_io_keys():
-    hdf5_io = io.NetCDFIO(hdf_path, 'hdf5')
+    with pytest.warns(UserWarning, match=r'No associated .*'):
+        hdf5_io = io.NetCDFIO(hdf_path, 'hdf5')
     assert len(hdf5_io.keys) == 7
 
 
@@ -103,7 +116,7 @@ def test_nofile():
 
 def test_empty_file(tmp_path):
     p = utilities.create_dummy_netcdf(tmp_path)
-    with pytest.warns(UserWarning):
+    with pytest.raises(NotImplementedError):
         io.NetCDFIO(p, 'netcdf')
 
 
@@ -114,7 +127,7 @@ def test_invalid_file(tmp_path):
 
 
 def test_readvar_intomemory():
-    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    netcdf_io = io.NetCDFIO(golf_path, 'netcdf')
     assert netcdf_io._in_memory_data == {}
 
     netcdf_io.read('eta')
@@ -122,7 +135,7 @@ def test_readvar_intomemory():
 
 
 def test_readvar_intomemory_error():
-    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    netcdf_io = io.NetCDFIO(golf_path, 'netcdf')
     assert netcdf_io._in_memory_data == {}
 
     with pytest.raises(KeyError):
@@ -131,5 +144,5 @@ def test_readvar_intomemory_error():
 
 def test_netcdf_no_metadata():
     # works fine, because there is no `connect` call in io init
-    netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
+    netcdf_io = io.NetCDFIO(golf_path, 'netcdf')
     assert len(netcdf_io._in_memory_data.keys()) == 0

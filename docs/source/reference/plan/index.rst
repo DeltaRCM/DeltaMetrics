@@ -14,22 +14,31 @@ Planform types
 
 .. currentmodule:: deltametrics.plan
 
+.. rubric:: Basic data Planform
+
+.. autosummary::
+    :toctree: ../../_autosummary
+
+    Planform
+
+.. rubric:: Specialty Planforms
+
 .. autosummary::
     :toctree: ../../_autosummary
 
     OpeningAnglePlanform
-		MorphologicalPlanform
+    MorphologicalPlanform
 
 Functions
 =========
 
 .. autosummary::
-	:toctree: ../../_autosummary
+    :toctree: ../../_autosummary
 
-	compute_shoreline_roughness
-	compute_shoreline_length
-  compute_shoreline_distance
-  compute_channel_width
-	compute_channel_depth
-	shaw_opening_angle_method
-	morphological_closing_method
+    compute_shoreline_roughness
+    compute_shoreline_length
+    compute_shoreline_distance
+    compute_channel_width
+    compute_channel_depth
+    shaw_opening_angle_method
+    morphological_closing_method

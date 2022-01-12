@@ -3,6 +3,7 @@ import pytest
 import sys
 import os
 import numpy as np
+import xarray as xr
 import matplotlib.pyplot as plt
 
 import unittest.mock as mock
@@ -250,7 +251,7 @@ class TestShorelineMask:
         assert shoremask.mask_type == 'shoreline'
         assert shoremask.contour_threshold > 0
         assert shoremask._mask.dtype == bool
-        assert isinstance(shoremask._mask, np.ndarray)
+        assert isinstance(shoremask._mask, xr.core.dataarray.DataArray)
 
     @pytest.mark.xfail(raises=NotImplementedError, strict=True,
                        reason='Have not implemented pathway.')
@@ -845,10 +846,10 @@ class TestLandMask:
 
         # some comparisons to check that things are similar (loose checks!)
         assert mfem.shape == self._ElevationMask.shape
-        assert mfem._mask.sum() == pytest.approx(landmask._mask.sum(), rel=1)
-        assert (mfem._mask.sum()/mfem._mask.size == 
-                pytest.approx(landmask._mask.sum()/landmask._mask.size, abs=1))
-        assert mfem._mask.sum() > self._ElevationMask._mask.sum()
+        assert float(mfem._mask.sum()) == pytest.approx(float(landmask._mask.sum()), rel=1)
+        assert (float(mfem._mask.sum() / mfem._mask.size) == 
+                pytest.approx(float(landmask._mask.sum()/landmask._mask.size), abs=1))
+        assert float(mfem._mask.sum()) > float(self._ElevationMask._mask.sum())
 
     def test_method_MPM(self):
         mfem = mask.LandMask(golfcube['eta'][-1, :, :],
@@ -1189,6 +1190,7 @@ class TestChannelMask:
 
         assert np.all(channelmask_comp._mask == mfem2._mask)
         assert np.all(mfem._mask == mfem2._mask)
+        assert isinstance(channelmask_comp._mask, xr.core.dataarray.DataArray)
 
     def test_static_from_masks_LandMask_FlowMask(self):
         channelmask_comp = mask.ChannelMask(
@@ -1646,14 +1648,14 @@ class TestGeometricMask:
         gmsk = mask.GeometricMask(arr)
         gmsk.circular(1, 2, origin=(3, 3))
         assert gmsk._mask[3, 3] == 0
-        assert np.all(gmsk._mask == np.array([[[0., 0., 0., 0., 0., 0., 0.],
-                                               [0., 0., 0., 1., 0., 0., 0.],
-                                               [0., 0., 1., 1., 1., 0., 0.],
-                                               [0., 1., 1., 0., 1., 1., 0.],
-                                               [0., 0., 1., 1., 1., 0., 0.],
-                                               [0., 0., 0., 1., 0., 0., 0.],
-                                               [0., 0., 0., 0., 0., 0., 0.]]])
-                      )
+        assert np.all(gmsk._mask.values == 
+                      np.array([[[0., 0., 0., 0., 0., 0., 0.],
+                                 [0., 0., 0., 1., 0., 0., 0.],
+                                 [0., 0., 1., 1., 1., 0., 0.],
+                                 [0., 1., 1., 0., 1., 1., 0.],
+                                 [0., 0., 1., 1., 1., 0., 0.],
+                                 [0., 0., 0., 1., 0., 0., 0.],
+                                 [0., 0., 0., 0., 0., 0., 0.]]]))
         # check that the Mask origin is different
         #  from the one used in method (3, 3)
         assert gmsk.xc == 0
