@@ -802,9 +802,55 @@ class OpeningAnglePlanform(SpecialtyPlanform):
 class MorphologicalPlanform(SpecialtyPlanform):
     """Planform for handling the morphological method.
 
-    .. todo::
+    This `Planform` (called `MP` for short) is a wrapper/handler for the input
+    and output from the :func:`morphological_closing_method`. The `MP` is a
+    convenient way to manage extraction of a shoreline or a delta topset area.
 
-        Expand docstring
+    Moreoever, the `MP` can be used as the input for :doc:`many types of Mask
+    </reference/mask/index>` objects, so it is often computationally
+    advantageous to compute this `Planform` once, and then use it to create
+    many different types of masks.
+
+    The `MP` provides an alternative approach to shoreline and topset area
+    delineation to the `OAM` method. Depending on the input parameters chosen,
+    this method can be faster than the `OAM` method, however unlike the `OAM`
+    method, the accuracy and quality of the extracted planform is sensitive to
+    the parameter values and scales inherent in the supplied inputs.
+
+    .. note::
+
+        It is recommended to try several parameters using a sample slice of
+        data before computing the `MP` for an entire dataset, as choice of
+        input parameters will affect the speed and quality of results!
+
+    .. plot::
+        :context: reset
+        :include-source:
+
+        >>> golfcube = dm.sample_data.golf()
+        >>> EM = dm.mask.ElevationMask(
+        ...     golfcube['eta'][-1, :, :],
+        ...     elevation_threshold=0)
+
+        >>> MP = dm.plan.MorphologicalPlanform(EM, 10)
+
+    The MP stores information computed from the
+    :func:`morphological_closing_method`. See the property of the MP,
+    the computed :obj:`mean_image` below.
+
+    .. plot::
+        :context:
+
+        fig, ax = plt.subplots(1, 2, figsize=(7.5, 4))
+        golfcube.quick_show('eta', idx=-1, ax=ax[0])
+        im1 = ax[1].imshow(MP.mean_image,
+                           cmap='cividis')
+        dm.plot.append_colorbar(im1, ax=ax[1])
+        ax[0].set_title('input elevation data')
+        ax[1].set_title('MP.mean_image')
+        for i in range(1, 2):
+            ax[i].set_xticks([])
+            ax[i].set_yticks([])
 
     """
 
@@ -859,20 +905,42 @@ class MorphologicalPlanform(SpecialtyPlanform):
         return MorphologicalPlanform(UnknownMask, max_disk, **kwargs)
 
     def __init__(self, *args, **kwargs):
-        """Initialize the MP.
+        """Initialize the MorphologicalPlanform (MP).
 
-        Expects first argument to be either an ElevationMask, or an array that
-        represents some sort of elevation mask or land area for the delta.
+        Initializing the MP requires at least a binary input mask representing
+        the elevation or land area of the system. A secondary input setting
+        the maximum disk size for morphological operations can be provided.
 
-        Second argument should be the inlet width (# pixels), if a cube is
-        connected then this will be pulled from the cube directly.
+        .. warning::
 
-        Method should work if a landmask is provided too, the morphological
-        operations may just do less.
+            At this time two arguments are needed! Connections between the
+            planform object and the cube are not yet implemented.
 
-        .. todo::
+        Parameters
+        ----------
+        *args
+            The first argument is expected to be an elevation mask, or an
+            array which represents an elevation mask or land area. The
+            expectation is that this input is the binary representation of
+            the area from which you wish to identify the MP.
 
-            Improve docstring.
+            The second argument is the maximum disk size for morphological
+            operations in pixels. If a cube is connected and this argument is
+            not supplied, the inlet width will be pulled from the cube's
+            metadata and used to set this parameter.
+
+        **kwargs
+            Current supported key-word argument is 'allow_empty' which is a
+            boolean argument that if True, allows the MP to be initialized with
+            no other arguments supplied.
+
+        .. note::
+
+            Supplying elevation data or nonbinary data in general as the first
+            argument to the MP will **not** result in an error, however the
+            array will be coerced to be binary when morphological operations
+            are performed. Therefore results when inputting non-binary data
+            may not be what you expect.
 
         """
         super().__init__('morphological method', *args)
