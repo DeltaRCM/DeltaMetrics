@@ -440,10 +440,14 @@ class VariableSet(object):
     @sandfrac.setter
     def sandfrac(self, var):
         if not var:
-            sand_frac = colors.ListedColormap(
-                ['saddlebrown', 'sienna', 'goldenrod', 'gold'])
+            ends_str = ['saddlebrown',  'gold']  # define end points as strs
+            endpts_colors = [matplotlib.colors.to_rgb(col) for col in ends_str]
+            endpts_colors = np.column_stack(  # interpolate 64 between end pts
+                [np.linspace(endpts_colors[0][i], endpts_colors[1][i], num=64)
+                 for i in range(3)]  # for each column in RGB
+                 )
+            sand_frac = matplotlib.colors.ListedColormap(endpts_colors)
             sand_frac.set_under('saddlebrown')
-            bn = colors.BoundaryNorm([1e-6, 1], sand_frac.N)
             self._sandfrac = VariableInfo('sandfrac',
                                           cmap=sand_frac,
                                           norm=None, vmin=0,
