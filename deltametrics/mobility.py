@@ -231,7 +231,12 @@ def calculate_channel_decay(chmap, landmap,
         chmap, basevalues, basevalues_idx, window, window_idx, landmap)
 
     # initialize dry fraction array
-    dryfrac = np.zeros((len(basevalues), time_window))
+    dims = ('base', 'time')  # base and time-lag dimensions
+    coords = {'base': np.arange(len(basevalues)),
+              'time': chmap.time[:time_window].values}
+    dryfrac = xr.DataArray(
+        data=np.zeros((len(basevalues), time_window)),
+        coords=coords, dims=dims)
 
     # loop through basevalues
     for i in range(0, len(basevalues)):
@@ -301,9 +306,14 @@ def calculate_planform_overlap(chmap, landmap,
         chmap, basevalues, basevalues_idx, window, window_idx, landmap)
 
     # initialize D, phi and Ophi
-    D = np.zeros((len(basevalues), time_window))
-    phi = np.zeros_like(D)
-    Ophi = np.zeros_like(D)
+    dims = ('base', 'time')  # base and time-lag dimensions
+    coords = {'base': np.arange(len(basevalues)),
+              'time': chmap.time[:time_window].values}
+    D = xr.DataArray(
+        data=np.zeros((len(basevalues), time_window)),
+        coords=coords, dims=dims)
+    phi = xr.zeros_like(D)
+    Ophi = xr.zeros_like(D)
 
     # loop through the base maps
     for j in range(0, len(basevalues)):
@@ -371,8 +381,13 @@ def calculate_reworking_fraction(chmap, landmap,
         chmap, basevalues, basevalues_idx, window, window_idx, landmap)
 
     # initialize unreworked pixels (Nbt) and reworked fraction (fr)
-    Nbt = np.zeros((len(basevalues), time_window))
-    fr = np.zeros_like(Nbt)
+    dims = ('base', 'time')  # base and time-lag dimensions
+    coords = {'base': np.arange(len(basevalues)),
+              'time': chmap.time[:time_window].values}
+    Nbt = xr.DataArray(
+        data=np.zeros((len(basevalues), time_window)),
+        coords=coords, dims=dims)
+    fr = xr.zeros_like(Nbt)
 
     # loop through the base maps
     for j in range(0, len(basevalues)):
@@ -449,9 +464,14 @@ def calculate_channel_abandonment(chmap, basevalues=None, basevalues_idx=None,
     chmap, landmap, basevalues, time_window = check_inputs(
         chmap, basevalues, basevalues_idx, window, window_idx)
     # initialize values
-    PwetA = np.zeros((len(basevalues), time_window))
-    chA_base = np.zeros_like(chmap[0, :, :])
-    chA_step = np.zeros_like(chmap[0, :, :])
+    dims = ('base', 'time')  # base and time-lag dimensions
+    coords = {'base': np.arange(len(basevalues)),
+              'time': chmap.time[:time_window].values}
+    PwetA = xr.DataArray(
+        data=np.zeros((len(basevalues), time_window)),
+        coords=coords, dims=dims)
+    chA_base = xr.zeros_like(chmap[0, :, :])
+    chA_step = xr.zeros_like(chmap[0, :, :])
 
     # loop through the basevalues
     for i in range(0, len(basevalues)):
