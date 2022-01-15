@@ -123,8 +123,8 @@ time_window = 5
 
 def test_linear_fit():
     """Test linear curve fitting."""
-    ch_abandon = mob.calculate_channel_abandonment(chmap, basevalue,
-                                                   time_window)
+    ch_abandon = mob.calculate_channel_abandonment(
+        chmap, basevalues_idx=basevalue, window_idx=time_window)
     yfit, popts, cov, err = utils.curve_fit(ch_abandon, fit='linear')
     assert pytest.approx(yfit == np.array([4.76315477e-24, 2.50000000e-01,
                                            5.00000000e-01, 7.50000000e-01,
@@ -137,8 +137,8 @@ def test_linear_fit():
 
 def test_harmonic_fit():
     """Test harmonic curve fitting."""
-    ch_abandon = mob.calculate_channel_abandonment(chmap, basevalue,
-                                                   time_window)
+    ch_abandon = mob.calculate_channel_abandonment(
+        chmap, basevalues_idx=basevalue, window_idx=time_window)
     yfit, popts, cov, err = utils.curve_fit(ch_abandon, fit='harmonic')
     assert pytest.approx(yfit == np.array([-0.25986438, 0.41294455,
                                            0.11505591, 0.06683947,
@@ -151,8 +151,8 @@ def test_harmonic_fit():
 
 def test_invalid_fit():
     """Test invalid fit parameter."""
-    ch_abandon = mob.calculate_channel_abandonment(chmap, basevalue,
-                                                   time_window)
+    ch_abandon = mob.calculate_channel_abandonment(
+        chmap, basevalues_idx=basevalue, window_idx=time_window)
     with pytest.raises(ValueError):
         utils.curve_fit(ch_abandon, fit='invalid')
 
