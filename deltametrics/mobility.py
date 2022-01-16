@@ -117,24 +117,17 @@ def check_inputs(chmap, basevalues=None, basevalues_idx=None, window=None,
     #     raise ValueError('chmap was not binary')
 
     # check basevalues and time_window types
-    if (basevalues is not None) and \
-      (isinstance(basevalues, list) is False) and \
-      (isinstance(basevalues, int) is False) and \
-      (isinstance(basevalues, float) is False):
+    if (basevalues is not None):
         try:
-            basevalues = list(basevalues)
+            baselist = list(basevalues)
             # convert to indices of the time dimension
-            basevalues = [
-                out_maps['chmap'].time[
-                    np.abs(out_maps['chmap'].time - i).argmin()]
-                for i in basevalues]
+            basevalues = [np.argmin(
+                np.abs(out_maps['chmap'].time.data - i))
+                for i in baselist]
         except Exception:
             raise TypeError('basevalues was not a list or list-able obj.')
 
-    if (basevalues_idx is not None) and \
-      (isinstance(basevalues_idx, list) is False) and \
-      (isinstance(basevalues_idx, int) is False) and \
-      (isinstance(basevalues_idx, float) is False):
+    if (basevalues_idx is not None):
         try:
             basevalues_idx = list(basevalues_idx)
         except Exception:
@@ -157,8 +150,9 @@ def check_inputs(chmap, basevalues=None, basevalues_idx=None, window=None,
         raise TypeError('Input window type was not an integer or float.')
     elif (window is not None):
         # convert to index of the time dimension
-        window = out_maps['chmap'].time[
-            np.abs(out_maps['chmap'].time - window).argmin()]
+        _basetime = np.min(out_maps['chmap'].time.data)  # baseline time
+        _reltime = out_maps['chmap'].time.data - _basetime  # relative time
+        window = np.argmin(np.abs(_reltime - window)) + 1
 
     if (window_idx is not None) and \
       (isinstance(window_idx, int) is False) and \
@@ -204,19 +198,29 @@ def calculate_channel_decay(chmap, landmap,
 
     Parameters
     ----------
-    chmap : ndarray
-        A t-x-y shaped array with binary channel maps.
+    chmap : list, xarray.DataArray, numpy.ndarray
+        Either a list of 2-D deltametrics.mask, xarray.DataArray, or
+        numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
+        with channel mask values.
 
-    landmap : ndarray
-        A t-x-y shaped array with binary land maps. Or an x-y shaped array
-        with the binary region representing the fluvial surface over which
-        the mobility metric should be computed.
+    landmap : list, xarray.DataArray, numpy.ndarray
+        Either a list of 2-D deltametrics.mask, xarray.DataArray, or
+        numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
+        with land mask values.
 
-    basevalues : list
-        List of t indices to use as the base channel maps.
+    basevalues : list, int, float, optional
+        List of time values to use as the base channel map. (or single value)
 
-    time_window : int
-        Number of time slices (t indices) to use as the time lag
+    basevalues_idx : list, optional
+        List of time indices to use as the base channel map. (or single value)
+
+    window : int, float, optional
+        Duration of time to use as the time lag (aka how far from the basemap
+        will be analyzed).
+
+    window_idx : int, float, optional
+        Duration of time in terms of indices (# of save states) to use as the
+        time lag.
 
     Returns
     -------
@@ -278,19 +282,29 @@ def calculate_planform_overlap(chmap, landmap,
 
     Parameters
     ----------
-    chmap : ndarray
-        A t-x-y shaped array with binary channel maps
+    chmap : list, xarray.DataArray, numpy.ndarray
+        Either a list of 2-D deltametrics.mask, xarray.DataArray, or
+        numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
+        with channel mask values.
 
-    landmap : ndarray
-        A t-x-y shaped array with binary land maps. Or an x-y shaped array
-        with the binary region representing the fluvial surface over which
-        the mobility metric should be computed.
+    landmap : list, xarray.DataArray, numpy.ndarray
+        Either a list of 2-D deltametrics.mask, xarray.DataArray, or
+        numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
+        with land mask values.
 
-    basevalues : list
-        A list of values (t indices) to use for the base channel maps
+    basevalues : list, int, float, optional
+        List of time values to use as the base channel map. (or single value)
 
-    time_window : int
-        Number of time slices (t values) to use for the transient maps
+    basevalues_idx : list, optional
+        List of time indices to use as the base channel map. (or single value)
+
+    window : int, float, optional
+        Duration of time to use as the time lag (aka how far from the basemap
+        will be analyzed).
+
+    window_idx : int, float, optional
+        Duration of time in terms of indices (# of save states) to use as the
+        time lag.
 
     Returns
     -------
@@ -353,19 +367,29 @@ def calculate_reworking_fraction(chmap, landmap,
 
     Parameters
     ----------
-    chmap : ndarray
-        A t-x-y shaped array with binary channel maps
+    chmap : list, xarray.DataArray, numpy.ndarray
+        Either a list of 2-D deltametrics.mask, xarray.DataArray, or
+        numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
+        with channel mask values.
 
-    landmap : ndarray
-        A t-x-y shaped array with binary land maps. Or an x-y shaped array
-        with the binary region representing the fluvial surface over which
-        the mobility metric should be computed.
+    landmap : list, xarray.DataArray, numpy.ndarray
+        Either a list of 2-D deltametrics.mask, xarray.DataArray, or
+        numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
+        with land mask values.
 
-    basevalues : list
-        A list of values (t indices) to use for the base channel maps
+    basevalues : list, int, float, optional
+        List of time values to use as the base channel map. (or single value)
 
-    time_window : int
-        Number of time slices (t values) to use for the transient maps
+    basevalues_idx : list, optional
+        List of time indices to use as the base channel map. (or single value)
+
+    window : int, float, optional
+        Duration of time to use as the time lag (aka how far from the basemap
+        will be analyzed).
+
+    window_idx : int, float, optional
+        Duration of time in terms of indices (# of save states) to use as the
+        time lag.
 
     Returns
     -------
@@ -442,14 +466,24 @@ def calculate_channel_abandonment(chmap, basevalues=None, basevalues_idx=None,
 
     Parameters
     ----------
-    chmap : ndarray
-        A t-x-y shaped array with binary channel maps
+    chmap : list, xarray.DataArray, numpy.ndarray
+        Either a list of 2-D deltametrics.mask, xarray.DataArray, or
+        numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
+        with channel mask values.
 
-    basevalues : list
-        A list of values (t indices) to use for the base channel maps
+    basevalues : list, int, float, optional
+        List of time values to use as the base channel map. (or single value)
 
-    time_window : int
-        Number of time slices (t values) to use for the transient maps
+    basevalues_idx : list, optional
+        List of time indices to use as the base channel map. (or single value)
+
+    window : int, float, optional
+        Duration of time to use as the time lag (aka how far from the basemap
+        will be analyzed).
+
+    window_idx : int, float, optional
+        Duration of time in terms of indices (# of save states) to use as the
+        time lag.
 
     Returns
     -------
@@ -511,6 +545,27 @@ def channel_presence(chmap):
     -------
     channel_presence : ndarray
         A x-y shaped array with the normalized channel presence values.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        >>> golfcube = dm.sample_data.golf()
+        >>> (x, y) = np.shape(golfcube['eta'][-1, ...])
+        >>> # calculate channel masks/presence over final 5 timesteps
+        >>> chmap = np.zeros((5, x, y))  # initialize channel map
+        >>> for i in np.arange(-5, 0):
+        ...     chmap[i, ...] = dm.mask.ChannelMask(
+        ...         golfcube['eta'][i, ...], golfcube['velocity'][i, ...],
+        ...         elevation_threshold=0, flow_threshold=0).mask
+        >>>
+        >>> fig, ax = plt.subplots(1, 2)
+        >>> golfcube.quick_show('eta', ax=ax[0])  # final delta
+        >>> p = ax[1].imshow(dm.mobility.channel_presence(chmap), cmap='Blues')
+        >>> dm.plot.append_colorbar(p, ax[1], label='Channelized Time')
+        >>> plt.show()
 
     """
     if isinstance(chmap, mask.ChannelMask) is True:
