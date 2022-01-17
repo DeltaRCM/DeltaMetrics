@@ -13,6 +13,8 @@ to the results of these functions is provided as well.
 
 The functions are defined in ``deltametrics.mobility``.
 
+.. include:: mobilityex.rst
+
 
 .. mobility functions
 .. ===================
