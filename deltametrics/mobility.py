@@ -87,7 +87,7 @@ def check_inputs(chmap, basevalues=None, basevalues_idx=None, window=None,
             for j in range(1, len(_converted)):
                 # stack them up along the time array into a 3-D dataarray
                 out_maps[key] = xr.concat(
-                    (out_maps[key], _converted[j]), dim='time')
+                    (out_maps[key], _converted[j]), dim='time').astype(float)
 
         elif (isinstance(inmap, np.ndarray) is True) and \
           (len(inmap.shape) == 3) and (_skip is False):
@@ -95,7 +95,9 @@ def check_inputs(chmap, basevalues=None, basevalues_idx=None, window=None,
             coords = {'time': np.arange(inmap.shape[0]),
                       'x': np.arange(inmap.shape[1]),
                       'y': np.arange(inmap.shape[2])}
-            out_maps[key] = xr.DataArray(data=inmap, coords=coords, dims=dims)
+            out_maps[key] = \
+                xr.DataArray(
+                    data=inmap, coords=coords, dims=dims).astype(float)
 
         elif (issubclass(type(inmap), mask.BaseMask) is True) and \
           (_skip is False):
@@ -105,7 +107,7 @@ def check_inputs(chmap, basevalues=None, basevalues_idx=None, window=None,
 
         elif (isinstance(inmap, xr.core.dataarray.DataArray) is True) and \
           (len(inmap.shape) == 3) and (_skip is False):
-            out_maps[key] = inmap
+            out_maps[key] = inmap.astype(float)
 
         elif _skip is False:
             raise TypeError('Input mask data type or format not understood.')
