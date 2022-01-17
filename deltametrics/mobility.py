@@ -74,7 +74,7 @@ def check_inputs(chmap, basevalues=None, basevalues_idx=None, window=None,
                     data=np.reshape(inmap[i],
                                     (1, inmap[i].shape[0], inmap[i].shape[1])),
                     coords=coords, dims=dims)
-                              for i in inmap]
+                              for i in range(len(inmap))]
             elif issubclass(type(inmap[0]), mask.BaseMask) is True:
                 _converted = [i.mask for i in inmap]
             elif isinstance(inmap[0], xr.DataArray) is True:
@@ -152,7 +152,7 @@ def check_inputs(chmap, basevalues=None, basevalues_idx=None, window=None,
         # convert to index of the time dimension
         _basetime = np.min(out_maps['chmap'].time.data)  # baseline time
         _reltime = out_maps['chmap'].time.data - _basetime  # relative time
-        window = np.argmin(np.abs(_reltime - window)) + 1
+        window = int(np.argmin(np.abs(_reltime - window)) + 1)
 
     if (window_idx is not None) and \
       (isinstance(window_idx, int) is False) and \
@@ -181,8 +181,11 @@ def check_inputs(chmap, basevalues=None, basevalues_idx=None, window=None,
     if Kmax > out_maps['chmap'].shape[0]:
         raise ValueError('Largest basevalue + time_window exceeds max time.')
 
+    # collect name of the first dimenstion (should be time assuming t-x-y)
+    dim0 = out_maps['chmap'].dims[0]
+
     # return the sanitized variables
-    return out_maps['chmap'], out_maps['landmap'], base_out, win_out
+    return out_maps['chmap'], out_maps['landmap'], base_out, win_out, dim0
 
 
 def calculate_channel_decay(chmap, landmap,
@@ -231,13 +234,13 @@ def calculate_channel_decay(chmap, landmap,
 
     """
     # sanitize the inputs first
-    chmap, landmap, basevalues, time_window = check_inputs(
+    chmap, landmap, basevalues, time_window, dim0 = check_inputs(
         chmap, basevalues, basevalues_idx, window, window_idx, landmap)
 
     # initialize dry fraction array
-    dims = ('base', 'time')  # base and time-lag dimensions
+    dims = ('base', dim0)  # base and time-lag dimensions
     coords = {'base': np.arange(len(basevalues)),
-              'time': chmap.time[:time_window].values}
+              dim0: chmap[dim0][:time_window].values}
     dryfrac = xr.DataArray(
         data=np.zeros((len(basevalues), time_window)),
         coords=coords, dims=dims)
@@ -316,13 +319,13 @@ def calculate_planform_overlap(chmap, landmap,
 
     """
     # sanitize the inputs first
-    chmap, landmap, basevalues, time_window = check_inputs(
+    chmap, landmap, basevalues, time_window, dim0 = check_inputs(
         chmap, basevalues, basevalues_idx, window, window_idx, landmap)
 
     # initialize D, phi and Ophi
-    dims = ('base', 'time')  # base and time-lag dimensions
+    dims = ('base', dim0)  # base and time-lag dimensions
     coords = {'base': np.arange(len(basevalues)),
-              'time': chmap.time[:time_window].values}
+              dim0: chmap[dim0][:time_window].values}
     D = xr.DataArray(
         data=np.zeros((len(basevalues), time_window)),
         coords=coords, dims=dims)
@@ -401,13 +404,13 @@ def calculate_reworking_fraction(chmap, landmap,
 
     """
     # sanitize the inputs first
-    chmap, landmap, basevalues, time_window = check_inputs(
+    chmap, landmap, basevalues, time_window, dim0 = check_inputs(
         chmap, basevalues, basevalues_idx, window, window_idx, landmap)
 
     # initialize unreworked pixels (Nbt) and reworked fraction (fr)
-    dims = ('base', 'time')  # base and time-lag dimensions
+    dims = ('base', dim0)  # base and time-lag dimensions
     coords = {'base': np.arange(len(basevalues)),
-              'time': chmap.time[:time_window].values}
+              dim0: chmap[dim0][:time_window].values}
     Nbt = xr.DataArray(
         data=np.zeros((len(basevalues), time_window)),
         coords=coords, dims=dims)
@@ -495,12 +498,12 @@ def calculate_channel_abandonment(chmap, basevalues=None, basevalues_idx=None,
 
     """
     # sanitize the inputs first
-    chmap, landmap, basevalues, time_window = check_inputs(
+    chmap, landmap, basevalues, time_window, dim0 = check_inputs(
         chmap, basevalues, basevalues_idx, window, window_idx)
     # initialize values
-    dims = ('base', 'time')  # base and time-lag dimensions
+    dims = ('base', dim0)  # base and time-lag dimensions
     coords = {'base': np.arange(len(basevalues)),
-              'time': chmap.time[:time_window].values}
+              dim0: chmap[dim0][:time_window].values}
     PwetA = xr.DataArray(
         data=np.zeros((len(basevalues), time_window)),
         coords=coords, dims=dims)
@@ -568,13 +571,45 @@ def channel_presence(chmap):
         >>> plt.show()
 
     """
+    tmp_chans = None  # instantiate
     if isinstance(chmap, mask.ChannelMask) is True:
         chans = chmap._mask
     elif isinstance(chmap, np.ndarray) is True:
-        chans = chmap
+        tmp_chans = chmap
     elif isinstance(chmap, xr.DataArray) is True:
         chans = chmap
+    elif isinstance(chmap, list) is True:
+        # convert to numpy.ndarray if possible
+        if (isinstance(chmap[0], np.ndarray) is True) \
+          or (isinstance(chmap[0], xr.DataArray) is True):
+            # init empty array
+            tmp_chans = np.zeros(
+                (len(chmap), chmap[0].squeeze().shape[0],
+                 chmap[0].squeeze().shape[1]))
+            # populate it
+            for i in range(len(chmap)):
+                if isinstance(chmap[0], xr.DataArray) is True:
+                    tmp_chans[i, ...] = chmap[i].data.squeeze()
+                else:
+                    tmp_chans[i, ...] = chmap[i].squeeze()
+        elif issubclass(type(chmap[0]), mask.BaseMask) is True:
+            tmp_chans = [i.mask for i in chmap]
+            # convert list to ndarray
+            chans = np.zeros(
+                (len(tmp_chans), tmp_chans[0].shape[1], tmp_chans[0].shape[2]))
+            for i in range(chans.shape[0]):
+                chans[i, ...] = tmp_chans[i]
+        else:
+            raise ValueError('Invalid values in the supplied list.')
     else:
         raise TypeError('chmap data type not understood.')
+    # if tmp_chans is a numpy.ndarray, dimensions are not known
+    if isinstance(tmp_chans, np.ndarray):
+        dims = ('time', 'x', 'y')  # assumes an ultimate t-x-y shape
+        coords = {'time': np.arange(tmp_chans.shape[0]),
+                  'x': np.arange(tmp_chans.shape[1]),
+                  'y': np.arange(tmp_chans.shape[2])}
+        chans = xr.DataArray(data=tmp_chans, coords=coords, dims=dims)
+    # calculation of channel presence is actually very simple
     channel_presence = np.sum(chans, axis=0) / chans.shape[0]
     return channel_presence

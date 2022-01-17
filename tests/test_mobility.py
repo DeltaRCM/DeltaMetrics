@@ -28,14 +28,44 @@ for i in range(20, 23):
         dm.mask.LandMask(rcm8cube['eta'][i, :, :],
                          elevation_threshold=0))
 
+# make them into xarrays (list of xarrays)
+dims = ('time', 'x', 'y')  # assumes an ultimate t-x-y shape
+coords = {'time': np.arange(1),
+          'x': np.arange(chmask[0].mask.shape[0]),
+          'y': np.arange(chmask[0].mask.shape[1])}
+# channel masks
+ch_xarr = [xr.DataArray(
+    data=np.reshape(chmask[i].mask.data,
+                    (1, chmask[i].mask.shape[0], chmask[i].mask.shape[1])),
+    coords=coords, dims=dims)
+            for i in range(len(chmask))]
+# land masks
+land_xarr = [xr.DataArray(
+    data=np.reshape(landmask[i].mask.data,
+                    (1, landmask[i].mask.shape[0], landmask[i].mask.shape[1])),
+    coords=coords, dims=dims)
+            for i in range(len(landmask))]
+
+# convert them to ndarrays
+ch_arr = np.zeros((3, chmask[0].shape[0], chmask[0].shape[1]))
+land_arr = np.zeros((3, chmask[0].shape[0], chmask[0].shape[1]))
+ch_arr_list = []
+land_arr_list = []
+for i in range(3):
+    ch_arr[i, ...] = ch_xarr[i].data
+    land_arr[i, ...] = land_xarr[i].data
+    ch_arr_list.append(ch_xarr[i].data.squeeze())
+    land_arr_list.append(land_xarr[i].data.squeeze())
+
 
 def test_check_input_list_of_mask():
     """Test that a deltametrics.mask.BaseMask type can be used."""
     # call checker function
     assert isinstance(chmask, list)
-    chmap, landmap, basevalues, time_window = mob.check_inputs(
+    chmap, landmap, basevalues, time_window, dim0 = mob.check_inputs(
         chmask, basevalues_idx=[0], window_idx=1, landmap=landmask)
     # assert types
+    assert dim0 == 'time'
     assert isinstance(chmap, xr.DataArray) is True
     assert isinstance(landmap, xr.DataArray) is True
     assert len(np.shape(chmap)) == 3
@@ -48,18 +78,60 @@ def test_check_input_single_mask_error():
     """Test that a deltametrics.mask.BaseMask type can be used."""
     # call checker function
     with pytest.raises(TypeError, match=r'Cannot input a Mask .*'):
-        chmap, landmap, basevalues, time_window = mob.check_inputs(
-            chmask[0], [0], 1, landmask[0])
+        chmap, landmap, basevalues, time_window, dim0 = mob.check_inputs(
+            chmask[0], basevalues_idx=[0], window_idx=1,
+            landmap=landmask[0])
 
 
-@pytest.mark.xfail()
 def test_check_xarrays():
     """Test that an xarray.DataArray can be used as an input."""
     # call checker function
-    chmap, landmap, basevalues, time_window = mob.check_inputs(ch_xarr,
-                                                               [0], 1,
-                                                               land_xarr)
+    chmap, landmap, basevalues, time_window, dim0 = mob.check_inputs(
+        ch_xarr, basevalues_idx=[0], window_idx=1,
+        landmap=land_xarr)
     # assert types
+    assert dim0 == 'time'
+    assert isinstance(chmap, xr.DataArray) is True
+    assert isinstance(landmap, xr.DataArray) is True
+    assert isinstance(basevalues, list) is True
+    assert isinstance(time_window, int) is True
+
+
+def test_check_list_ndarrays():
+    """Test that a list of numpy.ndarray can be used as an input."""
+    # call checker function
+    chmap, landmap, basevalues, time_window, dim0 = mob.check_inputs(
+        ch_arr_list, basevalues_idx=[0], window_idx=1,
+        landmap=land_arr_list)
+    # assert types
+    assert dim0 == 'time'
+    assert isinstance(chmap, xr.DataArray) is True
+    assert isinstance(landmap, xr.DataArray) is True
+    assert isinstance(basevalues, list) is True
+    assert isinstance(time_window, int) is True
+
+
+def test_check_ndarrays():
+    """Test that a numpy.ndarray can be used as an input."""
+    # call checker function
+    chmap, landmap, basevalues, time_window, dim0 = mob.check_inputs(
+        ch_arr, basevalues_idx=[0], window_idx=1,
+        landmap=land_arr)
+    # assert types
+    assert dim0 == 'time'
+    assert isinstance(chmap, xr.DataArray) is True
+    assert isinstance(landmap, xr.DataArray) is True
+    assert isinstance(basevalues, list) is True
+    assert isinstance(time_window, int) is True
+
+
+def test_check_basevalues_window():
+    """Test that basevalues and window inputs work."""
+    # call checker function
+    chmap, landmap, basevalues, time_window, dim0 = mob.check_inputs(
+        ch_arr, basevalues=[0], window=1, landmap=land_arr)
+    # assert types
+    assert dim0 == 'time'
     assert isinstance(chmap, xr.DataArray) is True
     assert isinstance(landmap, xr.DataArray) is True
     assert isinstance(basevalues, list) is True
@@ -69,9 +141,10 @@ def test_check_xarrays():
 def test_check_input_nolandmask():
     """Test that the check input can run without a landmap."""
     # call checker function
-    chmap, landmap, basevalues, time_window = mob.check_inputs(
+    chmap, landmap, basevalues, time_window, dim0 = mob.check_inputs(
         chmask, basevalues_idx=[0], window_idx=1)
     # assert types
+    assert dim0 == 'time'
     assert isinstance(chmap, xr.DataArray) is True
     assert landmap is None
     assert isinstance(basevalues, list) is True
@@ -114,10 +187,40 @@ def test_check_input_invalid_landmap():
                          landmap='invalid')
 
 
+def test_check_input_invalid_basevalues():
+    """Test that a non-listable basevalues throws an error."""
+    with pytest.raises(TypeError):
+        mob.check_inputs(chmask, basevalues=0, window_idx='invalid')
+
+
+def test_check_input_invalid_basevalues_idx():
+    """Test that a non-listable basevalues_idx throws an error."""
+    with pytest.raises(TypeError):
+        mob.check_inputs(chmask, basevalues_idx=0, window_idx='invalid')
+
+
+def test_check_no_basevalues_error():
+    """No basevalues will throw an error."""
+    with pytest.raises(ValueError):
+        mob.check_inputs(chmask, window_idx='invalid')
+
+
 def test_check_input_invalid_time_window():
     """Test that a non-valid time_window throws an error."""
     with pytest.raises(TypeError):
+        mob.check_inputs(chmask, basevalues_idx=[0], window='invalid')
+
+
+def test_check_input_invalid_time_window_idx():
+    """Test that a non-valid time_window_idx throws an error."""
+    with pytest.raises(TypeError):
         mob.check_inputs(chmask, basevalues_idx=[0], window_idx='invalid')
+
+
+def test_check_no_time_window():
+    """Test that no time_window throws an error."""
+    with pytest.raises(ValueError):
+        mob.check_inputs(chmask, basevalues_idx=[0])
 
 
 def test_check_input_2dchanmask():
@@ -146,13 +249,26 @@ def test_check_input_exceedmaxvals():
         mob.check_inputs(chmask, basevalues_idx=[0], window_idx=100)
 
 
+def test_check_input_invalid_list():
+    """Test a wrong list."""
+    with pytest.raises(TypeError):
+        mob.check_inputs(['str', 5, 1.], basevalues_idx=[0], window_idx=1)
+
+
+def test_check_input_list_wrong_shape():
+    """Test list with wrongly shaped arrays."""
+    in_list = [np.zeros((5, 2, 1, 1)), np.zeros((5, 2, 2, 2))]
+    with pytest.raises(ValueError):
+        mob.check_inputs(in_list, basevalues_idx=[0], window_idx=100)
+
+
 @pytest.mark.xfail(
     reason='Removed this functionality - do we want to blindly expand dims?')
 def test_check_input_castlandmap():
     """Test ability to cast a 2D landmask to match 3D channelmap."""
-    chmap, landmap, bv, tw = mob.check_inputs(chmask, basevalues_idx=[0],
-                                              window_idx=1,
-                                              landmap=landmask[0].mask[:, :])
+    chmap, landmap, bv, tw, dim0 = mob.check_inputs(
+        chmask, basevalues_idx=[0], window_idx=1,
+        landmap=landmask[0].mask[:, :])
     assert np.shape(chmap) == np.shape(landmap)
 
 
@@ -171,6 +287,21 @@ for i in range(1, 5):
     chmap[i, :, :] = chmap[i-1, :, :].copy()
     chmap[i, -1*i, 1] = 0
     chmap[i, -1*i, 2] = 1
+# alt typing for the input map
+# chmap xarrays
+dims = ('time', 'x', 'y')  # assumes an ultimate t-x-y shape
+coords = {'time': np.arange(5),
+          'x': np.arange(chmap.shape[1]),
+          'y': np.arange(chmap.shape[2])}
+chmap_xr = xr.DataArray(data=chmap, coords=coords, dims=dims)
+# lists
+chmap_xr_list = []
+chmap_list = []
+for i in range(5):
+    chmap_list.append(chmap[i, ...])
+    chmap_xr_list.append(chmap_xr[i, ...].squeeze())
+
+
 # define the fluvial surface - entire 4x4 area through all time
 fsurf = np.ones((5, 4, 4))
 # define the index corresponding to the basemap at time 0
@@ -210,9 +341,48 @@ def test_channel_abandon():
 
 
 def test_channel_presence():
-    """Test channel presence."""
+    """Test channel presence with a regular array."""
     chan_presence = mob.channel_presence(chmap)
     assert np.all(chan_presence == np.array([[0., 0.8, 0.2, 0.],
                                              [0., 0.6, 0.4, 0.],
                                              [0., 0.4, 0.6, 0.],
                                              [0., 0.2, 0.8, 0.]]))
+
+
+def test_channel_presence_xarray():
+    """Test channel presence with an xarray."""
+    chan_presence = mob.channel_presence(chmap_xr)
+    assert np.all(chan_presence == np.array([[0., 0.8, 0.2, 0.],
+                                             [0., 0.6, 0.4, 0.],
+                                             [0., 0.4, 0.6, 0.],
+                                             [0., 0.2, 0.8, 0.]]))
+
+
+def test_channel_presence_xarray_list():
+    """Test channel presence with a list of xarrays."""
+    chan_presence = mob.channel_presence(chmap_xr_list)
+    assert np.all(chan_presence == np.array([[0., 0.8, 0.2, 0.],
+                                             [0., 0.6, 0.4, 0.],
+                                             [0., 0.4, 0.6, 0.],
+                                             [0., 0.2, 0.8, 0.]]))
+
+
+def test_channel_presence_array_list():
+    """Test channel presence with a list of arrays."""
+    chan_presence = mob.channel_presence(chmap_list)
+    assert np.all(chan_presence == np.array([[0., 0.8, 0.2, 0.],
+                                             [0., 0.6, 0.4, 0.],
+                                             [0., 0.4, 0.6, 0.],
+                                             [0., 0.2, 0.8, 0.]]))
+
+
+def test_invalid_list_channel_presence():
+    """Test an invalid list."""
+    with pytest.raises(ValueError):
+        mob.channel_presence(['in', 'valid', 'list'])
+
+
+def test_invalid_type_channel_presence():
+    """Test an invalid input typing."""
+    with pytest.raises(TypeError):
+        mob.channel_presence('invalid type input')
