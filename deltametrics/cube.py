@@ -61,7 +61,8 @@ class BaseCube(abc.ABC):
         elif type(data) is dict:
             # handle a dict, arrays set up already, make an io class to wrap it
             self._data_path = None
-            raise NotImplementedError
+            self._dataio = io.DictionaryIO(data)
+            self._read_meta_from_file()
         elif isinstance(data, DataCube):
             # handle initializing one cube type from another
             self._data_path = data.data_path
@@ -121,7 +122,7 @@ class BaseCube(abc.ABC):
         else:
             # try taking a slice of the dataset to get the coordinates
             d0, d1, d2 = self.dataio[self._dataio.known_variables[0]].dims
-        self._dim0_idx = self._dataio.dataset[d0]
+        self._dim0_idx = self._dataio[d0]
 
         # if x is 2-D then we assume x and y are mesh grid values
         if np.ndim(self._dataio[d1]) == 2:
@@ -129,8 +130,13 @@ class BaseCube(abc.ABC):
             self._dim2_idx = self._dataio.dataset[d2][0, :].squeeze()
         # if x is 1-D we do mesh-gridding
         elif np.ndim(self._dataio[d1]) == 1:
-            self._dim1_idx = self._dataio.dataset[d1]
-            self._dim2_idx = self._dataio.dataset[d2]
+            self._dim1_idx = self._dataio[d1]
+            self._dim2_idx = self._dataio[d2]
+        else:
+            raise TypeError(
+                'Shape of coordinate array was not 1d or 2d. '
+                'Maybe the name was not correctly identified in the dataset, '
+                'or the array is misformatted.')
 
         # assign values to dimensions of cube
         self._dim0_coords = self._t = self._dim0_idx
@@ -660,8 +666,6 @@ class DataCube(BaseCube):
                 _var = self.variables[i]
                 i = len(self.variables)
 
-        self._H, self._L, self._W = self[_var].data.shape
-
         # set up dimension and coordinate fields for when slices of the cube
         # are made
         self._view_dimensions = self._dataio.dims
@@ -670,8 +674,11 @@ class DataCube(BaseCube):
             self._view_dimensions[1]: self.dim1_coords,
             self._view_dimensions[2]: self.dim2_coords})
 
-        self._knows_stratigraphy = False
+        # set the shape of the cube
+        self._H, self._L, self._W = self[_var].data.shape
 
+        # determine stratigraphy information
+        self._knows_stratigraphy = False
         if stratigraphy_from:
             self.stratigraphy_from(variable=stratigraphy_from)
 
@@ -691,27 +698,36 @@ class DataCube(BaseCube):
         CubeVariable : `~deltametrics.cube.CubeVariable`
             The instantiated CubeVariable.
         """
-        if var in self._coords:
+        if var == 'time':  # special case for time
+            # use the name of the first dimension, to enable
+            #   unlabeled np.ndarrays and flexible name for time 
+            dim0_name = self.dataio.dims[0]
+            dim0_coord = np.array(self.dataio.dataset[dim0_name])
+            _t = np.expand_dims(dim0_coord,
+                                axis=(1, 2))
+            _xrt = xr.DataArray(
+                np.tile(_t, (1, *self.shape[1:])),
+                coords=self._view_coordinates,
+                dims=self._view_dimensions)
+            _obj = _xrt
+        elif var in self._coords:
             # ensure coords can be called by cube[var]
-            if var == 'time':  # special case for time
-                _t = np.expand_dims(self.dataio.dataset['time'].values,
-                                    axis=(1, 2))
-                _xrt = xr.DataArray(
-                    np.tile(_t, (1, *self.shape[1:])),
-                    coords=self._view_coordinates,
-                    dims=self._view_dimensions)
-                _obj = _xrt
-            else:
-                _obj = self._dataio.dataset[var]
-            return _obj
+            _obj = self._dataio.dataset[var]
 
         elif var in self._variables:
             _obj = self._dataio.dataset[var]
-            return _obj
 
         else:
             raise AttributeError('No variable of {cube} named {var}'.format(
                                  cube=str(self), var=var))
+
+        # make _obj xarray if it not already
+        if isinstance(_obj, np.ndarray):
+            _obj = xr.DataArray(
+                _obj,
+                coords=self._view_coordinates,
+                dims=self._view_dimensions)
+        return _obj
 
     def stratigraphy_from(self, variable='eta', style='mesh', **kwargs):
         """Compute stratigraphy attributes.
@@ -891,7 +907,12 @@ class StratigraphyCube(BaseCube):
         """
         if var == 'time':
             # a special attribute we add, which matches eta.shape
-            _t = np.expand_dims(self.dataio['time'], axis=(1, 2))
+            #   use the name of the first dimension, to enable
+            #   unlabeled np.ndarrays and flexible name for time 
+            dim0_name = self.dataio.dims[0]
+            dim0_coord = np.array(self.dataio[dim0_name])
+            _t = np.expand_dims(dim0_coord,
+                                axis=(1, 2))
             _arr = np.full(self.shape, np.nan)
             _var = np.tile(_t, (1, *self.shape[1:]))
         elif var in self._variables:

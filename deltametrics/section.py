@@ -525,6 +525,8 @@ class BaseSection(abc.ABC):
         ax.set_xlim(xmin, xmax)
         ax.set_ylim(ymin, ymax)
 
+        return ci
+
     def show_trace(self, *args, ax=None, autoscale=False, **kwargs):
         """Plot section trace (x-y plane path).
 

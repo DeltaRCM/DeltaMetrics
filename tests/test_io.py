@@ -18,7 +18,7 @@ hdf_path = _get_landsat_path()
 
 def test_netcdf_io_init():
     netcdf_io = io.NetCDFIO(golf_path, 'netcdf')
-    assert netcdf_io.type == 'netcdf'
+    assert netcdf_io.io_type == 'netcdf'
     assert len(netcdf_io._in_memory_data.keys()) == 0
 
 
@@ -28,7 +28,7 @@ def test_netcdf_io_init_legacy():
         netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
     with pytest.warns(UserWarning, match=r'No associated .*'):
         netcdf_io = io.NetCDFIO(rcm8_path, 'netcdf')
-    assert netcdf_io.type == 'netcdf'
+    assert netcdf_io.io_type == 'netcdf'
     assert len(netcdf_io._in_memory_data.keys()) == 0
 
 
@@ -99,7 +99,7 @@ def test_netcdf_io_intomemory_read():
 def test_hdf5_io_init():
     with pytest.warns(UserWarning, match=r'No associated .*'):
         netcdf_io = io.NetCDFIO(hdf_path, 'hdf5')
-    assert netcdf_io.type == 'hdf5'
+    assert netcdf_io.io_type == 'hdf5'
     assert len(netcdf_io._in_memory_data.keys()) == 0
 
 
