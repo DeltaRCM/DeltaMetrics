@@ -13,6 +13,8 @@ to the results of these functions is provided as well.
 
 The functions are defined in ``deltametrics.mobility``.
 
+.. include:: mobilityex.rst
+
 
 .. mobility functions
 .. ===================
@@ -27,3 +29,4 @@ The functions are defined in ``deltametrics.mobility``.
   calculate_planform_overlap
   calculate_reworking_fraction
   calculate_channel_abandonment
+  channel_presence

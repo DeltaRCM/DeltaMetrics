@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Channel Mobility Functions &#8212; DeltaMetrics 0.3.0 documentation</title>
+    <title>Using the Mobility Functions &#8212; DeltaMetrics 0.3.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -17,9 +17,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="deltametrics.mobility.check_inputs" href="../../_autosummary/deltametrics.mobility.check_inputs.html" />
-    <link rel="prev" title="deltametrics.mask.GeometricMask" href="../../_autosummary/deltametrics.mask.GeometricMask.html" /> 
+    <link rel="search" title="Search" href="../../search.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -27,15 +25,8 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
-        <li class="right" >
-          <a href="../../_autosummary/deltametrics.mobility.check_inputs.html" title="deltametrics.mobility.check_inputs"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="../../_autosummary/deltametrics.mask.GeometricMask.html" title="deltametrics.mask.GeometricMask"
-             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">API reference</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Channel Mobility Functions</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Using the Mobility Functions</a></li> 
       </ul>
     </div>  
 
@@ -44,16 +35,8 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="channel-mobility-functions">
-<h1>Channel Mobility Functions<a class="headerlink" href="#channel-mobility-functions" title="Permalink to this headline">¶</a></h1>
-<p>This set of functions is for computing channel mobility metrics.
-Inputs to these functions are some sort of binary channel masks, and maps
-defining the fluvial surface (land area) over which the metrics should be
-computed. Functionality for fitting linear, harmonic, and exponential curves
-to the results of these functions is provided as well.</p>
-<p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.mobility</span></code>.</p>
-<section id="using-the-mobility-functions">
-<h2>Using the Mobility Functions<a class="headerlink" href="#using-the-mobility-functions" title="Permalink to this headline">¶</a></h2>
+  <section id="using-the-mobility-functions">
+<h1>Using the Mobility Functions<a class="headerlink" href="#using-the-mobility-functions" title="Permalink to this headline">¶</a></h1>
 <p>To use the mobility functions, you need a set of masks covering various time
 points from the model output. These can be in the form of a list of mask
 objects, numpy ndarrays, or xarrays. Or these can be 3-D arrays or xarrays.</p>
@@ -104,37 +87,10 @@ which will then be plotted.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../../reference/mobility/index-1.png">png</a>, <a class="reference external" href="../../reference/mobility/index-1.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../../reference/mobility/mobilityex-1.png">png</a>, <a class="reference external" href="../../reference/mobility/mobilityex-1.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../../_images/index-11.png" class="plot-directive" src="../../_images/index-11.png" />
+<img alt="../../_images/mobilityex-1.png" class="plot-directive" src="../../_images/mobilityex-1.png" />
 </figure>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mobility.check_inputs.html#deltametrics.mobility.check_inputs" title="deltametrics.mobility.check_inputs"><code class="xref py py-obj docutils literal notranslate"><span class="pre">check_inputs</span></code></a>(chmap[, basevalues, ...])</p></td>
-<td><p>Check the input variable values.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mobility.calculate_channel_decay.html#deltametrics.mobility.calculate_channel_decay" title="deltametrics.mobility.calculate_channel_decay"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_channel_decay</span></code></a>(chmap, landmap[, ...])</p></td>
-<td><p>Calculate channel decay (reduction in dry fraction).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mobility.calculate_planform_overlap.html#deltametrics.mobility.calculate_planform_overlap" title="deltametrics.mobility.calculate_planform_overlap"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_planform_overlap</span></code></a>(chmap, landmap[, ...])</p></td>
-<td><p>Calculate channel planform overlap.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mobility.calculate_reworking_fraction.html#deltametrics.mobility.calculate_reworking_fraction" title="deltametrics.mobility.calculate_reworking_fraction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_reworking_fraction</span></code></a>(chmap, landmap)</p></td>
-<td><p>Calculate the reworking fraction.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mobility.calculate_channel_abandonment.html#deltametrics.mobility.calculate_channel_abandonment" title="deltametrics.mobility.calculate_channel_abandonment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_channel_abandonment</span></code></a>(chmap[, ...])</p></td>
-<td><p>Calculate channel abandonment.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.mobility.channel_presence.html#deltametrics.mobility.channel_presence" title="deltametrics.mobility.channel_presence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">channel_presence</span></code></a>(chmap)</p></td>
-<td><p>Calculate the normalized channel presence at each pixel location.</p></td>
-</tr>
-</tbody>
-</table>
-</section>
 </section>
 
 
@@ -144,30 +100,10 @@ which will then be plotted.</p>
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <div>
-    <h3><a href="../../index.html">Table of Contents</a></h3>
-    <ul>
-<li><a class="reference internal" href="#">Channel Mobility Functions</a><ul>
-<li><a class="reference internal" href="#using-the-mobility-functions">Using the Mobility Functions</a></li>
-</ul>
-</li>
-</ul>
-
-  </div>
-  <div>
-    <h4>Previous topic</h4>
-    <p class="topless"><a href="../../_autosummary/deltametrics.mask.GeometricMask.html"
-                          title="previous chapter">deltametrics.mask.GeometricMask</a></p>
-  </div>
-  <div>
-    <h4>Next topic</h4>
-    <p class="topless"><a href="../../_autosummary/deltametrics.mobility.check_inputs.html"
-                          title="next chapter">deltametrics.mobility.check_inputs</a></p>
-  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/reference/mobility/index.rst.txt"
+      <li><a href="../../_sources/reference/mobility/mobilityex.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -191,15 +127,8 @@ which will then be plotted.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
-        <li class="right" >
-          <a href="../../_autosummary/deltametrics.mobility.check_inputs.html" title="deltametrics.mobility.check_inputs"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="../../_autosummary/deltametrics.mask.GeometricMask.html" title="deltametrics.mask.GeometricMask"
-             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.3.0 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../index.html" >API reference</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Channel Mobility Functions</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Using the Mobility Functions</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

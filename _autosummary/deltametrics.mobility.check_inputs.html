@@ -49,19 +49,25 @@
 <h1>deltametrics.mobility.check_inputs<a class="headerlink" href="#deltametrics-mobility-check-inputs" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.mobility.check_inputs">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_window</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">landmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.check_inputs" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">check_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">landmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.check_inputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check the input variable values.</p>
 <p>Ensures compatibility with mobility functions. Tries to convert from some
 potential input types (xarray data arrays, deltametrics masks) if possible.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>chmap</strong> (<em>ndarray</em>) – A t-x-y shaped array with binary channel maps.</p></li>
-<li><p><strong>basevalues</strong> (<em>list</em>) – List of t indices to use as the base channel maps.</p></li>
-<li><p><strong>time_window</strong> (<em>int</em>) – Number of time slices (t indices) to use as the time lag</p></li>
-<li><p><strong>landmap</strong> (<em>ndarray</em><em>, </em><em>optional</em>) – A t-x-y shaped array with binary land maps. Or a x-y 2D array of a
-binary base mask that contains 1s in the region to be analyzed and
-0s elsewhere.</p></li>
+<li><p><strong>chmap</strong> (<em>list</em><em>, </em><em>xarray.DataArray</em><em>, </em><em>numpy.ndarray</em>) – Either a list of 2-D deltametrics.mask, xarray.DataArray, or
+numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
+with channel mask values.</p></li>
+<li><p><strong>basevalues</strong> (<em>list</em><em>, </em><em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – List of time values to use as the base channel map. (or single value)</p></li>
+<li><p><strong>basevalues_idx</strong> (<em>list</em><em>, </em><em>optional</em>) – List of time indices to use as the base channel map. (or single value)</p></li>
+<li><p><strong>window</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – Duration of time to use as the time lag (aka how far from the basemap
+will be analyzed).</p></li>
+<li><p><strong>window_idx</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – Duration of time in terms of indices (# of save states) to use as the
+time lag.</p></li>
+<li><p><strong>landmap</strong> (<em>list</em><em>, </em><em>xarray.DataArray</em><em>, </em><em>numpy.ndarray</em><em>, </em><em>optional</em>) – Either a list of 2-D deltametrics.mask, xarray.DataArray, or
+numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
+with land mask values.</p></li>
 </ul>
 </dd>
 </dl>

@@ -18,7 +18,7 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Section operations and classes" href="../reference/section/index.html" />
+    <link rel="next" title="deltametrics.mobility.channel_presence" href="deltametrics.mobility.channel_presence.html" />
     <link rel="prev" title="deltametrics.mobility.calculate_reworking_fraction" href="deltametrics.mobility.calculate_reworking_fraction.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -28,7 +28,7 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../reference/section/index.html" title="Section operations and classes"
+          <a href="deltametrics.mobility.channel_presence.html" title="deltametrics.mobility.channel_presence"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="deltametrics.mobility.calculate_reworking_fraction.html" title="deltametrics.mobility.calculate_reworking_fraction"
@@ -49,7 +49,7 @@
 <h1>deltametrics.mobility.calculate_channel_abandonment<a class="headerlink" href="#deltametrics-mobility-calculate-channel-abandonment" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.mobility.calculate_channel_abandonment">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">calculate_channel_abandonment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_window</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.calculate_channel_abandonment" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">calculate_channel_abandonment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.calculate_channel_abandonment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate channel abandonment.</p>
 <p>Measure the number of channelized pixels that are no longer channelized as
 a signature of channel mobility based on method in Liang et al 2016. This
@@ -59,9 +59,15 @@ can be done.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>chmap</strong> (<em>ndarray</em>) – A t-x-y shaped array with binary channel maps</p></li>
-<li><p><strong>basevalues</strong> (<em>list</em>) – A list of values (t indices) to use for the base channel maps</p></li>
-<li><p><strong>time_window</strong> (<em>int</em>) – Number of time slices (t values) to use for the transient maps</p></li>
+<li><p><strong>chmap</strong> (<em>list</em><em>, </em><em>xarray.DataArray</em><em>, </em><em>numpy.ndarray</em>) – Either a list of 2-D deltametrics.mask, xarray.DataArray, or
+numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
+with channel mask values.</p></li>
+<li><p><strong>basevalues</strong> (<em>list</em><em>, </em><em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – List of time values to use as the base channel map. (or single value)</p></li>
+<li><p><strong>basevalues_idx</strong> (<em>list</em><em>, </em><em>optional</em>) – List of time indices to use as the base channel map. (or single value)</p></li>
+<li><p><strong>window</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – Duration of time to use as the time lag (aka how far from the basemap
+will be analyzed).</p></li>
+<li><p><strong>window_idx</strong> (<em>int</em><em>, </em><em>float</em><em>, </em><em>optional</em>) – Duration of time in terms of indices (# of save states) to use as the
+time lag.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -92,8 +98,8 @@ the columns are associated with each time lag.</p>
   </div>
   <div>
     <h4>Next topic</h4>
-    <p class="topless"><a href="../reference/section/index.html"
-                          title="next chapter">Section operations and classes</a></p>
+    <p class="topless"><a href="deltametrics.mobility.channel_presence.html"
+                          title="next chapter">deltametrics.mobility.channel_presence</a></p>
   </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
@@ -123,7 +129,7 @@ the columns are associated with each time lag.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../reference/section/index.html" title="Section operations and classes"
+          <a href="deltametrics.mobility.channel_presence.html" title="deltametrics.mobility.channel_presence"
              >next</a> |</li>
         <li class="right" >
           <a href="deltametrics.mobility.calculate_reworking_fraction.html" title="deltametrics.mobility.calculate_reworking_fraction"
