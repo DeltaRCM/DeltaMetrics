@@ -126,13 +126,13 @@ def test_linear_fit():
     ch_abandon = mob.calculate_channel_abandonment(
         chmap, basevalues_idx=basevalue, window_idx=time_window)
     yfit, popts, cov, err = utils.curve_fit(ch_abandon, fit='linear')
-    assert pytest.approx(yfit == np.array([4.76315477e-24, 2.50000000e-01,
-                                           5.00000000e-01, 7.50000000e-01,
-                                           1.00000000e+00]))
-    assert pytest.approx(popts == np.array([2.50000000e-01, 4.76315477e-24]))
-    assert pytest.approx(cov == np.array([[1.76300984e-25, -0.00000000e+00],
-                                          [0.00000000e+00,  5.28902953e-24]]))
-    assert pytest.approx(err == np.array([4.19882108e-13, 2.29978902e-12]))
+    assert pytest.approx(yfit) == np.array([4.76315477e-24, 2.50000000e-01,
+                                            5.00000000e-01, 7.50000000e-01,
+                                            1.00000000e+00])
+    assert pytest.approx(popts) == np.array([2.50000000e-01, 4.76315477e-24])
+    assert pytest.approx(cov) == np.array([[1.76300984e-25, -0.00000000e+00],
+                                           [0.00000000e+00,  5.28902953e-24]])
+    assert pytest.approx(err) == np.array([4.19882108e-13, 2.29978902e-12])
 
 
 def test_harmonic_fit():
@@ -140,13 +140,13 @@ def test_harmonic_fit():
     ch_abandon = mob.calculate_channel_abandonment(
         chmap, basevalues_idx=basevalue, window_idx=time_window)
     yfit, popts, cov, err = utils.curve_fit(ch_abandon, fit='harmonic')
-    assert pytest.approx(yfit == np.array([-0.25986438, 0.41294455,
-                                           0.11505591, 0.06683947,
-                                           0.04710091]))
-    assert pytest.approx(popts == np.array([-0.25986438, -1.62929608]))
-    assert pytest.approx(cov == np.array([[0.50676407, 1.26155952],
-                                          [1.26155952, 4.3523343]]))
-    assert pytest.approx(err == np.array([0.71187364, 2.08622489]))
+    assert pytest.approx(yfit) == np.array([-0.25986438, 0.41294455,
+                                            0.11505591, 0.06683947,
+                                            0.04710091])
+    assert pytest.approx(popts) == np.array([-0.25986438, -1.62929608])
+    assert pytest.approx(cov) == np.array([[0.50676407, 1.26155952],
+                                           [1.26155952, 4.3523343]])
+    assert pytest.approx(err) == np.array([0.71187364, 2.08622489])
 
 
 def test_invalid_fit():
@@ -161,15 +161,15 @@ def test_exponential_fit():
     """Test exponential fitting."""
     ydata = np.array([10, 5, 2, 1])
     yfit, popts, cov, err = utils.curve_fit(ydata, fit='exponential')
-    assert pytest.approx(yfit == np.array([10.02900253, 4.85696353,
-                                           2.22612537, 0.88790858]))
-    assert pytest.approx(popts == np.array([10.02900253, -0.49751195,
-                                            0.67596451]))
-    assert pytest.approx(cov == np.array([[0.0841566, 0.04554967, 0.01139969],
-                                          [0.04554967, 0.59895713, 0.08422946],
-                                          [0.01139969, 0.08422946,
-                                           0.01327807]]))
-    assert pytest.approx(err == np.array([0.29009757, 0.77392321, 0.11523053]))
+    assert pytest.approx(yfit) == np.array([10.02900253, 4.85696353,
+                                            2.22612537, 0.88790858])
+    assert pytest.approx(popts) == np.array([10.02900253, -0.49751195,
+                                             0.67596451])
+    assert pytest.approx(cov) == np.array([[0.0841566, 0.04554967, 0.01139969],
+                                           [0.04554967, 0.59895713, 0.08422946],
+                                           [0.01139969, 0.08422946,
+                                            0.01327807]])
+    assert pytest.approx(err) == np.array([0.29009757, 0.77392321, 0.11523053])
 
 
 def test_format_number_float():

@@ -321,16 +321,16 @@ def test_planform_olap():
     """Test channel planform overlap."""
     ophi = mob.calculate_planform_overlap(
         chmap, fsurf, basevalues_idx=basevalue, window_idx=time_window)
-    assert pytest.approx(ophi.values == np.array([[1., 0.66666667, 0.33333333,
-                                                   0., -0.33333333]]))
+    assert pytest.approx(ophi.values) == np.array([[1., 0.66666667, 0.33333333,
+                                                    0., -0.33333333]])
 
 
 def test_reworking():
     """Test reworking index."""
     fr = mob.calculate_reworking_fraction(
         chmap, fsurf, basevalues_idx=basevalue, window_idx=time_window)
-    assert pytest.approx(fr.values == np.array([[0., 0.08333333, 0.16666667,
-                                                 0.25, 0.33333333]]))
+    assert pytest.approx(fr.values) == np.array([[0., 0.08333333, 0.16666667,
+                                                  0.25, 0.33333333]])
 
 
 def test_channel_abandon():
