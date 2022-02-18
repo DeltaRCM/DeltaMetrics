@@ -51,16 +51,74 @@
 <dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.plan.</span></span><span class="sig-name descname"><span class="pre">MorphologicalPlanform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Planform for handling the morphological method.</p>
+<p>This <cite>Planform</cite> (called <cite>MP</cite> for short) is a wrapper/handler for the input
+and output from the <a class="reference internal" href="deltametrics.plan.morphological_closing_method.html#deltametrics.plan.morphological_closing_method" title="deltametrics.plan.morphological_closing_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">morphological_closing_method()</span></code></a>. The <cite>MP</cite> is a
+convenient way to manage extraction of a shoreline or a delta topset area.</p>
+<p>Moreoever, the <cite>MP</cite> can be used as the input for <a class="reference internal" href="../reference/mask/index.html"><span class="doc">many types of Mask</span></a> objects, so it is often computationally
+advantageous to compute this <cite>Planform</cite> once, and then use it to create
+many different types of masks.</p>
+<p>The <cite>MP</cite> provides an alternative approach to shoreline and topset area
+delineation to the <cite>OAM</cite> method. Depending on the input parameters chosen,
+this method can be faster than the <cite>OAM</cite> method, however unlike the <cite>OAM</cite>
+method, the accuracy and quality of the extracted planform is sensitive to
+the parameter values and scales inherent in the supplied inputs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is recommended to try several parameters using a sample slice of
+data before computing the <cite>MP</cite> for an entire dataset, as choice of
+input parameters will affect the speed and quality of results!</p>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">EM</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ElevationMask</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+<span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">MP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">MorphologicalPlanform</span><span class="p">(</span><span class="n">EM</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The MP stores information computed from the
+<a class="reference internal" href="deltametrics.plan.morphological_closing_method.html#deltametrics.plan.morphological_closing_method" title="deltametrics.plan.morphological_closing_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">morphological_closing_method()</span></code></a>. See the property of the MP,
+the computed <a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.mean_image" title="deltametrics.plan.MorphologicalPlanform.mean_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_image</span></code></a> below.</p>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-plan-MorphologicalPlanform-2.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-plan-MorphologicalPlanform-2.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../_images/deltametrics-plan-MorphologicalPlanform-2.png" class="plot-directive" src="../_images/deltametrics-plan-MorphologicalPlanform-2.png" />
+</figure>
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize the MP.</p>
-<p>Expects first argument to be either an ElevationMask, or an array that
-represents some sort of elevation mask or land area for the delta.</p>
-<p>Second argument should be the inlet width (# pixels), if a cube is
-connected then this will be pulled from the cube directly.</p>
-<p>Method should work if a landmask is provided too, the morphological
-operations may just do less.</p>
+<dd><p>Initialize the MorphologicalPlanform (MP).</p>
+<p>Initializing the MP requires at least a binary input mask representing
+the elevation or land area of the system. A secondary input setting
+the maximum disk size for morphological operations can be provided.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>At this time two arguments are needed! Connections between the
+planform object and the cube are not yet implemented.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*args</strong> – <p>The first argument is expected to be an elevation mask, or an
+array which represents an elevation mask or land area. The
+expectation is that this input is the binary representation of
+the area from which you wish to identify the MP.</p>
+<p>The second argument is the maximum disk size for morphological
+operations in pixels. If a cube is connected and this argument is
+not supplied, the inlet width will be pulled from the cube’s
+metadata and used to set this parameter.</p>
+</p></li>
+<li><p><strong>**kwargs</strong> – Current supported key-word argument is ‘allow_empty’ which is a
+boolean argument that if True, allows the MP to be initialized with
+no other arguments supplied.</p></li>
+<li><p><strong>note::</strong> (<em>..</em>) – Supplying elevation data or nonbinary data in general as the first
+argument to the MP will <strong>not</strong> result in an error, however the
+array will be coerced to be binary when morphological operations
+are performed. Therefore results when inputting non-binary data
+may not be what you expect.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -71,7 +129,7 @@ operations may just do less.</p>
 </colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.__init__" title="deltametrics.plan.MorphologicalPlanform.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Initialize the MP.</p></td>
+<td><p>Initialize the MorphologicalPlanform (MP).</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.from_elevation_data" title="deltametrics.plan.MorphologicalPlanform.from_elevation_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_elevation_data</span></code></a>(elevation_data, ...)</p></td>
 <td><p>Create a <cite>MorphologicalPlanform</cite> from elevation data.</p></td>
