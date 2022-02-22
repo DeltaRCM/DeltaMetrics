@@ -40,5 +40,7 @@ Functions
     compute_shoreline_distance
     compute_channel_width
     compute_channel_depth
+    compute_surface_deposit_time
+    compute_surface_deposit_age
     shaw_opening_angle_method
     morphological_closing_method
