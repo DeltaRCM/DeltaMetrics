@@ -690,3 +690,60 @@ class TestComputeChannelDepth:
         with pytest.raises(NotImplementedError):
             m, s = plan.compute_channel_depth(
                 self.cm, self.golf['depth'][-1, :, :])
+
+
+class TestComputeSurfaceDepositTime:
+
+    golfcube = cube.DataCube(golf_path)
+
+    def test_with_diff_indices(self):
+        with pytest.raises(ValueError):
+            # cannot be index 0
+            _ = plan.compute_surface_deposit_time(
+                self.golfcube, surface_idx=0)
+        sfc_date_1 = plan.compute_surface_deposit_time(
+            self.golfcube, surface_idx=1)
+        assert np.all(sfc_date_1 == 0)
+        sfc_date_m1 = plan.compute_surface_deposit_time(
+            self.golfcube, surface_idx=-1)
+        assert np.any(sfc_date_m1 > 0)
+
+        # test that cannot be above idx
+        half_idx = self.golfcube.shape[0]//2
+        sfc_date_half = plan.compute_surface_deposit_time(
+            self.golfcube, surface_idx=half_idx)
+        assert np.max(sfc_date_half) <= half_idx
+        assert np.max(sfc_date_m1) <= self.golfcube.shape[0]
+
+    def test_with_diff_stasis_tol(self):
+        with pytest.raises(ValueError):
+            # cannot be tol 0
+            _ = plan.compute_surface_deposit_time(
+                self.golfcube, surface_idx=-1, stasis_tol=0)
+        sfc_date_tol_000 = plan.compute_surface_deposit_time(
+                self.golfcube, surface_idx=-1, stasis_tol=1e-16)
+        sfc_date_tol_001 = plan.compute_surface_deposit_time(
+            self.golfcube, surface_idx=-1, stasis_tol=0.01)
+        sfc_date_tol_010 = plan.compute_surface_deposit_time(
+            self.golfcube, surface_idx=-1, stasis_tol=0.1)
+        # time of deposition should always be older when threshold is greater
+        assert np.all(sfc_date_tol_001 <= sfc_date_tol_000)
+        assert np.all(sfc_date_tol_010 <= sfc_date_tol_001)
+
+
+class TestComputeSurfaceDepositAge:
+
+    golfcube = cube.DataCube(golf_path)
+
+    def test_idx_minus_date(self):
+        with pytest.raises(ValueError):
+            # cannot be index 0
+            _ = plan.compute_surface_deposit_time(
+                self.golfcube, surface_idx=0)
+        sfc_date_1 = plan.compute_surface_deposit_age(
+            self.golfcube, surface_idx=1)
+        assert np.all(sfc_date_1 == 1)  # 1 - 0
+        sfc_date_m1 = plan.compute_surface_deposit_time(
+            self.golfcube, surface_idx=-1)
+        # check that the idx wrapping functionality works
+        assert np.all(sfc_date_m1 >= 0)

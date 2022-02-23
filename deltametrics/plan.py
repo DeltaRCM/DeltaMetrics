@@ -1958,3 +1958,173 @@ def compute_channel_depth(channelmask, depth, section=None,
         return _m, _s, _channel_depth_list
     else:
         return _m, _s
+
+
+def compute_surface_deposit_time(data, surface_idx=-1, **kwargs):
+    """Compute the time of last deposition for a single time.
+
+    This method computes the timing of last deposition for each location for a
+    given time_index. This is done by finding the last time the bed elevation
+    was outside of a "stasis tolerance" length scale at each location.
+    Therefore, the function requires the spacetime dataset of bed elevation,
+    at a minimum, up to the point in time of interest.
+
+    .. warning:: only works for indices (not times) as implemented.
+
+    Parameters
+    ----------
+    data : :obj:`DataCube`, :obj:`ndarray`, :obj:`DataArray`
+        Input data to compute the surface deposit time from. Must be `DataCube`
+        or a array-like (`ndarray` or `DataArray`) containing bed elevation
+        history, at a minimum, up until the time of interest.
+
+    surface_idx : :obj:`int`
+        The index along the time dimension of the array (`dim0`) to compute
+        the surface deposit time for. This number cannot be greater than
+        `data.shape[0]`.
+
+    **kwargs
+        Keyword arguments passed to supporting
+        function :obj:`_compute_surface_deposit_time_from_etas`. Hint: you
+        may want to control the `stasis_tol` parameter.
+
+    Returns
+    -------
+    sfc_time : :obj:`ndarray`
+        The time of the surface.
+
+    Examples
+    --------
+    .. plot::
+        :include-source:
+        :context:
+
+        golf = dm.sample_data.golf()
+        sfc_time = dm.plan.compute_surface_deposit_time(golf, surface_idx=-1)
+
+        fig, ax = plt.subplots()
+        im = ax.imshow(sfc_time)
+        dm.plot.append_colorbar(im, ax=ax)
+        plt.show()
+
+    The keyword argument `stasis_tol` is an important control on the resultant
+    calculation.
+
+    .. plot::
+        :include-source:
+        :context:
+
+        fig, ax = plt.subplots(1, 3, figsize=(9, 3))
+        for i, tol in enumerate([1e-16, 0.01, 0.1]):
+            i_sfc_date = dm.plan.compute_surface_deposit_time(
+                golfcube, surface_idx=-1, stasis_tol=tol)
+            im = ax[i].imshow(i_sfc_date)
+            plt.colorbar(im, ax=ax[i], shrink=0.4)
+            ax[i].set_title(f'stasis_tol={tol}')
+        plt.show()
+
+    """
+    # sanitize the input surface declared
+    if surface_idx == 0:
+        raise ValueError(
+            '`surface_idx` must not be 0 '
+            ' (i.e., this would yield no timeseries)')
+
+    if isinstance(data, cube.DataCube):
+        etas = data['eta'][:surface_idx, :, :]
+        etas = np.array(etas)  # strip xarray for input to helper
+    elif utils.is_ndarray_or_xarray(data):
+        etas = np.array(etas[:surface_idx, :, :])
+    else:
+        # implement other options...
+        raise TypeError(
+            'Unexpected data type input: {0}'.format(type(data)))
+
+    sfc_date = _compute_surface_deposit_time_from_etas(etas, **kwargs)
+
+    return sfc_date
+
+
+def compute_surface_deposit_age(data, surface_idx, **kwargs):
+    """Compute the age (i.e., how much time ago) the surface was deposited.
+
+    .. warning:: only works for indices (not times) as implemented.
+
+    .. hint::
+
+        This function internally uses :obj:`compute_surface_deposit_time` and
+        is simply the current time/idx of interest minute the date of
+        deposition (with handling for wrapping negative indices).
+
+    Parameters
+    ----------
+    data : :obj:`DataCube`, :obj:`ndarray`, :obj:`DataArray`
+        Input data to compute the surface deposit age from. Must be `DataCube`
+        or a array-like (`ndarray` or `DataArray`) containing bed elevation
+        history, at a minimum, up until the time of interest.
+
+    surface_idx : :obj:`int`
+        The index along the time dimension of the array (`dim0`) to compute
+        the surface deposit age for. This number cannot be greater than
+        `data.shape[0]`.
+
+    **kwargs
+        Keyword arguments passed to supporting
+        function :obj:`_compute_surface_deposit_time_from_etas`. Hint: you
+        may want to control the `stasis_tol` parameter.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        golf = dm.sample_data.golf()
+        sfc_time = dm.plan.compute_surface_deposit_age(golf, surface_idx=-1)
+
+        fig, ax = plt.subplots()
+        ax.imshow(sfc_time, cmap='YlGn_r')
+        plt.show()
+    """
+    sfc_date = compute_surface_deposit_time(data, surface_idx, **kwargs)
+    # handle indices less than 0
+    if surface_idx < 0:
+        # wrap to find the index
+        surface_idx = surface_idx % data.shape[0]
+    return surface_idx - sfc_date
+
+
+def _compute_surface_deposit_time_from_etas(etas, stasis_tol=0.01):
+    """Helper for surface deposit time/age calculations.
+
+    Parameters
+    ----------
+    etas
+        An array-like with bed elevation information.
+
+    stasis_tol
+        The length scale above which any change in bed elevation is considered
+        signficant. Changes in bed elevation less than this threshold are
+        considered to be stasis and ignored in the computation of surface
+        deposit times. Must be nonzero and positive (``>0``).
+
+    .. hint:
+
+        :obj:`stasis_tol` can be passed as a keyword argument to the public
+        functions :obj:`compute_surface_deposit_time`
+        and :obj:`compute_surface_deposit_age` to control the threshold.
+
+    Returns
+    -------
+    sfc_date : obj:`ndarray`
+    """
+    if not (stasis_tol > 0):
+        raise ValueError(
+            f'`stasis_tol must be nonzero and positive, but was {stasis_tol}')
+
+    etaf = np.array(etas[-1, :, :])
+
+    whr = np.abs(etaf - etas) < stasis_tol
+    sfc_date = np.argmax(whr, axis=0)
+
+    return sfc_date
