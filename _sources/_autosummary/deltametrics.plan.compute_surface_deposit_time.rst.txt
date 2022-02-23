@@ -1,0 +1,6 @@
+﻿deltametrics.plan.compute\_surface\_deposit\_time
+=================================================
+
+.. currentmodule:: deltametrics.plan
+
+.. autofunction:: compute_surface_deposit_time
