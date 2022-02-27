@@ -1938,9 +1938,9 @@ def compute_surface_deposit_time(data, surface_idx=-1, **kwargs):
 
     .. plot::
         :include-source:
-        :context:
+        :context: close-figs
 
-        fig, ax = plt.subplots(1, 3, figsize=(9, 3))
+        fig, ax = plt.subplots(1, 3, figsize=(10, 3))
         for i, tol in enumerate([1e-16, 0.01, 0.1]):
             i_sfc_date = dm.plan.compute_surface_deposit_time(
                 golf, surface_idx=-1, stasis_tol=tol)
