@@ -1997,7 +1997,7 @@ def compute_surface_deposit_time(data, surface_idx=-1, **kwargs):
     --------
     .. plot::
         :include-source:
-        :context:
+        :context: reset
 
         golf = dm.sample_data.golf()
         sfc_time = dm.plan.compute_surface_deposit_time(golf, surface_idx=-1)
@@ -2012,12 +2012,12 @@ def compute_surface_deposit_time(data, surface_idx=-1, **kwargs):
 
     .. plot::
         :include-source:
-        :context:
+        :context: close-figs
 
-        fig, ax = plt.subplots(1, 3, figsize=(9, 3))
+        fig, ax = plt.subplots(1, 3, figsize=(10, 3))
         for i, tol in enumerate([1e-16, 0.01, 0.1]):
             i_sfc_date = dm.plan.compute_surface_deposit_time(
-                golfcube, surface_idx=-1, stasis_tol=tol)
+                golf, surface_idx=-1, stasis_tol=tol)
             im = ax[i].imshow(i_sfc_date)
             plt.colorbar(im, ax=ax[i], shrink=0.4)
             ax[i].set_title(f'stasis_tol={tol}')
