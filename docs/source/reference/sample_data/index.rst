@@ -34,6 +34,7 @@ Example data cubes
 ------------------
 
 .. autofunction:: golf
+.. autofunction:: xslope
 .. autofunction:: aeolian
 .. autofunction:: landsat
 .. autofunction:: rcm8

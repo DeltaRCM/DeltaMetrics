@@ -73,6 +73,81 @@ def golf():
     return cube.DataCube(golf_path)
 
 
+def _get_xslope_path():
+    unpack = pooch.Unzip()
+    fnames = REGISTRY.fetch('xslope.zip', processor=unpack)
+    nc_bool = [os.path.splitext(fname)[1] == '.nc' for fname in fnames]
+    # nc_idx = [i for i, b in enumerate(nc_bool) if b]
+    fnames_idx = [fnames[i] for i, b in enumerate(nc_bool) if b]
+    fnames_idx.sort()
+    # xslope_path = fnames[nc_idx[0]]
+    xslope_job_003_path = fnames_idx[0]
+    xslope_job_013_path = fnames_idx[1]
+    return xslope_job_003_path, xslope_job_013_path
+
+
+def xslope():
+    """xslope delta dataset.
+
+    The delta model runs in this dataset were executed in support of a
+    demonstration and teaching clinic. The set of simualtions examines the
+    effect of a basin with cross-stream slope on the progradation of a delta
+    system.
+    
+    .. important::
+
+        This sample data provides **two** datasets. Calling this function
+        returns two :obj:`~dm.cube.DataCube`.
+
+    Models were run on 02/21/2022, at the University of Texas at Austin.
+
+    Runs were computed with pyDeltaRCM v2.1.2. See log files for complete
+    information on system and model configuration.
+
+    Data available at Zenodo, version 1.1: 10.5281/zenodo.6301362
+
+    Version history:
+      * v1.0: 10.5281/zenodo.6226448
+      * v1.1: 10.5281/zenodo.6301362
+
+    .. plot::
+
+        xslope0, xslope1 = dm.sample_data.xslope()
+        nt = 5
+        ts = np.linspace(0, xslope0['eta'].shape[0]-1, num=nt, dtype=np.int)
+
+        fig, ax = plt.subplots(2, nt, figsize=(12, 2))
+        for i, t in enumerate(ts):
+            ax[0, i].imshow(xslope0['eta'][t, :, :], vmin=-10, vmax=0.5)
+            ax[0, i].set_title('t = ' + str(t))
+            ax[1, i].imshow(xslope1['eta'][t, :, :], vmin=-10, vmax=0.5)
+
+        ax[1, 0].set_ylabel('dim1 direction')
+        ax[1, 0].set_xlabel('dim2 direction')
+
+        for axi in ax.ravel():
+            axi.axes.get_xaxis().set_ticks([])
+            axi.axes.get_yaxis().set_ticks([])
+
+        plt.show()
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    xslope0
+        First return, a :obj:`~dm.cube.DataCube` with flat basin.
+
+    xslope1
+        Second return, a :obj:`~dm.cube.DataCube` with sloped basin in the
+        cross-stream direction. Slope is 0.001 m/m, with elevation centered
+        at channel inlet.
+    """
+    xslope_path0, xslope_path1 = _get_xslope_path()
+    return cube.DataCube(xslope_path0), cube.DataCube(xslope_path1)
+
+
 def tdb12():
     raise NotImplementedError
 
