@@ -16,4 +16,4 @@ In particular, DeltaMetrics has robust objects and routines designed to help org
 
 .. figure:: https://deltarcm.org/DeltaMetrics/_images/cover.png
 
-  A view of bed elevation on a modeled deltaic deposit in :obj:`~deltametrics.plan.Planform`, and a cross :obj:`~deltametrics.section.StrikeSection` view of the timing of sediment deposition in stratigraphy.
+  A view of bed elevation on a modeled deltaic deposit in `Planform`, and a cross `StrikeSection` view of the timing of sediment deposition in stratigraphy.
