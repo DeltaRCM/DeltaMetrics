@@ -7,4 +7,7 @@ If you are not familiar with our code of conduct policy, take a minute to read t
 
 How to contribute
 -----------------
-If you are interested in contributing, please contact me so we can coordinate efforts.
+If you are interested in contributing, please get in touch with us on GitHub and we will be happy to have you be a part of our community!
+
+
+.. include:: ./meta/planning.rst

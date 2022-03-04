@@ -22,7 +22,7 @@ For example:
     >>> sm = dm.mask.ShorelineMask.from_Planform(OAP)
 
     >>> fig, ax = plt.subplots(2, 2)
-    >>> golfcube.show_plan('eta', t=-1, ax=ax[0, 0])
+    >>> golfcube.quick_show('eta', idx=-1, ax=ax[0, 0])
     >>> ax[0, 1].imshow(OAP.sea_angles, vmax=180, cmap='jet')
     >>> lm.show(ax=ax[1, 0])
     >>> sm.show(ax=ax[1, 1])

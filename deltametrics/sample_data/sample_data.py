@@ -57,7 +57,7 @@ def golf():
 
         golf = dm.sample_data.golf()
         nt = 5
-        ts = np.linspace(0, golf['eta'].shape[0]-1, num=nt, dtype=np.int)
+        ts = np.linspace(0, golf['eta'].shape[0]-1, num=nt, dtype=int)
 
         fig, ax = plt.subplots(1, nt, figsize=(12, 2))
         for i, t in enumerate(ts):
@@ -114,7 +114,7 @@ def xslope():
 
         xslope0, xslope1 = dm.sample_data.xslope()
         nt = 5
-        ts = np.linspace(0, xslope0['eta'].shape[0]-1, num=nt, dtype=np.int)
+        ts = np.linspace(0, xslope0['eta'].shape[0]-1, num=nt, dtype=int)
 
         fig, ax = plt.subplots(2, nt, figsize=(12, 2))
         for i, t in enumerate(ts):
@@ -190,7 +190,7 @@ def aeolian():
 
         aeolian = dm.sample_data.aeolian()
         nt = 5
-        ts = np.linspace(0, aeolian['eta'].shape[0]-1, num=nt, dtype=np.int)
+        ts = np.linspace(0, aeolian['eta'].shape[0]-1, num=nt, dtype=int)
 
         fig, ax = plt.subplots(1, nt, figsize=(8, 4))
         for i, t in enumerate(ts):
@@ -235,7 +235,7 @@ def rcm8():
             warnings.simplefilter("ignore")
             rcm8 = dm.sample_data.rcm8()
         nt = 5
-        ts = np.linspace(0, rcm8['eta'].shape[0]-1, num=nt, dtype=np.int)
+        ts = np.linspace(0, rcm8['eta'].shape[0]-1, num=nt, dtype=int)
 
         fig, ax = plt.subplots(1, nt, figsize=(12, 2))
         for i, t in enumerate(ts):
