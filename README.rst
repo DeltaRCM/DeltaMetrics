@@ -9,12 +9,11 @@ DeltaMetrics
   :target: https://codecov.io/gh/DeltaRCM/DeltaMetrics
 
 DeltaMetrics is a Python package for manipulating depositional system data cubes.
-In particular, DeltaMetrics has robust objects and routines designed to help organize, visualize, and analyze topography and sedimentological timeseries data from the DeltaRCM numerical model and laboratory  delta experiments.
+In particular, DeltaMetrics has robust objects and routines designed to help organize, visualize, and analyze topography and sedimentological timeseries data deltaic systems (e.g., the pyDeltaRCM numerical model and laboratory delta experiments).
 
 `Full documentation here <https://deltarcm.org/DeltaMetrics/index.html>`_.
 
-Status
-######
 
-DeltaMetrics is currently in development, with a constantly changing API.
-We make no guarantee of stability, correctness, or functionality.
+.. figure:: https://deltarcm.org/DeltaMetrics/_images/cover.png
+
+  A view of bed elevation on a modeled deltaic deposit in :obj:`~deltametrics.plan.Planform`, and a cross :obj:`~deltametrics.section.StrikeSection` view of the timing of sediment deposition in stratigraphy.
