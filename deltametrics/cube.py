@@ -356,6 +356,19 @@ class BaseCube(abc.ABC):
         """Number of elements in data (HxLxW)."""
         return (self.H, self.L, self.W)
 
+    @property
+    def extent(self):
+        """The limits of the dim1 by dim2 plane.
+
+        Useful for plotting.
+        """
+        _extent = [
+            self.dim2_coords[0],                         # dim1, 0
+            self.dim2_coords[-1] + self.dim2_coords[1],  # dim1, end + dx
+            self.dim1_coords[-1] + self.dim1_coords[1],  # dim0, end + dx
+            self.dim1_coords[0]]                         # dim0, 0
+        return _extent
+
     def export_frozen_variable(self, var, return_cube=False):
         """Export a cube with frozen values.
 

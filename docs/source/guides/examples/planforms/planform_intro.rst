@@ -74,7 +74,7 @@ The `MorphologicalPlanform` can also be created directly from elevation data:
     :include-source:
 
     MP = dm.plan.MorphologicalPlanform.from_elevation_data(
-      golfcube['eta'][-1, :, :], elevation_threshold=0, max_disk=5)
+      golfcube['eta'][-1, :, :], elevation_threshold=0, max_disk=8)
 
 In this case, the `composite_array` attribute of the planform represents the inverse of the average pixel value when different sized disks are used to perform the binary closing on the elevation data.
 

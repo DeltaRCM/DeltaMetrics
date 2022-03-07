@@ -1202,7 +1202,12 @@ class ShorelineMask(BaseMask):
 
     @staticmethod
     def from_mask(UnknownMask, **kwargs):
-        """Create a ShorelineMask directly from an ElevationMask.
+        """Create a ShorelineMask directly from an :obj:`ElevationMask`.
+
+        .. hint::
+
+            Optionally, use the `method` flag to control how the
+            mask is created.
         """
         if not isinstance(UnknownMask, ElevationMask):
             # make intermediate shoreline mask
