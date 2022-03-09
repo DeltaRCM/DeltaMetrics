@@ -45,6 +45,7 @@
       ~DataCube.dim0_coords
       ~DataCube.dim1_coords
       ~DataCube.dim2_coords
+      ~DataCube.extent
       ~DataCube.meta
       ~DataCube.planform_set
       ~DataCube.planforms

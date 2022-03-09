@@ -54,9 +54,9 @@ If not specified explicitly, they are often implicitly part of binary mask creat
 <p>For each we start with the same example dataset, and use the elevation data at the end of the simulation.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Final Elevation Data&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">golfcube</span><span class="o">.</span><span class="n">quick_show</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Final Elevation Data&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -66,7 +66,7 @@ If not specified explicitly, they are often implicitly part of binary mask creat
 </figure>
 <section id="the-openingangleplanform">
 <h2>The OpeningAnglePlanform<a class="headerlink" href="#the-openingangleplanform" title="Permalink to this headline">¶</a></h2>
-<p>This planform object is based around the Opening Angle Method <a class="footnote-reference brackets" href="#id3" id="id1">1</a>.</p>
+<p>This planform object is based around the Opening Angle Method <a class="footnote-reference brackets" href="#id2" id="id1">1</a>.</p>
 <p>The <cite>OpeningAnglePlanform</cite> can be created directly from elevation data:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="n">OAP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">OpeningAnglePlanform</span><span class="o">.</span><span class="n">from_elevation_data</span><span class="p">(</span>
@@ -75,41 +75,43 @@ If not specified explicitly, they are often implicitly part of binary mask creat
 </div>
 <p>All planforms have a <cite>composite_array</cite> attribute from which a contour is extracted when defining the shoreline.
 In the case of the <cite>OpeningAnglePlanform</cite>, the <cite>composite_array</cite> is the “sea angles” array from the Opening Angle Method.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">OAP</span><span class="o">.</span><span class="n">composite_array</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">OAP</span><span class="o">.</span><span class="n">composite_array</span><span class="p">)</span>
+<span class="n">dm</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">append_colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../../../guides/examples/planforms/planform_intro-4.png">png</a>, <a class="reference external" href="../../../guides/examples/planforms/planform_intro-4.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../../../guides/examples/planforms/planform_intro-3.png">png</a>, <a class="reference external" href="../../../guides/examples/planforms/planform_intro-3.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../../../_images/planform_intro-4.png" class="plot-directive" src="../../../_images/planform_intro-4.png" />
+<img alt="../../../_images/planform_intro-3.png" class="plot-directive" src="../../../_images/planform_intro-3.png" />
 </figure>
 <dl class="footnote brackets">
-<dt class="label" id="id3"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
 <dd><p>Shaw, J. B., Wolinsky, M. A., Paola, C., &amp; Voller, V. R. (2008). An image‐based method for shoreline mapping on complex coasts. Geophysical Research Letters, 35(12).</p>
 </dd>
 </dl>
 </section>
 <section id="the-morphologicalplanform">
 <h2>The MorphologicalPlanform<a class="headerlink" href="#the-morphologicalplanform" title="Permalink to this headline">¶</a></h2>
-<p>This planform object uses mathematical morphology to identify the delta planform, inspired by Geleynse et al (2012) <a class="footnote-reference brackets" href="#id6" id="id4">2</a>.</p>
+<p>This planform object uses mathematical morphology to identify the delta planform, inspired by Geleynse et al (2012) <a class="footnote-reference brackets" href="#id4" id="id3">2</a>.</p>
 <p>The <cite>MorphologicalPlanform</cite> can also be created directly from elevation data:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">MorphologicalPlanform</span><span class="o">.</span><span class="n">from_elevation_data</span><span class="p">(</span>
-  <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_disk</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+  <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_disk</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>In this case, the <cite>composite_array</cite> attribute of the planform represents the inverse of the average pixel value when different sized disks are used to perform the binary closing on the elevation data.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">MP</span><span class="o">.</span><span class="n">composite_array</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">MP</span><span class="o">.</span><span class="n">composite_array</span><span class="p">)</span>
+<span class="n">dm</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">append_colorbar</span><span class="p">(</span><span class="n">im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../../../guides/examples/planforms/planform_intro-7.png">png</a>, <a class="reference external" href="../../../guides/examples/planforms/planform_intro-7.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../../../guides/examples/planforms/planform_intro-5.png">png</a>, <a class="reference external" href="../../../guides/examples/planforms/planform_intro-5.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../../../_images/planform_intro-7.png" class="plot-directive" src="../../../_images/planform_intro-7.png" />
+<img alt="../../../_images/planform_intro-5.png" class="plot-directive" src="../../../_images/planform_intro-5.png" />
 </figure>
 <dl class="footnote brackets">
-<dt class="label" id="id6"><span class="brackets"><a class="fn-backref" href="#id4">2</a></span></dt>
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
 <dd><p>Geleynse, N., Voller, V. R., Paola, C., &amp; Ganti, V. (2012). Characterization of river delta shorelines. Geophysical research letters, 39(17).</p>
 </dd>
 </dl>
@@ -126,27 +128,27 @@ Of course the two methods are different, so the shorelines identified will also 
 <span class="n">SM_from_MPM</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ShorelineMask</span><span class="o">.</span><span class="n">from_Planform</span><span class="p">(</span>
   <span class="n">MP</span><span class="p">,</span> <span class="n">contour_threshold</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">SM_from_OAM</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">SM_from_OAM</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Shoreline from OAM&#39;</span><span class="p">)</span>
 
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">SM_from_MPM</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">SM_from_MPM</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Shoreline from MPM&#39;</span><span class="p">)</span>
 
-<span class="n">d_plot</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+<span class="n">diff_im</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
   <span class="n">SM_from_OAM</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span> <span class="o">-</span> <span class="n">SM_from_MPM</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
   <span class="n">interpolation</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;bone&#39;</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;OAM shoreline - MPM shoreline&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">d_plot</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">dm</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">append_colorbar</span><span class="p">(</span><span class="n">diff_im</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../../../guides/examples/planforms/planform_intro-9.png">png</a>, <a class="reference external" href="../../../guides/examples/planforms/planform_intro-9.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../../../guides/examples/planforms/planform_intro-7.png">png</a>, <a class="reference external" href="../../../guides/examples/planforms/planform_intro-7.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../../../_images/planform_intro-9.png" class="plot-directive" src="../../../_images/planform_intro-9.png" />
+<img alt="../../../_images/planform_intro-7.png" class="plot-directive" src="../../../_images/planform_intro-7.png" />
 </figure>
 <p>Both methods require the user to set a “contour threshold” value when extracting the shoreline.
 The shoreline ends up being a contour extracted at this value from the planform <cite>composite_array</cite>.</p>

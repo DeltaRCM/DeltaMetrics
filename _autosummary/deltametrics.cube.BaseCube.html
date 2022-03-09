@@ -161,31 +161,34 @@ to style this cube similarly to another cube.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.dim2_coords" title="deltametrics.cube.BaseCube.dim2_coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dim2_coords</span></code></a></p></td>
 <td><p>Coordinates along the third dimension of <cite>cube</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta</span></code></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.extent" title="deltametrics.cube.BaseCube.extent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extent</span></code></a></p></td>
+<td><p>The limits of the dim1 by dim2 plane.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.planform_set" title="deltametrics.cube.BaseCube.planform_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">planform_set</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.planform_set" title="deltametrics.cube.BaseCube.planform_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">planform_set</span></code></a></p></td>
 <td><p>Set of planform instances.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.planforms" title="deltametrics.cube.BaseCube.planforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">planforms</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.planforms" title="deltametrics.cube.BaseCube.planforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">planforms</span></code></a></p></td>
 <td><p>Set of plan instances.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.section_set" title="deltametrics.cube.BaseCube.section_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_set</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.section_set" title="deltametrics.cube.BaseCube.section_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_set</span></code></a></p></td>
 <td><p>Set of section instances.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.sections" title="deltametrics.cube.BaseCube.sections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sections</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.sections" title="deltametrics.cube.BaseCube.sections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sections</span></code></a></p></td>
 <td><p>Set of section instances.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.shape" title="deltametrics.cube.BaseCube.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.shape" title="deltametrics.cube.BaseCube.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Number of elements in data (HxLxW).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.variables" title="deltametrics.cube.BaseCube.variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.variables" title="deltametrics.cube.BaseCube.variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></a></p></td>
 <td><p>List of variable names as strings.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.varset" title="deltametrics.cube.BaseCube.varset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varset</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.varset" title="deltametrics.cube.BaseCube.varset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varset</span></code></a></p></td>
 <td><p>Variable styling for plotting.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.z" title="deltametrics.cube.BaseCube.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.z" title="deltametrics.cube.BaseCube.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
 <td><p>Vertical coordinate.</p></td>
 </tr>
 </tbody>
@@ -285,6 +288,13 @@ operation that will repeatedly utilize the underlying data in
 computations. Access to underlying data is comparatively slow to data
 loaded in memory, because the <cite>Cube</cite> utilities are configured to read
 data off-disk as needed.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.BaseCube.extent">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extent</span></span><a class="headerlink" href="#deltametrics.cube.BaseCube.extent" title="Permalink to this definition">¶</a></dt>
+<dd><p>The limits of the dim1 by dim2 plane.</p>
+<p>Useful for plotting.</p>
 </dd></dl>
 
 <dl class="py property">
