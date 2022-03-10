@@ -161,7 +161,7 @@ def compute_boxy_stratigraphy_coordinates(elev, z=None, dz=None, nz=None,
     return_strata : :obj:`boolean`, optional
         Whether to return the stratigraphy elevations, as returned from
         internal computations in :obj:`_compute_elevation_to_preservation`.
-        Default is `False`, do not return strata. 
+        Default is `False`, do not return strata.
 
     Returns
     -------
@@ -602,7 +602,7 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
         is used of `dz=0.1`.
 
     .. important::
-        
+
         Precedence when multiple arguments are supplied is `z`, `dz`, `nz`.
 
     Parameters
@@ -634,7 +634,7 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
 
     # set up an error message to use in a few places
     _valerr = ValueError('"dz" or "nz" cannot be zero or negative.')
-    
+
     # process to find the option to set up z
     if not (z is None):
         if np.isscalar(z):
@@ -654,3 +654,21 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
         return np.linspace(min_dos, max_dos, num=nz+1, endpoint=True)
     else:
         raise RuntimeError('No coordinates determined. Check inputs.')
+
+
+def _adjust_elevation_by_subsidence(elev, sigma):
+    """Adjust elevation array by subsidence rates."""
+    # single value assumed to be constant rate over all time
+    if isinstance(sigma, (int, float)):
+        s_arr = np.ones_like(elev) * sigma
+    else:
+        s_arr = sigma
+    # else shapes of arrays must be the same
+    if np.shape(elev) != np.shape(s_arr):
+        raise ValueError('Shapes of input arrays do not match!')
+    # adjust and return elevation
+    elev_adjusted = np.zeros_like(elev)  # init adjusted array
+    # first dimension assumed to be time
+    for i in range(elev.shape[0]):
+        elev_adjusted[i, ...] = elev[i, ...] + np.sum(s_arr[:i, ...])
+    return elev_adjusted
