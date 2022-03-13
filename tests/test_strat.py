@@ -423,3 +423,24 @@ class TestDetermineStratCoordinates:
         assert z[0] == 0
         assert z[-1] == 2
         assert z[1] - z[0] == 0.1
+
+
+class TestSubsidenceElevationAdjustment:
+
+    def test_shapes_not_matching(self):
+        e = np.zeros((5, 2, 1))
+        s = np.zeros((2, 4, 2))
+        with pytest.raises(ValueError):
+            strat._adjust_elevation_by_subsidence(e, s)
+
+    def test_1D_sigma_as_float(self):
+        e = np.zeros((10,))
+        s = 1.0
+        adj = strat._adjust_elevation_by_subsidence(e, s)
+        assert np.all(adj == np.arange(-10, 0))
+
+    def test_1D_sigma_as_int(self):
+        e = np.zeros((10,))
+        s = 1
+        adj = strat._adjust_elevation_by_subsidence(e, s)
+        assert np.all(adj == np.arange(-10, 0))
