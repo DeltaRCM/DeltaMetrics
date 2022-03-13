@@ -693,7 +693,8 @@ def _adjust_elevation_by_subsidence(elev, sigma):
                 'Shapes of input arrays elev and sigma do not match.')
     # adjust and return elevation
     elev_adjusted = np.zeros_like(elev)  # init adjusted array
-    # first dimension assumed to be time
+    # do elevation adjustment - first dimension assumed to be time
     for i in range(elev.shape[0]):
-        elev_adjusted[i, ...] = elev[i, ...] - np.sum(s_arr[i:, ...])
+        elev_adjusted[i, ...] = elev[i, ...] - np.sum(s_arr[i:, ...], axis=0)
+    # return the subsidence-adjusted elevation values
     return elev_adjusted
