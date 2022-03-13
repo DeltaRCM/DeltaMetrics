@@ -868,8 +868,9 @@ def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
     return coll.PatchCollection(pl, match_original=True)
 
 
-def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
-                                              ax=None, show_strata=True,
+def show_one_dimensional_trajectory_to_strata(e, sigma=None, dz=None, z=None,
+                                              nz=None, ax=None,
+                                              show_strata=True,
                                               label_strata=False):
     """1d elevation to stratigraphy.
 
@@ -894,7 +895,7 @@ def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
     ----------
     e : :obj:`ndarray`
         Elevation data as a 1D array.
-    
+
     z : :obj:`ndarray`, optional
         Vertical coordinates for stratigraphy, in meters. Optional, and
         mutually exclusive with :obj:`dz` and :obj:`nz`,
@@ -930,8 +931,11 @@ def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
     t = np.arange(e.shape[0])  # x-axis time array
     t3 = np.expand_dims(t, axis=(1, 2))  # 3d time, for slicing
 
-    z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
+    if sigma is not None:
+        # adjust elevations by subsidence rate
+        e = strat._adjust_elevation_by_subsidence(e, sigma)
     s, p = strat._compute_elevation_to_preservation(e)  # strat, preservation
+    z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
     sc, dc = strat._compute_preservation_to_cube(s, z)
     lst = np.argmin(s < s[-1])  # last elevation
 

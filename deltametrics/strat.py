@@ -35,7 +35,8 @@ def compute_compensation(line1, line2):
     pass
 
 
-def compute_boxy_stratigraphy_volume(elev, prop, z=None, dz=None, nz=None,
+def compute_boxy_stratigraphy_volume(elev, prop, sigma=None,
+                                     z=None, dz=None, nz=None,
                                      return_cube=False):
     """Process t-x-y data volume to boxy stratigraphy volume.
 
@@ -99,6 +100,9 @@ def compute_boxy_stratigraphy_volume(elev, prop, z=None, dz=None, nz=None,
         raise ValueError('Input arrays must be three-dimensional.')
 
     # compute preservation from low-level funcs
+    if sigma is not None:
+        # convert elevations
+        elev = _adjust_elevation_by_subsidence(elev, sigma)
     strata, _ = _compute_elevation_to_preservation(elev)
     z = _determine_strat_coordinates(elev, z=z, dz=dz, nz=nz)
     strata_coords, data_coords = _compute_preservation_to_cube(strata, z=z)
@@ -120,7 +124,8 @@ def compute_boxy_stratigraphy_volume(elev, prop, z=None, dz=None, nz=None,
         return stratigraphy, elevations
 
 
-def compute_boxy_stratigraphy_coordinates(elev, z=None, dz=None, nz=None,
+def compute_boxy_stratigraphy_coordinates(elev, sigma=None,
+                                          z=None, dz=None, nz=None,
                                           return_cube=False,
                                           return_strata=False):
     """Process t-x-y data volume to boxy stratigraphy coordinates.
@@ -185,6 +190,9 @@ def compute_boxy_stratigraphy_coordinates(elev, z=None, dz=None, nz=None,
         argument only if `return_strata=True`.
     """
     # compute preservation from low-level funcs
+    if sigma is not None:
+        # adjust elevation by subsidence rates if present
+        elev = _adjust_elevation_by_subsidence(elev, sigma)
     strata, _ = _compute_elevation_to_preservation(elev)
     z = _determine_strat_coordinates(elev, z=z, dz=dz, nz=nz)
     strata_coords, data_coords = _compute_preservation_to_cube(strata, z=z)
@@ -324,6 +332,11 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
             _eta = np.array(elev)
         else:
             _eta = elev
+
+        # rate of subsidence
+        sigma = kwargs.pop('sigma', None)
+        if sigma is not None:
+            _eta = _adjust_elevation_by_subsidence(_eta, sigma)
 
         # make computation
         _strata, _psvd = _compute_elevation_to_preservation(_eta)
@@ -662,13 +675,24 @@ def _adjust_elevation_by_subsidence(elev, sigma):
     if isinstance(sigma, (int, float)):
         s_arr = np.ones_like(elev) * sigma
     else:
+        # rename to s_arr anyway
         s_arr = sigma
-    # else shapes of arrays must be the same
-    if np.shape(elev) != np.shape(s_arr):
-        raise ValueError('Shapes of input arrays do not match!')
+    # 2-D sigma array gets cast into the shape of the 3-d elevation array
+    if len(s_arr.shape) == 2 and len(elev.shape) == 3:
+        s_arr = np.tile(s_arr, (elev.shape[0], 1, 1))
+    elif len(s_arr.shape) == 1 and len(s_arr) == elev.shape[0]:
+        # casting for a 1-D vector of sigma that matches elev time dimension
+        s_arr = np.tile(
+            s_arr.reshape(len(s_arr), 1, 1),
+            (1, elev.shape[1], elev.shape[2]))
+    else:
+        # else shapes of arrays must be the same
+        if np.shape(elev) != np.shape(s_arr):
+            raise ValueError(
+                'Shapes of input arrays elev and sigma do not match.')
     # adjust and return elevation
     elev_adjusted = np.zeros_like(elev)  # init adjusted array
     # first dimension assumed to be time
     for i in range(elev.shape[0]):
-        elev_adjusted[i, ...] = elev[i, ...] + np.sum(s_arr[:i, ...])
+        elev_adjusted[i, ...] = elev[i, ...] - np.sum(s_arr[i:, ...])
     return elev_adjusted
