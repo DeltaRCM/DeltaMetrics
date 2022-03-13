@@ -58,6 +58,11 @@ def compute_boxy_stratigraphy_volume(elev, prop, sigma=None,
     prop : :obj:`ndarray`
         The `t-x-y` ndarry of property data to process into the stratigraphy.
 
+    sigma : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
+        Optional subsidence rate argument that is used to adjust the elevation
+        data to account for subsidence when computing stratigraphy. See
+        :obj:`_adjust_elevation_by_subsidence` for a complete description.
+
     z : :obj:`ndarray`, optional
         Vertical coordinates for stratigraphy, in meters. Optional, and
         mutually exclusive with :obj:`dz` and :obj:`nz`,
@@ -140,6 +145,11 @@ def compute_boxy_stratigraphy_coordinates(elev, sigma=None,
     ----------
     elev : :obj:`ndarray`
         The `t-x-y` ndarry of elevation data to determine stratigraphy.
+
+    sigma : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
+        Optional subsidence rate argument that is used to adjust the elevation
+        data to account for subsidence when computing stratigraphy. See
+        :obj:`_adjust_elevation_by_subsidence` for a complete description.
 
     z : :obj:`ndarray`, optional
         Vertical coordinates for stratigraphy, in meters. Optional, and
@@ -323,6 +333,12 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
             Whether to load the eta array into memory before computation. For
             especially large data files, `load` should be `False` to keep the
             file on disk; note on-disk computation is considerably slower.
+
+        sigma : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
+            Optional subsidence rate argument that is used to adjust the
+            elevation data to account for subsidence when computing
+            stratigraphy. See :obj:`_adjust_elevation_by_subsidence` for a
+            complete description.
         """
         super().__init__('mesh')
 
@@ -670,7 +686,44 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
 
 
 def _adjust_elevation_by_subsidence(elev, sigma):
-    """Adjust elevation array by subsidence rates."""
+    """Adjust elevation array by subsidence rates.
+
+    Given the elevation information and information about the rate of
+    subsidence, the true sedimentation and erosion pattern can be unraveled.
+    The function is written flexibly to handle subsidence rate information
+    provided as either a single constant value, a constant rate over a 2-D
+    spatial pattern, a 1-D temporal vector when the rate changes over time but
+    is applied to the entire domain, and finally a full t-x-y 3-D array with
+    subsidence rate information for each x-y position in the domain at each
+    instance in time.
+
+    This function is declared as a private function and is not part of the
+    public API. Higher level functions make a call internally to adjust the
+    elevation data based on subsidence rate information when the optional
+    argument `sigma` is provided.
+
+    Parameters
+    ----------
+    elev : :obj:`ndarray` or :obj:`xr.core.dataarray.DataArray`
+        The `t-x-y` volume of elevation data to determine stratigraphy.
+
+    sigma : :obj:`ndarray`, :obj:`xr.core.dataarray.DataArray`, :obj:`float`,
+            :obj:`int`
+        The subsidence rate information. If a single float or int is provided,
+        that rate is assumed to apply across the entire domain for all times.
+        If a 2-D array is provided, the rates are assumed to be given for each
+        x-y location and are applied across all times. If a 1-D vector is
+        provided, it is assumed that each value applies to all locations in
+        the domain for a given time. If a full 3-D array is provided, it is
+        assumed to follow the same `t-x-y` convention as the elevation data.
+
+    Returns
+    -------
+    elev_adjusted : :obj:`ndarray`
+        A `t-x-y` `ndarray` of the same shape as the input `elev` array, but
+        the values have all been adjusted by the subsidence rate information
+        provided by the input `sigma`.
+    """
     # single value assumed to be constant rate over all time
     if isinstance(sigma, (int, float)):
         s_arr = np.ones_like(elev) * sigma

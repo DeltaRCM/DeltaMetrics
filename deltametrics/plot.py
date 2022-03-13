@@ -917,6 +917,11 @@ def show_one_dimensional_trajectory_to_strata(e, sigma=None, dz=None, z=None,
     e : :obj:`ndarray`
         Elevation data as a 1D array.
 
+    sigma : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
+        Optional subsidence rate argument that is used to adjust the elevation
+        data to account for subsidence when computing stratigraphy. See
+        :obj:`_adjust_elevation_by_subsidence` for a complete description.
+
     z : :obj:`ndarray`, optional
         Vertical coordinates for stratigraphy, in meters. Optional, and
         mutually exclusive with :obj:`dz` and :obj:`nz`,
