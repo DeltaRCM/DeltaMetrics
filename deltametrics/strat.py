@@ -680,7 +680,8 @@ def _adjust_elevation_by_subsidence(elev, sigma):
     # 2-D sigma array gets cast into the shape of the 3-d elevation array
     if len(s_arr.shape) == 2 and len(elev.shape) == 3:
         s_arr = np.tile(s_arr, (elev.shape[0], 1, 1))
-    elif len(s_arr.shape) == 1 and len(s_arr) == elev.shape[0]:
+    elif len(s_arr.shape) == 1 and len(s_arr) == elev.shape[0] and \
+      len(elev.shape) == 3:
         # casting for a 1-D vector of sigma that matches elev time dimension
         s_arr = np.tile(
             s_arr.reshape(len(s_arr), 1, 1),
