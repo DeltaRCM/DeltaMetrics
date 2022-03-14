@@ -132,10 +132,14 @@ class StratigraphicInformation:
         if self._check_knows_stratigraphy():
             # actual data, where preserved
             _psvd_data = self._obj.data[self.strat_attr['psvd_idx']]
+            breakpoint()
             _sp = sparse.coo_matrix((_psvd_data,
                                      (self.strat_attr['z_sp'],
                                       self.strat_attr['s_sp'])))
-            return _sp
+            _whr = sparse.coo_matrix((np.ones_like(_psvd_data),
+                                     (self.strat_attr['z_sp'],
+                                      self.strat_attr['s_sp'])))
+            return _sp, _whr
 
 
 class BaseSection(abc.ABC):
@@ -490,10 +494,11 @@ class BaseSection(abc.ABC):
         if style in ['shade', 'shaded']:
             _data, _X, _Y = plot.get_display_arrays(SectionVariableInstance,
                                                     data=data)
-            ci = ax.pcolormesh(_X, _Y, _data, cmap=_varinfo.cmap,
-                               norm=_varinfo.norm,
-                               vmin=_varinfo.vmin, vmax=_varinfo.vmax,
-                               rasterized=True, shading='auto')
+            ci = ax.pcolormesh(
+                _X, _Y, _data,
+                cmap=_varinfo.cmap, norm=_varinfo.norm,
+                vmin=_varinfo.vmin, vmax=_varinfo.vmax,
+                shading='flat')
         elif style in ['line', 'lines']:
             _data, _segments = plot.get_display_lines(SectionVariableInstance,
                                                       data=data)
@@ -522,8 +527,8 @@ class BaseSection(abc.ABC):
         # set the limits of the plot accordingly
         xmin, xmax, ymin, ymax = plot.get_display_limits(
             SectionVariableInstance, data=data)
-        ax.set_xlim(xmin, xmax)
-        ax.set_ylim(ymin, ymax)
+        # ax.set_xlim(xmin, xmax)
+        # ax.set_ylim(ymin, ymax)
 
     def show_trace(self, *args, ax=None, autoscale=False, **kwargs):
         """Plot section trace (x-y plane path).

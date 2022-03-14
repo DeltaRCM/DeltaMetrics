@@ -646,11 +646,23 @@ def get_display_arrays(VarInst, data=None):
             _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
             return VarInst.strat.as_preserved(), _S, _Z
         elif data in VarInst.strat._stratigraphy_names:
-            _sp = VarInst.strat.as_stratigraphy()
-            _den = _sp.toarray()  # .view(section.DataSectionVariable)
+            _sp, _whr = VarInst.strat.as_stratigraphy()
+            _den = _sp.toarray()
+            _whr = _whr.toarray()
+            _den[~(_whr == 1)] = np.nan
+            _den = np.pad(_den, ((1, 0), (0, 0)), mode='edge')
             _arr_Y = VarInst.strat.strat_attr['psvd_flld'][:_sp.shape[0], ...]
-            _arr_X = np.tile(VarInst['s'], (_sp.shape[0], 1))
-            return _den[1:, 1:], _arr_X, _arr_Y
+            _arr_Y = np.pad(_arr_Y, ((2, 0), (0, 1)), mode='edge')
+            # _arr_Y = np.pad(_arr_Y, (1, 0), mode='constant', constant_values=-5)
+            _s = VarInst['s'].data
+            _s = _s + ((_s[1]-_s[0]) / 2)
+            pad_s_dim = np.pad(
+                _s, (0, 1),
+                mode='constant', constant_values=_s[-1]+((_s[1]-_s[0])))
+            _arr_X = np.tile(pad_s_dim, (_sp.shape[0]+2, 1))
+            # fig, ax = plt.subplots(); ax.imshow(_den, origin='lower'); plt.show(block=False)
+            # breakpoint()
+            return _den, _arr_X, _arr_Y
         else:
             raise ValueError('Bad data argument: %s' % str(data))
 
@@ -662,7 +674,17 @@ def get_display_arrays(VarInst, data=None):
         elif data in VarInst.strat._preserved_names:
             VarInst.strat._check_knows_spacetime()  # always False
         elif data in VarInst.strat._stratigraphy_names:
-            _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+            _s = VarInst['s'].data
+            _z = VarInst[VarInst.dims[0]]
+            pad_s_dim = np.pad(
+                _s, (0, 1),
+                mode='constant', constant_values=_s[-1]+((_s[1]-_s[0])))
+            pad_0_dim = np.pad(
+                _z, (0, 1),
+                mode='constant', constant_values=_z[-1]+((_z[1]-_z[0])))
+                # _z, (1, 0),
+                # mode='constant', constant_values=np.min(_z))
+            _S, _Z = np.meshgrid(pad_s_dim, pad_0_dim)
             return VarInst, _S, _Z
         else:
             raise ValueError('Bad data argument: %s' % str(data))
