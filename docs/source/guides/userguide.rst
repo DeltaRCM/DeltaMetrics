@@ -44,7 +44,22 @@ Additionally, we frequently rely on the `numpy` package, and `matplotlib`. We wi
 Create and manipulate a "DataCube"
 ##################################
 
-DeltaMetrics centers around the use of “Cubes” in DeltaMetrics language are the central office that connects all the different modules and workflows together.
+DeltaMetrics centers around the use of “Cubes”.
+In DeltaMetrics, these `Cube` objects are the central office that connects all the different modules and a workflow together.
+The base cube is the `DataCube`, which is set up to handle multi-variable three-dimensional datasets; for example, 2D-spatial timeseries data of multiple variables.
+
+The data of the `DataCube` can come from a file or can be directly passed; where possible, loading from a file is usually preferred, because it is memory-efficient.
+Connecting to a netCDF file on disk is as simple as:
+
+.. code::
+
+    >>> acube = dm.cube.DataCube('/path/to/data/file.nc')
+
+.. hint::
+
+    For more information about data files, and how to configure your data to work with DeltaMetrics, please visit the ``Examples/io`` section of the documentation.
+
+For this guide to be easy to follow along with, we will use some sample data that comes with DeltaMetrics.
 
 .. doctest::
 
@@ -52,8 +67,8 @@ DeltaMetrics centers around the use of “Cubes” in DeltaMetrics language are 
     >>> golfcube
     <deltametrics.cube.DataCube object at 0x...>
 
-Creating the ``golfcube`` connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets.
-The type of the ``golfcube`` is ``DataCube``.
+Creating the ``golfcube`` connects to a dataset on your computer (the file is downloaded if it has not already been downloaded).
+Creating the `DataCube` though, does not read any of the data into memory, allowing for efficient computation on large datasets.
 
 Inspect which variables are available in the ``golfcube``.
 
