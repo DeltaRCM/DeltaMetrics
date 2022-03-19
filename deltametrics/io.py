@@ -377,20 +377,21 @@ class DictionaryIO(BaseIO):
         # if the underlying data variables are xarray,
         #   then we ignore any of the other argument passed
         if isinstance(under, xr.core.dataarray.DataArray):
-            # breakpoint()
-            # raise NotImplementedError('todo...')
+            # get the coordinates and dimensions from the data
             self.dims = under.dims
             self.coords = [under.coords[dim].data for dim in self.dims]
             self.dimensions = dict(zip(self.dims, self.coords))
-            # get the coordinates and dimensions from the data
         # otherwise, check for the arguments passed
         elif not (dimensions is None):
             # if dimensions was passed, it must be a dictionary
             if not isinstance(dimensions, dict):
-                raise TypeError
+                raise TypeError(
+                    'Input type for `dimensions` must be '
+                    '`dict` but was {0}'.format(type(dimensions)))
             # there should be exactly 3 keys
             if not (len(dimensions.keys()) == 3):
-                raise ValueError
+                raise ValueError(
+                    '`dimensions` must contain three dimensions!')
             # use the dimensions keys as dims and the vals as coords
             #   note, we check the size against the underlying a we go
             for i, (k, v) in enumerate(dimensions.items()):
@@ -410,7 +411,7 @@ class DictionaryIO(BaseIO):
         self.known_coords = self.dims
         self.dimensions = dict(zip(self.dims, self.coords))
 
-    def connect(self):
+    def connect(self, *args, **kwargs):
         """Connect to the data file.
 
         .. warning::
@@ -419,7 +420,7 @@ class DictionaryIO(BaseIO):
         """
         raise NotImplementedError
 
-    def read(self, var):
+    def read(self, *args, **kwargs):
         """Read variable from file and into memory.
 
         .. warning::
@@ -440,6 +441,11 @@ class DictionaryIO(BaseIO):
         raise NotImplementedError
 
     def __getitem__(self, var):
+        """Get item reimplemented for dictionaires.
+
+        Returns the variables exactly as they are: either a numpy ndarray or
+        xarray.
+        """
         if var in self.dataset.keys():
             return self.dataset[var]
         elif var in self.known_coords:

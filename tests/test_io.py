@@ -146,3 +146,71 @@ def test_netcdf_no_metadata():
     # works fine, because there is no `connect` call in io init
     netcdf_io = io.NetCDFIO(golf_path, 'netcdf')
     assert len(netcdf_io._in_memory_data.keys()) == 0
+
+
+class TestDictionaryIO:
+
+    _shape = (50, 100, 200)
+    dict_xr = {'eta': xr.DataArray(np.random.normal(size=_shape))}
+    dict_np = {'eta': np.random.normal(size=_shape),
+               'velocity': np.random.normal(size=_shape)}
+
+    def test_create_from_xarray_data(self):
+        dict_io = io.DictionaryIO(self.dict_xr)
+        assert ('eta' in dict_io._in_memory_data.keys()) is True
+        assert isinstance(dict_io['eta'], xr.core.dataarray.DataArray)
+
+    def test_dimensions_ignored_if_xarray(self):
+        dict_io = io.DictionaryIO(self.dict_xr, dimensions=(3, 4, 5))
+        assert ('eta' in dict_io._in_memory_data.keys()) is True
+        assert isinstance(dict_io['eta'], xr.core.dataarray.DataArray)
+
+    def test_create_from_numpy_data_nodims(self):
+        dict_io = io.DictionaryIO(
+            self.dict_np)
+        assert ('eta' in dict_io._in_memory_data.keys()) is True
+        assert ('velocity' in dict_io._in_memory_data.keys()) is True
+        assert isinstance(dict_io['eta'], np.ndarray)
+        assert isinstance(dict_io['dim0'], np.ndarray)
+
+    def test_create_from_numpy_data_dimensions(self):
+        dict_io = io.DictionaryIO(
+            self.dict_np, dimensions={
+                'time': np.arange(self._shape[0]),
+                'x': np.arange(self._shape[1]),
+                'y': np.arange(self._shape[2])})
+        assert ('eta' in dict_io._in_memory_data.keys()) is True
+        assert ('velocity' in dict_io._in_memory_data.keys()) is True
+        assert isinstance(dict_io['eta'], np.ndarray)
+        assert isinstance(dict_io['time'], np.ndarray)
+        assert isinstance(dict_io['x'], np.ndarray)
+        assert isinstance(dict_io['y'], np.ndarray)
+        assert np.all(dict_io['eta'] == self.dict_np['eta'])
+
+    def test_bad_dimensions_types(self):
+        with pytest.raises(TypeError, match=r'.* type for `dimensions` .*'):
+            _ = io.DictionaryIO(
+                self.dict_np, dimensions=(3, 4, 5))
+        with pytest.raises(TypeError, match=r'.* type for `dimensions` .*'):
+            _ = io.DictionaryIO(
+                self.dict_np, dimensions=1)
+        with pytest.raises(TypeError, match=r'.* type for `dimensions` .*'):
+            _ = io.DictionaryIO(
+                self.dict_np, dimensions='string')
+        with pytest.raises(TypeError, match=r'.* type for `dimensions` .*'):
+            _ = io.DictionaryIO(
+                self.dict_np, dimensions=['list', 'string'])
+
+    def test_bad_dimensions_length(self):
+        with pytest.raises(ValueError, match=r'`dimensions` must .*'):
+            _ = io.DictionaryIO(
+                self.dict_np, dimensions={})
+
+    def test_not_implemented_methods(self):
+        dict_io = io.DictionaryIO(self.dict_xr)
+        with pytest.raises(NotImplementedError):
+            dict_io.connect()
+        with pytest.raises(NotImplementedError):
+            dict_io.read()
+        with pytest.raises(NotImplementedError):
+            dict_io.write()

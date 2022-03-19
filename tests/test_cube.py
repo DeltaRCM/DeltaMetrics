@@ -46,6 +46,10 @@ class TestDataCubeNoStratigraphy:
         with pytest.raises(ValueError):
             _ = cube.DataCube('./nonexistent/path.doc')
 
+    def test_error_init_bad_type(self):
+        with pytest.raises(ValueError):
+            _ = cube.DataCube(9)
+
     def test_stratigraphy_from_eta(self):
         golf0 = cube.DataCube(golf_path)
         golf1 = cube.DataCube(golf_path)
@@ -128,6 +132,19 @@ class TestDataCubeNoStratigraphy:
             golf.register_planform('fail2', 22)
         with pytest.raises(TypeError, match=r'`name` .*'):
             golf.register_planform(22, plan.Planform(idx=10))
+        returnedplanform = golf.register_planform(
+            'returnedplanform', plan.Planform(idx=10),
+            return_planform=True)
+        assert returnedplanform.name == 'returnedplanform'
+
+    def test_register_plan_legacy_method(self):
+        """This tests the shorthand named version."""
+        golf = cube.DataCube(golf_path)
+        golf.register_plan(
+            'testplanform', plan.Planform(idx=10))
+        assert golf.planforms is golf.planform_set
+        assert len(golf.planforms.keys()) == 1
+        assert 'testplanform' in golf.planforms.keys()
 
     def test_planforms_slice_op(self):
         golf = cube.DataCube(golf_path)
@@ -439,6 +456,7 @@ class TestCubesFromDictionary:
         eta_data = np.array(self.fixeddatacube['eta'][:, :, :])
         dict_cube = cube.DataCube(
             {'eta': eta_data})
+        # the return is always dataarray!
         assert isinstance(dict_cube['eta'], xr.core.dataarray.DataArray)
         assert dict_cube.shape == self.fixeddatacube.shape
 
