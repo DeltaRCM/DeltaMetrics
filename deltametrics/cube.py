@@ -813,6 +813,7 @@ class StratigraphyCube(BaseCube):
             The new `StratigraphyCube` instance.
         """
         return StratigraphyCube(DataCubeInstance,
+                                varset=DataCubeInstance.varset,
                                 stratigraphy_from=stratigraphy_from,
                                 dz=dz, z=z, nz=nz)
 

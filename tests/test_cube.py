@@ -364,6 +364,12 @@ class TestStratigraphyCube:
         frzn = self.fixedstratigraphycube.export_frozen_variable('time')
         assert frzn.ndim == 3
 
+    def test_StratigraphyCube_inherit_varset(self):
+        # when creating from DataCube, varset should be inherited
+        tempsc = cube.StratigraphyCube.from_DataCube(
+            self.fixeddatacube, dz=1)
+        assert tempsc.varset is self.fixeddatacube.varset
+
 
 class TestFrozenStratigraphyCube:
 
