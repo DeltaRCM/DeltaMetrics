@@ -2,7 +2,13 @@
 Introduction to Masking objects
 ================================
 
-.. rubric:: Computing masks efficiently
+.. note::
+
+    Need description of what masks are conceptually (a binary classification of some field), and what they are in practice (an object that wraps an array that indicates True and False).
+
+
+Computing masks efficiently
+---------------------------
 
 If you are creating multiple masks for the same planform data (e.g., for the same time slice of data for the physical domain), it is computationally advantageous to create a single :obj:`~deltametrics.plan.OpeningAnglePlanform`, and use this `OAP` to create other masks.
 
@@ -23,20 +29,19 @@ For example:
 
     >>> fig, ax = plt.subplots(2, 2)
     >>> golfcube.quick_show('eta', idx=-1, ax=ax[0, 0])
-    >>> ax[0, 1].imshow(OAP.sea_angles, vmax=180, cmap='jet')
+    >>> OAP.show(ax=ax[0, 1])
     >>> lm.show(ax=ax[1, 0])
     >>> sm.show(ax=ax[1, 1])
 
 
-.. note:: needs to be expanded!
-
-
-
-.. rubric:: Trimming masks before input to metrics and functions
+Trimming masks before input
+---------------------------
 
 Sometimes it is helpful to :meth:`trim a mask <~deltametrics.mask.BaseMask.trim_mask>`, essentially replacing values with a different value, before using the mask for analysis or input to functions.
 
 .. plot::
+    :include-source:
+    :context: reset
 
     >>> golfcube = dm.sample_data.golf()
 
@@ -47,7 +52,7 @@ Sometimes it is helpful to :meth:`trim a mask <~deltametrics.mask.BaseMask.trim_
     ...     golfcube['eta'][-1, :, :],
     ...     elevation_threshold=0)
 
-    # trim one of the masks
+    >>> # trim one of the masks
     >>> m1.trim_mask(length=3)
 
     >>> fig, ax = plt.subplots(1, 2)
