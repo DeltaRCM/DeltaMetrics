@@ -78,14 +78,26 @@
 </section>
 <section id="create-and-manipulate-a-datacube">
 <h2>Create and manipulate a “DataCube”<a class="headerlink" href="#create-and-manipulate-a-datacube" title="Permalink to this headline">¶</a></h2>
-<p>DeltaMetrics centers around the use of “Cubes” in DeltaMetrics language are the central office that connects all the different modules and workflows together.</p>
+<p>DeltaMetrics centers around the use of “Cubes”.
+In DeltaMetrics, these <cite>Cube</cite> objects are the central office that connects all the different modules and a workflow together.
+The base cube is the <cite>DataCube</cite>, which is set up to handle multi-variable three-dimensional datasets; for example, 2D-spatial timeseries data of multiple variables.</p>
+<p>The data of the <cite>DataCube</cite> can come from a file or can be directly passed; where possible, loading from a file is usually preferred, because it is memory-efficient.
+Connecting to a netCDF file on disk is as simple as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">acube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">DataCube</span><span class="p">(</span><span class="s1">&#39;/path/to/data/file.nc&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>For more information about data files, and how to configure your data to work with DeltaMetrics, please visit the <code class="docutils literal notranslate"><span class="pre">Examples/io</span></code> section of the documentation.</p>
+</div>
+<p>For this guide to be easy to follow along with, we will use some sample data that comes with DeltaMetrics.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span>
 <span class="go">&lt;deltametrics.cube.DataCube object at 0x...&gt;</span>
 </pre></div>
 </div>
-<p>Creating the <code class="docutils literal notranslate"><span class="pre">golfcube</span></code> connects to a dataset, but does not read any of the data into memory, allowing for efficient computation on large datasets.
-The type of the <code class="docutils literal notranslate"><span class="pre">golfcube</span></code> is <code class="docutils literal notranslate"><span class="pre">DataCube</span></code>.</p>
+<p>Creating the <code class="docutils literal notranslate"><span class="pre">golfcube</span></code> connects to a dataset on your computer (the file is downloaded if it has not already been downloaded).
+Creating the <cite>DataCube</cite> though, does not read any of the data into memory, allowing for efficient computation on large datasets.</p>
 <p>Inspect which variables are available in the <code class="docutils literal notranslate"><span class="pre">golfcube</span></code>.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">variables</span>
 <span class="go">[&#39;eta&#39;, &#39;stage&#39;, &#39;depth&#39;, &#39;discharge&#39;, &#39;velocity&#39;, &#39;sedflux&#39;, &#39;sandfrac&#39;]</span>

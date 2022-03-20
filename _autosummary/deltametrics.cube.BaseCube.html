@@ -49,7 +49,7 @@
 <h1>deltametrics.cube.BaseCube<a class="headerlink" href="#deltametrics-cube-basecube" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.cube.BaseCube">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.cube.</span></span><span class="sig-name descname"><span class="pre">BaseCube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.cube.</span></span><span class="sig-name descname"><span class="pre">BaseCube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimensions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube" title="Permalink to this definition">¶</a></dt>
 <dd><p>Base cube object.</p>
 <p>Cube objects contain t-x-y or z-x-y information.</p>
 <p>This base class should not be used directly, but is subclassed below,
@@ -63,7 +63,7 @@ See the <a class="reference internal" href="#deltametrics.cube.BaseCube.read" ti
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.cube.BaseCube.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimensions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the BaseCube.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -77,6 +77,9 @@ corresponding t-x-y <cite>ndarray</cite> of data.</p></li>
 for <code class="docutils literal notranslate"><span class="pre">read=True</span></code> to read all available variables into memory.</p></li>
 <li><p><strong>varset</strong> (<a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">VariableSet</span></code></a>, optional) – Pass a <cite>~deltametrics.plot.VariableSet</cite> instance if you wish
 to style this cube similarly to another cube.</p></li>
+<li><p><strong>dimensions</strong> (<cite>dict</cite>, optional) – A dictionary with names and coordinates for dimensions of the
+cube, if instanntiating the cube from data loaded in memory
+in a dictionary.</p></li>
 </ul>
 </dd>
 </dl>
@@ -89,7 +92,7 @@ to style this cube similarly to another cube.</p></li>
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.__init__" title="deltametrics.cube.BaseCube.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data[, read, varset])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.__init__" title="deltametrics.cube.BaseCube.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data[, read, varset, dimensions])</p></td>
 <td><p>Initialize the BaseCube.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.export_frozen_variable" title="deltametrics.cube.BaseCube.export_frozen_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">export_frozen_variable</span></code></a>(var[, return_cube])</p></td>

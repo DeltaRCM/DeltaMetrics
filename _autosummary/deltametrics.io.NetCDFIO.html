@@ -49,7 +49,7 @@
 <h1>deltametrics.io.NetCDFIO<a class="headerlink" href="#deltametrics-io-netcdfio" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.io.</span></span><span class="sig-name descname"><span class="pre">NetCDFIO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.io.</span></span><span class="sig-name descname"><span class="pre">NetCDFIO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">io_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO" title="Permalink to this definition">¶</a></dt>
 <dd><p>Utility for consistent IO with netCDF4 files.</p>
 <p>This module wraps calls to the netCDF4 python module in a consistent API,
 so the user can work seamlessly with either netCDF4 files or HDF5 files.
@@ -64,14 +64,14 @@ information about the netCDF4 format, visit the netCDF4
 <a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/docs/faq.html">docs</a>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">io_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the NetCDFIO handler.</p>
 <p>Initialize a connection to a NetCDF file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data_path</strong> (<cite>str</cite>) – Path to file to read or write to.</p></li>
-<li><p><strong>type</strong> (<cite>str</cite>) – Stores the type of output file loaded, either a netCDF4 file,
+<li><p><strong>io_type</strong> (<cite>str</cite>) – Stores the type of output file loaded, either a netCDF4 file,
 ‘netcdf’ or an HDF5 file, ‘hdf5’.</p></li>
 <li><p><strong>write</strong> (<cite>bool</cite>, optional) – Whether to allow writing to an existing file. Set to False by
 default, if a file already exists at <code class="docutils literal notranslate"><span class="pre">data_path</span></code>, writing is
@@ -88,7 +88,7 @@ disabled, unless <code class="docutils literal notranslate"><span class="pre">wr
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.NetCDFIO.__init__" title="deltametrics.io.NetCDFIO.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data_path, type[, write])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.NetCDFIO.__init__" title="deltametrics.io.NetCDFIO.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data_path, io_type[, write])</p></td>
 <td><p>Initialize the NetCDFIO handler.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.NetCDFIO.connect" title="deltametrics.io.NetCDFIO.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>()</p></td>

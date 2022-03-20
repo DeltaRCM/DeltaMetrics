@@ -14,11 +14,6 @@
    .. autosummary::
    
       ~BaseIO.__init__
-      ~BaseIO.connect
-      ~BaseIO.get_known_coords
-      ~BaseIO.get_known_variables
-      ~BaseIO.read
-      ~BaseIO.write
    
    
 
@@ -28,7 +23,6 @@
 
    .. autosummary::
    
-      ~BaseIO.data_path
       ~BaseIO.keys
    
    

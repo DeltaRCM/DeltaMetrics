@@ -49,17 +49,23 @@
 <h1>deltametrics.io.BaseIO<a class="headerlink" href="#deltametrics-io-baseio" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.io.BaseIO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.io.</span></span><span class="sig-name descname"><span class="pre">BaseIO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.io.</span></span><span class="sig-name descname"><span class="pre">BaseIO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">io_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO" title="Permalink to this definition">¶</a></dt>
 <dd><p>BaseIO object other file format wrappers inheririt from.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This is an abstract class and cannot be instantiated directly. If you
-wish to subclass to create a new IO format, you must implement the
-methods <code class="docutils literal notranslate"><span class="pre">connect</span></code>, <code class="docutils literal notranslate"><span class="pre">read</span></code>, <code class="docutils literal notranslate"><span class="pre">write</span></code>, and <code class="docutils literal notranslate"><span class="pre">keys</span></code>.</p>
+wish to subclass to create a new IO format, you must implement
+several methods.</p>
+<p>To create an IO format for data already loaded into memory, you can
+subclass <cite>BaseIO</cite> directly, and you just need to implement the
+<cite>__getitem__</cite> method and <cite>keys</cite> attribute.</p>
+<p>To create an IO format that reads data from disk, you should subclass
+<cite>FileIO</cite>, and implement the required methods <cite>__getitem__</cite>, <cite>connect</cite>,
+<cite>read</cite>, and <cite>write</cite>, and the  <cite>keys</cite> attribute.</p>
 </div>
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.io.BaseIO.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">io_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the base IO.</p>
 </dd></dl>
 
@@ -70,23 +76,8 @@ methods <code class="docutils literal notranslate"><span class="pre">connect</sp
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.__init__" title="deltametrics.io.BaseIO.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data_path, type, write)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.__init__" title="deltametrics.io.BaseIO.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(io_type)</p></td>
 <td><p>Initialize the base IO.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.connect" title="deltametrics.io.BaseIO.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>()</p></td>
-<td><p>Should connect to the data file.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.get_known_coords" title="deltametrics.io.BaseIO.get_known_coords"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_known_coords</span></code></a>()</p></td>
-<td><p>A list of known coordinates.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.get_known_variables" title="deltametrics.io.BaseIO.get_known_variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_known_variables</span></code></a>()</p></td>
-<td><p>Should create list of known variables.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.read" title="deltametrics.io.BaseIO.read"><code class="xref py py-obj docutils literal notranslate"><span class="pre">read</span></code></a>()</p></td>
-<td><p>Should read data into memory.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.write" title="deltametrics.io.BaseIO.write"><code class="xref py py-obj docutils literal notranslate"><span class="pre">write</span></code></a>()</p></td>
-<td><p>Should write the data to file.</p></td>
 </tr>
 </tbody>
 </table>
@@ -97,10 +88,7 @@ methods <code class="docutils literal notranslate"><span class="pre">connect</sp
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.data_path" title="deltametrics.io.BaseIO.data_path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_path</span></code></a></p></td>
-<td><p>Path to data file.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.keys" title="deltametrics.io.BaseIO.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.io.BaseIO.keys" title="deltametrics.io.BaseIO.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a></p></td>
 <td><p>Should link to all key _names_ stored in file.</p></td>
 </tr>
 </tbody>
@@ -111,64 +99,10 @@ methods <code class="docutils literal notranslate"><span class="pre">connect</sp
 <dd><p>Should slice the data from file.</p>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="deltametrics.io.BaseIO.connect">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Should connect to the data file.</p>
-<p>This function should initialize the file if it does not exist, or
-connect to the file if it already exists—but <em>do not</em> read the file.</p>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="deltametrics.io.BaseIO.data_path">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_path</span></span><a class="headerlink" href="#deltametrics.io.BaseIO.data_path" title="Permalink to this definition">¶</a></dt>
-<dd><p>Path to data file.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>data_path</strong> (<em>str</em>) – path to data file for IO operations.</p>
-</dd>
-</dl>
-<p class="rubric">Notes</p>
-<p>The setter method validates the path, and returns a
-<code class="docutils literal notranslate"><span class="pre">FileNotFoundError</span></code> if the file is not found.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type</dt>
-<dd class="field-odd"><p><cite>str</cite></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="deltametrics.io.BaseIO.get_known_coords">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_known_coords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.get_known_coords" title="Permalink to this definition">¶</a></dt>
-<dd><p>A list of known coordinates.</p>
-<p>This function needs to populate <cite>self.known_coords</cite>.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="deltametrics.io.BaseIO.get_known_variables">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_known_variables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.get_known_variables" title="Permalink to this definition">¶</a></dt>
-<dd><p>Should create list of known variables.</p>
-<p>This function needs to populate <cite>self.known_variables</cite>.</p>
-</dd></dl>
-
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.io.BaseIO.keys">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><a class="headerlink" href="#deltametrics.io.BaseIO.keys" title="Permalink to this definition">¶</a></dt>
 <dd><p>Should link to all key _names_ stored in file.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="deltametrics.io.BaseIO.read">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.read" title="Permalink to this definition">¶</a></dt>
-<dd><p>Should read data into memory.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="deltametrics.io.BaseIO.write">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.BaseIO.write" title="Permalink to this definition">¶</a></dt>
-<dd><p>Should write the data to file.</p>
-<p>Take a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> and write it to file.</p>
 </dd></dl>
 
 </dd></dl>
