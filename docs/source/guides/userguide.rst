@@ -5,17 +5,6 @@ User Guide
 This documentation provides some "workflow" examples as well as some explanations and background about the various methods available in DeltaMetrics.
 
 
-Examples
-########
-
-We maintain a library of "workflow" examples, which show how to do common, interesting, or cool analysis with DeltaRCM.
-
-.. toctree::
-  :maxdepth: 2
-
-  examples/index
-
-
 Setting up your coding environment
 ##################################
 

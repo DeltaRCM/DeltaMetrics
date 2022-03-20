@@ -1,7 +1,13 @@
+.. _setup-any-dataset:
+
 How to set up any dataset to work with DeltaMetrics
 ---------------------------------------------------
 
-This guide describes how to set up any spatiotemporal (`t-x-y`) dataset to work with DeltaMetrics. 
+This guide describes how to set up any spatiotemporal (`t-x-y`) dataset to work with DeltaMetrics.
+
+.. hint::
+
+    If you are trying DeltaMetrics for the first time with your data, and want a quick and simple test, check out :doc:`this guide <./connect_to_nonstandard_data>`
 
 First, let's make some sample data:
 

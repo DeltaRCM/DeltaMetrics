@@ -1,6 +1,6 @@
-*********************************
-The Cube
-*********************************
+***************
+Cube operations
+***************
 
 The package makes available `Cube` objects, which are the central office to all of the other functionality of DeltaMetrics. 
 
@@ -11,7 +11,7 @@ So, variables in the underlying data might be lidar scans, overhead photos, grai
 The functions are defined in ``deltametrics.cube``. 
 
 
-Cube types
+Cube classes
 ==============
 
 .. currentmodule:: deltametrics.cube

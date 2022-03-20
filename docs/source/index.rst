@@ -41,14 +41,23 @@ Documentation Table of Contents
    meta/conduct
    meta/planning
 
+.. toctree::
+   :maxdepth: 1
+
+   guides/10min
 
 .. toctree::
    :maxdepth: 2
 
-   guides/getting_started
    guides/userguide
+   guides/examples/index
+   guides/subject_guides/index
    guides/devguide
-   guides/visualization
+   
+
+.. toctree::
+   :maxdepth: 2
+
    reference/index
 
 

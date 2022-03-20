@@ -1,13 +1,22 @@
-*******************
 Visualization Guide
-*******************
+=====================
 
 This guide covers the full range of visualization routines available as part of DeltaMetrics, and explains how to create your own visualization routines that build on top of DeltaMetrics.
 
 
 
+Default styling
+---------------
+
+By default, each variable receives a set of styling definitions.
+The default parameters of each styling variable are defined below:
+
+.. plot:: plot/document_variableset.py
+
+
+
 Section display types
-=====================
+---------------------
 
 `DataCube` with computed "quick" stratigraphy may be visualized a number of different ways.
 
