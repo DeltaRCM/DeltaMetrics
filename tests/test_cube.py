@@ -29,7 +29,7 @@ class TestDataCubeNoStratigraphy:
     def test_init_cube_from_path_rcm8(self):
         golf = cube.DataCube(golf_path)
         assert golf._data_path == golf_path
-        assert golf.dataio.type == 'netcdf'
+        assert golf.dataio.io_type == 'netcdf'
         assert golf._planform_set == {}
         assert golf._section_set == {}
         assert type(golf.varset) is plot.VariableSet
@@ -45,6 +45,10 @@ class TestDataCubeNoStratigraphy:
     def test_error_init_bad_extension(self):
         with pytest.raises(ValueError):
             _ = cube.DataCube('./nonexistent/path.doc')
+
+    def test_error_init_bad_type(self):
+        with pytest.raises(TypeError):
+            _ = cube.DataCube(9)
 
     def test_stratigraphy_from_eta(self):
         golf0 = cube.DataCube(golf_path)
@@ -128,6 +132,19 @@ class TestDataCubeNoStratigraphy:
             golf.register_planform('fail2', 22)
         with pytest.raises(TypeError, match=r'`name` .*'):
             golf.register_planform(22, plan.Planform(idx=10))
+        returnedplanform = golf.register_planform(
+            'returnedplanform', plan.Planform(idx=10),
+            return_planform=True)
+        assert returnedplanform.name == 'returnedplanform'
+
+    def test_register_plan_legacy_method(self):
+        """This tests the shorthand named version."""
+        golf = cube.DataCube(golf_path)
+        golf.register_plan(
+            'testplanform', plan.Planform(idx=10))
+        assert golf.planforms is golf.planform_set
+        assert len(golf.planforms.keys()) == 1
+        assert 'testplanform' in golf.planforms.keys()
 
     def test_planforms_slice_op(self):
         golf = cube.DataCube(golf_path)
@@ -399,7 +416,7 @@ class TestLegacyPyDeltaRCMCube:
         with pytest.warns(UserWarning) as record:
             rcm8cube = cube.DataCube(rcm8_path)
         assert rcm8cube._data_path == rcm8_path
-        assert rcm8cube.dataio.type == 'netcdf'
+        assert rcm8cube.dataio.io_type == 'netcdf'
         assert rcm8cube._planform_set == {}
         assert rcm8cube._section_set == {}
         assert type(rcm8cube.varset) is plot.VariableSet
@@ -423,6 +440,59 @@ class TestLegacyPyDeltaRCMCube:
         assert rcm8cube.meta is None
 
 
+class TestCubesFromDictionary:
+
+    fixeddatacube = cube.DataCube(golf_path)
+
+    def test_DataCube_one_dataset(self):
+        eta_data = self.fixeddatacube['eta'][:, :, :]
+        dict_cube = cube.DataCube(
+            {'eta': eta_data})
+        assert isinstance(dict_cube['eta'], xr.core.dataarray.DataArray)
+        assert dict_cube.shape == self.fixeddatacube.shape
+        assert np.all(dict_cube['eta'] == self.fixeddatacube['eta'][:, :, :])
+
+    def test_DataCube_one_dataset_numpy(self):
+        eta_data = np.array(self.fixeddatacube['eta'][:, :, :])
+        dict_cube = cube.DataCube(
+            {'eta': eta_data})
+        # the return is always dataarray!
+        assert isinstance(dict_cube['eta'], xr.core.dataarray.DataArray)
+        assert dict_cube.shape == self.fixeddatacube.shape
+
+    def test_DataCube_one_dataset_partial(self):
+        eta_data = self.fixeddatacube['eta'][:30, :, :]
+        dict_cube = cube.DataCube(
+            {'eta': eta_data})
+        assert np.all(dict_cube['eta'] == self.fixeddatacube['eta'][:30, :, :])
+
+    def test_DataCube_two_dataset(self):
+        eta_data = self.fixeddatacube['eta'][:, :, :]
+        vel_data = self.fixeddatacube['velocity'][:, :, :]
+        dict_cube = cube.DataCube(
+            {'eta': eta_data,
+             'velocity': vel_data})
+        assert np.all(dict_cube['eta'] == self.fixeddatacube['eta'][:, :, :])
+        assert np.all(dict_cube['velocity'] == self.fixeddatacube['velocity'][:, :, :])
+
+    @pytest.mark.xfail(NotImplementedError, reason='not implemented', strict=True)
+    def test_StratigraphyCube_from_etas(self):
+        eta_data = self.fixeddatacube['eta'][:, :, :]
+        _ = cube.StratigraphyCube({'eta': eta_data})
+
+    @pytest.mark.xfail(NotImplementedError, reason='not implemented', strict=True)
+    def test_StratigraphyCube_from_etas_numpy(self):
+        eta_data = self.fixeddatacube['eta'][:, :, :]
+        _ = cube.StratigraphyCube({'eta': np.array(eta_data)})
+
+    def test_no_metadata_integrated(self):
+        eta_data = self.fixeddatacube['eta'][:30, :, :]
+        dict_cube = cube.DataCube(
+            {'eta': eta_data})
+        with pytest.raises(AttributeError):
+            dict_cube.meta
+
+
 class TestLandsatCube:
 
     with pytest.warns(UserWarning, match=r'No associated metadata'):
@@ -432,7 +502,7 @@ class TestLandsatCube:
         with pytest.warns(UserWarning, match=r'No associated metadata'):
             hdfcube = cube.DataCube(hdf_path)
         assert hdfcube._data_path == hdf_path
-        assert hdfcube.dataio.type == 'hdf5'
+        assert hdfcube.dataio.io_type == 'hdf5'
         assert hdfcube._planform_set == {}
         assert hdfcube._section_set == {}
         assert type(hdfcube.varset) is plot.VariableSet

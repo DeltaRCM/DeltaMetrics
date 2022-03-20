@@ -5,6 +5,7 @@ import copy
 from warnings import warn
 
 import xarray as xr
+import numpy as np
 import netCDF4
 
 
@@ -12,22 +13,79 @@ class BaseIO(abc.ABC):
     """BaseIO object other file format wrappers inheririt from.
 
     .. note::
+        
         This is an abstract class and cannot be instantiated directly. If you
-        wish to subclass to create a new IO format, you must implement the
-        methods ``connect``, ``read``, ``write``, and ``keys``.
+        wish to subclass to create a new IO format, you must implement
+        several methods.
+
+        To create an IO format for data already loaded into memory, you can
+        subclass `BaseIO` directly, and you just need to implement the
+        `__getitem__` method and `keys` attribute. 
+
+        To create an IO format that reads data from disk, you should subclass
+        `FileIO`, and implement the required methods `__getitem__`, `connect`,
+        `read`, and `write`, and the  `keys` attribute.
     """
 
-    def __init__(self, data_path, type, write):
+    def __init__(self, io_type):
         """Initialize the base IO.
         """
+        self.io_type = io_type
+
+    @abc.abstractmethod
+    def __getitem__(self):
+        """Should slice the data from file.
+        """
+        return
+
+    @property
+    @abc.abstractmethod
+    def keys(self):
+        """Should link to all key _names_ stored in file.
+        """
+        return
+
+
+class FileIO(BaseIO):
+    """Base class for File input output datasets.
+
+    This class should be the basis for subclasses that read data directly from
+    a file or folder.
+
+    To create an IO format that reads data from disk, you should subclass
+    `FileIO`, and implement the required methods `__getitem__`, `connect`,
+    `read`, and `write`, and the  `keys` attribute.
+    """
+
+    def __init__(self, data_path, io_type, write=False):
+        """Initialize a file IO handler.
+
+        Initialize a connection to a NetCDF file.
+
+        Parameters
+        ----------
+        data_path : `str`
+            Path to file to read or write to.
+
+        type : `str`
+            Stores the type of output file loaded, either a netCDF4 file,
+            'netcdf' or an HDF5 file, 'hdf5'.
+
+        write : `bool`, optional
+            Whether to allow writing to an existing file. Set to False by
+            default, if a file already exists at ``data_path``, writing is
+            disabled, unless ``write`` is set to True.
+        """
         self.data_path = data_path
-        self.type = type
+        self.io_type = io_type
         self.write = write
 
         self.connect()
 
         self.get_known_coords()
         self.get_known_variables()
+
+        super().__init__(io_type=io_type)
 
     @property
     def data_path(self):
@@ -58,6 +116,8 @@ class BaseIO(abc.ABC):
 
         This function should initialize the file if it does not exist, or
         connect to the file if it already exists---but *do not* read the file.
+
+        If no file is required, this function should simply pass.
         """
         return
 
@@ -91,21 +151,8 @@ class BaseIO(abc.ABC):
         """
         return
 
-    @abc.abstractmethod
-    def __getitem__(self):
-        """Should slice the data from file.
-        """
-        return
 
-    @property
-    @abc.abstractmethod
-    def keys(self):
-        """Should link to all key _names_ stored in file.
-        """
-        return
-
-
-class NetCDFIO(BaseIO):
+class NetCDFIO(FileIO):
     """Utility for consistent IO with netCDF4 files.
 
     This module wraps calls to the netCDF4 python module in a consistent API,
@@ -123,7 +170,7 @@ class NetCDFIO(BaseIO):
     `docs <https://www.unidata.ucar.edu/software/netcdf/docs/faq.html>`_.
     """
 
-    def __init__(self, data_path, type, write=False):
+    def __init__(self, data_path, io_type, write=False):
         """Initialize the NetCDFIO handler.
 
         Initialize a connection to a NetCDF file.
@@ -133,7 +180,7 @@ class NetCDFIO(BaseIO):
         data_path : `str`
             Path to file to read or write to.
 
-        type : `str`
+        io_type : `str`
             Stores the type of output file loaded, either a netCDF4 file,
             'netcdf' or an HDF5 file, 'hdf5'.
 
@@ -143,7 +190,7 @@ class NetCDFIO(BaseIO):
             disabled, unless ``write`` is set to True.
         """
 
-        super().__init__(data_path=data_path, type=type, write=write)
+        super().__init__(data_path=data_path, io_type=io_type, write=write)
 
         self._in_memory_data = {}
 
@@ -277,6 +324,139 @@ class NetCDFIO(BaseIO):
             return self._in_memory_data[var]
         else:
             return self.dataset[var]
+
+    @property
+    def keys(self):
+        """Variable names in file.
+        """
+        return [var for var in self.dataset.variables]
+
+
+class DictionaryIO(BaseIO):
+    """Utility for consistent IO with a dictionary as input.
+
+    This module wraps calls to an underyling data dictionary, so that any
+    arbitrary data can be used as a cube dataset.
+    """
+
+    def __init__(self, data_dictionary, dimensions=None):
+        """Initialize the dictionary handler.
+
+        Parameters
+        ----------
+        data_dictionary : `dict`
+            The dictionary, containing `np.ndarray` or `xr.DataArray` data for
+            each variable.
+        """
+
+        super().__init__(io_type='dictionary')
+
+        self.dataset = data_dictionary
+        self._in_memory_data = self.dataset
+
+        self.get_known_variables()
+        self.get_known_coords(dimensions)
+
+    def get_known_variables(self):
+        """List known variables.
+
+        These variables are pulled from the loaded dataset.
+        """
+        _vars = self.dataset.keys()
+        self.known_variables = [item for item in _vars]
+
+    def get_known_coords(self, dimensions):
+        """List known coordinates.
+
+        These coordinates must be supplied during instantiation.
+        """
+        # start with a grab of underlying data
+        under = list(self.dataset.values())[0]
+        under_shp = under.shape
+
+        # if the underlying data variables are xarray,
+        #   then we ignore any of the other argument passed
+        if isinstance(under, xr.core.dataarray.DataArray):
+            # get the coordinates and dimensions from the data
+            self.dims = under.dims
+            self.coords = [under.coords[dim].data for dim in self.dims]
+            self.dimensions = dict(zip(self.dims, self.coords))
+        # otherwise, check for the arguments passed
+        elif not (dimensions is None):
+            # if dimensions was passed, it must be a dictionary
+            if not isinstance(dimensions, dict):
+                raise TypeError(
+                    'Input type for `dimensions` must be '
+                    '`dict` but was {0}'.format(type(dimensions)))
+            # there should be exactly 3 keys
+            if not (len(dimensions.keys()) == 3):
+                raise ValueError(
+                    '`dimensions` must contain three dimensions!')
+            # use the dimensions keys as dims and the vals as coords
+            #   note, we check the size against the underlying a we go
+            for i, (k, v) in enumerate(dimensions.items()):
+                if not (len(dimensions[k]) == under_shp[i]):
+                    raise ValueError(
+                        'Shape of `dimensions` at position {0} was {1}, '
+                        'which does not match the variables dimensions '
+                        '{2}.'.format(i, len(dimensions[k]), under_shp))
+            # make the assignment
+            self.dims = list(dimensions.keys())
+            self.coords = list(dimensions.values())
+            self.dimensions = dimensions
+        # otherwise, fill with np.arange(shape)
+        else:
+            self.dims = ['dim0', 'dim1', 'dim2']
+            coords = []
+            for i in range(3):
+                coords.append(np.arange(under_shp[i]))
+            self.coords = coords
+
+        self.known_coords = self.dims
+        self.dimensions = dict(zip(self.dims, self.coords))
+
+    def connect(self, *args, **kwargs):
+        """Connect to the data file.
+
+        .. warning::
+            Not Implemented.
+
+        """
+        raise NotImplementedError
+
+    def read(self, *args, **kwargs):
+        """Read variable from file and into memory.
+
+        .. warning::
+            Not Implemented. Data is always in memory.
+
+        """
+        raise NotImplementedError
+
+    def write(self):
+        """Write data to file.
+
+        Take a :obj:`~deltametrics.cube.Cube` and write it to file.
+
+        .. warning::
+            Not Implemented.
+
+        """
+        raise NotImplementedError
+
+    def __getitem__(self, var):
+        """Get item reimplemented for dictionaires.
+
+        Returns the variables exactly as they are: either a numpy ndarray or
+        xarray.
+        """
+        if var in self.dataset.keys():
+            return self.dataset[var]
+        elif var in self.known_coords:
+            return self.dimensions[var]
+        else:
+            raise ValueError(
+                'No variable named {0} found.'.format(var))
 
     @property
     def keys(self):
