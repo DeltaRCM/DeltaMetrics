@@ -33,7 +33,7 @@ class BaseCube(abc.ABC):
 
     """
 
-    def __init__(self, data, read=[], varset=None):
+    def __init__(self, data, read=[], varset=None, dimensions=None):
         """Initialize the BaseCube.
 
         Parameters
@@ -52,6 +52,11 @@ class BaseCube(abc.ABC):
         varset : :class:`~deltametrics.plot.VariableSet`, optional
             Pass a `~deltametrics.plot.VariableSet` instance if you wish
             to style this cube similarly to another cube.
+
+        dimensions : `dict`, optional
+            A dictionary with names and coordinates for dimensions of the
+            cube, if instanntiating the cube from data loaded in memory
+            in a dictionary.
         """
         if type(data) is str:
             # handle a path to netCDF file
@@ -61,7 +66,8 @@ class BaseCube(abc.ABC):
         elif type(data) is dict:
             # handle a dict, arrays set up already, make an io class to wrap it
             self._data_path = None
-            self._dataio = io.DictionaryIO(data)
+            self._dataio = io.DictionaryIO(
+                data, dimensions=dimensions)
             self._read_meta_from_file()
         elif isinstance(data, DataCube):
             # handle initializing one cube type from another
@@ -621,7 +627,8 @@ class DataCube(BaseCube):
     number of attached attributes (grain size, mud frac, elevation).
     """
 
-    def __init__(self, data, read=[], varset=None, stratigraphy_from=None):
+    def __init__(self, data, read=[], varset=None, stratigraphy_from=None,
+                 dimensions=None):
         """Initialize the BaseCube.
 
         Parameters
@@ -649,8 +656,13 @@ class DataCube(BaseCube):
             outputs. Stratigraphy can be computed on an existing data cube
             with the :meth:`~deltametrics.cube.DataCube.stratigraphy_from`
             method.
+
+        dimensions : `dict`, optional
+            A dictionary with names and coordinates for dimensions of the
+            `DataCube`, if instanntiating the cube from data loaded in memory
+            in a dictionary.
         """
-        super().__init__(data, read, varset)
+        super().__init__(data, read, varset, dimensions=dimensions)
 
         # set up the grid for time
         _, self._T, _ = np.meshgrid(

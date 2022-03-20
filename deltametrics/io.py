@@ -395,10 +395,14 @@ class DictionaryIO(BaseIO):
             # use the dimensions keys as dims and the vals as coords
             #   note, we check the size against the underlying a we go
             for i, (k, v) in enumerate(dimensions.items()):
-                assert len(dimensions[k]) == under_shp[i]
+                if not (len(dimensions[k]) == under_shp[i]):
+                    raise ValueError(
+                        'Shape of `dimensions` at position {0} was {1}, '
+                        'which does not match the variables dimensions '
+                        '{2}.'.format(i, len(dimensions[k]), under_shp))
             # make the assignment
-            self.dims = dimensions.keys()
-            self.coords = dimensions.values()
+            self.dims = list(dimensions.keys())
+            self.coords = list(dimensions.values())
             self.dimensions = dimensions
         # otherwise, fill with np.arange(shape)
         else:

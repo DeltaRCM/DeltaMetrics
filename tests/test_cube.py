@@ -47,7 +47,7 @@ class TestDataCubeNoStratigraphy:
             _ = cube.DataCube('./nonexistent/path.doc')
 
     def test_error_init_bad_type(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(TypeError):
             _ = cube.DataCube(9)
 
     def test_stratigraphy_from_eta(self):
@@ -484,6 +484,13 @@ class TestCubesFromDictionary:
     def test_StratigraphyCube_from_etas_numpy(self):
         eta_data = self.fixeddatacube['eta'][:, :, :]
         _ = cube.StratigraphyCube({'eta': np.array(eta_data)})
+
+    def test_no_metadata_integrated(self):
+        eta_data = self.fixeddatacube['eta'][:30, :, :]
+        dict_cube = cube.DataCube(
+            {'eta': eta_data})
+        with pytest.raises(AttributeError):
+            dict_cube.meta
 
 
 class TestLandsatCube:

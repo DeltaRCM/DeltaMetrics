@@ -206,6 +206,15 @@ class TestDictionaryIO:
             _ = io.DictionaryIO(
                 self.dict_np, dimensions={})
 
+    def test_bad_dimensions_shape_mismatch(self):
+        with pytest.raises(ValueError, match=r'Shape of `dimensions` .*'):
+            # note dim2 and dim1 are switchd below!
+            _ = dict_io = io.DictionaryIO(
+                self.dict_np, dimensions={
+                    'time': np.arange(self._shape[0]),
+                    'x': np.arange(self._shape[2]),
+                    'y': np.arange(self._shape[1])})
+
     def test_not_implemented_methods(self):
         dict_io = io.DictionaryIO(self.dict_xr)
         with pytest.raises(NotImplementedError):
