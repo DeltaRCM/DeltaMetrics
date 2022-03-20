@@ -8,11 +8,13 @@ the delta.
 This class is defined in ``deltametrics.mask``.
 
 
-.. include:: lexicon.rst
+.. hint::
+
+  There is a complete :doc:`Masking Subject Guide </guides/subject_guides/masking>` about the organization of this area of DeltaMetrics and examples for how to use and compute masks.
 
 
-Mask types
-==========
+Mask classes
+============
 
 .. currentmodule:: deltametrics.mask
 

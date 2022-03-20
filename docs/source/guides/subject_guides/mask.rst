@@ -1,6 +1,6 @@
 
-Mask lexicon and use
---------------------
+Introduction to Masking objects
+================================
 
 .. rubric:: Computing masks efficiently
 

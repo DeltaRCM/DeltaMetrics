@@ -1,4 +1,7 @@
 
+Introduction to Section objects
+================================
+
 .. rubric:: Section lexicon
 
 The `Section` module defines some terms that are used throughout the code and rest of the documentation. 

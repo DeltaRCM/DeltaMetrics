@@ -1,4 +1,4 @@
-Introduction to Planform Objects
+Introduction to Planform objects
 ================================
 
 Multiple definitions of the delta planform are supported.
