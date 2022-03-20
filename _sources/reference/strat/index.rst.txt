@@ -1,7 +1,7 @@
 .. api.settle:
 
 *********************************
-Stratigraphy functions
+Stratigraphy operations
 *********************************
 
 The package makes available functions relating to computing things based on

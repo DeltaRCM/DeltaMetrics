@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>How to connect to non-standard data &#8212; DeltaMetrics 0.3.2 documentation</title>
+    <title>Quick connect to your own data &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
@@ -19,7 +19,7 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="How to set up any dataset to work with DeltaMetrics" href="setup_any_dataset.html" />
-    <link rel="prev" title="Examples" href="../index.html" /> 
+    <link rel="prev" title="View a section slice" href="../plot/show_section.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -31,12 +31,11 @@
           <a href="setup_any_dataset.html" title="How to set up any dataset to work with DeltaMetrics"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="Examples"
+          <a href="../plot/show_section.html" title="View a section slice"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.3.2 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../userguide.html" >User Guide</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../index.html" accesskey="U">Examples</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">How to connect to non-standard data</a></li> 
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Quick connect to your own  data</a></li> 
       </ul>
     </div>  
 
@@ -45,9 +44,35 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="how-to-connect-to-non-standard-data">
-<h1>How to connect to non-standard data<a class="headerlink" href="#how-to-connect-to-non-standard-data" title="Permalink to this headline">¶</a></h1>
-<p>This guide covers how to connect to non-standard data with DeltaMetrics.</p>
+  <section id="quick-connect-to-your-own-data">
+<span id="quick-non-standard-testing"></span><h1>Quick connect to your own  data<a class="headerlink" href="#quick-connect-to-your-own-data" title="Permalink to this headline">¶</a></h1>
+<p>If you are considering DeltaMetrics for your project, it may be helpful to use some of your data and see how DeltaMetrics works with that data, before committing to formatting a NetCDF file.</p>
+<p>This guide covers how to connect to non-standard data with DeltaMetrics</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The preferred approach to using DeltaMetrics is to <a class="reference internal" href="setup_any_dataset.html"><span class="doc">properly format a NetCDF file for input datasets</span></a>.</p>
+</div>
+<p>First, use <cite>numpy</cite> to manipulate each variable in your dataset into a 3D array with “time” on the first axis, and the two spatial dimensions on the next two axes.
+In the following example, the data is from a 100x200 domain with 51 saved data intervals.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">eta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">51</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+
+<span class="n">dict_datacube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">DataCube</span><span class="p">(</span>
+    <span class="p">{</span><span class="s1">&#39;eta&#39;</span><span class="p">:</span> <span class="n">eta</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>That is all you need to get your data into DeltaMetrics to test the package out.
+You could also have additional variables by adding key-value pairs to the input dictionary.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dict_datacube</span><span class="o">.</span><span class="n">quick_show</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">,</span> <span class="n">idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../../../guides/examples/io/connect_to_nonstandard_data-2.png">png</a>, <a class="reference external" href="../../../guides/examples/io/connect_to_nonstandard_data-2.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../../../_images/connect_to_nonstandard_data-2.png" class="plot-directive" src="../../../_images/connect_to_nonstandard_data-2.png" />
+</figure>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>If you decide to use DeltaMetrics, please check out the guide on how to <a class="reference internal" href="setup_any_dataset.html"><span class="doc">properly format a NetCDF file for input datasets</span></a>.</p>
+</div>
 </section>
 
 
@@ -59,8 +84,8 @@
         <div class="sphinxsidebarwrapper">
   <div>
     <h4>Previous topic</h4>
-    <p class="topless"><a href="../index.html"
-                          title="previous chapter">Examples</a></p>
+    <p class="topless"><a href="../plot/show_section.html"
+                          title="previous chapter">View a section slice</a></p>
   </div>
   <div>
     <h4>Next topic</h4>
@@ -98,12 +123,11 @@
           <a href="setup_any_dataset.html" title="How to set up any dataset to work with DeltaMetrics"
              >next</a> |</li>
         <li class="right" >
-          <a href="../index.html" title="Examples"
+          <a href="../plot/show_section.html" title="View a section slice"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.3.2 documentation</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../userguide.html" >User Guide</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="../index.html" >Examples</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">How to connect to non-standard data</a></li> 
+          <li class="nav-item nav-item-1"><a href="../index.html" >Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Quick connect to your own  data</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

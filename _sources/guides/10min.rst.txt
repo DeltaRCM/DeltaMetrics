@@ -1,6 +1,6 @@
-******************
-10-minute tutorial
-******************
+*****************************************
+Getting started with a 10-minute tutorial
+*****************************************
 
 This documentation provides a guide to learn the most basic components of DeltaMetrics in just ten minutes!
 For a more in depth guide, be sure to check out the :doc:`userguide`.

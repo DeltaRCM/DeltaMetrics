@@ -1,6 +1,7 @@
+.. _mobility-subject-guide:
 
-Using the Mobility Functions
-----------------------------
+Introduction to mobility functions
+======================================
 
 To use the mobility functions, you need a set of masks covering various time
 points from the model output. These can be in the form of a list of mask

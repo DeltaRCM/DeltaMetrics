@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>&lt;no title&gt; &#8212; DeltaMetrics 0.3.2 documentation</title>
+    <title>Introduction to Section objects &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -17,7 +17,9 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Introduction to Masking objects" href="mask.html" />
+    <link rel="prev" title="Introduction to Planform objects" href="planform.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -25,8 +27,15 @@
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="mask.html" title="Introduction to Masking objects"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="planform.html" title="Introduction to Planform objects"
+             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.3.2 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">&lt;no title&gt;</a></li> 
+          <li class="nav-item nav-item-1"><a href="index.html" accesskey="U">Subject Guides</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Introduction to Section objects</a></li> 
       </ul>
     </div>  
 
@@ -35,7 +44,9 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <p class="rubric">Section lexicon</p>
+  <section id="introduction-to-section-objects">
+<h1>Introduction to Section objects<a class="headerlink" href="#introduction-to-section-objects" title="Permalink to this headline">¶</a></h1>
+<p class="rubric">Section lexicon</p>
 <p>The <cite>Section</cite> module defines some terms that are used throughout the code and rest of the documentation.</p>
 <p>Most importantly, a Section is defined by a set of coordinates in the <cite>dim1</cite>-<cite>dim2</cite> plane of a <cite>Cube</cite>.</p>
 <p>Therefore, we transform variable definitions when extracting the <cite>Section</cite>, and the coordinate system of the section is defined by the along-section direction <img class="math" src="../../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/> and a vertical section coordinate, which is <img class="math" src="../../_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> when viewing stratigraphy, and <img class="math" src="../../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/> when viewing a spacetime section.</p>
@@ -103,6 +114,7 @@ The same <cite>spacetime</cite> data can be requested in the “preserved” for
 </figure>
 <p>Note that in this visual all non-preserved spacetime points have been masked and are shown as white.
 See the <a class="reference external" href="https://numpy.org/doc/stable/reference/maskedarray.generic.html">numpy MaskedArray documentation</a> for more information on interacting with masked arrays.</p>
+</section>
 
 
             <div class="clearer"></div>
@@ -111,10 +123,20 @@ See the <a class="reference external" href="https://numpy.org/doc/stable/referen
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="planform.html"
+                          title="previous chapter">Introduction to Planform objects</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="mask.html"
+                          title="next chapter">Introduction to Masking objects</a></p>
+  </div>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="../../_sources/reference/section/lexicon.rst.txt"
+      <li><a href="../../_sources/guides/subject_guides/section.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -138,8 +160,15 @@ See the <a class="reference external" href="https://numpy.org/doc/stable/referen
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="mask.html" title="Introduction to Masking objects"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="planform.html" title="Introduction to Planform objects"
+             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.3.2 documentation</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">&lt;no title&gt;</a></li> 
+          <li class="nav-item nav-item-1"><a href="index.html" >Subject Guides</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Introduction to Section objects</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

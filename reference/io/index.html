@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>Input/output file operations &#8212; DeltaMetrics 0.3.2 documentation</title>
+    <title>Input/output operations &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
@@ -35,7 +35,7 @@
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.3.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">API reference</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Input/output file operations</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Input/output operations</a></li> 
       </ul>
     </div>  
 
@@ -44,11 +44,13 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="input-output-file-operations">
-<h1>Input/output file operations<a class="headerlink" href="#input-output-file-operations" title="Permalink to this headline">¶</a></h1>
-<p>The package specifies several data input/output utilities. Typically, these utilities will not be interacted with directly, but rather are used by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> or <a class="reference internal" href="../section/index.html"><span class="doc">Section operations and classes</span></a> to handle slicing. The IO utilities are data agnostic, that is to say, they do not care about what the data <em>are</em>, but instead just connect by variable names. Datasets commonly used are  could be lidar scans, overhead photos, grain-size maps (DeltaRCM), or flow velocity (DeltaRCM).</p>
+  <section id="input-output-operations">
+<h1>Input/output operations<a class="headerlink" href="#input-output-operations" title="Permalink to this headline">¶</a></h1>
+<p>The package specifies several data input/output utilities. Typically, these utilities will not be interacted with directly, but rather are used by the <code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> or <a class="reference internal" href="../section/index.html"><span class="doc">Section operations</span></a> to handle slicing. The IO utilities are data agnostic, that is to say, they do not care about what the data <em>are</em>, but instead just connect by variable names. Datasets commonly used are  could be lidar scans, overhead photos, grain-size maps (DeltaRCM), or flow velocity (DeltaRCM).</p>
 <p>By default, nothing is loaded from disk and into memory, and instead all slicing operations are handled on the fly.</p>
-<p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.io</span></code>.</p>
+<p>The tools are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.io</span></code>.</p>
+<section id="i-o-classes">
+<h2>I/O classes<a class="headerlink" href="#i-o-classes" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -64,6 +66,7 @@
 </tbody>
 </table>
 </section>
+</section>
 
 
             <div class="clearer"></div>
@@ -72,6 +75,16 @@
       </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Input/output operations</a><ul>
+<li><a class="reference internal" href="#i-o-classes">I/O classes</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
   <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="../../_autosummary/deltametrics.strat.BaseStratigraphyAttributes.html"
@@ -117,7 +130,7 @@
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">DeltaMetrics 0.3.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >API reference</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Input/output file operations</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Input/output operations</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

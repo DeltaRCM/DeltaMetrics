@@ -1,7 +1,7 @@
 .. api.profile:
 
 *********************************
-Section operations and classes
+Section operations
 *********************************
 
 The package makes available models for vertical sections of deposits and strata.
@@ -10,8 +10,12 @@ All classes inherit from :obj:`BaseSection`, and redefine methods and attributes
 
 The classes are defined in ``deltametrics.section``. 
 
-Section types
-==============
+.. hint::
+
+  There is a complete :doc:`Sections Subject Guide </guides/subject_guides/mobility>` about the organization of this area of DeltaMetrics and examples for how to use and compute `Section` metrics.
+
+Section classes
+===============
 
 .. currentmodule:: deltametrics.section
 
@@ -24,9 +28,3 @@ Section types
     CircularSection
     RadialSection
     BaseSection
-
-
-Information about Sections
-==========================
-
-.. include:: lexicon.rst

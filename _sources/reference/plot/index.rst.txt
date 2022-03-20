@@ -1,14 +1,19 @@
 .. api.plot:
 
 ********************************
-Plotting utilities and functions
+Plotting operations
 ********************************
 
 The package uses a few utility classes and functions to make consistent plotting easy thoughout the package.
 This reference page documents the lower-level utilities used to make this happen.
 
 .. note::
+
     The built-in routines to plot ``Section`` and ``Plan`` objects are not documented here, look for documentation on those high-level methods in their respective module documentation.
+
+.. hint::
+
+  There is a complete :doc:`Visualization Guide </guides/subject_guides/visualization>` about the organization of this area of DeltaMetrics and examples for how to use and make visualizations.
 
 The functions are defined in ``deltametrics.plot``. 
 
