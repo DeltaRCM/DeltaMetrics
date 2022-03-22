@@ -1203,7 +1203,7 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
     im = ax.imshow(
         elevation_data - datum,
         cmap=carto_cm, norm=carto_norm,
-        extent=_extent,**kwargs)
+        extent=_extent, **kwargs)
 
     cb = append_colorbar(im, ax, **colorbar_kw)
     if not ticks:
@@ -1217,7 +1217,7 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
 
 
 def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
-                         alpha_clip=(None, 90)):
+                         alpha_clip=(None, 90), clip_type='percentile'):
     """Convenient plotting method to overlay a sparse 2D array on an image.
 
     Should only be used with data arrays that are sparse: i.e., where many
@@ -1285,7 +1285,15 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
 
     if len(alpha_clip) != 2:
         raise ValueError(
-            '`alpha_clip` argument must be tuple or list of lenght 2.')
+            '`alpha_clip` argument must be tuple or list of length 2.')
+
+    # check the clip_type flag
+    clip_type_allow = ['percentile', 'value']
+    if clip_type not in clip_type_allow:
+        raise ValueError(
+            'Bad value given for `clip_type` argument. Input argument must '
+            'be one of `{0}`, but was `{1}`'.format(
+                clip_type_allow, clip_type))
 
     # pull the cmap out
     if isinstance(cmap, str):
@@ -1305,13 +1313,17 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
         _extent = [0, sparse_array.shape[1],
                    sparse_array.shape[0], 0]
 
-    # process the clip fields
-    if alpha_clip[0]:
+    # process the clip field
+    if (not (alpha_clip[0] is None)) and (clip_type == 'percentile'):
         amin = np.nanpercentile(sparse_array, alpha_clip[0])
+    elif (not (alpha_clip[0] is None)) and (clip_type == 'value'):
+        amin = alpha_clip[0]
     else:
         amin = np.nanmin(sparse_array)
-    if alpha_clip[1]:
+    if (not (alpha_clip[1] is None)) and (clip_type == 'percentile'):
         amax = np.nanpercentile(sparse_array, alpha_clip[1])
+    elif (not (alpha_clip[1] is None)) and (clip_type == 'value'):
+        amax = alpha_clip[1]
     else:
         amax = np.nanmax(sparse_array)
 
