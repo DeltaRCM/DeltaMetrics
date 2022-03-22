@@ -1,0 +1,184 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Radial growth of delta through time &#8212; DeltaMetrics 0.3.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="View a planform" href="../plot/show_plan.html" />
+    <link rel="prev" title="Examples" href="../index.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../plot/show_plan.html" title="View a planform"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Examples"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.3.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Radial growth of delta through time</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="radial-growth-of-delta-through-time">
+<h1>Radial growth of delta through time<a class="headerlink" href="#radial-growth-of-delta-through-time" title="Permalink to this headline">¶</a></h1>
+<p>The growth pattern of a delta can be predicted from the volume of a cylinder.
+The expectation is that a delta’s planform area grows according to a power law that is a function of basin depth, sediment input, and time.</p>
+<div class="math">
+<p><img src="../../../_images/math/d314f3252c4b0fb2b21faacbdcf83e033400d9bb.png" alt="r = \sqrt{\frac{2 t Q_s}{h_b \pi}}"/></p>
+</div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This formulation ignores deposit porosity (as is true for the sample data from <cite>pyDeltaRCM</cite> below).</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golf</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+
+<span class="c1"># measure the delta shoreline distance at five differet times</span>
+<span class="n">time_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="n">golf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+<span class="n">shoredist_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">time_idxs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="n">shoredist_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">time_idxs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">time_idx</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">time_idxs</span><span class="p">):</span>
+    <span class="c1"># compute the shoreline mask</span>
+    <span class="n">SM_mpm</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ShorelineMask</span><span class="p">(</span>
+        <span class="n">golf</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">time_idx</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+        <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">method</span><span class="o">=</span><span class="s1">&#39;MPM&#39;</span><span class="p">,</span>
+        <span class="n">contour_threshold</span><span class="o">=</span><span class="mf">0.75</span><span class="p">,</span>
+        <span class="n">max_disk</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">SM_mpm</span><span class="o">.</span><span class="n">trim_mask</span><span class="p">(</span><span class="n">length</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># compute the mean shoreline distance</span>
+    <span class="n">shoredist_mean</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">shoredist_std</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">compute_shoreline_distance</span><span class="p">(</span>
+        <span class="n">SM_mpm</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="p">(</span><span class="n">golf</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;CTR&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">golf</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;L0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Now plot</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># make a predictive model</span>
+<span class="k">def</span> <span class="nf">predict_for_t</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Qs</span><span class="p">,</span> <span class="n">hb</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Predict the delta shoreline radius.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">t</span><span class="o">*</span><span class="n">Qs</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">hb</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+
+<span class="c1"># set up the parameters</span>
+<span class="n">hb</span> <span class="o">=</span> <span class="n">golf</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;hb&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># basin depth, m</span>
+<span class="n">Qs</span> <span class="o">=</span> <span class="p">(</span><span class="n">golf</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;h0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span>
+      <span class="n">golf</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;u0&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span>
+      <span class="n">golf</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;N0&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span>
+      <span class="n">golf</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;dx&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">*</span>
+      <span class="p">(</span><span class="n">golf</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;C0_percent&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span> <span class="o">/</span> <span class="mi">100</span><span class="p">))</span>  <span class="c1"># sediment input, m3/s</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">golf</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="n">time_idxs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="n">num</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># make the figure</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">t</span><span class="p">,</span> <span class="n">predict_for_t</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Qs</span><span class="p">,</span> <span class="n">hb</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
+    <span class="n">golf</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="n">time_idxs</span><span class="p">],</span> <span class="n">shoredist_mean</span><span class="p">,</span> <span class="n">shoredist_std</span><span class="p">,</span>
+    <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">golf</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="n">time_idxs</span><span class="p">],</span> <span class="n">shoredist_mean</span><span class="p">,</span>
+    <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;radius (m)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;time (s)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../../../guides/examples/computations/radial_growth_pattern-2.png">png</a>, <a class="reference external" href="../../../guides/examples/computations/radial_growth_pattern-2.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../../../_images/radial_growth_pattern-2.png" class="plot-directive" src="../../../_images/radial_growth_pattern-2.png" />
+</figure>
+<p>Why do the data not line up with the prediction?
+A likely possibility is that the shoreline location determined from the <a class="reference internal" href="../../../_autosummary/deltametrics.plan.MorphologicalPlanform.html#deltametrics.plan.MorphologicalPlanform" title="deltametrics.plan.MorphologicalPlanform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MorphologicalPlanform</span></code></a> does not include the full area of the deposit.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Try passing the <cite>elevation_offset</cite> parameter to the MPM method, which is then passed along to the <a class="reference internal" href="../../../_autosummary/deltametrics.mask.ElevationMask.html#deltametrics.mask.ElevationMask" title="deltametrics.mask.ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElevationMask</span></code></a>.</p>
+</div>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../index.html"
+                          title="previous chapter">Examples</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../plot/show_plan.html"
+                          title="next chapter">View a planform</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/guides/examples/computations/radial_growth_pattern.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../plot/show_plan.html" title="View a planform"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Examples"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.3.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Radial growth of delta through time</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.4.0.
+    </div>
+  </body>
+</html>
