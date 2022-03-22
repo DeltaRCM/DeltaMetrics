@@ -5,6 +5,15 @@ Examples
 Examples of how to do various tasks and visualizations in DeltaMetrics.
 
 
+Planforms
+---------
+
+.. toctree::
+   :maxdepth: 1
+
+   computations/radial_growth_pattern
+
+
 Plotting
 --------
 
