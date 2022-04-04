@@ -117,17 +117,21 @@ class TestVariableSet:
         vi = plot.VariableInfo('depth', vmin=-9999)
         vs.depth = vi
         assert vs.depth.vmin == -9999
+        assert vs['depth'].vmin == -9999
 
     def test_VariableSet_add_unknown_VariableInfo(self):
         vs = plot.VariableSet()
         vi = plot.VariableInfo('fakevariable', vmin=-9999)
         vs.fakevariable = vi
         assert vs.fakevariable.vmin == -9999
+        assert 'fakevariable' in vs.variables
+        assert vs['fakevariable'].vmin == -9999
 
     def test_VariableSet_set_known_VariableInfo_direct(self):
         vs = plot.VariableSet()
         vs.depth.vmin = -9999
         assert vs.depth.vmin == -9999
+        assert vs['depth'].vmin == -9999
 
     def test_VariableSet_change_then_default(self):
         vs = plot.VariableSet()
@@ -148,6 +152,15 @@ class TestVariableSet:
         vs = plot.VariableSet()
         with pytest.raises(TypeError):
             vs.fakevariable = 'Yellow!'
+
+    def test_get_unknown_notadded_variable(self):
+        # should return a default VariableInfo with name field
+        vs = plot.VariableSet()
+        got = vs['fakevariable']
+        assert got.name == 'fakevariable'
+        # NOTE: this does not work with attribute accessing
+        with pytest.raises(AttributeError):
+            _ = vs.fakevariable
 
 
 class TestAppendColorbar:

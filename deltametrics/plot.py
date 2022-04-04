@@ -252,6 +252,7 @@ class VariableSet(object):
 
     @property
     def variables(self):
+        """Variables known to the VariableSet."""
         return self._variables
 
     def __getitem__(self, var):
@@ -261,9 +262,22 @@ class VariableSet(object):
         slicing the VariableSet with a string matching the VariableInfo `name`
         field. This enables accessing variables in evaluation, rather than
         explicit typing of variable names.
-        """
 
-        return self.__getattribute__(var)
+        Parameters
+        ----------
+        variable : :obj:`str`
+            Which variable to get the `VariableInfo` for.
+
+        .. note::
+
+            If `variable` is not identified in the VariableSet, then a default
+            instance of :obj:`VariableInfo` is instantiated with the variable
+            name and returned.
+        """
+        if var in self._variables:
+            return self.__getattribute__(var)
+        else:
+            return VariableInfo(var)
 
     def __setattr__(self, key, var):
         """Set, with check for types.
@@ -275,6 +289,8 @@ class VariableSet(object):
         else:
             if type(var) is VariableInfo or var is None:
                 object.__setattr__(self, key, var)
+                # add it to the list of variables
+                self._variables.append(key)
             else:
                 raise TypeError(
                     'Can only set attributes of type VariableInfo.')
