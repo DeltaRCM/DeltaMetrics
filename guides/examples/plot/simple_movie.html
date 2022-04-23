@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>Make a simple gif movie &#8212; DeltaMetrics 0.3.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Quick connect to your own data" href="../io/connect_to_nonstandard_data.html" />
+    <link rel="prev" title="View a section slice" href="show_section.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../io/connect_to_nonstandard_data.html" title="Quick connect to your own data"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="show_section.html" title="View a section slice"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.3.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Make a simple gif movie</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="make-a-simple-gif-movie">
+<h1>Make a simple gif movie<a class="headerlink" href="#make-a-simple-gif-movie" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">animation</span>
+
+<span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
+
+<span class="k">def</span> <span class="nf">update_field</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>
+    <span class="n">im</span><span class="o">.</span><span class="n">set_data</span><span class="p">(</span><span class="n">golf</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:])</span>
+
+<span class="n">golf</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+
+<span class="n">time_idxs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">golf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">cartographic_colormap</span><span class="p">(</span><span class="n">H_SL</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">4.5</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+    <span class="n">golf</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
+    <span class="n">extent</span><span class="o">=</span><span class="n">golf</span><span class="o">.</span><span class="n">extent</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>Then, make the animation with matplotlib’s <cite>FuncAnimation</cite>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">anim</span> <span class="o">=</span> <span class="n">animation</span><span class="o">.</span><span class="n">FuncAnimation</span><span class="p">(</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">update_field</span><span class="p">,</span>
+    <span class="n">frames</span><span class="o">=</span><span class="n">golf</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">interval</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">anim</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">&#39;simple_movie.gif&#39;</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>An view the gif:</p>
+<img alt="../../../_images/simple_movie.gif" src="../../../_images/simple_movie.gif" />
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="show_section.html"
+                          title="previous chapter">View a section slice</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../io/connect_to_nonstandard_data.html"
+                          title="next chapter">Quick connect to your own  data</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/guides/examples/plot/simple_movie.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../io/connect_to_nonstandard_data.html" title="Quick connect to your own data"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="show_section.html" title="View a section slice"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.3.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Make a simple gif movie</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+    </div>
+  </body>
+</html>
