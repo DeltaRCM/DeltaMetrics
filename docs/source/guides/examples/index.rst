@@ -14,6 +14,15 @@ Planforms
    computations/radial_growth_pattern
 
 
+Sections
+---------
+
+.. toctree::
+   :maxdepth: 1
+
+   computations/aggradation_preserved_time
+
+
 Plotting
 --------
 
@@ -22,6 +31,7 @@ Plotting
 
    plot/show_plan
    plot/show_section
+   plot/simple_movie
 
 
 Input and output
