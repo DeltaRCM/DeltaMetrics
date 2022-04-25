@@ -759,10 +759,14 @@ class TestOverlaySparseArray:
         plot.overlay_sparse_array(
             _e, ax=ax,
             alpha_clip=(50, None))
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError, match=r'`alpha_clip` .* type .*'):
             plot.overlay_sparse_array(
                 _e, ax=ax,
                 alpha_clip=50)
+        with pytest.raises(ValueError, match=r'`alpha_clip` .* length .*'):
+            plot.overlay_sparse_array(
+                _e, ax=ax,
+                alpha_clip=(50, 90, 1000))
         plt.close()
 
     def test_clip_type_option(self):
@@ -786,11 +790,11 @@ class TestOverlaySparseArray:
         plot.overlay_sparse_array(
             _e, ax=ax,
             alpha_clip=(50, None), clip_type='percentile')
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r'Bad value .*'):
             plot.overlay_sparse_array(
                 _e, ax=ax,
                 alpha_clip=(50, None), clip_type='invalidstring')
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match=r'Bad value .*'):
             plot.overlay_sparse_array(
                 _e, ax=ax,
                 alpha_clip=(50, None), clip_type=(30, 30))
