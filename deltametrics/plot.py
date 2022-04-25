@@ -1246,6 +1246,14 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
         elements can be `None` to indicate no clipping. Default is ``(None,
         90)``.
 
+    clip_type
+        String specifying how `alpha_clip` should be interpreted. Accepted
+        values are `'percentile'` (default) and `'value'`. If `'percentile'`,
+        the data in `sparse_array` are clipped based on the density of the
+        data at the specified percentiles; note values should be in range
+        [0, 100). If  `'value'`, the data in `sparse_array` are clipped
+        directly based on the values in `alpha_clip`.
+
     Returns
     -------
     image
@@ -1283,9 +1291,15 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
     if not ax:
         fig, ax = plt.subplots()
 
-    if len(alpha_clip) != 2:
-        raise ValueError(
-            '`alpha_clip` argument must be tuple or list of length 2.')
+    # check this is a tuple or list
+    if isinstance(alpha_clip, tuple) or isinstance(alpha_clip, list):  
+        if len(alpha_clip) != 2:
+            raise ValueError(
+                '`alpha_clip` must be tuple or list of length 2.')
+    else:  # if it is a tuple, check the length
+        raise TypeError(
+            '`alpha_clip` must be type `tuple`, '
+            'but was type {0}.'.format(type(alpha_clip)))
 
     # check the clip_type flag
     clip_type_allow = ['percentile', 'value']
@@ -1314,16 +1328,22 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
                    sparse_array.shape[0], 0]
 
     # process the clip field
+    #  if first argument is given and percentile
     if (not (alpha_clip[0] is None)) and (clip_type == 'percentile'):
         amin = np.nanpercentile(sparse_array, alpha_clip[0])
+    #  if first argument is given and value
     elif (not (alpha_clip[0] is None)) and (clip_type == 'value'):
         amin = alpha_clip[0]
+    #  if first argument is not given
     else:
         amin = np.nanmin(sparse_array)
+    #  if second argument is given and percentile
     if (not (alpha_clip[1] is None)) and (clip_type == 'percentile'):
         amax = np.nanpercentile(sparse_array, alpha_clip[1])
+    #  if second argument is given and value
     elif (not (alpha_clip[1] is None)) and (clip_type == 'value'):
         amax = alpha_clip[1]
+    #  if second argument is not given
     else:
         amax = np.nanmax(sparse_array)
 
