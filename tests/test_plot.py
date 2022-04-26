@@ -727,20 +727,20 @@ class TestOverlaySparseArray:
     """These are just "does it work" tests."""
 
     def test_makes_plot(self):
-        _e = np.random.uniform(0, 1, size=(50, 50))
+        _e = np.random.uniform(0, 73, size=(50, 50))
         fig, ax = plt.subplots()
         plot.overlay_sparse_array(_e, ax=ax)
         plt.close()
 
     def test_makes_plot_cmap_str(self):
-        _e = np.random.uniform(0, 1, size=(50, 50))
+        _e = np.random.uniform(0, 73, size=(50, 50))
         fig, ax = plt.subplots()
         plot.overlay_sparse_array(
             _e, cmap='Blues', ax=ax)
         plt.close()
 
     def test_makes_plot_cmap_obj(self):
-        _e = np.random.uniform(0, 1, size=(50, 50))
+        _e = np.random.uniform(0, 73, size=(50, 50))
         _cmap = plt.cm.get_cmap('Oranges', 64)
         fig, ax = plt.subplots()
         plot.overlay_sparse_array(
@@ -748,7 +748,7 @@ class TestOverlaySparseArray:
         plt.close()
 
     def test_makes_clips(self):
-        _e = np.random.uniform(0, 1, size=(50, 50))
+        _e = np.random.uniform(0, 73, size=(50, 50))
         fig, ax = plt.subplots()
         plot.overlay_sparse_array(
             _e, ax=ax,
@@ -759,10 +759,49 @@ class TestOverlaySparseArray:
         plot.overlay_sparse_array(
             _e, ax=ax,
             alpha_clip=(50, None))
+        with pytest.raises(TypeError, match=r'`alpha_clip` .* type .*'):
+            plot.overlay_sparse_array(
+                _e, ax=ax,
+                alpha_clip=50)
+        with pytest.raises(ValueError, match=r'`alpha_clip` .* length .*'):
+            plot.overlay_sparse_array(
+                _e, ax=ax,
+                alpha_clip=(50, 90, 1000))
+        plt.close()
+
+    def test_clip_type_option(self):
+        _e = np.random.uniform(0, 73, size=(50, 50))
+        fig, ax = plt.subplots()
+        plot.overlay_sparse_array(
+            _e, ax=ax,
+            alpha_clip=(None, None), clip_type='value')
+        plot.overlay_sparse_array(
+            _e, ax=ax,
+            alpha_clip=(20, 30), clip_type='value')
+        plot.overlay_sparse_array(
+            _e, ax=ax,
+            alpha_clip=(50, None), clip_type='value')
+        plot.overlay_sparse_array(
+            _e, ax=ax,
+            alpha_clip=(None, None), clip_type='percentile')
+        plot.overlay_sparse_array(
+            _e, ax=ax,
+            alpha_clip=(20, 30), clip_type='percentile')
+        plot.overlay_sparse_array(
+            _e, ax=ax,
+            alpha_clip=(50, None), clip_type='percentile')
+        with pytest.raises(ValueError, match=r'Bad value .*'):
+            plot.overlay_sparse_array(
+                _e, ax=ax,
+                alpha_clip=(50, None), clip_type='invalidstring')
+        with pytest.raises(ValueError, match=r'Bad value .*'):
+            plot.overlay_sparse_array(
+                _e, ax=ax,
+                alpha_clip=(50, None), clip_type=(30, 30))
         plt.close()
 
     def test_makes_plot_no_ax(self):
-        _e = np.random.uniform(0, 1, size=(50, 50))
+        _e = np.random.uniform(0, 73, size=(50, 50))
         plot.overlay_sparse_array(
             _e)
         plt.close()
