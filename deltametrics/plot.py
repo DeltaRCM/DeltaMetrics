@@ -1367,7 +1367,6 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
     else:
         amax = np.nanmax(sparse_array)
 
-    print(amin, amax)
     # normalize the alpha channel
     alphas = matplotlib.colors.Normalize(
         amin, amax, clip=True)(sparse_array)  # Normalize alphas
