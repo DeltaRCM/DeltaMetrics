@@ -1261,17 +1261,16 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
 
     Examples
     --------
-    Here, we use the normalized discharge field from the model as an example
+    Here, we use the discharge field from the model as an example
     of sparse data.
 
     .. plot::
         :include-source:
+        :context: reset
 
         golfcube = dm.sample_data.golf()
         elevation_data = golfcube['eta'][-1, :, :]
-        sparse_data = (golfcube['discharge'][-1, ...] /
-                      (golfcube.meta['h0'].data *
-                       golfcube.meta['u0'][-1].data))
+        sparse_data = golfcube['discharge'][-1, ...]
 
         fig, ax = plt.subplots(1, 3, figsize=(8, 3))
         for axi in ax.ravel():
@@ -1283,6 +1282,27 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
             sparse_data, alpha_clip=(None, None), ax=ax[1])
         dm.plot.overlay_sparse_array(
             sparse_data, alpha_clip=(70, 90), ax=ax[2])
+
+        plt.tight_layout()
+        plt.show()
+
+    .. plot::
+        :include-source:
+        :context: close-figs
+
+        fig, ax = plt.subplots(1, 3, figsize=(8, 3))
+        for axi in ax.ravel():
+            dm.plot.aerial_view(elevation_data, ax=axi)
+
+        dm.plot.overlay_sparse_array(
+            sparse_data, ax=ax[0],
+            clip_type='value')  # default clip is (None, 90)
+        dm.plot.overlay_sparse_array(
+            sparse_data, ax=ax[1],
+            alpha_clip=(None, 0.2), clip_type='value')
+        dm.plot.overlay_sparse_array(
+            sparse_data, ax=ax[2],
+            alpha_clip=(0.4, 0.6), clip_type='value')
 
         plt.tight_layout()
         plt.show()
@@ -1347,6 +1367,7 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
     else:
         amax = np.nanmax(sparse_array)
 
+    print(amin, amax)
     # normalize the alpha channel
     alphas = matplotlib.colors.Normalize(
         amin, amax, clip=True)(sparse_array)  # Normalize alphas
