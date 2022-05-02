@@ -480,3 +480,21 @@ class TestSubsidenceElevationAdjustment:
         assert adj.shape == e.shape
         assert adj[0, 0, 0] == 1.0
         assert adj[-1, 0, 0] == 5.0
+
+    def test_1d_flat(self):
+        topo = np.array([0, 0, 0, 0, 0, 0])  # recorded as eta
+        sedimentation = np.array([0, 1, 2, 3, 4, 5])
+        sigma_dist = np.array([0, 1, 2, 3, 4, 5])  # known subsidence
+        # apply function
+        adj = strat._adjust_elevation_by_subsidence(topo, sigma_dist)
+        # adjusted elevation should equal sedimentation
+        assert np.all(adj == sedimentation)
+
+    def test_1d_with_uplift(self):
+        topo = np.array([0, 0, 2, 3, 4])
+        sigma_dist = np.array([0, 2, 2, 1, 1])
+        true_sedimentation = np.array([0, 2, 4, 4, 5])
+        # apply function
+        adj = strat._adjust_elevation_by_subsidence(topo, sigma_dist)
+        # adjusted elevation should equal sedimentation
+        assert np.all(adj == true_sedimentation)
