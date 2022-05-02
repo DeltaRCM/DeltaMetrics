@@ -868,7 +868,8 @@ def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
     return coll.PatchCollection(pl, match_original=True)
 
 
-def show_one_dimensional_trajectory_to_strata(e, sigma=None, dz=None, z=None,
+def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
+                                              dz=None, z=None,
                                               nz=None, ax=None,
                                               show_strata=True,
                                               label_strata=False):
@@ -896,8 +897,8 @@ def show_one_dimensional_trajectory_to_strata(e, sigma=None, dz=None, z=None,
     e : :obj:`ndarray`
         Elevation data as a 1D array.
 
-    sigma : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
-        Optional subsidence rate argument that is used to adjust the elevation
+    sigma_dist : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
+        Optional subsidence distance argument used to adjust the elevation
         data to account for subsidence when computing stratigraphy. See
         :obj:`_adjust_elevation_by_subsidence` for a complete description.
 
@@ -936,9 +937,9 @@ def show_one_dimensional_trajectory_to_strata(e, sigma=None, dz=None, z=None,
     t = np.arange(e.shape[0])  # x-axis time array
     t3 = np.expand_dims(t, axis=(1, 2))  # 3d time, for slicing
 
-    if sigma is not None:
+    if sigma_dist is not None:
         # adjust elevations by subsidence rate
-        e = strat._adjust_elevation_by_subsidence(e, sigma)
+        e = strat._adjust_elevation_by_subsidence(e, sigma_dist)
     s, p = strat._compute_elevation_to_preservation(e)  # strat, preservation
     z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
     sc, dc = strat._compute_preservation_to_cube(s, z)
