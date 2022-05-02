@@ -42,7 +42,7 @@ class TestComputeBoxyStratigraphyVolume:
 
     def test_returns_volume_and_elevations_given_subsidence(self):
         s, e = strat.compute_boxy_stratigraphy_volume(
-            self.elev, self.time, sigma=1, nz=33)
+            self.elev, self.time, sigma_dist=1, nz=33)
         assert s.ndim == 3
         assert s.shape == e.shape
         assert s.shape[0] == 33 + 1
@@ -136,8 +136,8 @@ class TestComputeBoxyStratigraphyCoordinates:
 
     def test_returns_sc_dc_given_subsidence(self):
         sc, dc = strat.compute_boxy_stratigraphy_coordinates(
-            self.elev, sigma=1, nz=13)
-        assert np.min(sc[:, 0]) == 0 
+            self.elev, sigma_dist=1, nz=13)
+        assert np.min(sc[:, 0]) == 0
 
     @pytest.mark.xfail(raises=NotImplementedError,
                        strict=True, reason='Not yet developed.')
@@ -453,30 +453,30 @@ class TestSubsidenceElevationAdjustment:
         with pytest.raises(ValueError):
             strat._adjust_elevation_by_subsidence(e, s)
 
-    def test_1D_sigma_as_float(self):
+    def test_1D_sigma_dist_as_float(self):
         e = np.zeros((10,))
         s = 1.0
         adj = strat._adjust_elevation_by_subsidence(e, s)
-        assert np.all(adj == np.arange(-10, 0))
+        assert np.all(adj == np.arange(1, 11))
 
-    def test_1D_sigma_as_int(self):
+    def test_1D_sigma_dist_as_int(self):
         e = np.zeros((10,))
         s = 1
         adj = strat._adjust_elevation_by_subsidence(e, s)
-        assert np.all(adj == np.arange(-10, 0))
+        assert np.all(adj == np.arange(1, 11))
 
-    def test_2d_sigma_3d_elev(self):
+    def test_2d_sigma_dist_3d_elev(self):
         e = np.zeros((5, 2, 3))
         s = np.ones((2, 3))
         adj = strat._adjust_elevation_by_subsidence(e, s)
         assert adj.shape == e.shape
-        assert adj[0, 0, 0] == -5
-        assert adj[-1, 0, 0] == -1
+        assert adj[0, 0, 0] == 1.0
+        assert adj[-1, 0, 0] == 5.0
 
-    def test_1d_sigma_3d_elev(self):
+    def test_1d_sigma_dist_3d_elev(self):
         e = np.zeros((5, 2, 3))
         s = np.ones((5,))
         adj = strat._adjust_elevation_by_subsidence(e, s)
         assert adj.shape == e.shape
-        assert adj[0, 0, 0] == -5
-        assert adj[-1, 0, 0] == -1
+        assert adj[0, 0, 0] == 1.0
+        assert adj[-1, 0, 0] == 5.0

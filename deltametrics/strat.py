@@ -35,7 +35,7 @@ def compute_compensation(line1, line2):
     pass
 
 
-def compute_boxy_stratigraphy_volume(elev, prop, sigma=None,
+def compute_boxy_stratigraphy_volume(elev, prop, sigma_dist=None,
                                      z=None, dz=None, nz=None,
                                      return_cube=False):
     """Process t-x-y data volume to boxy stratigraphy volume.
@@ -58,8 +58,8 @@ def compute_boxy_stratigraphy_volume(elev, prop, sigma=None,
     prop : :obj:`ndarray`
         The `t-x-y` ndarry of property data to process into the stratigraphy.
 
-    sigma : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
-        Optional subsidence rate argument that is used to adjust the elevation
+    sigma_dist : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
+        Optional subsidence distance argument used to adjust the elevation
         data to account for subsidence when computing stratigraphy. See
         :obj:`_adjust_elevation_by_subsidence` for a complete description.
 
@@ -105,9 +105,9 @@ def compute_boxy_stratigraphy_volume(elev, prop, sigma=None,
         raise ValueError('Input arrays must be three-dimensional.')
 
     # compute preservation from low-level funcs
-    if sigma is not None:
+    if sigma_dist is not None:
         # convert elevations
-        elev = _adjust_elevation_by_subsidence(elev, sigma)
+        elev = _adjust_elevation_by_subsidence(elev, sigma_dist)
     strata, _ = _compute_elevation_to_preservation(elev)
     z = _determine_strat_coordinates(elev, z=z, dz=dz, nz=nz)
     strata_coords, data_coords = _compute_preservation_to_cube(strata, z=z)
@@ -129,7 +129,7 @@ def compute_boxy_stratigraphy_volume(elev, prop, sigma=None,
         return stratigraphy, elevations
 
 
-def compute_boxy_stratigraphy_coordinates(elev, sigma=None,
+def compute_boxy_stratigraphy_coordinates(elev, sigma_dist=None,
                                           z=None, dz=None, nz=None,
                                           return_cube=False,
                                           return_strata=False):
@@ -146,8 +146,8 @@ def compute_boxy_stratigraphy_coordinates(elev, sigma=None,
     elev : :obj:`ndarray`
         The `t-x-y` ndarry of elevation data to determine stratigraphy.
 
-    sigma : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
-        Optional subsidence rate argument that is used to adjust the elevation
+    sigma_dist : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
+        Optional subsidence distance argument used to adjust the elevation
         data to account for subsidence when computing stratigraphy. See
         :obj:`_adjust_elevation_by_subsidence` for a complete description.
 
@@ -200,9 +200,9 @@ def compute_boxy_stratigraphy_coordinates(elev, sigma=None,
         argument only if `return_strata=True`.
     """
     # compute preservation from low-level funcs
-    if sigma is not None:
+    if sigma_dist is not None:
         # adjust elevation by subsidence rates if present
-        elev = _adjust_elevation_by_subsidence(elev, sigma)
+        elev = _adjust_elevation_by_subsidence(elev, sigma_dist)
     strata, _ = _compute_elevation_to_preservation(elev)
     z = _determine_strat_coordinates(elev, z=z, dz=dz, nz=nz)
     strata_coords, data_coords = _compute_preservation_to_cube(strata, z=z)
@@ -334,8 +334,8 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
             especially large data files, `load` should be `False` to keep the
             file on disk; note on-disk computation is considerably slower.
 
-        sigma : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
-            Optional subsidence rate argument that is used to adjust the
+        sigma_dist : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
+            Optional subsidence distance argument that is used to adjust the
             elevation data to account for subsidence when computing
             stratigraphy. See :obj:`_adjust_elevation_by_subsidence` for a
             complete description.
@@ -350,9 +350,9 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
             _eta = elev
 
         # rate of subsidence
-        sigma = kwargs.pop('sigma', None)
-        if sigma is not None:
-            _eta = _adjust_elevation_by_subsidence(_eta, sigma)
+        sigma_dist = kwargs.pop('sigma_dist', None)
+        if sigma_dist is not None:
+            _eta = _adjust_elevation_by_subsidence(_eta, sigma_dist)
 
         # make computation
         _strata, _psvd = _compute_elevation_to_preservation(_eta)
@@ -685,69 +685,73 @@ def _determine_strat_coordinates(elev, z=None, dz=None, nz=None):
         raise RuntimeError('No coordinates determined. Check inputs.')
 
 
-def _adjust_elevation_by_subsidence(elev, sigma):
+def _adjust_elevation_by_subsidence(elev, sigma_dist):
     """Adjust elevation array by subsidence rates.
 
-    Given the elevation information and information about the rate of
-    subsidence, the true sedimentation and erosion pattern can be unraveled.
-    The function is written flexibly to handle subsidence rate information
-    provided as either a single constant value, a constant rate over a 2-D
-    spatial pattern, a 1-D temporal vector when the rate changes over time but
+    Given the elevation information and information about the distance
+    subsided, the true sedimentation and erosion pattern can be unraveled.
+    The function is written flexibly to handle subsidence distance information
+    provided as either a single constant value, a constant value over a 2-D
+    spatial pattern, a 1-D temporal vector when the distance changes but
     is applied to the entire domain, and finally a full t-x-y 3-D array with
-    subsidence rate information for each x-y position in the domain at each
+    subsidence information for each x-y position in the domain at each
     instance in time.
 
     This function is declared as a private function and is not part of the
     public API. Higher level functions make a call internally to adjust the
     elevation data based on subsidence rate information when the optional
-    argument `sigma` is provided.
+    argument `sigma_dist` is provided.
 
     Parameters
     ----------
     elev : :obj:`ndarray` or :obj:`xr.core.dataarray.DataArray`
         The `t-x-y` volume of elevation data to determine stratigraphy.
 
-    sigma : :obj:`ndarray`, :obj:`xr.core.dataarray.DataArray`, :obj:`float`,
-            :obj:`int`
-        The subsidence rate information. If a single float or int is provided,
-        that rate is assumed to apply across the entire domain for all times.
-        If a 2-D array is provided, the rates are assumed to be given for each
+    sigma_dist : :obj:`ndarray`, :obj:`xr.core.dataarray.DataArray`,
+                 :obj:`float`, :obj:`int`
+        The subsidence information. If a single float or int is provided,
+        that value is assumed to apply across the entire domain for all times.
+        If a 2-D array is provided, the distances are assumed for each
         x-y location and are applied across all times. If a 1-D vector is
         provided, it is assumed that each value applies to all locations in
         the domain for a given time. If a full 3-D array is provided, it is
         assumed to follow the same `t-x-y` convention as the elevation data.
+        Positive distances indicate subsidence, negative distances are uplift.
 
     Returns
     -------
     elev_adjusted : :obj:`ndarray`
         A `t-x-y` `ndarray` of the same shape as the input `elev` array, but
-        the values have all been adjusted by the subsidence rate information
-        provided by the input `sigma`.
+        the values have all been adjusted by the subsidence information
+        provided by the input `sigma_dist`.
     """
     # single value assumed to be constant rate over all time
-    if isinstance(sigma, (int, float)):
-        s_arr = np.ones_like(elev) * sigma
+    if isinstance(sigma_dist, (int, float)):
+        s_arr = np.ones_like(elev) * sigma_dist
+        s_arr = np.cumsum(s_arr, axis=0)  # assume dist subsided each timestep
     else:
-        # rename to s_arr anyway
-        s_arr = sigma
-    # 2-D sigma array gets cast into the shape of the 3-d elevation array
+        # proper 1-D timeseries; rename to s_arr anyway
+        s_arr = sigma_dist
+    # 2-D array gets cast into the shape of the 3-d elevation array
     if len(s_arr.shape) == 2 and len(elev.shape) == 3:
         s_arr = np.tile(s_arr, (elev.shape[0], 1, 1))
+        s_arr = np.cumsum(s_arr, axis=0)  # sum up over time
     elif len(s_arr.shape) == 1 and len(s_arr) == elev.shape[0] and \
       len(elev.shape) == 3:
         # casting for a 1-D vector of sigma that matches elev time dimension
         s_arr = np.tile(
             s_arr.reshape(len(s_arr), 1, 1),
             (1, elev.shape[1], elev.shape[2]))
+        s_arr = np.cumsum(s_arr, axis=0)  # sum up over time
     else:
         # else shapes of arrays must be the same
         if np.shape(elev) != np.shape(s_arr):
             raise ValueError(
-                'Shapes of input arrays elev and sigma do not match.')
+                'Shapes of input arrays elev and sigma_dist do not match.')
     # adjust and return elevation
     elev_adjusted = np.zeros_like(elev)  # init adjusted array
     # do elevation adjustment - first dimension assumed to be time
     for i in range(elev.shape[0]):
-        elev_adjusted[i, ...] = elev[i, ...] - np.sum(s_arr[i:, ...], axis=0)
+        elev_adjusted[i, ...] = elev[i, ...] + s_arr[i, ...]
     # return the subsidence-adjusted elevation values
     return elev_adjusted
