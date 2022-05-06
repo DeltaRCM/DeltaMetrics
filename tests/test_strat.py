@@ -479,7 +479,7 @@ class TestSubsidenceElevationAdjustment:
         adj = strat._adjust_elevation_by_subsidence(e, s)
         assert adj.shape == e.shape
         assert adj[0, 0, 0] == 1.0
-        assert adj[-1, 0, 0] == 5.0
+        assert adj[-1, 0, 0] == 1.0
 
     def test_1d_flat(self):
         topo = np.array([0, 0, 0, 0, 0, 0])  # recorded as eta
