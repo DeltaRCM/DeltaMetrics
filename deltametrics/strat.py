@@ -697,6 +697,12 @@ def _adjust_elevation_by_subsidence(elev, sigma_dist):
     subsidence information for each x-y position in the domain at each
     instance in time.
 
+    Critically, when temporal information is provided (either 1-D vector or
+    full 3-D array) values are assumed to be cumulative subsidence distances
+    at each index in time. Alternatively, when constant information is given
+    (1-D float/int, or 2-D x-y array) it is assumed that the constant values
+    reported represent the distance subsided per temporal index.
+
     This function is declared as a private function and is not part of the
     public API. Higher level functions make a call internally to adjust the
     elevation data based on subsidence rate information when the optional
@@ -729,23 +735,23 @@ def _adjust_elevation_by_subsidence(elev, sigma_dist):
     if isinstance(sigma_dist, (int, float)):
         s_arr = np.ones_like(elev) * sigma_dist
         s_arr = np.cumsum(s_arr, axis=0)  # assume dist subsided each timestep
-    else:
+    elif len(np.shape(sigma_dist)) == 1:
         # proper 1-D timeseries; rename to s_arr anyway
         s_arr = sigma_dist
     # 2-D array gets cast into the shape of the 3-d elevation array
-    if len(s_arr.shape) == 2 and len(elev.shape) == 3:
-        s_arr = np.tile(s_arr, (elev.shape[0], 1, 1))
+    elif len(sigma_dist.shape) == 2 and len(elev.shape) == 3:
+        s_arr = np.tile(sigma_dist, (elev.shape[0], 1, 1))
         s_arr = np.cumsum(s_arr, axis=0)  # sum up over time
-    elif len(s_arr.shape) == 1 and len(s_arr) == elev.shape[0] and \
+    elif len(sigma_dist.shape) == 1 and len(sigma_dist) == elev.shape[0] and \
       len(elev.shape) == 3:
         # casting for a 1-D vector of sigma that matches elev time dimension
         s_arr = np.tile(
-            s_arr.reshape(len(s_arr), 1, 1),
+            sigma_dist.reshape(len(sigma_dist), 1, 1),
             (1, elev.shape[1], elev.shape[2]))
         s_arr = np.cumsum(s_arr, axis=0)  # sum up over time
     else:
         # else shapes of arrays must be the same
-        if np.shape(elev) != np.shape(s_arr):
+        if np.shape(elev) != np.shape(sigma_dist):
             raise ValueError(
                 'Shapes of input arrays elev and sigma_dist do not match.')
     # adjust and return elevation
