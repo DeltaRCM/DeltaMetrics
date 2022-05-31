@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.strat.compute_boxy_stratigraphy_volume &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,7 +47,7 @@
           <div class="body" role="main">
             
   <section id="deltametrics-strat-compute-boxy-stratigraphy-volume">
-<h1>deltametrics.strat.compute_boxy_stratigraphy_volume<a class="headerlink" href="#deltametrics-strat-compute-boxy-stratigraphy-volume" title="Permalink to this headline">¶</a></h1>
+<h1>deltametrics.strat.compute_boxy_stratigraphy_volume<a class="headerlink" href="#deltametrics-strat-compute-boxy-stratigraphy-volume" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.strat.compute_boxy_stratigraphy_volume">
 <span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">compute_boxy_stratigraphy_volume</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prop</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cube</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.compute_boxy_stratigraphy_volume" title="Permalink to this definition">¶</a></dt>
@@ -60,7 +61,7 @@ three-dimesional real-valued 3D array.</p>
 :additionally returns an <cite>ndarray</cite> of elevations corresponding to the
 :stratigraphy positions.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of elevation data to determine stratigraphy.</p></li>
 <li><p><strong>prop</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of property data to process into the stratigraphy.</p></li>
@@ -83,7 +84,7 @@ to return an <cite>ndarray</cite> and <code class="xref py py-obj docutils liter
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>stratigraphy_cube</strong> (<a class="reference internal" href="deltametrics.cube.StratigraphyCube.html#deltametrics.cube.StratigraphyCube" title="deltametrics.cube.StratigraphyCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">StratigraphyCube</span></code></a>) – Not Implemented.</p></li>
 <li><p><strong>stratigraphy</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>z-x-y</cite> <cite>ndarray</cite> with data from <cite>prop</cite> placed into voxels to fill
@@ -131,7 +132,7 @@ array.</p></li>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -156,7 +157,7 @@ array.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

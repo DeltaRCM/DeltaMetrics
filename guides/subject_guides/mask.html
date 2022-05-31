@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Introduction to Masking objects &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -45,13 +46,13 @@
           <div class="body" role="main">
             
   <section id="introduction-to-masking-objects">
-<h1>Introduction to Masking objects<a class="headerlink" href="#introduction-to-masking-objects" title="Permalink to this headline">¶</a></h1>
+<h1>Introduction to Masking objects<a class="headerlink" href="#introduction-to-masking-objects" title="Permalink to this heading">¶</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Need description of what masks are conceptually (a binary classification of some field), and what they are in practice (an object that wraps an array that indicates True and False).</p>
 </div>
 <section id="computing-masks-efficiently">
-<h2>Computing masks efficiently<a class="headerlink" href="#computing-masks-efficiently" title="Permalink to this headline">¶</a></h2>
+<h2>Computing masks efficiently<a class="headerlink" href="#computing-masks-efficiently" title="Permalink to this heading">¶</a></h2>
 <p>If you are creating multiple masks for the same planform data (e.g., for the same time slice of data for the physical domain), it is computationally advantageous to create a single <a class="reference internal" href="../../_autosummary/deltametrics.plan.OpeningAnglePlanform.html#deltametrics.plan.OpeningAnglePlanform" title="deltametrics.plan.OpeningAnglePlanform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpeningAnglePlanform</span></code></a>, and use this <cite>OAP</cite> to create other masks.</p>
 <p>For example:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
@@ -79,7 +80,7 @@
 </figure>
 </section>
 <section id="trimming-masks-before-input">
-<h2>Trimming masks before input<a class="headerlink" href="#trimming-masks-before-input" title="Permalink to this headline">¶</a></h2>
+<h2>Trimming masks before input<a class="headerlink" href="#trimming-masks-before-input" title="Permalink to this heading">¶</a></h2>
 <p>Sometimes it is helpful to <code class="xref py py-meth docutils literal notranslate"><span class="pre">trim</span> <span class="pre">a</span> <span class="pre">mask</span></code>, essentially replacing values with a different value, before using the mask for analysis or input to functions.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 </pre></div>
@@ -153,7 +154,7 @@
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -177,7 +178,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.mobility.calculate_reworking_fraction &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,7 +47,7 @@
           <div class="body" role="main">
             
   <section id="deltametrics-mobility-calculate-reworking-fraction">
-<h1>deltametrics.mobility.calculate_reworking_fraction<a class="headerlink" href="#deltametrics-mobility-calculate-reworking-fraction" title="Permalink to this headline">¶</a></h1>
+<h1>deltametrics.mobility.calculate_reworking_fraction<a class="headerlink" href="#deltametrics-mobility-calculate-reworking-fraction" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.mobility.calculate_reworking_fraction">
 <span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">calculate_reworking_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">landmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.calculate_reworking_fraction" title="Permalink to this definition">¶</a></dt>
@@ -56,7 +57,7 @@ the reworking of the fluvial surface with time. This requires an input
 channel map, land map, as well as defining the base maps to use and the
 time window over which you want to look.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>chmap</strong> (<em>list</em><em>, </em><em>xarray.DataArray</em><em>, </em><em>numpy.ndarray</em>) – Either a list of 2-D deltametrics.mask, xarray.DataArray, or
 numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
@@ -72,13 +73,13 @@ will be analyzed).</p></li>
 time lag.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>fr</strong> – A 2-D array of the reworked fraction values, array is of shape
 len(basevalues) x time_window so each row in the array represents
 the overlap values associated with a given base value and the
 columns are associated with each time lag.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
@@ -119,7 +120,7 @@ columns are associated with each time lag.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -144,7 +145,7 @@ columns are associated with each time lag.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

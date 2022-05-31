@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Plotting operations &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -45,7 +46,7 @@
           <div class="body" role="main">
             
   <section id="plotting-operations">
-<h1>Plotting operations<a class="headerlink" href="#plotting-operations" title="Permalink to this headline">¶</a></h1>
+<h1>Plotting operations<a class="headerlink" href="#plotting-operations" title="Permalink to this heading">¶</a></h1>
 <p>The package uses a few utility classes and functions to make consistent plotting easy thoughout the package.
 This reference page documents the lower-level utilities used to make this happen.</p>
 <div class="admonition note">
@@ -58,7 +59,7 @@ This reference page documents the lower-level utilities used to make this happen
 </div>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.plot</span></code>.</p>
 <section id="default-styling">
-<span id="id1"></span><h2>Default styling<a class="headerlink" href="#default-styling" title="Permalink to this headline">¶</a></h2>
+<span id="id1"></span><h2>Default styling<a class="headerlink" href="#default-styling" title="Permalink to this heading">¶</a></h2>
 <p>By default, each variable receives a set of styling definitions.
 The default parameters of each styling variable are defined below:</p>
 <p>(<a class="reference external" href="../../pyplots/plot/document_variableset.png">png</a>, <a class="reference external" href="../../pyplots/plot/document_variableset.hires.png">hires.png</a>)</p>
@@ -67,14 +68,10 @@ The default parameters of each styling variable are defined below:</p>
 </figure>
 </section>
 <section id="plotting-utility-objects">
-<h2>Plotting utility objects<a class="headerlink" href="#plotting-utility-objects" title="Permalink to this headline">¶</a></h2>
+<h2>Plotting utility objects<a class="headerlink" href="#plotting-utility-objects" title="Permalink to this heading">¶</a></h2>
 <p>These objects are mostly used internally to help make plots appear consistent across the library.
 You may want to examine these to change the style of plotting across the package.</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plot.VariableInfo.html#deltametrics.plot.VariableInfo" title="deltametrics.plot.VariableInfo"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableInfo</span></code></a>(name, **kwargs)</p></td>
 <td><p>Variable styling and information.</p></td>
@@ -86,7 +83,7 @@ You may want to examine these to change the style of plotting across the package
 </table>
 </section>
 <section id="plotting-convenience-functions">
-<h2>Plotting convenience functions<a class="headerlink" href="#plotting-convenience-functions" title="Permalink to this headline">¶</a></h2>
+<h2>Plotting convenience functions<a class="headerlink" href="#plotting-convenience-functions" title="Permalink to this heading">¶</a></h2>
 <p>These functions may be helpful in making figures and exploring during analyses.
 Mostly, these functions provide a component of a plot.</p>
 <dl class="py function">
@@ -95,7 +92,7 @@ Mostly, these functions provide a component of a plot.</p>
 <dd><p>Show an aerial plot of an elevation dataset.</p>
 <p>See also: implementation wrapper for a cube.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>elevation_data</strong> – 2D array of elevations.</p></li>
 <li><p><strong>datum</strong> – Sea level reference, default value is 0.</p></li>
@@ -109,7 +106,7 @@ create a new) <cite>Axes</cite> object.</p></li>
 <cite>imshow</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><em>colorbar</em> – Colorbar instance appended to the axes.</p></li>
 <li><p><strong>im</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">AxesImage</span></code> object, optional) – Optional return of the image object itself if <code class="docutils literal notranslate"><span class="pre">return_im</span></code> is True</p></li>
@@ -141,7 +138,7 @@ elements take the value 0 (or very near 0).</p>
 <p>Original implementation was borrowed from the <cite>dorado</cite> project’s
 implementation of <cite>show_nourishment_area</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>sparse_array</strong> – 2d array to plot.</p></li>
 <li><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Axes</span></code> object, optional) – A <cite>matplotlib</cite> <cite>Axes</cite> object to plot the section. Optional; if not
@@ -161,10 +158,10 @@ data at the specified percentiles; note values should be in range
 directly based on the values in <cite>alpha_clip</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>image object returned from <cite>imshow</cite>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>image</p>
 </dd>
 </dl>
@@ -220,13 +217,9 @@ of sparse data.</p>
 
 </section>
 <section id="deltametrics-plot-routines">
-<h2>DeltaMetrics plot routines<a class="headerlink" href="#deltametrics-plot-routines" title="Permalink to this headline">¶</a></h2>
+<h2>DeltaMetrics plot routines<a class="headerlink" href="#deltametrics-plot-routines" title="Permalink to this heading">¶</a></h2>
 <p>These functions are similar to the convenience functions above, but mostly produce their own plots entirely, rather than adding a component of a plot.</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.plot.show_one_dimensional_trajectory_to_strata.html#deltametrics.plot.show_one_dimensional_trajectory_to_strata" title="deltametrics.plot.show_one_dimensional_trajectory_to_strata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_one_dimensional_trajectory_to_strata</span></code></a>(e)</p></td>
 <td><p>1d elevation to stratigraphy.</p></td>
@@ -238,13 +231,13 @@ of sparse data.</p>
 </table>
 </section>
 <section id="deltametrics-colormaps">
-<h2>DeltaMetrics colormaps<a class="headerlink" href="#deltametrics-colormaps" title="Permalink to this headline">¶</a></h2>
+<h2>DeltaMetrics colormaps<a class="headerlink" href="#deltametrics-colormaps" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.cartographic_colormap">
 <span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">cartographic_colormap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H_SL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.cartographic_colormap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Colormap for an elevation map style.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>H_SL</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Sea level for the colormap. This is the break-point
 between blues and greens. Default value is <cite>0.0</cite>.</p></li>
@@ -256,7 +249,7 @@ characteristic <em>above sea-level</em> relief for the colormap to extend to
 through the range of greens. Default value is <cite>1.0</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>delta</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotib.colors.ListedColormap</span></code>) – The colormap object, which can then be used by other <cite>matplotlib</cite>
 plotting routines (see examples below).</p></li>
@@ -302,28 +295,29 @@ parameters to highlight depth variability (right):</p>
 
 </section>
 <section id="plotting-utility-functions">
-<h2>Plotting utility functions<a class="headerlink" href="#plotting-utility-functions" title="Permalink to this headline">¶</a></h2>
+<h2>Plotting utility functions<a class="headerlink" href="#plotting-utility-functions" title="Permalink to this heading">¶</a></h2>
 <p>These functions are mostly used internally.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.append_colorbar">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">append_colorbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ci</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">append_colorbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ci</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Permalink to this definition">¶</a></dt>
 <dd><p>Append a colorbar, consistently placed.</p>
 <p>Adjusts some parameters of the parent axes as well.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ci</strong> (<cite>matplotlib.pyplot.pcolormesh</cite>, <cite>matplotlib.pyplot.ImageAxes</cite>) – The colored object generated via matplotlib that the colormap should
 be stolen from.</p></li>
 <li><p><strong>ax</strong> (<cite>matplotlib.Axes</cite>) – The instance of axes to place the colorbar next to.</p></li>
-<li><p><strong>adjust</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to adjust some minor attributes of the parent axis, for
-presentation.</p></li>
+<li><p><strong>size</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Width (percent of parent axis width) of the colorbar; default is 2.</p></li>
+<li><p><strong>pad</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Padding between parent and colorbar axes. Default is 0.05.</p></li>
+<li><p><strong>labelsize</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Font size of label text. Default is 9pt.</p></li>
 <li><p><strong>**kwargs</strong> – Passed to <cite>matplotlib.pyplot.colorbar</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>cb</strong> – The colorbar instance created.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>matplotlib.colorbar</cite> instance.</p>
 </dd>
 </dl>
@@ -338,7 +332,7 @@ presentation.</p></li>
 type to return, and gives back arrays of 1) data, 2) display x-coordinates
 and 3) display y-coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>VarInst</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> or
@@ -352,11 +346,11 @@ sourced from a <cite>StratigraphyCube</cite> do not support the <cite>spacetime<
 <cite>stratigraphy</cite> if the Cube has computed “quick” stratigraphy.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>data, X, Y</strong> – Three matching-size <cite>ndarray</cite> representing the 1) data, 2) display
 x-coordinates and 3) display y-coordinates.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -370,7 +364,7 @@ x-coordinates and 3) display y-coordinates.</p>
 <cite>Planform</cite> and an optional <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> argument, which specifies the data
 type to return, and gives back data and line segments for display.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>VarInst</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> or
@@ -384,12 +378,12 @@ stratigraphy for a <cite>StratigraphyCube</cite> variable. Variables from
 <li><p><strong>note::</strong> (<em>..</em>) – Not currently implemented for variables from the <cite>StratigraphyCube</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>vals, segments</strong> – An off-by-one sized array of data values (<cite>vals</cite>) to color the line
 segments (<cite>segments</cite>). The segments are organized along the 0th
 dimension of the array.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -403,7 +397,7 @@ dimension of the array.</p>
 <cite>Planform</cite> and an optional <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> argument, which specifies how to
 determine the limits to return.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>VarInst</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> subclass) – The <cite>Variable</cite> instance to visualize. May be any subclass of
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSectionVariable</span></code> or
@@ -415,11 +409,11 @@ same value used with either <a class="reference internal" href="#deltametrics.pl
 <li><p><strong>factor</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Factor to extend vertical limits upward for stratigraphic sections.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>xmin, xmax, ymin, ymax</strong> – Values to use as limits on a plot. Use with, for example,
 <code class="docutils literal notranslate"><span class="pre">ax.set_xlim((xmin,</span> <span class="pre">xmax))</span></code>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
 </dl>
@@ -437,7 +431,7 @@ highlight where time has been preserved (or eliminated) in a timeseries of
 data. For example, see
 <a class="reference internal" href="../../_autosummary/deltametrics.plot.show_one_dimensional_trajectory_to_strata.html#deltametrics.plot.show_one_dimensional_trajectory_to_strata" title="deltametrics.plot.show_one_dimensional_trajectory_to_strata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_one_dimensional_trajectory_to_strata</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>where</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Boolean <cite>numpy</cite> <cite>ndarray</cite> indicating which locations to create a patch
 at.</p></li>
@@ -449,10 +443,10 @@ at.</p></li>
 <cite>matplotlib</cite> <cite>**kwargs</cite> (e.g., <cite>color</cite>, <cite>edgecolor</cite>).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>pc</strong> – Collection of <cite>Rectangle</cite> <cite>Patch</cite> objects.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.patches.PatchCollection</span></code></p>
 </dd>
 </dl>
@@ -465,7 +459,7 @@ at.</p></li>
 <p>Make a color perceptually lighter or darker. Adapted from
 <a class="reference external" href="https://stackoverflow.com/a/60562502/4038393">https://stackoverflow.com/a/60562502/4038393</a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rgb</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>) – A three element tuple of the RGB values for the color.</p></li>
 <li><p><strong>scale_l</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>) – The scale factor, relative to a value of <cite>1</cite>. A value of 1 performs no
@@ -473,10 +467,10 @@ scaling, and values less than 1 darken the color, whereas values
 greater than 1 brighten the color.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>scaled</strong> – Scaled color RGB tuple.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code></p>
 </dd>
 </dl>
@@ -538,7 +532,7 @@ greater than 1 brighten the color.</p></li>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -562,7 +556,7 @@ greater than 1 brighten the color.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

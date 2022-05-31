@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Introduction to Planform objects &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -45,7 +46,7 @@
           <div class="body" role="main">
             
   <section id="introduction-to-planform-objects">
-<h1>Introduction to Planform objects<a class="headerlink" href="#introduction-to-planform-objects" title="Permalink to this headline">¶</a></h1>
+<h1>Introduction to Planform objects<a class="headerlink" href="#introduction-to-planform-objects" title="Permalink to this heading">¶</a></h1>
 <p>Multiple definitions of the delta planform are supported.
 These planform objects can be used as starting points for binary mask computation.
 If not specified explicitly, they are often implicitly part of binary mask creation.</p>
@@ -64,8 +65,8 @@ If not specified explicitly, they are often implicitly part of binary mask creat
 <img alt="../../_images/planform-1.png" class="plot-directive" src="../../_images/planform-1.png" />
 </figure>
 <section id="the-openingangleplanform">
-<h2>The OpeningAnglePlanform<a class="headerlink" href="#the-openingangleplanform" title="Permalink to this headline">¶</a></h2>
-<p>This planform object is based around the Opening Angle Method <a class="footnote-reference brackets" href="#id2" id="id1">1</a>.</p>
+<h2>The OpeningAnglePlanform<a class="headerlink" href="#the-openingangleplanform" title="Permalink to this heading">¶</a></h2>
+<p>This planform object is based around the Opening Angle Method <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <p>The <cite>OpeningAnglePlanform</cite> can be created directly from elevation data:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="n">OAP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">OpeningAnglePlanform</span><span class="o">.</span><span class="n">from_elevation_data</span><span class="p">(</span>
@@ -84,15 +85,14 @@ In the case of the <cite>OpeningAnglePlanform</cite>, the <cite>composite_array<
 <figure class="align-default">
 <img alt="../../_images/planform-3.png" class="plot-directive" src="../../_images/planform-3.png" />
 </figure>
-<dl class="footnote brackets">
-<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
-<dd><p>Shaw, J. B., Wolinsky, M. A., Paola, C., &amp; Voller, V. R. (2008). An image‐based method for shoreline mapping on complex coasts. Geophysical Research Letters, 35(12).</p>
-</dd>
-</dl>
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Shaw, J. B., Wolinsky, M. A., Paola, C., &amp; Voller, V. R. (2008). An image‐based method for shoreline mapping on complex coasts. Geophysical Research Letters, 35(12).</p>
+</aside>
 </section>
 <section id="the-morphologicalplanform">
-<h2>The MorphologicalPlanform<a class="headerlink" href="#the-morphologicalplanform" title="Permalink to this headline">¶</a></h2>
-<p>This planform object uses mathematical morphology to identify the delta planform, inspired by Geleynse et al (2012) <a class="footnote-reference brackets" href="#id4" id="id3">2</a>.</p>
+<h2>The MorphologicalPlanform<a class="headerlink" href="#the-morphologicalplanform" title="Permalink to this heading">¶</a></h2>
+<p>This planform object uses mathematical morphology to identify the delta planform, inspired by Geleynse et al (2012) <a class="footnote-reference brackets" href="#id4" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 <p>The <cite>MorphologicalPlanform</cite> can also be created directly from elevation data:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">MorphologicalPlanform</span><span class="o">.</span><span class="n">from_elevation_data</span><span class="p">(</span>
   <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_disk</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
@@ -109,14 +109,13 @@ In the case of the <cite>OpeningAnglePlanform</cite>, the <cite>composite_array<
 <figure class="align-default">
 <img alt="../../_images/planform-5.png" class="plot-directive" src="../../_images/planform-5.png" />
 </figure>
-<dl class="footnote brackets">
-<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id3">2</a></span></dt>
-<dd><p>Geleynse, N., Voller, V. R., Paola, C., &amp; Ganti, V. (2012). Characterization of river delta shorelines. Geophysical research letters, 39(17).</p>
-</dd>
-</dl>
+<aside class="footnote brackets" id="id4" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>Geleynse, N., Voller, V. R., Paola, C., &amp; Ganti, V. (2012). Characterization of river delta shorelines. Geophysical research letters, 39(17).</p>
+</aside>
 </section>
 <section id="mask-extraction">
-<h2>Mask Extraction<a class="headerlink" href="#mask-extraction" title="Permalink to this headline">¶</a></h2>
+<h2>Mask Extraction<a class="headerlink" href="#mask-extraction" title="Permalink to this heading">¶</a></h2>
 <p>These planform objects can be used to extract shoreline masks as well as land masks.
 The masking API accepts either planform object as an input, making it easy to swap one planform for the other in a masking workflow.</p>
 <p>As an example, we will extract a shoreline from both planforms shown above.
@@ -201,7 +200,7 @@ Overall though, this example shows that the two methods produce roughly similar 
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -225,7 +224,7 @@ Overall though, this example shows that the two methods produce roughly similar 
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Stratigraphy operations &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -45,17 +46,13 @@
           <div class="body" role="main">
             
   <section id="stratigraphy-operations">
-<h1>Stratigraphy operations<a class="headerlink" href="#stratigraphy-operations" title="Permalink to this headline">¶</a></h1>
+<h1>Stratigraphy operations<a class="headerlink" href="#stratigraphy-operations" title="Permalink to this heading">¶</a></h1>
 <p>The package makes available functions relating to computing things based on
 stratigraphy.</p>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.strat</span></code>.</p>
 <section id="compute-stratigraphy-routines">
-<h2>Compute stratigraphy routines<a class="headerlink" href="#compute-stratigraphy-routines" title="Permalink to this headline">¶</a></h2>
+<h2>Compute stratigraphy routines<a class="headerlink" href="#compute-stratigraphy-routines" title="Permalink to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.strat.compute_boxy_stratigraphy_volume.html#deltametrics.strat.compute_boxy_stratigraphy_volume" title="deltametrics.strat.compute_boxy_stratigraphy_volume"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_boxy_stratigraphy_volume</span></code></a>(elev, prop)</p></td>
 <td><p>Process t-x-y data volume to boxy stratigraphy volume.</p></td>
@@ -67,12 +64,8 @@ stratigraphy.</p>
 </table>
 </section>
 <section id="stratigraphy-statistics-functions">
-<h2>Stratigraphy statistics functions<a class="headerlink" href="#stratigraphy-statistics-functions" title="Permalink to this headline">¶</a></h2>
+<h2>Stratigraphy statistics functions<a class="headerlink" href="#stratigraphy-statistics-functions" title="Permalink to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.strat.compute_trajectory.html#deltametrics.strat.compute_trajectory" title="deltametrics.strat.compute_trajectory"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_trajectory</span></code></a>()</p></td>
 <td><p>Show 1d profile at point.</p></td>
@@ -84,16 +77,12 @@ stratigraphy.</p>
 </table>
 </section>
 <section id="quick-stratigraphy-attributes-classes">
-<h2>Quick-stratigraphy attributes classes<a class="headerlink" href="#quick-stratigraphy-attributes-classes" title="Permalink to this headline">¶</a></h2>
+<h2>Quick-stratigraphy attributes classes<a class="headerlink" href="#quick-stratigraphy-attributes-classes" title="Permalink to this heading">¶</a></h2>
 <p>The “quick” stratigraphy attributes provide a common API that is accessed by
 <cite>DataCube</cite>, <cite>DataSectionVariable</cite> and <cite>DataPlanformVariable</cite> methods. There
 are two methods of computing quick stratigraphy, with
 <a class="reference internal" href="../../_autosummary/deltametrics.strat.MeshStratigraphyAttributes.html#deltametrics.strat.MeshStratigraphyAttributes" title="deltametrics.strat.MeshStratigraphyAttributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MeshStratigraphyAttributes</span></code></a> as the default.</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.strat.MeshStratigraphyAttributes.html#deltametrics.strat.MeshStratigraphyAttributes" title="deltametrics.strat.MeshStratigraphyAttributes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">MeshStratigraphyAttributes</span></code></a>(elev, **kwargs)</p></td>
 <td><p>Attribute set for mesh stratigraphy information, emebdded into a DataCube.</p></td>
@@ -108,7 +97,7 @@ are two methods of computing quick stratigraphy, with
 </table>
 </section>
 <section id="low-level-stratigraphy-utility-functions">
-<h2>Low-level stratigraphy utility functions<a class="headerlink" href="#low-level-stratigraphy-utility-functions" title="Permalink to this headline">¶</a></h2>
+<h2>Low-level stratigraphy utility functions<a class="headerlink" href="#low-level-stratigraphy-utility-functions" title="Permalink to this heading">¶</a></h2>
 <p>The functions outlined in this section are the main functions that do the actual work of computing stratigraphy and preservation, throughout DeltaMetrics. These functions may be useful if you are trying to use parts of DeltaMetrics, but need to customize something for your own use-case.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.strat._compute_elevation_to_preservation">
@@ -124,10 +113,10 @@ however some users may find it helpful. The function is heavily utlized
 internally. Function inputs and outputs are standard numpy <cite>ndarray</cite>, so
 that these functions can accept data from an arbitrary source.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">xr.core.dataarray.DataArray</span></code>) – The <cite>t-x-y</cite> volume of elevation data to determine stratigraphy.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>strata</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>t-x-y</cite> <cite>ndarry</cite> of stratal surface elevations.</p></li>
 <li><p><strong>psvd</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>t-x-y</cite> boolean <cite>ndarry</cite> of whether a <cite>(t,x,y)</cite> point of
@@ -159,15 +148,15 @@ indicate that an entire timestep was preserved, but rather that some
 portion of this time-interval (up to the entire interval) is recorded.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>psvd</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Boolean <cite>ndarray</cite> indicating the preservation of instances of time.
 Time is expected to be the 0th axis.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>psvd_intervals</strong> – Boolean <cite>ndarray</cite> indicating the preservation of time-intervals,
 including partial intervals.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 </dl>
@@ -200,7 +189,7 @@ however some users may find it helpful. The function is heavily utlized
 internally. Function inputs and outputs are standard numpy <cite>ndarray</cite>, so
 that these functions can accept data from an arbitrary source.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>strata</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>t-x-y</cite> <cite>ndarry</cite> of stratal surface elevations. Can be computed by
 <a class="reference internal" href="#deltametrics.strat._compute_elevation_to_preservation" title="deltametrics.strat._compute_elevation_to_preservation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_elevation_to_preservation</span></code></a>.</p></li>
@@ -208,7 +197,7 @@ that these functions can accept data from an arbitrary source.</p>
 have regular intervals.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>strat_coords</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – An <cite>N x 3</cite> array of <cite>z-x-y</cite> coordinates where information is preserved
 in the boxy stratigraphy. Rows in <cite>strat_coords</cite> correspond with
@@ -240,7 +229,7 @@ is used of <cite>dz=0.1</cite>.</p>
 <p>Precedence when multiple arguments are supplied is <cite>z</cite>, <cite>dz</cite>, <cite>nz</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – An up-to-three-dimensional array with timeseries of elevation values,
 where elevation is expected to along the zeroth axis.</p></li>
@@ -305,7 +294,7 @@ returned unchanged if supplied.</p></li>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -329,7 +318,7 @@ returned unchanged if supplied.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

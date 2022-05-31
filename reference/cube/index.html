@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Cube operations &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -45,19 +46,15 @@
           <div class="body" role="main">
             
   <section id="cube-operations">
-<h1>Cube operations<a class="headerlink" href="#cube-operations" title="Permalink to this headline">¶</a></h1>
+<h1>Cube operations<a class="headerlink" href="#cube-operations" title="Permalink to this heading">¶</a></h1>
 <p>The package makes available <cite>Cube</cite> objects, which are the central office to all of the other functionality of DeltaMetrics.</p>
 <p>The cubes keep track of underlying data, which may represent any number of unique variables.
 For example, the <a class="reference internal" href="../../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a> connects to a set of data in the form of a <code class="docutils literal notranslate"><span class="pre">t-x-y</span></code> array-like dataset, and associated metadata defining the array coordinates, type, and data units.
 So, variables in the underlying data might be lidar scans, overhead photos, grain size maps (pyDeltaRCM), or flow velocity records (pyDeltaRCM), etc.</p>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.cube</span></code>.</p>
 <section id="cube-classes">
-<h2>Cube classes<a class="headerlink" href="#cube-classes" title="Permalink to this headline">¶</a></h2>
+<h2>Cube classes<a class="headerlink" href="#cube-classes" title="Permalink to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a>(data[, read, varset, ...])</p></td>
 <td><p>DataCube object.</p></td>
@@ -116,7 +113,7 @@ So, variables in the underlying data might be lidar scans, overhead photos, grai
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -140,7 +137,7 @@ So, variables in the underlying data might be lidar scans, overhead photos, grai
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

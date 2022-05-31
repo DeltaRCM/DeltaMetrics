@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.plan.MorphologicalPlanform &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,7 +47,7 @@
           <div class="body" role="main">
             
   <section id="deltametrics-plan-morphologicalplanform">
-<h1>deltametrics.plan.MorphologicalPlanform<a class="headerlink" href="#deltametrics-plan-morphologicalplanform" title="Permalink to this headline">¶</a></h1>
+<h1>deltametrics.plan.MorphologicalPlanform<a class="headerlink" href="#deltametrics-plan-morphologicalplanform" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.plan.</span></span><span class="sig-name descname"><span class="pre">MorphologicalPlanform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform" title="Permalink to this definition">¶</a></dt>
@@ -97,7 +98,7 @@ the maximum disk size for morphological operations can be provided.</p>
 planform object and the cube are not yet implemented.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*args</strong> – <p>The first argument is expected to be an elevation mask, or an
 array which represents an elevation mask or land area. The
@@ -123,10 +124,6 @@ may not be what you expect.</p></li>
 
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.__init__" title="deltametrics.plan.MorphologicalPlanform.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Initialize the MorphologicalPlanform (MP).</p></td>
@@ -144,10 +141,6 @@ may not be what you expect.</p></li>
 </table>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.all_images" title="deltametrics.plan.MorphologicalPlanform.all_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_images</span></code></a></p></td>
 <td><p>3-D array of all binary closed arrays.</p></td>
@@ -216,7 +209,7 @@ method, because it is required to instantiate an
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">ElevationMask</span></code> from elevation data.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>elevation_data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The elevation data to create the <cite>ElevationMask</cite> that is in
 turn used to create the <cite>MorphologicalPlanform</cite>.</p></li>
@@ -266,7 +259,7 @@ turn used to create the <cite>MorphologicalPlanform</cite>.</p></li>
 <dd><p>Show the planform.</p>
 <p>Display a field of the planform, called by attribute name.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which field to show. Must be an attribute of the planform. <cite>show</cite>
 will look for another attribute describing
@@ -327,7 +320,7 @@ create a new) <cite>Axes</cite> object.</p></li>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -352,7 +345,7 @@ create a new) <cite>Axes</cite> object.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

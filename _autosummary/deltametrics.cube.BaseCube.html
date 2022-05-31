@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.cube.BaseCube &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,7 +47,7 @@
           <div class="body" role="main">
             
   <section id="deltametrics-cube-basecube">
-<h1>deltametrics.cube.BaseCube<a class="headerlink" href="#deltametrics-cube-basecube" title="Permalink to this headline">¶</a></h1>
+<h1>deltametrics.cube.BaseCube<a class="headerlink" href="#deltametrics-cube-basecube" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.cube.BaseCube">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.cube.</span></span><span class="sig-name descname"><span class="pre">BaseCube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimensions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube" title="Permalink to this definition">¶</a></dt>
@@ -66,7 +67,7 @@ See the <a class="reference internal" href="#deltametrics.cube.BaseCube.read" ti
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">read</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">varset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dimensions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize the BaseCube.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code>) – If data is type <cite>str</cite>, the string points to a NetCDF or HDF5 file
 that can be read. Typically this is used to directly import files
@@ -87,10 +88,6 @@ in a dictionary.</p></li>
 
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.__init__" title="deltametrics.cube.BaseCube.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(data[, read, varset, dimensions])</p></td>
 <td><p>Initialize the BaseCube.</p></td>
@@ -129,10 +126,6 @@ in a dictionary.</p></li>
 </table>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.H" title="deltametrics.cube.BaseCube.H"><code class="xref py py-obj docutils literal notranslate"><span class="pre">H</span></code></a></p></td>
 <td><p>Number of elements, vertical (height) coordinate.</p></td>
@@ -233,7 +226,7 @@ implemented by subclasses.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">coords</span></span><a class="headerlink" href="#deltametrics.cube.BaseCube.coords" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of coordinate names as strings.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>list</cite></p>
 </dd>
 </dl>
@@ -246,7 +239,7 @@ implemented by subclasses.</p>
 <p>Returns a string if connected to file, or None if cube initialized
 from <code class="docutils literal notranslate"><span class="pre">dict</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
@@ -257,7 +250,7 @@ from <code class="docutils literal notranslate"><span class="pre">dict</span></c
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataio</span></span><a class="headerlink" href="#deltametrics.cube.BaseCube.dataio" title="Permalink to this definition">¶</a></dt>
 <dd><p>Data I/O handler.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="deltametrics.io.BaseIO.html#deltametrics.io.BaseIO" title="deltametrics.io.BaseIO"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseIO</span></code></a> subclass</p>
 </dd>
 </dl>
@@ -305,7 +298,7 @@ data off-disk as needed.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">planform_set</span></span><a class="headerlink" href="#deltametrics.cube.BaseCube.planform_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of planform instances.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
 </dd>
 </dl>
@@ -317,7 +310,7 @@ data off-disk as needed.</p>
 <dd><p>Set of plan instances.</p>
 <p>Alias to <code class="xref py py-meth docutils literal notranslate"><span class="pre">plan_set()</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>dict</cite></p>
 </dd>
 </dl>
@@ -333,7 +326,7 @@ data off-disk as needed.</p>
 last index is shown.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to show from the underlying dataset.</p></li>
 <li><p><strong>idx</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Which index along the <cite>axis</cite> to slice data from. Default value is
@@ -369,7 +362,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
 <span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.cube.BaseCube.read" title="Permalink to this definition">¶</a></dt>
 <dd><p>Read variable into memory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>variables</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code> of <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variables to read into memory.</p>
 </dd>
 </dl>
@@ -387,7 +380,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
 <dd><p>Register a planform to the <a class="reference internal" href="#deltametrics.cube.BaseCube.planform_set" title="deltametrics.cube.BaseCube.planform_set"><code class="xref py py-attr docutils literal notranslate"><span class="pre">planform_set</span></code></a>.</p>
 <p>Connect a planform to the cube.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The name to register the <cite>Planform</cite>.</p></li>
 <li><p><strong>PlanformInstance</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BasePlanform</span></code> subclass instance) – The planform instance that will be registered.</p></li>
@@ -403,7 +396,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
 <dd><p>Register a section to the <a class="reference internal" href="#deltametrics.cube.BaseCube.section_set" title="deltametrics.cube.BaseCube.section_set"><code class="xref py py-attr docutils literal notranslate"><span class="pre">section_set</span></code></a>.</p>
 <p>Connect a section to the cube.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The name to register the section.</p></li>
 <li><p><strong>SectionInstance</strong> (<a class="reference internal" href="deltametrics.section.BaseSection.html#deltametrics.section.BaseSection" title="deltametrics.section.BaseSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseSection</span></code></a> subclass instance) – The section instance that will be registered.</p></li>
@@ -426,7 +419,7 @@ the <code class="docutils literal notranslate"><span class="pre">register_sectio
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">section_set</span></span><a class="headerlink" href="#deltametrics.cube.BaseCube.section_set" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set of section instances.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
 </dd>
 </dl>
@@ -438,7 +431,7 @@ the <code class="docutils literal notranslate"><span class="pre">register_sectio
 <dd><p>Set of section instances.</p>
 <p>Alias to <a class="reference internal" href="#deltametrics.cube.BaseCube.section_set" title="deltametrics.cube.BaseCube.section_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">section_set()</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">dict</span></code></p>
 </dd>
 </dl>
@@ -459,7 +452,7 @@ the <code class="docutils literal notranslate"><span class="pre">register_sectio
 <p>requires <cite>pyvista</cite> package for 3d visualization.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to show from the underlying dataset.</p></li>
 <li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Style to show <cite>cube</cite>. Default is <cite>‘mesh’</cite>, which gives a 3D
@@ -512,7 +505,7 @@ in a future release.</p>
 <dd><p>Show a registered planform by name and variable.</p>
 <p>Call a registered planform by name and variable.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The name of the registered planform.</p></li>
 <li><p><strong>variable</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The varaible name to show.</p></li>
@@ -529,7 +522,7 @@ to <a class="reference internal" href="deltametrics.plan.Planform.html#deltametr
 <dd><p>Show a registered section by name and variable.</p>
 <p>Call a registered section by name and variable.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The name of the registered section.</p></li>
 <li><p><strong>variable</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The varaible name to show.</p></li>
@@ -545,7 +538,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">variables</span></span><a class="headerlink" href="#deltametrics.cube.BaseCube.variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of variable names as strings.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>list</cite></p>
 </dd>
 </dl>
@@ -559,7 +552,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
 <code class="docutils literal notranslate"><span class="pre">VariableSetInstance</span></code> is a valid instance of
 <a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">VariableSet</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-class docutils literal notranslate"><span class="pre">VariableSet</span></code></a></p>
 </dd>
 </dl>
@@ -608,7 +601,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -633,7 +626,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

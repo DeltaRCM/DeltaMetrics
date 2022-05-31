@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.mask.EdgeMask &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,7 +47,7 @@
           <div class="body" role="main">
             
   <section id="deltametrics-mask-edgemask">
-<h1>deltametrics.mask.EdgeMask<a class="headerlink" href="#deltametrics-mask-edgemask" title="Permalink to this headline">¶</a></h1>
+<h1>deltametrics.mask.EdgeMask<a class="headerlink" href="#deltametrics-mask-edgemask" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.mask.EdgeMask">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.mask.</span></span><span class="sig-name descname"><span class="pre">EdgeMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.EdgeMask" title="Permalink to this definition">¶</a></dt>
@@ -79,7 +80,7 @@ Edge identification is implemented via Canny edge detection from <cite>skimage</
 data, or it can be computed using the <a class="reference internal" href="deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a> and the
 <a class="reference internal" href="deltametrics.mask.WetMask.html#deltametrics.mask.WetMask" title="deltametrics.mask.WetMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WetMask</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>arr</strong> (<em>ndarray</em>) – The data array to make the mask from.</p></li>
 <li><p><strong>contour_threshold</strong> (<em>int</em><em>, </em><em>optional</em>) – <p>Threshold value used for identifying the shoreline.</p>
@@ -100,10 +101,6 @@ just store the data in the EdgeMask object.</p></li>
 
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.EdgeMask.__init__" title="deltametrics.mask.EdgeMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Initialize the EdgeMask.</p></td>
@@ -133,10 +130,6 @@ just store the data in the EdgeMask object.</p></li>
 </table>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.EdgeMask.integer_mask" title="deltametrics.mask.EdgeMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a></p></td>
 <td><p>Binary mask values as integer</p></td>
@@ -189,7 +182,7 @@ your array to a boolean before using <cite>from_array</cite> to ensure the
 mask is created correctly.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>_arr</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The array with values to set as the mask. Can be any <cite>dtype</cite> but
 will be coerced to <cite>boolean</cite>.</p>
 </dd>
@@ -214,7 +207,7 @@ also <a class="reference internal" href="#deltametrics.mask.EdgeMask.mask" title
 </div>
 <p>Read-only mask attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
@@ -231,7 +224,7 @@ also <a class="reference internal" href="#deltametrics.mask.EdgeMask.mask" title
 </div>
 <p>Read-only mask attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
@@ -256,7 +249,7 @@ black and white.</p>
 <p>Passes <cite>**kwargs</cite> to <code class="docutils literal notranslate"><span class="pre">matplotlib.imshow</span></code>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.pyplot.Axes</span></code>) – Which axes object to plot into.</p>
 </dd>
 </dl>
@@ -270,7 +263,7 @@ black and white.</p>
 computations. Most often, this method is used to manually correct
 domain edge effects.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseCube</span></code> subclass, optional) – Optionally pass a <cite>Cube</cite> object to the mask, and the dimensions to
 trim/replace the mask by will be inferred from the cube. In this
@@ -322,7 +315,7 @@ the top domain edge.</p></li>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -347,7 +340,7 @@ the top domain edge.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

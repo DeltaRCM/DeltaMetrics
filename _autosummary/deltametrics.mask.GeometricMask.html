@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.mask.GeometricMask &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,7 +47,7 @@
           <div class="body" role="main">
             
   <section id="deltametrics-mask-geometricmask">
-<h1>deltametrics.mask.GeometricMask<a class="headerlink" href="#deltametrics-mask-geometricmask" title="Permalink to this headline">¶</a></h1>
+<h1>deltametrics.mask.GeometricMask<a class="headerlink" href="#deltametrics-mask-geometricmask" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.mask.GeometricMask">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.mask.</span></span><span class="sig-name descname"><span class="pre">GeometricMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask" title="Permalink to this definition">¶</a></dt>
@@ -96,7 +97,7 @@ to.</p>
 are set to <code class="docutils literal notranslate"><span class="pre">False</span></code> during initialization.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*args</strong> – Various input arguments can be used to initialize the
 <cite>GeometricMask</cite>. Input may be a two-element <cite>tuple</cite>, specifying
@@ -115,10 +116,6 @@ configuration of a pyDeltaRCM model inlet.</p></li>
 
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.__init__" title="deltametrics.mask.GeometricMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args[, origin])</p></td>
 <td><p>Initialize the GeometricMask.</p></td>
@@ -148,10 +145,6 @@ configuration of a pyDeltaRCM model inlet.</p></li>
 </table>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.integer_mask" title="deltametrics.mask.GeometricMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a></p></td>
 <td><p>Binary mask values as integer</p></td>
@@ -190,7 +183,7 @@ allow for an input origin point from which the angular bounds are
 determined.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>theta1</strong> (<em>float</em>) – Radian value controlling the left bound of the mask</p></li>
 <li><p><strong>theta2</strong> (<em>float</em>) – Radian value controlling the right bound of the mask</p></li>
@@ -228,7 +221,7 @@ determined.</p>
 <p>Computes a mask that is bounded by 2 radial distances which are input
 by the user.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>rad1</strong> (<em>int</em>) – Index value to set the inner radius.</p></li>
 <li><p><strong>rad2</strong> (<em>int</em><em>, </em><em>optional</em>) – Index value to set the outer radius. If unspecified, this bound
@@ -271,7 +264,7 @@ If only one value is supplied, then this mask is centered on the
 inlet and has a width of ind1. If two values are supplied then they
 set the bounds for the mask.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ind1</strong> (<em>int</em>) – Width of the mask if ind2 is not specified. Otherwise, it sets
 the left bound of the mask.</p></li>
@@ -316,7 +309,7 @@ your array to a boolean before using <cite>from_array</cite> to ensure the
 mask is created correctly.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>_arr</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The array with values to set as the mask. Can be any <cite>dtype</cite> but
 will be coerced to <cite>boolean</cite>.</p>
 </dd>
@@ -335,7 +328,7 @@ also <a class="reference internal" href="#deltametrics.mask.GeometricMask.mask" 
 </div>
 <p>Read-only mask attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
@@ -352,7 +345,7 @@ also <a class="reference internal" href="#deltametrics.mask.GeometricMask.mask" 
 </div>
 <p>Read-only mask attribute.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Type</dt>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>ndarray</p>
 </dd>
 </dl>
@@ -377,7 +370,7 @@ black and white.</p>
 <p>Passes <cite>**kwargs</cite> to <code class="docutils literal notranslate"><span class="pre">matplotlib.imshow</span></code>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.pyplot.Axes</span></code>) – Which axes object to plot into.</p>
 </dd>
 </dl>
@@ -390,7 +383,7 @@ black and white.</p>
 <p>Makes a mask bounded by lines perpendicular to the direction of the
 flow in the inlet channel.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ind1</strong> (<em>int</em>) – Index value to set first boundary (closest to inlet)</p></li>
 <li><p><strong>ind2</strong> (<em>int</em><em>, </em><em>optional</em>) – Index value to set second boundary (farther from inlet). This is
@@ -430,7 +423,7 @@ optional, if unspecified, this is set to the length of the domain.</p></li>
 computations. Most often, this method is used to manually correct
 domain edge effects.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">BaseCube</span></code> subclass, optional) – Optionally pass a <cite>Cube</cite> object to the mask, and the dimensions to
 trim/replace the mask by will be inferred from the cube. In this
@@ -494,7 +487,7 @@ the top domain edge.</p></li>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -519,7 +512,7 @@ the top domain edge.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

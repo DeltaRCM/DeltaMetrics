@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Utility functions &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -45,11 +46,11 @@
           <div class="body" role="main">
             
   <section id="utility-functions">
-<h1>Utility functions<a class="headerlink" href="#utility-functions" title="Permalink to this headline">¶</a></h1>
+<h1>Utility functions<a class="headerlink" href="#utility-functions" title="Permalink to this heading">¶</a></h1>
 <p>The package has some more miscellaneous functions and utilities that are made publicly available.</p>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.utils</span></code>.</p>
 <section id="id1">
-<h2>Utility functions<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<h2>Utility functions<a class="headerlink" href="#id1" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.utils.curve_fit">
 <span class="sig-prename descclassname"><span class="pre">deltametrics.utils.</span></span><span class="sig-name descname"><span class="pre">curve_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'harmonic'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.utils.curve_fit" title="Permalink to this definition">¶</a></dt>
@@ -62,7 +63,7 @@ dimension is of <code class="docutils literal notranslate"><span class="pre">len
 <p>E.g. Given some mobility data output from one of the mobility metrics,
 fit a curve to the average of that data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Data, either already averaged or a 2D array of of shape
 len(data values) x len(# values).</p></li>
@@ -78,7 +79,7 @@ follows:</p>
 </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>yfit</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – y-values corresponding to the fitted function.</p></li>
 <li><p><strong>popt</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">array</span></code>) – Optimal values for the parameters of the function. Number of
@@ -96,14 +97,14 @@ parameters is dependent on the functional form used.</p></li>
 <span class="sig-prename descclassname"><span class="pre">deltametrics.utils.</span></span><span class="sig-name descname"><span class="pre">coordinates_to_segments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">coordinates</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.utils.coordinates_to_segments" title="Permalink to this definition">¶</a></dt>
 <dd><p>Transform coordinate [x, y] array into line segments.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>coordinates</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – <cite>[N, 2]</cite> array with <cite>(x, y)</cite> coordinate pairs in rows.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><cite>[(N-1), 2, 2</cite> array of line segments with dimensions of
 <cite>each segment x x-coordinates x y-coordinates</cite>.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>segments</p>
 </dd>
 </dl>
@@ -124,10 +125,10 @@ of three ways:</p>
 <p>Cell coordinates will be ordered according to the order of the arguments
 (i.e., as though walking along the line from <cite>p0</cite> to <cite>p1</cite>).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>line</strong> (four <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, two <code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>, one <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The line, defined in one of the options described above.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>x</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – x-coordinates of cells intersected with line.</p></li>
 <li><p><strong>y</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – y-coordinates of cells intersected with line.</p></li>
@@ -185,13 +186,13 @@ line.</p>
 
 </section>
 <section id="utility-exceptions-and-warnings">
-<h2>Utility Exceptions and Warnings<a class="headerlink" href="#utility-exceptions-and-warnings" title="Permalink to this headline">¶</a></h2>
+<h2>Utility Exceptions and Warnings<a class="headerlink" href="#utility-exceptions-and-warnings" title="Permalink to this heading">¶</a></h2>
 <dl class="py exception">
 <dt class="sig sig-object py" id="deltametrics.utils.NoStratigraphyError">
 <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.utils.</span></span><span class="sig-name descname"><span class="pre">NoStratigraphyError</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.utils.NoStratigraphyError" title="Permalink to this definition">¶</a></dt>
 <dd><p>Error message for access when no stratigraphy.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obj</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which object user tried to access.</p></li>
 <li><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Which variable user tried to access. If provided, more information
@@ -268,7 +269,7 @@ set self.__traceback__ to tb and return self.</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -292,7 +293,7 @@ set self.__traceback__ to tb and return self.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

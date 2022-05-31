@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.section.DipSection &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,7 +47,7 @@
           <div class="body" role="main">
             
   <section id="deltametrics-section-dipsection">
-<h1>deltametrics.section.DipSection<a class="headerlink" href="#deltametrics-section-dipsection" title="Permalink to this headline">¶</a></h1>
+<h1>deltametrics.section.DipSection<a class="headerlink" href="#deltametrics-section-dipsection" title="Permalink to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.section.DipSection">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.section.</span></span><span class="sig-name descname"><span class="pre">DipSection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.DipSection" title="Permalink to this definition">¶</a></dt>
@@ -63,7 +64,7 @@ dip section with <a class="reference internal" href="#deltametrics.section.DipSe
 <p>Either <a class="reference internal" href="#deltametrics.section.DipSection.distance" title="deltametrics.section.DipSection.distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distance</span></code></a> <em>or</em> <a class="reference internal" href="#deltametrics.section.DipSection.distance_idx" title="deltametrics.section.DipSection.distance_idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distance_idx</span></code></a> must be specified.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*args</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code> or <cite>StratigraphyCube</cite>) – The <cite>Cube</cite> object to link for underlying data. This option should be
 ommitted if using the <code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code> method of a <cite>Cube</cite>.</p></li>
@@ -86,14 +87,14 @@ giving the lower and upper bounds of indices to span the section.</p></li>
 options are <cite>name</cite>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>section</strong> – <cite>DipSection</cite> object with specified parameters. The section is
 automatically connected to the underlying <cite>Cube</cite> data source if the
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code> method of a <cite>Cube</cite> is used to set up the
 section, or the <cite>Cube</cite> is passed as the first positional argument
 during instantiation.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#deltametrics.section.DipSection" title="deltametrics.section.DipSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DipSection</span></code></a></p>
 </dd>
 </dl>
@@ -170,10 +171,6 @@ differ in which direction the line is drawn.</p>
 
 <p class="rubric">Methods</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.__init__" title="deltametrics.section.DipSection.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args[, distance, distance_idx, ...])</p></td>
 <td><p>Initialization for the LineSection.</p></td>
@@ -191,10 +188,6 @@ differ in which direction the line is drawn.</p>
 </table>
 <p class="rubric">Attributes</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.DipSection.distance" title="deltametrics.section.DipSection.distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">distance</span></code></a></p></td>
 <td><p>Distance of section from <cite>dim1</cite> lower edge, in <cite>dim1</cite> coordinates.</p></td>
@@ -254,14 +247,14 @@ from data, for variable <code class="docutils literal notranslate"><span class="
 <p>We only support slicing by string.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to slice.</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>data</strong> – The undelrying data returned as an xarray <cite>DataArray</cite>, maintaining
 coordinates.</p>
 </dd>
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataArray</span></code></p>
 </dd>
 </dl>
@@ -337,7 +330,7 @@ edge node, and colors for the <cite>style=’shaded’</cite> mesh are determine
 from the lower-left-end edge node of the quad.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>SectionAttribute</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">SectionVariableInstance</span></code>) – Which attribute to show. Can be a string for a named <cite>Cube</cite>
 attribute, or any arbitrary data.</p></li>
@@ -410,7 +403,7 @@ create a new) <cite>Axes</cite> object.</p></li>
 <dd><p>Plot section trace (x-y plane path).</p>
 <p>Plot the section trace (<a class="reference internal" href="#deltametrics.section.DipSection.trace" title="deltametrics.section.DipSection.trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></a>) onto an x-y planview.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*args</strong> – Passed to <cite>matplotlib</cite> <code class="xref py py-obj docutils literal notranslate"><span class="pre">plot()</span></code>.</p></li>
 <li><p><strong>ax</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">Axes</span></code> object, optional) – A <cite>matplotlib</cite> <cite>Axes</cite> object to plot the trace. Optional; if not
@@ -430,7 +423,7 @@ Manipulates the <cite>matplotlib</cite> <cite>autoscale</cite> attribute. Defaul
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">strat_attr</span></span><a class="headerlink" href="#deltametrics.section.DipSection.strat_attr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Stratigraphic attributes data object.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Raises</dt>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="../reference/utils/index.html#deltametrics.utils.NoStratigraphyError" title="deltametrics.utils.NoStratigraphyError"><strong>NoStratigraphyError</strong></a> – If no stratigraphy information is found for the section.</p>
 </dd>
 </dl>
@@ -514,7 +507,7 @@ Manipulates the <cite>matplotlib</cite> <cite>autoscale</cite> attribute. Defaul
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -539,7 +532,7 @@ Manipulates the <cite>matplotlib</cite> <cite>autoscale</cite> attribute. Defaul
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

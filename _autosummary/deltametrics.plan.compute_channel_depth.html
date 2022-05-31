@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.plan.compute_channel_depth &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,7 +47,7 @@
           <div class="body" role="main">
             
   <section id="deltametrics-plan-compute-channel-depth">
-<h1>deltametrics.plan.compute_channel_depth<a class="headerlink" href="#deltametrics-plan-compute-channel-depth" title="Permalink to this headline">¶</a></h1>
+<h1>deltametrics.plan.compute_channel_depth<a class="headerlink" href="#deltametrics-plan-compute-channel-depth" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plan.compute_channel_depth">
 <span class="sig-prename descclassname"><span class="pre">deltametrics.plan.</span></span><span class="sig-name descname"><span class="pre">compute_channel_depth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channelmask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">section</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">depth_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'thalweg'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_depths</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.compute_channel_depth" title="Permalink to this definition">¶</a></dt>
@@ -63,7 +64,7 @@ list of depths can be returned with <cite>return_depths=True</cite>.</p>
 between points along the section is assumed to be <cite>==1</cite>.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>channelmask</strong> (<a class="reference internal" href="deltametrics.mask.ChannelMask.html#deltametrics.mask.ChannelMask" title="deltametrics.mask.ChannelMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ChannelMask</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The channel mask (i.e., should be binary) to compute channel depths
 from.</p></li>
@@ -80,7 +81,7 @@ trace.</p></li>
 Default is false (do not return list).</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>mean</strong> (<em>float</em>) – Mean of measured depths.</p></li>
 <li><p><strong>stddev</strong> (<em>float</em>) – Standard deviation of measured depths.</p></li>
@@ -126,7 +127,7 @@ Default is false (do not return list).</p></li>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -151,7 +152,7 @@ Default is false (do not return list).</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

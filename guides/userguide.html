@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>User Guide &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -44,10 +45,10 @@
           <div class="body" role="main">
             
   <section id="user-guide">
-<h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this headline">¶</a></h1>
+<h1>User Guide<a class="headerlink" href="#user-guide" title="Permalink to this heading">¶</a></h1>
 <p>This documentation provides some “workflow” examples as well as some explanations and background about the various methods available in DeltaMetrics.</p>
 <section id="setting-up-your-coding-environment">
-<h2>Setting up your coding environment<a class="headerlink" href="#setting-up-your-coding-environment" title="Permalink to this headline">¶</a></h2>
+<h2>Setting up your coding environment<a class="headerlink" href="#setting-up-your-coding-environment" title="Permalink to this heading">¶</a></h2>
 <p>All of the documentation in this package assumes that you have imported the DeltaMetrics package as <code class="docutils literal notranslate"><span class="pre">dm</span></code>:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">deltametrics</span> <span class="k">as</span> <span class="nn">dm</span>
 </pre></div>
@@ -59,7 +60,7 @@
 </div>
 </section>
 <section id="create-and-manipulate-a-datacube">
-<h2>Create and manipulate a “DataCube”<a class="headerlink" href="#create-and-manipulate-a-datacube" title="Permalink to this headline">¶</a></h2>
+<h2>Create and manipulate a “DataCube”<a class="headerlink" href="#create-and-manipulate-a-datacube" title="Permalink to this heading">¶</a></h2>
 <p>DeltaMetrics centers around the use of “Cubes”.
 In DeltaMetrics, these <cite>Cube</cite> objects are the central office that connects all the different modules and a workflow together.
 The base cube is the <cite>DataCube</cite>, which is set up to handle multi-variable three-dimensional datasets; for example, 2D-spatial timeseries data of multiple variables.</p>
@@ -145,11 +146,11 @@ For example:</p>
 </figure>
 </section>
 <section id="manipulating-planform-data">
-<h2>Manipulating Planform data<a class="headerlink" href="#manipulating-planform-data" title="Permalink to this headline">¶</a></h2>
+<h2>Manipulating Planform data<a class="headerlink" href="#manipulating-planform-data" title="Permalink to this heading">¶</a></h2>
 <p>In addition to indexing directly, slices along the <cite>Cube</cite> time dimension can be explicitly created as <cite>Planform</cite> objects.
 This is helpful for organizing an analysis where you want to repeatedly access data from a particular point in time.</p>
 <section id="planform-slices">
-<h3>Planform slices<a class="headerlink" href="#planform-slices" title="Permalink to this headline">¶</a></h3>
+<h3>Planform slices<a class="headerlink" href="#planform-slices" title="Permalink to this heading">¶</a></h3>
 <p>Create a <cite>Planform</cite> of the last time index from the cube.
 The data returned from the planform are an <cite>xarray</cite> <cite>DataArray</cite>, so you can continue to perform arbitrary math on the data.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">final</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">Planform</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
@@ -203,14 +204,14 @@ Use the <a class="reference internal" href="../_autosummary/deltametrics.cube.Da
 </div>
 </section>
 <section id="specialty-planform-objects">
-<h3>Specialty Planform objects<a class="headerlink" href="#specialty-planform-objects" title="Permalink to this headline">¶</a></h3>
+<h3>Specialty Planform objects<a class="headerlink" href="#specialty-planform-objects" title="Permalink to this heading">¶</a></h3>
 <p>A slice of the <cite>Cube</cite> is a basic <cite>Planform</cite>, but often there are some analyses we wish to compute on a <cite>Planform</cite>, that may have multiple steps and sets of derived values we want to keep track of.
 DeltaMetrics has several specialty planform objects that make this easier.
 These specialty calculations are beyond the scope of this basic user guide, find more information on the <a class="reference internal" href="../reference/plan/index.html"><span class="doc">Planform API reference page</span></a>.</p>
 </section>
 </section>
 <section id="manipulating-section-data">
-<h2>Manipulating Section data<a class="headerlink" href="#manipulating-section-data" title="Permalink to this headline">¶</a></h2>
+<h2>Manipulating Section data<a class="headerlink" href="#manipulating-section-data" title="Permalink to this heading">¶</a></h2>
 <p>Similar to <cite>Planform</cite> slices, we can make cuts <em>across</em> the <cite>Cube</cite> time dimension with <cite>Section</cite> objects.
 Most often, it’s best to use the API to register a section of a specified type to an underlying data cube and
 assigning it a name (“demo” below).
@@ -281,7 +282,7 @@ are sliced themselves, similarly to the cube.</p>
 </pre></div>
 </div>
 <section id="quick-stratigraphy">
-<span id="userguide-quick-stratigraphy"></span><h3>“Quick” stratigraphy<a class="headerlink" href="#quick-stratigraphy" title="Permalink to this headline">¶</a></h3>
+<span id="userguide-quick-stratigraphy"></span><h3>“Quick” stratigraphy<a class="headerlink" href="#quick-stratigraphy" title="Permalink to this heading">¶</a></h3>
 <p>We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
 In DeltaMetrics, we refer to this preserved history as the “stratigraphy”, and we provide a number of convenient routines for computing stratigraphy and analyzing deposits.</p>
 <p>Importantly, stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created.
@@ -337,7 +338,7 @@ These quick stratigraphy computations create a mesh of preserved elevations and 
 </figure>
 </section>
 <section id="all-section-types">
-<h3>All Section types<a class="headerlink" href="#all-section-types" title="Permalink to this headline">¶</a></h3>
+<h3>All Section types<a class="headerlink" href="#all-section-types" title="Permalink to this heading">¶</a></h3>
 <p>There are multiple section types available.
 The <cite>Section</cite> classes all inherit from the same <code class="docutils literal notranslate"><span class="pre">BaseSection</span></code> class, which means they mostly have the same options available to them, and have a common API.
 Each <cite>Section</cite> requires unique instantiation arguments, though, which must be properly specified.
@@ -355,7 +356,7 @@ The below figure shows each section type available and the <cite>velocity</cite>
 </section>
 </section>
 <section id="default-colors-in-deltametrics">
-<h2>Default Colors in DeltaMetrics<a class="headerlink" href="#default-colors-in-deltametrics" title="Permalink to this headline">¶</a></h2>
+<h2>Default Colors in DeltaMetrics<a class="headerlink" href="#default-colors-in-deltametrics" title="Permalink to this heading">¶</a></h2>
 <p>You may have noticed the beautiful colors above, and be wondering: “how are the colors set?”
 We use a custom object (<a class="reference internal" href="../_autosummary/deltametrics.plot.VariableSet.html#deltametrics.plot.VariableSet" title="deltametrics.plot.VariableSet"><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableSet</span></code></a>) to define common plotting properties for all plots.
 The <cite>VariableSet</cite> supports all kinds of other controls, such as custom colormaps for any variable, addition of new defined variables, fixed color limits, color normalizations, and more.
@@ -364,7 +365,7 @@ You can also use these attributes of the <cite>VariableSet</cite> in your own pl
 <p>Additionally, there are a <a class="reference internal" href="../reference/plot/index.html"><span class="doc">number of plotting routines</span></a> that are helpful in visualizations.</p>
 </section>
 <section id="computing-and-manipulating-stratigraphy">
-<h2>Computing and Manipulating Stratigraphy<a class="headerlink" href="#computing-and-manipulating-stratigraphy" title="Permalink to this headline">¶</a></h2>
+<h2>Computing and Manipulating Stratigraphy<a class="headerlink" href="#computing-and-manipulating-stratigraphy" title="Permalink to this heading">¶</a></h2>
 <p><a class="reference internal" href="#userguide-quick-stratigraphy"><span class="std std-ref">Quick stratigraphy</span></a> works great for statistics of what-is-preserved and for quick visualizations, but it has several limitations.
 1) Does not consider volume of sediment filled by preserved-time indicies, 2) cannot be sliced by planform, 3) irregularity does not lend well to computation and other uses (hydrological studies).</p>
 <p>So, we want to be able to create what I refer to as “boxy” stratigraphy.
@@ -449,7 +450,7 @@ Specify <cite>z</cite> as the elevation of the planform slice:</p>
 <img alt="../_images/userguide-7.png" class="plot-directive" src="../_images/userguide-7.png" />
 </figure>
 <section id="frozen-stratigraphy-volumes">
-<h3>Frozen stratigraphy volumes<a class="headerlink" href="#frozen-stratigraphy-volumes" title="Permalink to this headline">¶</a></h3>
+<h3>Frozen stratigraphy volumes<a class="headerlink" href="#frozen-stratigraphy-volumes" title="Permalink to this heading">¶</a></h3>
 <p>We still support creating “frozen” cubes, which might be useful for to
 speed up computations if an array is being accessed over and over.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fs</span> <span class="o">=</span> <span class="n">stratcube</span><span class="o">.</span><span class="n">export_frozen_variable</span><span class="p">(</span><span class="s1">&#39;sandfrac&#39;</span><span class="p">)</span>
@@ -485,7 +486,7 @@ See a <a class="reference internal" href="examples/computations/comparing_speeds
 </section>
 </section>
 <section id="masks">
-<h2>Masks<a class="headerlink" href="#masks" title="Permalink to this headline">¶</a></h2>
+<h2>Masks<a class="headerlink" href="#masks" title="Permalink to this heading">¶</a></h2>
 <p>We have implemented operations to compute masks of several types.</p>
 <p>By design, masks can be instantiated directly from the most basic “raw data” components (e.g., a channel <code class="xref py py-obj docutils literal notranslate"><span class="pre">CenterlineMask</span></code> from <cite>eta</cite> and  <cite>velocity</cite>).
 This is convenient, and can be a great way to quickly explore data and prototype algorithms; however, it is often more computationally efficient to reuse a precomputed mask (and <cite>Planform</cite> objects) to compute a new mask.
@@ -606,7 +607,7 @@ See the <a class="reference internal" href="../reference/mask/index.html"><span 
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -629,7 +630,7 @@ See the <a class="reference internal" href="../reference/mask/index.html"><span 
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

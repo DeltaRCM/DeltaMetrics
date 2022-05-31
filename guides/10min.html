@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Getting started with a 10-minute tutorial &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -44,7 +45,7 @@
           <div class="body" role="main">
             
   <section id="getting-started-with-a-10-minute-tutorial">
-<h1>Getting started with a 10-minute tutorial<a class="headerlink" href="#getting-started-with-a-10-minute-tutorial" title="Permalink to this headline">¶</a></h1>
+<h1>Getting started with a 10-minute tutorial<a class="headerlink" href="#getting-started-with-a-10-minute-tutorial" title="Permalink to this heading">¶</a></h1>
 <p>This documentation provides a guide to learn the most basic components of DeltaMetrics in just ten minutes!
 For a more in depth guide, be sure to check out the <a class="reference internal" href="userguide.html"><span class="doc">User Guide</span></a>.</p>
 <p>All of the documentation in this package assumes that you have imported the DeltaMetrics package as <code class="docutils literal notranslate"><span class="pre">dm</span></code>:</p>
@@ -57,7 +58,7 @@ For a more in depth guide, be sure to check out the <a class="reference internal
 </pre></div>
 </div>
 <section id="connect-to-data">
-<h2>Connect to data<a class="headerlink" href="#connect-to-data" title="Permalink to this headline">¶</a></h2>
+<h2>Connect to data<a class="headerlink" href="#connect-to-data" title="Permalink to this heading">¶</a></h2>
 <p>In your application, you will want to connect to a your own dataset, but more on that later.
 For now, let’s use a sample dataset that is distributed with DeltaMetrics.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
@@ -75,7 +76,7 @@ Creating the <code class="docutils literal notranslate"><span class="pre">golfcu
 </div>
 </section>
 <section id="accessing-data-from-a-datacube">
-<h2>Accessing data from a DataCube<a class="headerlink" href="#accessing-data-from-a-datacube" title="Permalink to this headline">¶</a></h2>
+<h2>Accessing data from a DataCube<a class="headerlink" href="#accessing-data-from-a-datacube" title="Permalink to this heading">¶</a></h2>
 <p>A <a class="reference internal" href="../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube" title="deltametrics.cube.DataCube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code></a> can be sliced directly by variable name.
 Slicing a cube returns an instance of <code class="xref py py-obj docutils literal notranslate"><span class="pre">CubeVariable</span></code>, which is an xarray “accessor”; this means that it contains an xarray object in addition to custom functions.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">type</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">])</span>
@@ -98,7 +99,7 @@ Slicing a cube returns an instance of <code class="xref py py-obj docutils liter
 In this package, we refer to horizontal cuts as “plans” (<cite>Planform</cite> data) and vertical cuts as “sections” (<cite>Section</cite> data).</p>
 <p>The <a class="reference internal" href="../reference/plan/index.html"><span class="doc">Planform</span></a> and <a class="reference internal" href="../reference/section/index.html"><span class="doc">Section</span></a> data types have a series of helpful classes and functions, which are fully documented in their respective pages.</p>
 <section id="planform-data">
-<h3>Planform data<a class="headerlink" href="#planform-data" title="Permalink to this headline">¶</a></h3>
+<h3>Planform data<a class="headerlink" href="#planform-data" title="Permalink to this heading">¶</a></h3>
 <p>We can visualize Planform data of the cube with a number of built-in
 functions. Let’s inspect the state of several variables
 of the Cube at the fortieth (40th) timestep:</p>
@@ -121,7 +122,7 @@ of the Cube at the fortieth (40th) timestep:</p>
 </figure>
 </section>
 <section id="section-data">
-<h3>Section data<a class="headerlink" href="#section-data" title="Permalink to this headline">¶</a></h3>
+<h3>Section data<a class="headerlink" href="#section-data" title="Permalink to this heading">¶</a></h3>
 <p>We are often interested in not only the spatiotemporal changes in the planform of the delta, but we want to know what is preserved in the subsurface.
 In DeltaMetrics, we refer to this preserved history as the “stratigraphy”, and we provide a number of convenient routines for computing stratigraphy and analyzing the deposits.</p>
 <p>Importantly, the stratigraphy (or i.e., which voxels are preserved) is not computed by default when a Cube instance is created.
@@ -205,7 +206,7 @@ The stratigraphy computed via <cite>stratigraphy_from</cite> is often referred t
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -228,7 +229,7 @@ The stratigraphy computed via <cite>stratigraphy_from</cite> is often referred t
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

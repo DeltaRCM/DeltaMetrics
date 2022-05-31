@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Visualization Guide &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -45,10 +46,10 @@
           <div class="body" role="main">
             
   <section id="visualization-guide">
-<h1>Visualization Guide<a class="headerlink" href="#visualization-guide" title="Permalink to this headline">¶</a></h1>
+<h1>Visualization Guide<a class="headerlink" href="#visualization-guide" title="Permalink to this heading">¶</a></h1>
 <p>This guide covers the full range of visualization routines available as part of DeltaMetrics, and explains how to create your own visualization routines that build on top of DeltaMetrics.</p>
 <section id="default-styling">
-<h2>Default styling<a class="headerlink" href="#default-styling" title="Permalink to this headline">¶</a></h2>
+<h2>Default styling<a class="headerlink" href="#default-styling" title="Permalink to this heading">¶</a></h2>
 <p>By default, each variable receives a set of styling definitions.
 The default parameters of each styling variable are defined below:</p>
 <p>(<a class="reference external" href="../../pyplots/plot/document_variableset.png">png</a>, <a class="reference external" href="../../pyplots/plot/document_variableset.hires.png">hires.png</a>)</p>
@@ -57,7 +58,7 @@ The default parameters of each styling variable are defined below:</p>
 </figure>
 </section>
 <section id="section-display-types">
-<h2>Section display types<a class="headerlink" href="#section-display-types" title="Permalink to this headline">¶</a></h2>
+<h2>Section display types<a class="headerlink" href="#section-display-types" title="Permalink to this heading">¶</a></h2>
 <p><cite>DataCube</cite> with computed “quick” stratigraphy may be visualized a number of different ways.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
@@ -131,7 +132,7 @@ The default parameters of each styling variable are defined below:</p>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -155,7 +156,7 @@ The default parameters of each styling variable are defined below:</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>

@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>deltametrics.plan.shaw_opening_angle_method &#8212; DeltaMetrics 0.3.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -46,29 +47,30 @@
           <div class="body" role="main">
             
   <section id="deltametrics-plan-shaw-opening-angle-method">
-<h1>deltametrics.plan.shaw_opening_angle_method<a class="headerlink" href="#deltametrics-plan-shaw-opening-angle-method" title="Permalink to this headline">¶</a></h1>
+<h1>deltametrics.plan.shaw_opening_angle_method<a class="headerlink" href="#deltametrics-plan-shaw-opening-angle-method" title="Permalink to this heading">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plan.shaw_opening_angle_method">
 <span class="sig-prename descclassname"><span class="pre">deltametrics.plan.</span></span><span class="sig-name descname"><span class="pre">shaw_opening_angle_method</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">below_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">numviews</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.shaw_opening_angle_method" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extract the opening angle map from an image.</p>
-<p>Applies the opening angle method <a class="footnote-reference brackets" href="#id3" id="id1">1</a> to compute the shoreline mask.
-Adapted from the Matlab implementation in <a class="footnote-reference brackets" href="#id4" id="id2">2</a>.</p>
+<p>Applies the opening angle method <a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> to compute the shoreline mask.
+Adapted from the Matlab implementation in <a class="footnote-reference brackets" href="#id4" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
 <p>This <em>function</em> takes an image and extracts its opening angle map.</p>
-<dl class="footnote brackets">
-<dt class="label" id="id3"><span class="brackets">1</span><span class="fn-backref">(<a href="#id1">1</a>,<a href="#id5">2</a>)</span></dt>
-<dd><p>Shaw, John B., et al. “An image‐based method for
+<aside class="footnote brackets" id="id3" role="note">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id5">2</a>)</span>
+<p>Shaw, John B., et al. “An image‐based method for
 shoreline mapping on complex coasts.” Geophysical Research Letters
 35.12 (2008).</p>
-</dd>
-<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
-<dd><p>Liang, Man, Corey Van Dyk, and Paola Passalacqua.
+</aside>
+<aside class="footnote brackets" id="id4" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Liang, Man, Corey Van Dyk, and Paola Passalacqua.
 “Quantifying the patterns and dynamics of river deltas under
 conditions of steady forcing and relative sea level rise.” Journal
 of Geophysical Research: Earth Surface 121.2 (2016): 465-496.</p>
-</dd>
-</dl>
+</aside>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>below_mask</strong> (<em>ndarray</em>) – Binary image that has been thresholded to split water/land. At
 minimum, this should be a thresholded elevation matrix, or some
@@ -76,10 +78,10 @@ classification of land/water based on pixel color or reflectance
 intensity. This is the startin point (i.e., guess) for the opening
 angle method.</p></li>
 <li><p><strong>numviews</strong> (<em>int</em>) – Defines the number of largest angles to consider for the opening angle
-map for each pixel. Default is 3, based on <a class="footnote-reference brackets" href="#id3" id="id5">1</a>.</p></li>
+map for each pixel. Default is 3, based on <a class="footnote-reference brackets" href="#id3" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>shoreangles</strong> (<em>ndarray</em>) – Flattened values corresponding to the shoreangle detected for each
 ‘look’ of the opening angle method</p></li>
@@ -127,7 +129,7 @@ hull which envelops the shoreline as well as the delta interior.</p></li>
     </form>
     </div>
 </div>
-<script>$('#searchbox').show(0);</script>
+<script>document.getElementById('searchbox').style.display = "block"</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -152,7 +154,7 @@ hull which envelops the shoreline as well as the delta interior.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 4.5.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
     </div>
   </body>
 </html>
