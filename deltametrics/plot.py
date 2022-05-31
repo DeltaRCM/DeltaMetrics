@@ -585,7 +585,7 @@ def aerial_colormap():
     raise NotImplementedError
 
 
-def append_colorbar(ci, ax, size=2, labelsize=9, **kwargs):
+def append_colorbar(ci, ax, size=2, pad=2, labelsize=9, **kwargs):
     """Append a colorbar, consistently placed.
 
     Adjusts some parameters of the parent axes as well.
@@ -599,9 +599,14 @@ def append_colorbar(ci, ax, size=2, labelsize=9, **kwargs):
     ax : `matplotlib.Axes`
         The instance of axes to place the colorbar next to.
 
-    adjust : :obj:`bool`
-        Whether to adjust some minor attributes of the parent axis, for
-        presentation.
+    size : :obj:`float`, optional
+        Width (percent of parent axis width) of the colorbar; default is 2.
+
+    pad : :obj:`float`, optional
+        Padding between parent and colorbar axes. Default is 0.05.
+
+    labelsize : :obj:`int`, optional
+        Font size of label text. Default is 9pt.
 
     **kwargs
         Passed to `matplotlib.pyplot.colorbar`.
@@ -612,7 +617,7 @@ def append_colorbar(ci, ax, size=2, labelsize=9, **kwargs):
         The colorbar instance created.
     """
     divider = axtk.axes_divider.make_axes_locatable(ax)
-    cax = divider.append_axes("right", size=str(size)+"%", pad=0.05)
+    cax = divider.append_axes("right", size=str(size)+"%", pad=str(pad)+"%")
     cb = plt.colorbar(ci, cax=cax, **kwargs)
     cb.ax.tick_params(labelsize=labelsize)
     ax.use_sticky_edges = False
