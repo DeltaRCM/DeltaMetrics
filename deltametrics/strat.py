@@ -725,33 +725,34 @@ def _adjust_elevation_by_subsidence(elev, sigma_dist):
         the values have all been adjusted by the subsidence information
         provided by the input `sigma_dist`.
     """
-    # single value assumed to be constant rate over all time
+    # single value assumed to be constant displacement over all time
     if isinstance(sigma_dist, (int, float)):
         s_arr = np.ones_like(elev) * sigma_dist
-        s_arr = np.cumsum(s_arr, axis=0)  # assume dist subsided each timestep
+        s_arr[0] = 0.0  # no subsidence at time 0
+        s_arr = np.flip(np.cumsum(s_arr, axis=0), axis=0)  # assume dist subsided each timestep
     elif len(np.shape(sigma_dist)) == 1:
-        # proper 1-D timeseries; rename to s_arr anyway
-        s_arr = sigma_dist
+        # proper 1-D timeseries; flip and rename to s_arr
+        s_arr = np.flip(sigma_dist, axis=0)
     # 2-D array gets cast into the shape of the 3-d elevation array
     elif len(sigma_dist.shape) == 2 and len(elev.shape) == 3:
         s_arr = np.tile(sigma_dist, (elev.shape[0], 1, 1))
-        s_arr = np.cumsum(s_arr, axis=0)  # sum up over time
+        s_arr = np.flip(np.cumsum(s_arr, axis=0), axis=0)  # sum up over time
     elif len(sigma_dist.shape) == 1 and len(sigma_dist) == elev.shape[0] and \
       len(elev.shape) == 3:
         # casting for a 1-D vector of sigma that matches elev time dimension
         s_arr = np.tile(
             sigma_dist.reshape(len(sigma_dist), 1, 1),
             (1, elev.shape[1], elev.shape[2]))
-        s_arr = np.cumsum(s_arr, axis=0)  # sum up over time
+        s_arr = np.flip(np.cumsum(s_arr, axis=0), axis=0)  # sum up over time
     else:
         # else shapes of arrays must be the same
         if np.shape(elev) != np.shape(sigma_dist):
             raise ValueError(
                 'Shapes of input arrays elev and sigma_dist do not match.')
     # adjust and return elevation
-    elev_adjusted = np.zeros_like(elev)  # init adjusted array
+    elev_adjusted = np.zeros_like(elev).astype(float)  # init adjusted array
     # do elevation adjustment - first dimension assumed to be time
     for i in range(elev.shape[0]):
-        elev_adjusted[i, ...] = elev[i, ...] + s_arr[i, ...]
+        elev_adjusted[i, ...] = elev[i, ...] - s_arr[i, ...]
     # return the subsidence-adjusted elevation values
     return elev_adjusted

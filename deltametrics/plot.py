@@ -957,10 +957,11 @@ def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
             raise ValueError('Elevation data "e" must be one-dimensional.')
     t = np.arange(e.shape[0])  # x-axis time array
     t3 = np.expand_dims(t, axis=(1, 2))  # 3d time, for slicing
+    e_in = e.copy()
 
     if sigma_dist is not None:
         # adjust elevations by subsidence rate
-        e = strat._adjust_elevation_by_subsidence(e, sigma_dist)
+        e = strat._adjust_elevation_by_subsidence(e_in, sigma_dist)
     s, p = strat._compute_elevation_to_preservation(e)  # strat, preservation
     z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
     sc, dc = strat._compute_preservation_to_cube(s, z)
@@ -977,13 +978,13 @@ def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
     pt = np.zeros_like(t)  # for psvd timesteps background
     pt[np.union1d(p.nonzero()[0], np.array(
         strat._compute_preservation_to_time_intervals(p).nonzero()[0]))] = 1
-    ax.add_collection(_fill_steps(p, x=1, y=np.max(e) - np.min(e),
+    ax.add_collection(_fill_steps(p, x=1, y=np.max(e_in) - np.min(e),
                                   y0=np.min(e), facecolor='0.8'))
     ax.add_patch(ptch.Rectangle((0, 0), 0, 0, facecolor='0.8',
                                 label='psvd timesteps'))  # add for lgnd
     ax.hlines(s[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
     ax.axvline(lst, c='k')
-    ax.step(t, e, where='post', label='elevation')
+    ax.step(t, e_in, where='post', label='elevation')
     ax.step(t, s, linestyle='--', where='post', label='stratigraphy')
     ax.plot(t[p], s[p], color='0.5', marker='o',
             ls='none', label='psvd time')
@@ -1011,9 +1012,9 @@ def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
 
     # adjust and add legend
     if np.any(e < 0):
-        ax.set_ylim(np.min(e) * 1.2, np.maximum(0, np.max(e) * 1.2))
+        ax.set_ylim(np.min(e) * 1.2, np.maximum(0, np.max(e_in) * 1.2))
     else:
-        ax.set_ylim(np.min(e) * 0.8, np.max(e) * 1.2)
+        ax.set_ylim(np.min(e) * 0.8, np.max(e_in) * 1.2)
     ax.legend()
 
 
