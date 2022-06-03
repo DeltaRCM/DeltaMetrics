@@ -13,14 +13,14 @@ class BaseIO(abc.ABC):
     """BaseIO object other file format wrappers inheririt from.
 
     .. note::
-        
+
         This is an abstract class and cannot be instantiated directly. If you
         wish to subclass to create a new IO format, you must implement
         several methods.
 
         To create an IO format for data already loaded into memory, you can
         subclass `BaseIO` directly, and you just need to implement the
-        `__getitem__` method and `keys` attribute. 
+        `__getitem__` method and `keys` attribute.
 
         To create an IO format that reads data from disk, you should subclass
         `FileIO`, and implement the required methods `__getitem__`, `connect`,
@@ -256,8 +256,8 @@ class NetCDFIO(FileIO):
             # does not have specified coordinates, but we need a test case to
             # make it work. It may work to just pass everything along to the
             # cube, and let xarray automatically handle the naming of
-            # coordinates, but I have not tested this. 
-            
+            # coordinates, but I have not tested this.
+
             # self.dataset = _dataset.set_coords([])
             # self.dims = []
             # warn('Coordinates for "time", and set("x", "y") not provided in the \

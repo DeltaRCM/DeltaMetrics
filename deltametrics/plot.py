@@ -889,8 +889,10 @@ def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
     return coll.PatchCollection(pl, match_original=True)
 
 
-def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
-                                              ax=None, show_strata=True,
+def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
+                                              dz=None, z=None,
+                                              nz=None, ax=None,
+                                              show_strata=True,
                                               label_strata=False):
     """1d elevation to stratigraphy.
 
@@ -915,7 +917,12 @@ def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
     ----------
     e : :obj:`ndarray`
         Elevation data as a 1D array.
-    
+
+    sigma_dist : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
+        Optional subsidence distance argument used to adjust the elevation
+        data to account for subsidence when computing stratigraphy. See
+        :obj:`_adjust_elevation_by_subsidence` for a complete description.
+
     z : :obj:`ndarray`, optional
         Vertical coordinates for stratigraphy, in meters. Optional, and
         mutually exclusive with :obj:`dz` and :obj:`nz`,
@@ -951,8 +958,11 @@ def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
     t = np.arange(e.shape[0])  # x-axis time array
     t3 = np.expand_dims(t, axis=(1, 2))  # 3d time, for slicing
 
-    z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
+    if sigma_dist is not None:
+        # adjust elevations by subsidence rate
+        e = strat._adjust_elevation_by_subsidence(e, sigma_dist)
     s, p = strat._compute_elevation_to_preservation(e)  # strat, preservation
+    z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
     sc, dc = strat._compute_preservation_to_cube(s, z)
     lst = np.argmin(s < s[-1])  # last elevation
 
@@ -1317,7 +1327,7 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
         fig, ax = plt.subplots()
 
     # check this is a tuple or list
-    if isinstance(alpha_clip, tuple) or isinstance(alpha_clip, list):  
+    if isinstance(alpha_clip, tuple) or isinstance(alpha_clip, list):
         if len(alpha_clip) != 2:
             raise ValueError(
                 '`alpha_clip` must be tuple or list of length 2.')

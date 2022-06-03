@@ -333,6 +333,24 @@ class TestSODTTST:
             plot.show_one_dimensional_trajectory_to_strata(_e, dz=0.1)
         plt.close()
 
+    def test_sodttst_makes_plot_subsidence_zeros(self):
+        _e = np.array([0, 1, 4, 5, 4, 10])
+        _s = np.array([0, 0, 0, 0, 0, 0])
+        fig, ax = plt.subplots()
+        plot.show_one_dimensional_trajectory_to_strata(
+            _e, sigma_dist=_s, ax=ax, dz=0.1)
+        assert ax.get_ylim() == (0, 12)
+        plt.close()
+
+    def test_sodttst_makes_plot_lims_equal_via_subs(self):
+        _e = np.array([5, 4, 3, 2, 1, 0])
+        _s = np.ones_like(_e)
+        fig, ax = plt.subplots()
+        plot.show_one_dimensional_trajectory_to_strata(
+            _e, sigma_dist=_s, ax=ax, dz=0.1)
+        assert ax.get_ylim()[0] == 0.8
+        plt.close()
+
 
 class TestGetDisplayArrays:
 
