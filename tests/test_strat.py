@@ -457,44 +457,46 @@ class TestSubsidenceElevationAdjustment:
         e = np.zeros((10,))
         s = 1.0
         adj = strat._adjust_elevation_by_subsidence(e, s)
-        assert np.all(adj == np.arange(1, 11))
+        assert np.all(adj == np.arange(-9, 1))
 
     def test_1D_sigma_dist_as_int(self):
         e = np.zeros((10,))
         s = 1
         adj = strat._adjust_elevation_by_subsidence(e, s)
-        assert np.all(adj == np.arange(1, 11))
+        assert np.all(adj == np.arange(-9, 1))
 
     def test_2d_sigma_dist_3d_elev(self):
         e = np.zeros((5, 2, 3))
         s = np.ones((2, 3))
         adj = strat._adjust_elevation_by_subsidence(e, s)
         assert adj.shape == e.shape
-        assert adj[0, 0, 0] == 1.0
-        assert adj[-1, 0, 0] == 5.0
+        assert adj[0, 0, 0] == -4
+        assert adj[-1, 0, 0] == 0.0
 
     def test_1d_sigma_dist_3d_elev(self):
         e = np.zeros((5, 2, 3))
         s = np.ones((5,))
         adj = strat._adjust_elevation_by_subsidence(e, s)
         assert adj.shape == e.shape
-        assert adj[0, 0, 0] == 1.0
-        assert adj[-1, 0, 0] == 1.0
+        assert adj[0, 0, 0] == -5.0
+        assert adj[-1, 0, 0] == -1.0
 
     def test_1d_flat(self):
         topo = np.array([0, 0, 0, 0, 0, 0])  # recorded as eta
-        sedimentation = np.array([0, 1, 2, 3, 4, 5])
         sigma_dist = np.array([0, 1, 2, 3, 4, 5])  # known subsidence
         # apply function
         adj = strat._adjust_elevation_by_subsidence(topo, sigma_dist)
-        # adjusted elevation should equal sedimentation
-        assert np.all(adj == sedimentation)
+        # adjusted elevations, lowest (first) should be -15
+        # or total subsided distance, while final should match present elev
+        assert adj[0] == -1 * np.sum(sigma_dist)
+        assert adj[-1] == topo[-1]
 
     def test_1d_with_uplift(self):
         topo = np.array([0, 0, 2, 3, 4])
-        sigma_dist = np.array([0, 2, 2, 1, 1])
-        true_sedimentation = np.array([0, 2, 4, 4, 5])
+        sigma_dist = np.array([0, -2, -2, -1, -1])
         # apply function
         adj = strat._adjust_elevation_by_subsidence(topo, sigma_dist)
-        # adjusted elevation should equal sedimentation
-        assert np.all(adj == true_sedimentation)
+        # original stack of sediment should be raised 6
+        assert adj[0] == np.sum(sigma_dist) * -1
+        # final value should equal original topo at present
+        assert adj[-1] == topo[-1]

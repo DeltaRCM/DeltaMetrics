@@ -348,7 +348,8 @@ class TestSODTTST:
         fig, ax = plt.subplots()
         plot.show_one_dimensional_trajectory_to_strata(
             _e, sigma_dist=_s, ax=ax, dz=0.1)
-        assert ax.get_ylim()[0] == 0.8
+        assert ax.get_ylim()[0] < 0
+        assert ax.get_ylim()[1] > 0
         plt.close()
 
 
