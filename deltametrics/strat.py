@@ -729,16 +729,20 @@ def _adjust_elevation_by_subsidence(elev, sigma_dist):
     if isinstance(sigma_dist, (int, float)):
         s_arr = np.ones_like(elev) * sigma_dist
         s_arr[0] = 0.0  # no subsidence at time 0
-        s_arr = np.flip(np.cumsum(s_arr, axis=0), axis=0)  # assume dist subsided each timestep
-    elif len(np.shape(sigma_dist)) == 1:
-        # proper 1-D timeseries; flip and rename to s_arr
-        s_arr = np.flip(sigma_dist, axis=0)
+        # assume dist subsided each timestep
+        s_arr = np.flip(np.cumsum(s_arr, axis=0), axis=0)
+    # 1-D array renaming when topo is 1-D too
+    elif len(sigma_dist.shape) == 1 and len(elev.shape) == 1:
+        s_arr = np.flip(np.cumsum(sigma_dist, axis=0), axis=0)
     # 2-D array gets cast into the shape of the 3-d elevation array
     elif len(sigma_dist.shape) == 2 and len(elev.shape) == 3:
         s_arr = np.tile(sigma_dist, (elev.shape[0], 1, 1))
+        s_arr[0, ...] = 0.0  # no subsidence at time 0
         s_arr = np.flip(np.cumsum(s_arr, axis=0), axis=0)  # sum up over time
     elif len(sigma_dist.shape) == 1 and len(sigma_dist) == elev.shape[0] and \
       len(elev.shape) == 3:
+        # proper 1-D timeseries; flip and rename to s_arr
+        s_arr = np.flip(sigma_dist, axis=0)
         # casting for a 1-D vector of sigma that matches elev time dimension
         s_arr = np.tile(
             sigma_dist.reshape(len(sigma_dist), 1, 1),
