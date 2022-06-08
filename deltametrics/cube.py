@@ -833,7 +833,9 @@ class StratigraphyCube(BaseCube):
         **kwargs
             Keyword arguments passed to stratigraphy initialization. Can
             include specification for vertical resolution in `Boxy` case,
-            see :obj:_determine_strat_coordinates`.
+            see :obj:`~deltametrics.strat._determine_strat_coordinates`,
+            as well as information about subsidence,
+            see :obj:`~deltametrics.strat._adjust_elevation_by_subsidence`.
 
         Returns
         -------

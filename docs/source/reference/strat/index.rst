@@ -57,3 +57,4 @@ The functions outlined in this section are the main functions that do the actual
 .. autofunction:: _compute_preservation_to_time_intervals
 .. autofunction:: _compute_preservation_to_cube
 .. autofunction:: _determine_strat_coordinates
+.. autofunction:: _adjust_elevation_by_subsidence
