@@ -704,10 +704,12 @@ def _adjust_elevation_by_subsidence(elev, sigma_dist):
     public API. Higher level functions make a call internally to adjust the
     elevation data based on subsidence rate information when the optional
     argument `sigma_dist` is provided.
+
     Parameters
     ----------
     elev : :obj:`ndarray` or :obj:`xr.core.dataarray.DataArray`
         The `t-x-y` volume of elevation data to determine stratigraphy.
+
     sigma_dist : :obj:`ndarray`, :obj:`xr.core.dataarray.DataArray`,
                  :obj:`float`, :obj:`int`
         The subsidence information. If a single float or int is provided,
@@ -718,6 +720,7 @@ def _adjust_elevation_by_subsidence(elev, sigma_dist):
         the domain for a given time. If a full 3-D array is provided, it is
         assumed to follow the same `t-x-y` convention as the elevation data.
         Positive distances indicate subsidence, negative distances are uplift.
+        
     Returns
     -------
     elev_adjusted : :obj:`ndarray`
@@ -733,7 +736,9 @@ def _adjust_elevation_by_subsidence(elev, sigma_dist):
         s_arr = np.flip(np.cumsum(s_arr, axis=0), axis=0)
     # 1-D array renaming when topo is 1-D too
     elif len(sigma_dist.shape) == 1 and len(elev.shape) == 1:
-        s_arr = np.flip(np.cumsum(sigma_dist, axis=0), axis=0)
+        s_arr = sigma_dist
+        # convert to base of preserved strat at each time based on subs
+        s_arr = np.max(s_arr) - s_arr
     # 2-D array gets cast into the shape of the 3-d elevation array
     elif len(sigma_dist.shape) == 2 and len(elev.shape) == 3:
         s_arr = np.tile(sigma_dist, (elev.shape[0], 1, 1))
@@ -742,21 +747,26 @@ def _adjust_elevation_by_subsidence(elev, sigma_dist):
     elif len(sigma_dist.shape) == 1 and len(sigma_dist) == elev.shape[0] and \
       len(elev.shape) == 3:
         # proper 1-D timeseries; flip and rename to s_arr
-        s_arr = np.flip(sigma_dist, axis=0)
+        s_arr = sigma_dist
+        # convert to base of preserved strat at each time based on subs
+        s_arr = np.max(s_arr) - s_arr
         # casting for a 1-D vector of sigma that matches elev time dimension
         s_arr = np.tile(
             sigma_dist.reshape(len(sigma_dist), 1, 1),
             (1, elev.shape[1], elev.shape[2]))
-        s_arr = np.flip(np.cumsum(s_arr, axis=0), axis=0)  # sum up over time
     else:
         # else shapes of arrays must be the same
         if np.shape(elev) != np.shape(sigma_dist):
             raise ValueError(
                 'Shapes of input arrays elev and sigma_dist do not match.')
+        else:
+            # have to change name of input sigma_dist to s_arr
+            s_arr = sigma_dist
+            # convert to base of preserved strat at each time based on subs
+            s_arr = np.max(s_arr, axis=0) - s_arr
     # adjust and return elevation
     elev_adjusted = np.zeros_like(elev).astype(float)  # init adjusted array
     # do elevation adjustment - first dimension assumed to be time
-    for i in range(elev.shape[0]):
-        elev_adjusted[i, ...] = elev[i, ...] - s_arr[i, ...]
+    elev_adjusted = elev - s_arr
     # return the subsidence-adjusted elevation values
     return elev_adjusted
