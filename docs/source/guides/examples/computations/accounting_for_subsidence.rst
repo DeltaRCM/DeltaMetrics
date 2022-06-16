@@ -84,6 +84,7 @@ In this case, the effect steady basin-wide aggradation is equivalent to constant
         # show a slice through the section
         im = ax[i].imshow(
             vol[:, :, sec_idx],
+            extent=[0, aeolian.dim1_coords[-1], elev.min(), elev.max()],
             aspect='auto', origin='lower')
         cb = dm.plot.append_colorbar(im, ax=ax[i])
         cb.ax.set_ylabel(aeolian['time']['time'].units, fontsize=8)
@@ -98,6 +99,7 @@ In this case, the effect steady basin-wide aggradation is equivalent to constant
 
     for axi in ax.ravel():
         axi.set_ylabel('elevation', fontsize=8)
+        axi.set_ylim(-15, 10)
         axi.tick_params(labelsize=7)
 
     ax[i].set_xlabel('along section', fontsize=8)
