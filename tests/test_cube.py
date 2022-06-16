@@ -388,6 +388,55 @@ class TestStratigraphyCube:
         assert tempsc.varset is self.fixeddatacube.varset
 
 
+class TestStratigraphyCubeSubsidence:
+    
+    # create a cube with some uniform subsidence
+    datacube = cube.DataCube(golf_path)
+    subsstratcube = cube.StratigraphyCube.from_DataCube(
+        datacube, dz=0.2, sigma_dist=0.005)
+    nosubs = cube.StratigraphyCube.from_DataCube(
+        datacube, dz=0.2)
+
+    def test_subsidence_cube(self):
+        assert self.subsstratcube.sigma_dist == 0.005
+        assert self.nosubs.sigma_dist is None
+        assert self.subsstratcube.sigma_dist != self.nosubs.sigma_dist
+        assert np.all(self.subsstratcube.z.data != self.nosubs.z.data)
+        assert np.all(self.subsstratcube.Z.data != self.nosubs.Z.data)
+        assert self.nosubs.strata[0, -1, -1] == -2.
+        assert self.nosubs.strata[-1, -1, -1] == -2.
+        _expected_0 = -2. + self.subsstratcube.sigma_dist
+        assert self.subsstratcube.strata[0, -1, -1] == \
+            pytest.approx(_expected_0)
+        _expected_last = -2. + \
+            (self.subsstratcube.sigma_dist * self.datacube['eta'].shape[0])
+        assert self.subsstratcube.strata[-1, -1, -1] == \
+            pytest.approx(_expected_last)
+
+
+class TestStratigraphyCubeSubsidence:
+
+    # create a cube with some uniform subsidence
+    datacube = cube.DataCube(golf_path)
+    subsstratcube = cube.StratigraphyCube.from_DataCube(
+        datacube, dz=0.2, sigma_dist=0.005)
+    nosubs = cube.StratigraphyCube.from_DataCube(
+        datacube, dz=0.2)
+
+    def test_subsidence_cube(self):
+        assert self.subsstratcube.sigma_dist == 0.005
+        assert self.nosubs.sigma_dist is None
+        assert self.subsstratcube.sigma_dist != self.nosubs.sigma_dist
+        assert np.all(self.subsstratcube.z.data != self.nosubs.z.data)
+        assert np.all(self.subsstratcube.Z.data != self.nosubs.Z.data)
+        assert self.nosubs.strata[0, -1, -1] == -2.
+        assert self.nosubs.strata[-1, -1, -1] == -2.
+        assert self.subsstratcube.strata[-1, -1, -1] == -2.
+        # first spatial index deeper than final due to the subsidence
+        assert self.subsstratcube.strata[0, -1, -1] < \
+            self.subsstratcube.strata[-1, -1, -1]
+
+
 class TestFrozenStratigraphyCube:
 
     fixeddatacube = cube.DataCube(golf_path)

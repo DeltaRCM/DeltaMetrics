@@ -889,8 +889,10 @@ def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
     return coll.PatchCollection(pl, match_original=True)
 
 
-def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
-                                              ax=None, show_strata=True,
+def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
+                                              dz=None, z=None,
+                                              nz=None, ax=None,
+                                              show_strata=True,
                                               label_strata=False):
     """1d elevation to stratigraphy.
 
@@ -915,7 +917,12 @@ def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
     ----------
     e : :obj:`ndarray`
         Elevation data as a 1D array.
-    
+
+    sigma_dist : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
+        Optional subsidence distance argument used to adjust the elevation
+        data to account for subsidence when computing stratigraphy. See
+        :obj:`_adjust_elevation_by_subsidence` for a complete description.
+
     z : :obj:`ndarray`, optional
         Vertical coordinates for stratigraphy, in meters. Optional, and
         mutually exclusive with :obj:`dz` and :obj:`nz`,
@@ -950,9 +957,13 @@ def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
             raise ValueError('Elevation data "e" must be one-dimensional.')
     t = np.arange(e.shape[0])  # x-axis time array
     t3 = np.expand_dims(t, axis=(1, 2))  # 3d time, for slicing
+    e_in = e.copy()
 
-    z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
+    if sigma_dist is not None:
+        # adjust elevations by subsidence rate
+        e = strat._adjust_elevation_by_subsidence(e_in, sigma_dist)
     s, p = strat._compute_elevation_to_preservation(e)  # strat, preservation
+    z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
     sc, dc = strat._compute_preservation_to_cube(s, z)
     lst = np.argmin(s < s[-1])  # last elevation
 
@@ -967,13 +978,13 @@ def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
     pt = np.zeros_like(t)  # for psvd timesteps background
     pt[np.union1d(p.nonzero()[0], np.array(
         strat._compute_preservation_to_time_intervals(p).nonzero()[0]))] = 1
-    ax.add_collection(_fill_steps(p, x=1, y=np.max(e) - np.min(e),
+    ax.add_collection(_fill_steps(p, x=1, y=np.max(e_in) - np.min(e),
                                   y0=np.min(e), facecolor='0.8'))
     ax.add_patch(ptch.Rectangle((0, 0), 0, 0, facecolor='0.8',
                                 label='psvd timesteps'))  # add for lgnd
     ax.hlines(s[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
     ax.axvline(lst, c='k')
-    ax.step(t, e, where='post', label='elevation')
+    ax.step(t, e_in, where='post', label='elevation')
     ax.step(t, s, linestyle='--', where='post', label='stratigraphy')
     ax.plot(t[p], s[p], color='0.5', marker='o',
             ls='none', label='psvd time')
@@ -1001,9 +1012,9 @@ def show_one_dimensional_trajectory_to_strata(e, dz=None, z=None, nz=None,
 
     # adjust and add legend
     if np.any(e < 0):
-        ax.set_ylim(np.min(e) * 1.2, np.maximum(0, np.max(e) * 1.2))
+        ax.set_ylim(np.min(e) * 1.2, np.maximum(0, np.max(e_in) * 1.2))
     else:
-        ax.set_ylim(np.min(e) * 0.8, np.max(e) * 1.2)
+        ax.set_ylim(np.min(e) * 0.8, np.max(e_in) * 1.2)
     ax.legend()
 
 
@@ -1317,7 +1328,7 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
         fig, ax = plt.subplots()
 
     # check this is a tuple or list
-    if isinstance(alpha_clip, tuple) or isinstance(alpha_clip, list):  
+    if isinstance(alpha_clip, tuple) or isinstance(alpha_clip, list):
         if len(alpha_clip) != 2:
             raise ValueError(
                 '`alpha_clip` must be tuple or list of length 2.')

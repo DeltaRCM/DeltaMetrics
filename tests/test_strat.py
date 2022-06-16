@@ -40,6 +40,13 @@ class TestComputeBoxyStratigraphyVolume:
         assert s.shape == e.shape
         assert s.shape[0] == 33 + 1
 
+    def test_returns_volume_and_elevations_given_subsidence(self):
+        s, e = strat.compute_boxy_stratigraphy_volume(
+            self.elev, self.time, sigma_dist=1, nz=33)
+        assert s.ndim == 3
+        assert s.shape == e.shape
+        assert s.shape[0] == 33 + 1        
+
     @pytest.mark.xfail(raises=NotImplementedError,
                        strict=True, reason='Not yet developed.')
     def test_return_cube(self):
@@ -66,6 +73,14 @@ class TestComputeBoxyStratigraphyVolume:
                            match=r'Input arrays must be three-dimensional.'):
             strat.compute_boxy_stratigraphy_volume(
                 self.elev[:, 10, 120].squeeze(),
+                self.time[:, 10, 120].squeeze(),
+                dz=0.05)
+
+    def test_mismatch_shape_error(self):
+        with pytest.raises(ValueError,
+                           match=r'Mismatched input shapes "elev" and "prop".'):
+            strat.compute_boxy_stratigraphy_volume(
+                self.elev[:, 10:12, 120].squeeze(),
                 self.time[:, 10, 120].squeeze(),
                 dz=0.05)
 
@@ -118,6 +133,11 @@ class TestComputeBoxyStratigraphyCoordinates:
         assert np.min(sc[:, 0]) == 0
         # check that the number of z values matches nz
         assert np.unique(sc[:, 0]).shape[0] == 13
+
+    def test_returns_sc_dc_given_subsidence(self):
+        sc, dc = strat.compute_boxy_stratigraphy_coordinates(
+            self.elev, sigma_dist=1, nz=13)
+        assert np.min(sc[:, 0]) == 0        
 
     @pytest.mark.xfail(raises=NotImplementedError,
                        strict=True, reason='Not yet developed.')
@@ -423,3 +443,60 @@ class TestDetermineStratCoordinates:
         assert z[0] == 0
         assert z[-1] == 2
         assert z[1] - z[0] == 0.1
+
+
+class TestSubsidenceElevationAdjustment:
+    
+    def test_shapes_not_matching(self):
+        e = np.zeros((5, 2, 1))
+        s = np.zeros((2, 4, 2))
+        with pytest.raises(ValueError):
+            strat._adjust_elevation_by_subsidence(e, s)
+
+    def test_1D_sigma_dist_as_float(self):
+        e = np.zeros((10,))
+        s = 1.0
+        adj = strat._adjust_elevation_by_subsidence(e, s)
+        assert np.all(adj == np.arange(-9, 1))
+
+    def test_1D_sigma_dist_as_int(self):
+        e = np.zeros((10,))
+        s = 1
+        adj = strat._adjust_elevation_by_subsidence(e, s)
+        assert np.all(adj == np.arange(-9, 1))
+
+    def test_2d_sigma_dist_3d_elev(self):
+        e = np.zeros((5, 2, 3))
+        s = np.ones((2, 3))
+        adj = strat._adjust_elevation_by_subsidence(e, s)
+        assert adj.shape == e.shape
+        assert adj[0, 0, 0] == -4
+        assert adj[-1, 0, 0] == 0.0
+
+    def test_1d_sigma_dist_3d_elev(self):
+        e = np.zeros((5, 2, 3))
+        s = np.ones((5,))
+        adj = strat._adjust_elevation_by_subsidence(e, s)
+        assert adj.shape == e.shape
+        assert adj[0, 0, 0] == -1.0
+        assert adj[-1, 0, 0] == -1.0
+
+    def test_1d_flat(self):
+        topo = np.array([0, 0, 0, 0, 0, 0])  # recorded as eta
+        sigma_dist = np.array([0, 1, 2, 3, 4, 5])  # known subsidence
+        # apply function
+        adj = strat._adjust_elevation_by_subsidence(topo, sigma_dist)
+        # adjusted elevations, lowest (first) should be -5
+        # or total subsided distance, while final should match present elev
+        assert adj[0] == -1 * sigma_dist[-1]
+        assert adj[-1] == topo[-1]
+
+    def test_1d_with_uplift(self):
+        topo = np.array([0, 0, 2, 3, 4])
+        sigma_dist = np.array([0, -2, -2, -1, -1])
+        # apply function
+        adj = strat._adjust_elevation_by_subsidence(topo, sigma_dist)
+        # bottom of strat column should be at an elevation of 0
+        assert adj[0] == 0.0
+        # final value should equal combo of topo and subsidence at end
+        assert adj[-1] == topo[-1] + sigma_dist[-1]

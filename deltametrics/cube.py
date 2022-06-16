@@ -55,7 +55,7 @@ class BaseCube(abc.ABC):
 
         dimensions : `dict`, optional
             A dictionary with names and coordinates for dimensions of the
-            cube, if instanntiating the cube from data loaded in memory
+            cube, if instantiating the cube from data loaded in memory
             in a dictionary.
         """
         if type(data) is str:
@@ -229,7 +229,7 @@ class BaseCube(abc.ABC):
 
         Alias to :meth:`plan_set`.
         """
-        return self._planform_set    
+        return self._planform_set
 
     def register_plan(self, *args, **kwargs):
         """wrapper, might not really need this."""
@@ -480,7 +480,7 @@ class BaseCube(abc.ABC):
         Examples
         --------
 
-        .. note:: 
+        .. note::
 
             The following code snippets are not set up to actually make the
             plots in the documentation.
@@ -490,7 +490,7 @@ class BaseCube(abc.ABC):
             >>> golfcube = dm.sample_data.golf()
             >>> golfstrat = dm.cube.StratigraphyCube.from_DataCube(
             ...     golfcube, dz=0.1)
-            ... 
+            ...
             >>> fig, ax = plt.subplots()
             >>> golfstrat.show_cube('eta', ax=ax)
 
@@ -533,14 +533,14 @@ class BaseCube(abc.ABC):
             p.add_mesh(threshed, cmap=self.varset[var].cmap)
 
         elif style == 'fence':
-            # todo, improve this to manually create the sections so you can 
+            # todo, improve this to manually create the sections so you can
             #   do more than three slices
             slices = mesh.slice_orthogonal()
             p.add_mesh(slices, cmap=self.varset[var].cmap)
 
         else:
             raise ValueError('Bad value for style: {0}'.format(style))
-    
+
         p.show()
 
     def show_plan(self, *args, **kwargs):
@@ -551,7 +551,7 @@ class BaseCube(abc.ABC):
             Provides a legacy option to quickly show a planform, from before
             the `Planform` object was properly implemented. Will be removed
             in a future release.
-    
+
         Parameters
         ----------
         """
@@ -659,7 +659,7 @@ class DataCube(BaseCube):
 
         dimensions : `dict`, optional
             A dictionary with names and coordinates for dimensions of the
-            `DataCube`, if instanntiating the cube from data loaded in memory
+            `DataCube`, if instantiating the cube from data loaded in memory
             in a dictionary.
         """
         super().__init__(data, read, varset, dimensions=dimensions)
@@ -712,7 +712,7 @@ class DataCube(BaseCube):
         """
         if var == 'time':  # special case for time
             # use the name of the first dimension, to enable
-            #   unlabeled np.ndarrays and flexible name for time 
+            #   unlabeled np.ndarrays and flexible name for time
             dim0_name = self.dataio.dims[0]
             dim0_coord = np.array(self.dataio.dataset[dim0_name])
             _t = np.expand_dims(dim0_coord,
@@ -808,7 +808,7 @@ class StratigraphyCube(BaseCube):
     """
     @staticmethod
     def from_DataCube(DataCubeInstance, stratigraphy_from='eta',
-                      dz=None, z=None, nz=None):
+                      sigma_dist=None, dz=None, z=None, nz=None):
         """Create from a DataCube.
 
         Examples
@@ -833,7 +833,9 @@ class StratigraphyCube(BaseCube):
         **kwargs
             Keyword arguments passed to stratigraphy initialization. Can
             include specification for vertical resolution in `Boxy` case,
-            see :obj:_determine_strat_coordinates`.
+            see :obj:`~deltametrics.strat._determine_strat_coordinates`,
+            as well as information about subsidence,
+            see :obj:`~deltametrics.strat._adjust_elevation_by_subsidence`.
 
         Returns
         -------
@@ -843,10 +845,10 @@ class StratigraphyCube(BaseCube):
         return StratigraphyCube(DataCubeInstance,
                                 varset=DataCubeInstance.varset,
                                 stratigraphy_from=stratigraphy_from,
-                                dz=dz, z=z, nz=nz)
+                                sigma_dist=sigma_dist, dz=dz, z=z, nz=nz)
 
     def __init__(self, data, read=[], varset=None,
-                 stratigraphy_from=None,
+                 stratigraphy_from=None, sigma_dist=None,
                  dz=None, z=None, nz=None):
         """Initialize the StratigraphicCube.
 
@@ -881,15 +883,21 @@ class StratigraphyCube(BaseCube):
             _elev = copy.deepcopy(data[stratigraphy_from])
 
             # set up coordinates of the array
+            if sigma_dist is not None:
+                _elev_adj = strat._adjust_elevation_by_subsidence(
+                    _elev.data, sigma_dist)
+            else:
+                _elev_adj = _elev.data
             _z = strat._determine_strat_coordinates(
-                _elev.data, dz=dz, z=z, nz=nz)
+                _elev_adj, dz=dz, z=z, nz=nz)
             self._z = xr.DataArray(_z, name='z', dims=['z'], coords={'z': _z})
             self._H = len(self.z)
             self._L, self._W = _elev.shape[1:]
             self._Z = np.tile(self.z, (self.W, self.L, 1)).T
+            self._sigma_dist = sigma_dist
 
             _out = strat.compute_boxy_stratigraphy_coordinates(
-                _elev, z=_z, return_strata=True)
+                _elev_adj, sigma_dist=None, z=_z, return_strata=True)
             self.strata_coords, self.data_coords, self.strata = _out
         else:
             raise TypeError('No other input types implemented yet.')
@@ -920,7 +928,7 @@ class StratigraphyCube(BaseCube):
         if var == 'time':
             # a special attribute we add, which matches eta.shape
             #   use the name of the first dimension, to enable
-            #   unlabeled np.ndarrays and flexible name for time 
+            #   unlabeled np.ndarrays and flexible name for time
             dim0_name = self.dataio.dims[0]
             dim0_coord = np.array(self.dataio[dim0_name])
             _t = np.expand_dims(dim0_coord,
@@ -970,3 +978,8 @@ class StratigraphyCube(BaseCube):
     def Z(self):
         """Vertical mesh."""
         return self._Z
+
+    @property
+    def sigma_dist(self):
+        """Subsidence information."""
+        return self._sigma_dist
