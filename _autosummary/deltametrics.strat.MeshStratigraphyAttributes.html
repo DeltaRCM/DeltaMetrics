@@ -86,9 +86,15 @@ stored variable into the section.</em></p>
 <dd class="field-odd"><p><strong>elev</strong> – elevation t-x-y array to compute from</p>
 </dd>
 <dt class="field-even">Keyword Arguments<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>load</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to load the eta array into memory before computation. For
+<dd class="field-even"><ul class="simple">
+<li><p><strong>load</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to load the eta array into memory before computation. For
 especially large data files, <cite>load</cite> should be <cite>False</cite> to keep the
-file on disk; note on-disk computation is considerably slower.</p>
+file on disk; note on-disk computation is considerably slower.</p></li>
+<li><p><strong>sigma_dist</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Optional subsidence distance argument that is used to adjust the
+elevation data to account for subsidence when computing
+stratigraphy. See <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._adjust_elevation_by_subsidence" title="deltametrics.strat._adjust_elevation_by_subsidence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_adjust_elevation_by_subsidence</span></code></a> for a
+complete description.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -238,7 +244,7 @@ derived from the call.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
     </div>
   </body>
 </html>

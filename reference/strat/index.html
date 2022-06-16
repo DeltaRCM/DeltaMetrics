@@ -245,6 +245,53 @@ returned unchanged if supplied.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="deltametrics.strat._adjust_elevation_by_subsidence">
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_adjust_elevation_by_subsidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_dist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._adjust_elevation_by_subsidence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adjust elevation array by subsidence rates.
+Given the elevation information and information about the distance
+subsided, the true sedimentation and erosion pattern can be unraveled.
+The function is written flexibly to handle subsidence distance information
+provided as either a single constant value, a constant value over a 2-D
+spatial pattern, a 1-D temporal vector when the distance changes but
+is applied to the entire domain, and finally a full t-x-y 3-D array with
+subsidence information for each x-y position in the domain at each
+instance in time.
+Critically, when temporal information is provided (either 1-D vector or
+full 3-D array) values are assumed to be cumulative subsidence distances
+at each index in time. Alternatively, when constant information is given
+(1-D float/int, or 2-D x-y array) it is assumed that the constant values
+reported represent the distance subsided per temporal index.
+This function is declared as a private function and is not part of the
+public API. Higher level functions make a call internally to adjust the
+elevation data based on subsidence rate information when the optional
+argument <cite>sigma_dist</cite> is provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">xr.core.dataarray.DataArray</span></code>) – The <cite>t-x-y</cite> volume of elevation data to determine stratigraphy.</p></li>
+<li><p><strong>sigma_dist</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">xr.core.dataarray.DataArray</span></code>,) – <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>
+The subsidence information. If a single float or int is provided,
+that value is assumed to apply across the entire domain for all times.
+If a 2-D array is provided, the distances are assumed for each
+x-y location and are applied across all times. If a 1-D vector is
+provided, it is assumed that each value applies to all locations in
+the domain for a given time. If a full 3-D array is provided, it is
+assumed to follow the same <cite>t-x-y</cite> convention as the elevation data.
+Positive distances indicate subsidence, negative distances are uplift.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>elev_adjusted</strong> – A <cite>t-x-y</cite> <cite>ndarray</cite> of the same shape as the input <cite>elev</cite> array, but
+the values have all been adjusted by the subsidence information
+provided by the input <cite>sigma_dist</cite>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 </section>
 
@@ -318,7 +365,7 @@ returned unchanged if supplied.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.0.2.
     </div>
   </body>
 </html>

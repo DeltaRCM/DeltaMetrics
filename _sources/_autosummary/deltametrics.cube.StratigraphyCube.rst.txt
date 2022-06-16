@@ -51,6 +51,7 @@
       ~StratigraphyCube.section_set
       ~StratigraphyCube.sections
       ~StratigraphyCube.shape
+      ~StratigraphyCube.sigma_dist
       ~StratigraphyCube.strata
       ~StratigraphyCube.variables
       ~StratigraphyCube.varset

@@ -61,7 +61,7 @@ Using the :obj:`~deltametrics.strat.compute_boxy_stratigraphy_volume` function a
         # show a slice through the section
         im = ax[i].imshow(
             vol[:, :, sec_idx],
-            extent=[0, aeolian.dim1_coords[-1], 0, elev.max()],
+            extent=[0, aeolian.dim1_coords[-1], elev.min(), elev.max()],
             aspect='auto', origin='lower')
         cb = dm.plot.append_colorbar(im, ax=ax[i])
         cb.ax.set_ylabel(aeolian['time']['time'].units, fontsize=8)
@@ -75,6 +75,7 @@ Using the :obj:`~deltametrics.strat.compute_boxy_stratigraphy_volume` function a
 
     for axi in ax.ravel():
         axi.set_ylabel('elevation [m]', fontsize=8)
+        axi.set_ylim(-5, 20)
         axi.tick_params(labelsize=7)
 
     ax[i].set_xlabel('along section [m]', fontsize=8)
