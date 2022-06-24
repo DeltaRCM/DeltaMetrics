@@ -624,6 +624,67 @@ def append_colorbar(ci, ax, size=2, pad=2, labelsize=9, **kwargs):
 
     return cb
 
+def style_axes_km(*args):
+    """Style axes with kilometers, when initially set as meters.
+
+    This function can be used two ways. Passing an `Axes` object as the first
+    argument and optionally a string specifying `'x'`, `'y'`, or `'xy'`
+    [default] will chnage the appearance of the `Axes` object. Alternatively,
+    the function can be specified as the `ticker` function when setting a
+    label formatter.
+
+    Parameters
+    ----------
+    ax : :obj:`matplotlib.axes.Axes`
+        Axes object to format
+
+    which : :obj:`str`, optional
+        Which axes to style as kilometers. Default is `xy`, but optionally
+        pass `x` or `y` to only style one axis.
+
+    x : :obj:`float`
+        If using as a function to format labels, the tick mark location.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+        :context: reset
+
+        golf = dm.sample_data.golf()
+
+        fig, ax = plt.subplots(
+            3, 1,
+            gridspec_kw=dict(hspace=0.5))
+        golf.quick_show('eta', ax=ax[0], ticks=True)
+
+        golf.quick_show('eta', ax=ax[1], ticks=True)
+        dm.plot.style_axes_km(ax[1])
+
+        golf.quick_show('eta', axis=1, idx=10, ax=ax[2])
+        ax[2].xaxis.set_major_formatter(dm.plot.style_axes_km)
+        # OR use: dm.plot.style_axes_km(ax[2], 'x')
+
+        plt.show()
+    """
+    if isinstance(args[0], matplotlib.axes.Axes):
+        ax = args[0]
+        if len(args) > 1:
+            which = args[1]
+        else:
+            # default is to apply to both xy
+            which = 'xy'
+        # recursive calls to this func!
+        if 'x' in which:
+            ax.xaxis.set_major_formatter(style_axes_km)
+        if 'y' in which:
+            ax.yaxis.set_major_formatter(style_axes_km)
+
+    else:
+        v = args[0]
+        return f'{v / 1000.:g}'
+
 
 def get_display_arrays(VarInst, data=None):
     """Get arrays for display of Variables.
