@@ -52,6 +52,9 @@ Mostly, these functions provide a component of a plot.
 .. autofunction:: aerial_view
 .. autofunction:: overlay_sparse_array
 
+.. autofunction:: style_axes_km
+.. autofunction:: append_colorbar
+
 
 DeltaMetrics plot routines
 ==========================
@@ -77,7 +80,6 @@ Plotting utility functions
 
 These functions are mostly used internally.
 
-.. autofunction:: append_colorbar
 .. autofunction:: get_display_arrays
 .. autofunction:: get_display_lines
 .. autofunction:: get_display_limits

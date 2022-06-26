@@ -196,6 +196,41 @@ class TestAppendColorbar:
         assert cb.formatter is _formatter
 
 
+class TestStyleAxesKm:
+
+    def test_style_axes_km_ax(self):
+
+        fig, ax = plt.subplots(1, 6)
+        plot.style_axes_km(ax[0]) # both
+        plot.style_axes_km(ax[1], 'x')  # x only
+        plot.style_axes_km(ax[2], 'y')  # y only
+        plot.style_axes_km(ax[3], 'xy') # both
+        plot.style_axes_km(ax[4], 'z')  # do nothing
+        ax[5].xaxis.set_major_formatter(plot.style_axes_km)  # x only
+
+        # check that the formatter has been set (or not)
+        #   note, returns '' if formatter not changed
+        assert ax[0].xaxis.get_major_formatter()(1000) == '1'
+        assert ax[0].yaxis.get_major_formatter()(1000) == '1'
+
+        assert ax[1].xaxis.get_major_formatter()(1000) == '1'
+        assert ax[1].yaxis.get_major_formatter()(1000) == ''
+
+        assert ax[2].xaxis.get_major_formatter()(1000) == ''
+        assert ax[2].yaxis.get_major_formatter()(1000) == '1'
+
+        assert ax[3].xaxis.get_major_formatter()(1000) == '1'
+        assert ax[3].yaxis.get_major_formatter()(1000) == '1'
+
+        assert ax[4].xaxis.get_major_formatter()(1000) == ''
+        assert ax[4].yaxis.get_major_formatter()(1000) == ''
+
+        assert ax[5].xaxis.get_major_formatter()(1000) == '1'
+        assert ax[5].yaxis.get_major_formatter()(1000) == ''
+
+        plt.close()
+
+
 class TestFillSteps:
     """Test the `_fill_steps` function."""
 
