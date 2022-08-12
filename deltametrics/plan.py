@@ -1301,7 +1301,7 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     dists_pts = np.sqrt((_x[~hit_pts]-_x[_closest])**2 +
                         (_y[~hit_pts]-_y[_closest])**2)
     dist_next = np.min(dists_pts)
-    dist_max = np.sqrt(15)
+    dist_max = np.sqrt(100)
 
     # # loop through all of the other points and organize into a line
     idx = 0
