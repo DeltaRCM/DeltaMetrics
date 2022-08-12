@@ -569,7 +569,7 @@ def cartographic_colormap(H_SL=0.0, h=4.5, n=1.0):
                           greens(np.linspace(0.2, 0.8, 5))))
     delta = matplotlib.colors.ListedColormap(combined, name='delta')
     bounds = np.hstack(
-        (np.linspace(H_SL-h, H_SL-(n/2), 5),
+        (np.linspace(H_SL-h, H_SL-(h/2), 5),
          np.linspace(H_SL, H_SL+n, 6)))
     norm = matplotlib.colors.BoundaryNorm(bounds, len(bounds)-1)
     return delta, norm
@@ -623,6 +623,7 @@ def append_colorbar(ci, ax, size=2, pad=2, labelsize=9, **kwargs):
     ax.use_sticky_edges = False
 
     return cb
+
 
 def style_axes_km(*args):
     """Style axes with kilometers, when initially set as meters.
