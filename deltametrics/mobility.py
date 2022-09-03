@@ -667,18 +667,26 @@ def calculate_crv(arr, threshold=0.2, normalize_input=False,
     .. plot::
         :include-source:
 
-        >>> # generate a random array
-        >>> up = np.linspace(np.zeros((3, 3)), np.ones((3, 3)), 5)
-        >>> down = np.linspace(np.ones((3, 3)), np.zeros((3, 3)), 5)
-        >>> arr = np.hstack((up, down))
-        >>> # calculate the CRV
+        >>> # Load overhead imagery sample data from Savi et al 2020
+        >>> img, _ = dm.sample_data.savi2020()
+        >>> # Calculate the CRV on the "Red" band
         >>> crv_mag, slopes, crv = dm.mobility.calculate_crv(
-        ...    arr, threshold=0, normalize_input=True, normalize_output=True)
-        >>> # plot the CRV
-        >>> fig, ax = plt.subplots(1, 3)
-        >>> ax[0].imshow(crv_mag)
-        >>> ax[1].imshow(slopes)
-        >>> ax[2].imshow(crv)
+        ...    img['red'].data, threshold=0.0,
+        ...    normalize_input=True, normalize_output=True)
+        >>> # plot the results
+        >>> fig, ax = plt.subplots(1, 3, figsize=(9, 2))
+        >>> i0 = ax[0].imshow(crv_mag, vmin=0, vmax=1)
+        ...     ax[0].set_title('CRV Magnitude')
+        >>> dm.plot.append_colorbar(i0, ax=ax[0])
+        >>> s_ex = np.max([np.abs(slopes.min()), slopes.max()])
+        >>> i1 = ax[1].imshow(slopes, vmin=-1*s_ex, vmax=s_ex, cmap='PuOr')
+        >>> ax[1].set_title('CRV Slopes')
+        >>> dm.plot.append_colorbar(i1, ax=ax[1])
+        >>> i2 = ax[2].imshow(crv, vmin=-1, vmax=1, cmap='seismic')
+        >>> ax[2].set_title('Directional CRV')
+        >>> dm.plot.append_colorbar(i2, ax=ax[2])
+        >>> fig.suptitle('CRV of the Red band from overhead imagery of the "T_NC2" experiment from Savi et al 2020')
+        >>> plt.tight_layout()
         >>> plt.show()
     """
     # normalize the input array if desired
