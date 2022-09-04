@@ -9,5 +9,6 @@ from .sample_data import (
     aeolian,
     rcm8,
     landsat,
+    savi2020
 )
 from . import cube

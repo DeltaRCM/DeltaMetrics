@@ -337,11 +337,12 @@ def savi2020():
         ts_i = np.linspace(0, img['red'].shape[0]-1, num=nt, dtype=int)
         ts_s = np.linspace(0, scans['eta'].shape[0]-1, num=nt, dtype=int)
 
-        fig, ax = plt.subplots(2, nt, figsize=(12, 2))
-        for i, t in enumerate(ts):
-            ax[0, i].imshow(ts_i['red'][t, :, :], vmin=0, vmax=1)
-            ax[0, i].set_title('t = ' + str(t))
-            ax[1, i].imshow(scans['eta'][t, :, :])
+        fig, ax = plt.subplots(2, nt, figsize=(12, 4))
+        for i in range(nt):
+            ax[0, i].imshow(img['red'][ts_i[i], :, :], vmin=0, vmax=1)
+            ax[0, i].set_title('t = ' + str(ts_i[i]))
+            ax[1, i].imshow(scans['eta'][ts_s[i], :, :])
+            ax[1, i].set_title('t = ' + str(ts_s[i]))
 
         ax[1, 0].set_ylabel('dim1 direction')
         ax[1, 0].set_xlabel('dim2 direction')
@@ -364,5 +365,5 @@ def savi2020():
         Second return, a :obj:`~dm.cube.DataCube` with topographic scan data.
 
     """
-    savi2020_img_path, savi2020_scan_path = _get_xslope_path()
+    savi2020_img_path, savi2020_scan_path = _get_savi2020_path()
     return cube.DataCube(savi2020_img_path), cube.DataCube(savi2020_scan_path)
