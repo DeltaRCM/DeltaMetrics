@@ -676,7 +676,7 @@ def calculate_crv(arr, threshold=0.2, normalize_input=False,
         >>> # plot the results
         >>> fig, ax = plt.subplots(1, 3, figsize=(9, 2))
         >>> i0 = ax[0].imshow(crv_mag, vmin=0, vmax=1)
-        ...     ax[0].set_title('CRV Magnitude')
+        >>> ax[0].set_title('CRV Magnitude')
         >>> dm.plot.append_colorbar(i0, ax=ax[0])
         >>> s_ex = np.max([np.abs(slopes.min()), slopes.max()])
         >>> i1 = ax[1].imshow(slopes, vmin=-1*s_ex, vmax=s_ex, cmap='PuOr')

@@ -295,7 +295,6 @@ def _get_savi2020_path():
     nc_bool = [os.path.splitext(fname)[1] == '.nc' for fname in fnames]
     fnames_idx = [fnames[i] for i, b in enumerate(nc_bool) if b]
     fnames_idx.sort()
-    import pdb; pdb.set_trace()
     savi2020_img_path = fnames_idx[0]
     savi2020_scan_path = fnames_idx[1]
     return savi2020_img_path, savi2020_scan_path
