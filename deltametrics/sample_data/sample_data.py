@@ -323,7 +323,7 @@ def savi2020():
     .. important::
 
         This sample data provides **two** datasets. Calling this function
-        returns two :obj:`~dm.cube.DataCube`.
+        returns two :obj:`~dm.cube.DataCube` objects.
 
     Data available at Zenodo, version 1.1: https://doi.org/10.5281/zenodo.7080126
 
@@ -338,7 +338,7 @@ def savi2020():
         ts_i = np.linspace(0, img['red'].shape[0]-1, num=nt, dtype=int)
         ts_s = np.linspace(0, scans['eta'].shape[0]-1, num=nt, dtype=int)
 
-        fig, ax = plt.subplots(2, nt, figsize=(12, 4))
+        fig, ax = plt.subplots(2, nt, figsize=(9, 6))
         for i in range(nt):
             ax[0, i].imshow(img['red'][ts_i[i], :, :], vmin=0, vmax=1)
             ax[0, i].set_title('t = ' + str(ts_i[i]))
@@ -347,10 +347,6 @@ def savi2020():
 
         ax[1, 0].set_ylabel('dim1 direction')
         ax[1, 0].set_xlabel('dim2 direction')
-
-        for axi in ax.ravel():
-            axi.axes.get_xaxis().set_ticks([])
-            axi.axes.get_yaxis().set_ticks([])
 
         plt.show()
 
