@@ -618,7 +618,8 @@ def channel_presence(chmap):
     return channel_presence
 
 
-def calculate_crv(arr, threshold=0.2, normalize_input=False,
+def calculate_channelized_response_variance(
+                  arr, threshold=0.2, normalize_input=False,
                   normalize_output=False):
     """
     Calculate the Channelized Response Variance (CRV).
@@ -652,13 +653,13 @@ def calculate_crv(arr, threshold=0.2, normalize_input=False,
 
     Returns
     -------
-    crv_mag : numpy.ndarray
+    crv_magnitude : numpy.ndarray
         A t-x-y 3-D array with the CRV magnitude.
 
     slopes : numpy.ndarray
         A t-x-y 3-D array with the slopes of the linear regressions.
 
-    crv : numpy.ndarray
+    directional_crv : numpy.ndarray
         A t-x-y 3-D array with the directional CRV.
 
     Examples
@@ -670,7 +671,7 @@ def calculate_crv(arr, threshold=0.2, normalize_input=False,
         >>> # Load overhead imagery sample data from Savi et al 2020
         >>> img, _ = dm.sample_data.savi2020()
         >>> # Calculate the CRV on the "Red" band
-        >>> crv_mag, slopes, crv = dm.mobility.calculate_crv(
+        >>> crv_mag, slopes, crv = dm.mobility.calculate_channelized_response_variance(
         ...    img['red'].data, threshold=0.0,
         ...    normalize_input=True, normalize_output=True)
         >>> # plot the results
@@ -693,53 +694,41 @@ def calculate_crv(arr, threshold=0.2, normalize_input=False,
     if normalize_input is True:
         for t in range(arr.shape[0]):
             arr[t, ...] = arr[t, ...] / np.max(arr[t, ...])
+
     # calculate the CRV magnitude
-    crv_mag = calculate_crv_mag(arr, normalize_output)
-    # calculate the slopes of the linear regressions
-    slopes = calculate_slopes(arr)
-    # calculate the directional CRV
-    crv = calculate_directional_crv(crv_mag, slopes, threshold)
-    # return the CRV magnitude, slopes, and directional CRV
-    return crv_mag, slopes, crv
-
-
-def calculate_crv_mag(stack, normalize_output):
-    """
-    Calculates the CRV magnitude.
-    This function calculates the CRV magnitude given a 3-D array.
-    The CRV magnitude is the variance through time for the array.
-
-    Parameters
-    ----------
-    stack : numpy array
-        Stack of images as a t-x-y numpy array.
-
-    normalize_output : bool, optional
-        Whether to normalize the output image pixel values to 0-1.
-
-    Returns
-    -------
-    crv_magnitude : numpy array
-        CRV magnitude as a t-x-y numpy array.
-
-    """
-    # calculate variance
-    crv_magnitude = np.var(stack, axis=0)
-
+    crv_magnitude = np.var(arr, axis=0)  # calculate variance
     # normalize if desired
     if normalize_output is True:
         crv_magnitude = crv_magnitude / crv_magnitude.max()
 
-    return crv_magnitude
+    # calculate the slopes of the linear regressions
+    slopes = _calculate_temporal_linear_slope(arr)
+
+    # calculate the directional CRV
+    # threshold the slopes array
+    # first determine which slopes are below the threshold
+    slopes_abs = np.abs(slopes)
+    slopes_abs[slopes_abs < threshold] = 0
+    slopes_abs[slopes_abs >= threshold] = 1
+    # zero out the CRV values where the slope is below the threshold
+    slopes_thresholded = slopes * slopes_abs
+    # then assign -1 and 1 values where they belong
+    slopes_thresholded[slopes_thresholded <= -1*threshold] = -1
+    slopes_thresholded[slopes_thresholded >= threshold] = 1
+    # final calculation of directional CRV
+    directional_crv = slopes_thresholded * crv_magnitude
+
+    # return the CRV magnitude, slopes, and directional CRV
+    return crv_magnitude, slopes, directional_crv
 
 
-def calculate_slopes(stack):
+def _calculate_temporal_linear_slope(stack):
     """
     Fits linear regressions and calculates slopes.
 
     This function calculates the slopes of the linear regressions for each
-    pixel through time. The slopes are the slope of the linear regression
-    through time for each pixel.
+    pixel through time (axis 0). The slopes are the slope of the
+    linear regression through time for each pixel.
 
     Parameters
     ----------
@@ -765,47 +754,3 @@ def calculate_slopes(stack):
     slopes = np.reshape(slopes, [stack.shape[1], stack.shape[2]])
 
     return slopes
-
-
-def calculate_directional_crv(crv_magnitude, slopes, threshold):
-    """
-    Calculates the directional CRV.
-
-    This function calculates the directional CRV given the CRV magnitude and
-    slopes. The directional CRV is the directional variance through time for
-    the image stack and uses a slope threshold to assign a sign to the variance
-    values for individual pixels. Locations where the slope is below the
-    threshold get CRV values of 0.
-
-    Parameters
-    ----------
-    crv_magnitude : numpy array
-        CRV magnitude as a t-x-y numpy array.
-
-    slopes : numpy array
-        Slopes as a t-x-y numpy array.
-
-    threshold : float
-        Slope threshold.
-
-    Returns
-    -------
-    directional_crv : numpy array
-        Directional CRV as a t-x-y numpy array.
-
-    """
-    # threshold the slopes array
-    # first determine which slopes are below the threshold
-    slopes_abs = np.abs(slopes)
-    slopes_abs[slopes_abs < threshold] = 0
-    slopes_abs[slopes_abs >= threshold] = 1
-    # zero out the CRV values where the slope is below the threshold
-    slopes = slopes * slopes_abs
-    # then assign -1 and 1 values where they belong
-    slopes[slopes <= -1*threshold] = -1
-    slopes[slopes >= threshold] = 1
-
-    # calculate directional CRV
-    directional_crv = slopes * crv_magnitude
-
-    return directional_crv

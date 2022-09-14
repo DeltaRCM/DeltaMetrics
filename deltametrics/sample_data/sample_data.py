@@ -325,9 +325,10 @@ def savi2020():
         This sample data provides **two** datasets. Calling this function
         returns two :obj:`~dm.cube.DataCube`.
 
-    Data available at Zenodo, version 1.0: https://doi.org/10.5281/zenodo.7047109
+    Data available at Zenodo, version 1.1: https://doi.org/10.5281/zenodo.7080126
 
     Version history:
+      * v1.1: 10.5281/zenodo.7080126
       * v1.0: 10.5281/zenodo.7047109
 
     .. plot::
