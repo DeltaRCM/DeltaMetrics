@@ -386,3 +386,40 @@ def test_invalid_type_channel_presence():
     """Test an invalid input typing."""
     with pytest.raises(TypeError):
         mob.channel_presence('invalid type input')
+
+
+def test_calculate_noslopes():
+    """Test calculate slopes w/ constants."""
+    arr = np.zeros((5, 3, 2))
+    slopes = mob._calculate_temporal_linear_slope(arr)
+    assert np.all(slopes == 0.0)
+
+
+def test_calculate_neg_slopes():
+    """Test calculate slopes w/ negative values."""
+    arr = np.linspace(np.ones((5, 3)), np.zeros((5, 3)), 5)
+    slopes = mob._calculate_temporal_linear_slope(arr)
+    assert np.all(slopes < 0.0)
+
+
+def test_calculate_pos_slopes():
+    """Test calculate slopes w/ positive values."""
+    arr = np.linspace(np.zeros((3, 2)), np.ones((3, 2)), 5)
+    slopes = mob._calculate_temporal_linear_slope(arr)
+    assert np.all(slopes > 0.0)
+
+
+def test_calculate_crv():
+    """Testing the overall crv calculation function."""
+    # data array
+    arr = np.ones((2, 3, 2)) * 10.0
+    arr[0, :, :] = 1.0
+    arr[1, 0, :] = -5.0
+    # function
+    crv_mag, slopes, dir_crv = mob.calculate_channelized_response_variance(
+        arr, threshold=0.0)
+    assert np.all(crv_mag == np.abs(dir_crv))
+    assert np.all(slopes[0, :] < 0.0)
+    assert np.all(slopes[1:, :] > 0.0)
+    assert np.all(dir_crv[0, :] < 0.0)
+    assert np.all(dir_crv[1:, :] > 0.0)

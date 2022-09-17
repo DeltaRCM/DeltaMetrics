@@ -9,7 +9,7 @@ API. You do not *need* to get your data into the same format as these data, but
 doing so will likely make it simpler to use DeltaMetrics, and to get the most
 benefit from the tools included here.
 
-The sample data are defined in ``deltametrics.sample_data``. 
+The sample data are defined in ``deltametrics.sample_data``.
 
 .. currentmodule:: deltametrics.sample_data
 
@@ -38,6 +38,7 @@ Example data cubes
 .. autofunction:: aeolian
 .. autofunction:: landsat
 .. autofunction:: rcm8
+.. autofunction:: savi2020
 
 
 Paths to data files

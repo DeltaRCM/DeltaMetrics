@@ -93,7 +93,7 @@ def xslope():
     demonstration and teaching clinic. The set of simualtions examines the
     effect of a basin with cross-stream slope on the progradation of a delta
     system.
-    
+
     .. important::
 
         This sample data provides **two** datasets. Calling this function
@@ -104,7 +104,7 @@ def xslope():
     Runs were computed with pyDeltaRCM v2.1.2. See log files for complete
     information on system and model configuration.
 
-    Data available at Zenodo, version 1.1: 10.5281/zenodo.6301362
+    Data available at Zenodo, version 1.1: https://doi.org/10.5281/zenodo.6301362
 
     Version history:
       * v1.0: 10.5281/zenodo.6226448
@@ -222,7 +222,7 @@ def rcm8():
     :obj:`golf` dataset.
 
     .. important::
-        
+
         If you are learning to use DeltaMetrics or developing new codes or
         documentation, please use the :obj:`golf` delta dataset.
 
@@ -287,3 +287,80 @@ def landsat():
     """
     landsat_path = _get_landsat_path()
     return cube.DataCube(landsat_path)
+
+
+def _get_savi2020_path():
+    unpack = pooch.Unzip()
+    fnames = REGISTRY.fetch('savi2020.zip', processor=unpack)
+    nc_bool = [os.path.splitext(fname)[1] == '.nc' for fname in fnames]
+    fnames_idx = [fnames[i] for i, b in enumerate(nc_bool) if b]
+    fnames_idx.sort()
+    savi2020_img_path = fnames_idx[0]
+    savi2020_scan_path = fnames_idx[1]
+    return savi2020_img_path, savi2020_scan_path
+
+
+def savi2020():
+    """Dataset from No Change 2 experiment in Savi et al., 2020.
+
+    This is a dataset from one of the physical experiments conducted as part of
+    the work presented in Savi et al., 2020. Specifically, these data are from
+    the No Change 2 (NC2) experiment. Two netCDF files have been prepared, one
+    containing a subset of the overhead imagery collected during the experiment
+    at a temporal resolution of roughly one image a minute (the full dataset
+    is closer to an image every 20 seconds). The second file contains the
+    topographic scan data which was taken once every 30 minutes.
+
+    Savi, Sara, et al. "Interactions between main channels and tributary
+    alluvial fans: channel adjustments and sediment-signal propagation."
+    Earth Surface Dynamics 8.2 (2020): 303-322.
+    https://doi.org/10.5194/esurf-8-303-2020
+
+    Physical experiments on interactions between main-channels and
+    tributary alluvial fans. S. Savi, Tofelde, A. Wickert, A. Bufe,
+    T. Schildgen, and M. Strecker. https://doi.org/10.26009/s0ZOQ0S6
+
+    .. important::
+
+        This sample data provides **two** datasets. Calling this function
+        returns two :obj:`~dm.cube.DataCube` objects.
+
+    Data available at Zenodo, version 1.1: https://doi.org/10.5281/zenodo.7080126
+
+    Version history:
+      * v1.1: 10.5281/zenodo.7080126
+      * v1.0: 10.5281/zenodo.7047109
+
+    .. plot::
+
+        img, scans = dm.sample_data.savi2020()
+        nt = 5
+        ts_i = np.linspace(0, img['red'].shape[0]-1, num=nt, dtype=int)
+        ts_s = np.linspace(0, scans['eta'].shape[0]-1, num=nt, dtype=int)
+
+        fig, ax = plt.subplots(2, nt, figsize=(9, 6))
+        for i in range(nt):
+            ax[0, i].imshow(img['red'][ts_i[i], :, :], vmin=0, vmax=1)
+            ax[0, i].set_title('t = ' + str(ts_i[i]))
+            ax[1, i].imshow(scans['eta'][ts_s[i], :, :])
+            ax[1, i].set_title('t = ' + str(ts_s[i]))
+
+        ax[1, 0].set_ylabel('dim1 direction')
+        ax[1, 0].set_xlabel('dim2 direction')
+
+        plt.show()
+
+    Parameters
+    ----------
+
+    Returns
+    -------
+    img
+        First return, a :obj:`~dm.cube.DataCube` with subset overhead imagery.
+
+    scans
+        Second return, a :obj:`~dm.cube.DataCube` with topographic scan data.
+
+    """
+    savi2020_img_path, savi2020_scan_path = _get_savi2020_path()
+    return cube.DataCube(savi2020_img_path), cube.DataCube(savi2020_scan_path)
