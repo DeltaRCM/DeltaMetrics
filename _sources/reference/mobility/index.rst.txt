@@ -29,3 +29,4 @@ Mobility functions
   calculate_reworking_fraction
   calculate_channel_abandonment
   channel_presence
+  calculate_channelized_response_variance

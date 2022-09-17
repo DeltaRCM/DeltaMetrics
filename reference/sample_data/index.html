@@ -101,7 +101,7 @@ returns two <code class="xref py py-obj docutils literal notranslate"><span clas
 <p>Models were run on 02/21/2022, at the University of Texas at Austin.</p>
 <p>Runs were computed with pyDeltaRCM v2.1.2. See log files for complete
 information on system and model configuration.</p>
-<p>Data available at Zenodo, version 1.1: 10.5281/zenodo.6301362</p>
+<p>Data available at Zenodo, version 1.1: <a class="reference external" href="https://doi.org/10.5281/zenodo.6301362">https://doi.org/10.5281/zenodo.6301362</a></p>
 <dl class="simple">
 <dt>Version history:</dt><dd><ul class="simple">
 <li><p>v1.0: 10.5281/zenodo.6226448</p></li>
@@ -199,6 +199,52 @@ documentation, please use the <a class="reference internal" href="#deltametrics.
 <figure class="align-default">
 <img alt="../../_images/index-51.png" class="plot-directive" src="../../_images/index-51.png" />
 </figure>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="deltametrics.sample_data.savi2020">
+<span class="sig-prename descclassname"><span class="pre">deltametrics.sample_data.</span></span><span class="sig-name descname"><span class="pre">savi2020</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.sample_data.savi2020" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dataset from No Change 2 experiment in Savi et al., 2020.</p>
+<p>This is a dataset from one of the physical experiments conducted as part of
+the work presented in Savi et al., 2020. Specifically, these data are from
+the No Change 2 (NC2) experiment. Two netCDF files have been prepared, one
+containing a subset of the overhead imagery collected during the experiment
+at a temporal resolution of roughly one image a minute (the full dataset
+is closer to an image every 20 seconds). The second file contains the
+topographic scan data which was taken once every 30 minutes.</p>
+<p>Savi, Sara, et al. “Interactions between main channels and tributary
+alluvial fans: channel adjustments and sediment-signal propagation.”
+Earth Surface Dynamics 8.2 (2020): 303-322.
+<a class="reference external" href="https://doi.org/10.5194/esurf-8-303-2020">https://doi.org/10.5194/esurf-8-303-2020</a></p>
+<p>Physical experiments on interactions between main-channels and
+tributary alluvial fans. S. Savi, Tofelde, A. Wickert, A. Bufe,
+T. Schildgen, and M. Strecker. <a class="reference external" href="https://doi.org/10.26009/s0ZOQ0S6">https://doi.org/10.26009/s0ZOQ0S6</a></p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>This sample data provides <strong>two</strong> datasets. Calling this function
+returns two <code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code> objects.</p>
+</div>
+<p>Data available at Zenodo, version 1.1: <a class="reference external" href="https://doi.org/10.5281/zenodo.7080126">https://doi.org/10.5281/zenodo.7080126</a></p>
+<dl class="simple">
+<dt>Version history:</dt><dd><ul class="simple">
+<li><p>v1.1: 10.5281/zenodo.7080126</p></li>
+<li><p>v1.0: 10.5281/zenodo.7047109</p></li>
+</ul>
+</dd>
+</dl>
+<p>(<a class="reference external" href="../../reference/sample_data/index-6.png">png</a>, <a class="reference external" href="../../reference/sample_data/index-6.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../../_images/index-61.png" class="plot-directive" src="../../_images/index-61.png" />
+</figure>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><em>img</em> – First return, a <code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code> with subset overhead imagery.</p></li>
+<li><p><em>scans</em> – Second return, a <code class="xref py py-obj docutils literal notranslate"><span class="pre">DataCube</span></code> with topographic scan data.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <section id="paths-to-data-files">

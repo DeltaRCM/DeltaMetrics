@@ -1,0 +1,6 @@
+﻿deltametrics.mobility.calculate\_channelized\_response\_variance
+================================================================
+
+.. currentmodule:: deltametrics.mobility
+
+.. autofunction:: calculate_channelized_response_variance
