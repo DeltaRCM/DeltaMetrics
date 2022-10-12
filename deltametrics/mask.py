@@ -278,27 +278,9 @@ class ThresholdValueMask(BaseMask, abc.ABC):
     This mask implements a binarization of a raster based on a threshold
     values.
     """
-    @staticmethod
-    def from_array(_arr):
-        """Create an `ElevationMask` from an array.
-
-        .. note::
-
-            Instantiation with `from_array` will attempt to any data type
-            (`dtype`) to boolean. This may have unexpected results. Convert
-            your array to a boolean before using `from_array` to ensure the
-            mask is created correctly.
-
-        Parameters
-        ----------
-        _arr : :obj:`ndarray`
-            The array with values to set as the mask. Can be any `dtype` but
-            will be coerced to `boolean`.
-        """
-        # set directly
-        raise NotImplementedError
-
     def __init__(self, *args, threshold, cube_key=None, **kwargs):
+
+        # super().__init__('threshold', *args, **kwargs)
 
         self._threshold = threshold
 
@@ -356,6 +338,32 @@ class ElevationMask(ThresholdValueMask):
         plt.show()
     """
 
+    @staticmethod
+    def from_array(_arr):
+        """Create an `ElevationMask` from an array.
+
+        .. note::
+
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
+
+        Parameters
+        ----------
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        # set directly
+        _EM = ElevationMask(allow_empty=True, elevation_threshold=None)
+        _EM._set_shape_mask(_arr)
+        _EM._input_elevation_threshold = None
+        _EM._elevation_offset = None
+        _EM._input_flag = None
+        _EM._mask[:] = _arr.astype(bool)  # set the array as mask
+        return _EM
+
     def __init__(self, *args, elevation_threshold, elevation_offset=0,
                  cube_key='eta', **kwargs):
         """Initialize the ElevationMask.
@@ -363,10 +371,12 @@ class ElevationMask(ThresholdValueMask):
         .. note:: Needs docstring!
 
         """
-
         self._input_elevation_threshold = elevation_threshold
         self._elevation_offset = elevation_offset
-        _threshold = elevation_threshold + elevation_offset
+        if elevation_threshold is None:
+            _threshold = None
+        else:
+            _threshold = elevation_threshold + elevation_offset
 
         BaseMask.__init__(self, 'elevation', *args, **kwargs)
         ThresholdValueMask.__init__(self, *args, threshold=_threshold,
@@ -425,6 +435,30 @@ class FlowMask(ThresholdValueMask):
         fdmsk.show(ax=ax[1])
         plt.show()
     """
+
+    @staticmethod
+    def from_array(_arr):
+        """Create an `ElevationMask` from an array.
+
+        .. note::
+
+            Instantiation with `from_array` will attempt to any data type
+            (`dtype`) to boolean. This may have unexpected results. Convert
+            your array to a boolean before using `from_array` to ensure the
+            mask is created correctly.
+
+        Parameters
+        ----------
+        _arr : :obj:`ndarray`
+            The array with values to set as the mask. Can be any `dtype` but
+            will be coerced to `boolean`.
+        """
+        # set directly
+        _FM = FlowMask(allow_empty=True, flow_threshold=None)
+        _FM._set_shape_mask(_arr)
+        _FM._input_flag = None
+        _FM._mask[:] = _arr.astype(bool)  # set the array as mask
+        return _FM
 
     def __init__(self, *args, flow_threshold, cube_key='velocity', **kwargs):
         """Initialize the FlowMask.
@@ -590,7 +624,7 @@ class ChannelMask(BaseMask):
         _CM = ChannelMask(allow_empty=True)
         _CM._set_shape_mask(_arr)
         _CM._input_flag = None
-        _CM._mask = _arr.astype(bool)  # set the array as mask
+        _CM._mask[:] = _arr.astype(bool)  # set the array as mask
         return _CM
 
     def __init__(self, *args, is_mask=None, **kwargs):
@@ -813,7 +847,11 @@ class WetMask(BaseMask):
             will be coerced to `boolean`.
         """
         # set directly
-        raise NotImplementedError
+        _WM = WetMask(allow_empty=True)
+        _WM._set_shape_mask(_arr)
+        _WM._input_flag = None
+        _WM._mask[:] = _arr.astype(bool)  # set the array as mask
+        return _WM
 
     def __init__(self, *args, **kwargs):
         """Initialize the WetMask.
@@ -1037,7 +1075,11 @@ class LandMask(BaseMask):
             will be coerced to `boolean`.
         """
         # set directly
-        raise NotImplementedError
+        _LM = LandMask(allow_empty=True)
+        _LM._set_shape_mask(_arr)
+        _LM._input_flag = None
+        _LM._mask[:] = _arr.astype(bool)  # set the array as mask
+        return _LM
 
     def __init__(self, *args, contour_threshold=75,
                  method='OAM', **kwargs):
@@ -1252,7 +1294,7 @@ class ShorelineMask(BaseMask):
         _SM._set_shape_mask(_arr)
         _SM._contour_threshold = None
         _SM._input_flag = None
-        _SM._mask = _arr.astype(bool)  # set the array as mask
+        _SM._mask[:] = _arr.astype(bool)  # set the array as mask
         return _SM
 
     def __init__(self, *args, contour_threshold=75, method='OAM', **kwargs):
@@ -1619,7 +1661,11 @@ class EdgeMask(BaseMask):
             The array with values to set as the mask. Can be any `dtype` but
             will be coerced to `boolean`.
         """
-        raise NotImplementedError
+        _EM = EdgeMask(allow_empty=True)
+        _EM._set_shape_mask(_arr)
+        _EM._input_flag = None
+        _EM._mask[:] = _arr.astype(bool)  # set the array as mask
+        return _EM
 
     def __init__(self, *args, **kwargs):
         """Initialize the EdgeMask.
@@ -1856,7 +1902,11 @@ class CenterlineMask(BaseMask):
             will be coerced to `boolean`.
         """
         # set directly
-        raise NotImplementedError
+        _CM = CenterlineMask(allow_empty=True)
+        _CM._set_shape_mask(_arr)
+        _CM._input_flag = None
+        _CM._mask[:] = _arr.astype(bool)  # set the array as mask
+        return _CM
 
     def __init__(self, *args, method='skeletonize', **kwargs):
         """Initialize the CenterlineMask.
@@ -2075,7 +2125,11 @@ class GeometricMask(BaseMask):
             will be coerced to `boolean`.
         """
         # set directly
-        raise NotImplementedError
+        _GM = GeometricMask(allow_empty=True)
+        _GM._set_shape_mask(_arr)
+        _GM._input_flag = None
+        _GM._mask[:] = _arr.astype(bool)  # set the array as mask
+        return _GM
 
     def __init__(self, *args, origin=None, **kwargs):
         """Initialize the GeometricMask.
@@ -2413,7 +2467,11 @@ class DepositMask(BaseMask):
             will be coerced to `boolean`.
         """
         # set directly
-        raise NotImplementedError
+        _DM = DepositMask(allow_empty=True)
+        _DM._set_shape_mask(_arr)
+        _DM._input_flag = None
+        _DM._mask[:] = _arr.astype(bool)  # set the array as mask
+        return _DM
 
     def __init__(self, *args, background_value=0,
                  elevation_tolerance=0.1, **kwargs):

@@ -510,14 +510,28 @@ class TestElevationMask:
         assert np.all(elevationmask._mask[:_row, :third] == 1)
         assert np.all(elevationmask._mask[_row:, :] == 0)
 
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-                       reason='Have not implemented pathway.')
     def test_static_from_array(self):
         """Test that instantiation works for an array."""
         # define the mask
-        elevationmask = mask.ElevationMask.from_array(np.ones((100, 200)))
+        _arr = np.ones((100, 200))
+        _arr[50:55, :] = 0
+
+        elevmask = mask.ElevationMask.from_array(_arr)
         # make assertions
-        assert elevationmask._input_flag == 'elevation'
+        assert elevmask.mask_type == 'elevation'
+        assert elevmask._input_flag is None
+        assert np.all(elevmask._mask == _arr)
+
+        _arr2 = np.random.uniform(size=(100, 200))
+        _arr2_bool = _arr2.astype(bool)
+
+        assert _arr2.dtype == float
+
+        elevmask2 = mask.ElevationMask.from_array(_arr2)
+        # make assertions
+        assert elevmask2.mask_type == 'elevation'
+        assert elevmask2._input_flag is None
+        assert np.all(elevmask2._mask == _arr2_bool)
 
 
 class TestFlowMask:
@@ -681,14 +695,28 @@ class TestFlowMask:
         # assert - expect doesnt care about land
         assert flowmask.mask_type == 'flow'
 
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-                       reason='Have not implemented pathway.')
     def test_static_from_array(self):
         """Test that instantiation works for an array."""
         # define the mask
-        flowmask = mask.FlowMask.from_array(np.ones((100, 200)))
+        _arr = np.ones((100, 200))
+        _arr[50:55, :] = 0
+
+        flowmask = mask.FlowMask.from_array(_arr)
         # make assertions
-        assert flowmask._input_flag == 'flow'
+        assert flowmask.mask_type == 'flow'
+        assert flowmask._input_flag is None
+        assert np.all(flowmask._mask == _arr)
+
+        _arr2 = np.random.uniform(size=(100, 200))
+        _arr2_bool = _arr2.astype(bool)
+
+        assert _arr2.dtype == float
+
+        flowmask2 = mask.FlowMask.from_array(_arr2)
+        # make assertions
+        assert flowmask2.mask_type == 'flow'
+        assert flowmask2._input_flag is None
+        assert np.all(flowmask2._mask == _arr2_bool)
 
 
 class TestLandMask:
@@ -865,14 +893,27 @@ class TestLandMask:
                           elevation_threshold=0.0,
                           method='invalid')
 
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-                       reason='Have not implemented pathway.')
     def test_static_from_array(self):
         """Test that instantiation works for an array."""
-        # define the mask
-        landmask = mask.LandMask.from_array(np.ones((100, 200)))
+        _arr = np.ones((100, 200))
+        _arr[50:55, :] = 0
+
+        landmask = mask.LandMask.from_array(_arr)
         # make assertions
-        assert landmask._input_flag == 'land'
+        assert landmask.mask_type == 'land'
+        assert landmask._input_flag is None
+        assert np.all(landmask._mask == _arr)
+
+        _arr2 = np.random.uniform(size=(100, 200))
+        _arr2_bool = _arr2.astype(bool)
+
+        assert _arr2.dtype == float
+
+        landmask2 = mask.LandMask.from_array(_arr2)
+        # make assertions
+        assert landmask2.mask_type == 'land'
+        assert landmask2._input_flag is None
+        assert np.all(landmask2._mask == _arr2_bool)
 
 
 class TestWetMask:
@@ -1005,14 +1046,29 @@ class TestWetMask:
         assert np.all(wetmask_0._mask == mfem._mask)
         assert np.sum(wetmask_0.integer_mask) == np.sum(mfem.integer_mask)
 
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-                       reason='Have not implemented pathway.')
     def test_static_from_array(self):
         """Test that instantiation works for an array."""
         # define the mask
-        wetmask = mask.WetMask.from_array(np.ones((100, 200)))
+        _arr = np.ones((100, 200))
+        _arr[50:55, :] = 0
+
+        wetmask = mask.WetMask.from_array(_arr)
         # make assertions
-        assert wetmask._input_flag == 'land'
+        assert wetmask.mask_type == 'wet'
+        assert wetmask._input_flag is None
+        assert np.all(wetmask._mask == _arr)
+
+        _arr2 = np.random.uniform(size=(100, 200))
+        _arr2_bool = _arr2.astype(bool)
+
+        assert _arr2.dtype == float
+        assert _arr2_bool.dtype == bool
+
+        wetmask2 = mask.WetMask.from_array(_arr2)
+        # make assertions
+        assert wetmask2.mask_type == 'wet'
+        assert wetmask2._input_flag is None
+        assert np.all(wetmask2._mask == _arr2_bool)
 
 
 class TestChannelMask:
@@ -1221,8 +1277,6 @@ class TestChannelMask:
         with pytest.raises(TypeError):
             mask.ChannelMask.from_mask(wetmask, landmask)
 
-    # @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-    #                    reason='Have not implemented pathway.')
     def test_static_from_array(self):
         """Test that instantiation works for an array."""
         # define the mask
@@ -1371,14 +1425,28 @@ class TestEdgeMask:
         assert np.all(edgemask_comp._mask == mfem2._mask)
         assert np.all(mfem._mask == mfem2._mask)
 
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-                       reason='Have not implemented pathway.')
     def test_static_from_array(self):
         """Test that instantiation works for an array."""
         # define the mask
-        channelmask = mask.EdgeMask.from_array(np.ones((100, 200)))
+        _arr = np.ones((100, 200))
+        _arr[50:55, :] = 0
+
+        edgemask = mask.EdgeMask.from_array(_arr)
         # make assertions
-        assert channelmask._input_flag == 'channel'
+        assert edgemask.mask_type == 'edge'
+        assert edgemask._input_flag is None
+        assert np.all(edgemask._mask == _arr)
+
+        _arr2 = np.random.uniform(size=(100, 200))
+        _arr2_bool = _arr2.astype(bool)
+
+        assert _arr2.dtype == float
+
+        edgemask2 = mask.EdgeMask.from_array(_arr2)
+        # make assertions
+        assert edgemask2.mask_type == 'edge'
+        assert edgemask2._input_flag is None
+        assert np.all(edgemask2._mask == _arr2_bool)
 
 
 class TestCenterlineMask:
@@ -1556,14 +1624,28 @@ class TestCenterlineMask:
         assert np.all(centerlinemask_comp._mask == mfem2._mask)
         assert np.all(mfem._mask == mfem2._mask)
 
-    @pytest.mark.xfail(raises=NotImplementedError, strict=True,
-                       reason='Have not implemented pathway.')
     def test_static_from_array(self):
         """Test that instantiation works for an array."""
         # define the mask
-        channelmask = mask.CenterlineMask.from_array(np.ones((100, 200)))
+        _arr = np.ones((100, 200))
+        _arr[50:55, :] = 0
+
+        centerlinemask = mask.CenterlineMask.from_array(_arr)
         # make assertions
-        assert channelmask._input_flag == 'channel'
+        assert centerlinemask.mask_type == 'centerline'
+        assert centerlinemask._input_flag is None
+        assert np.all(centerlinemask._mask == _arr)
+
+        _arr2 = np.random.uniform(size=(100, 200))
+        _arr2_bool = _arr2.astype(bool)
+
+        assert _arr2.dtype == float
+
+        centerlinemask2 = mask.CenterlineMask.from_array(_arr2)
+        # make assertions
+        assert centerlinemask2.mask_type == 'centerline'
+        assert centerlinemask2._input_flag is None
+        assert np.all(centerlinemask2._mask == _arr2_bool)
 
     @pytest.mark.xfail(raises=ImportError,
                        reason='rivamap is not installed.')
