@@ -17,6 +17,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Sample data" href="../sample_data/index.html" />
@@ -202,13 +203,13 @@ is given in the error message.</p></li>
 </dl>
 <p class="rubric">Examples</p>
 <p>Without the optional <cite>var</cite> argument:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">utils</span><span class="o">.</span><span class="n">NoStratigraphyError</span><span class="p">(</span><span class="n">golfcube</span><span class="p">)</span> 
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">utils</span><span class="o">.</span><span class="n">NoStratigraphyError</span><span class="p">(</span><span class="n">golfcube</span><span class="p">)</span> 
 <span class="go">deltametrics.utils.NoStratigraphyError: &#39;DataCube&#39; object</span>
 <span class="go">has no preservation or stratigraphy information.</span>
 </pre></div>
 </div>
 <p>With the <cite>var</cite> argument given as <code class="docutils literal notranslate"><span class="pre">'strat_attr'</span></code>:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">utils</span><span class="o">.</span><span class="n">NoStratigraphyError</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="s1">&#39;strat_attr&#39;</span><span class="p">)</span> 
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">raise</span> <span class="n">utils</span><span class="o">.</span><span class="n">NoStratigraphyError</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="s1">&#39;strat_attr&#39;</span><span class="p">)</span> 
 <span class="go">deltametrics.utils.NoStratigraphyError: &#39;DataCube&#39; object</span>
 <span class="go">has no attribute &#39;strat_attr&#39;.</span>
 </pre></div>
@@ -236,8 +237,21 @@ set self.__traceback__ to tb and return self.</p>
     <h3><a href="../../index.html">Table of Contents</a></h3>
     <ul>
 <li><a class="reference internal" href="#">Utility functions</a><ul>
-<li><a class="reference internal" href="#id1">Utility functions</a></li>
-<li><a class="reference internal" href="#utility-exceptions-and-warnings">Utility Exceptions and Warnings</a></li>
+<li><a class="reference internal" href="#id1">Utility functions</a><ul>
+<li><a class="reference internal" href="#deltametrics.utils.curve_fit"><code class="docutils literal notranslate"><span class="pre">curve_fit()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.utils.coordinates_to_segments"><code class="docutils literal notranslate"><span class="pre">coordinates_to_segments()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.utils.line_to_cells"><code class="docutils literal notranslate"><span class="pre">line_to_cells()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.utils._walk_line"><code class="docutils literal notranslate"><span class="pre">_walk_line()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.utils._get_version"><code class="docutils literal notranslate"><span class="pre">_get_version()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#utility-exceptions-and-warnings">Utility Exceptions and Warnings</a><ul>
+<li><a class="reference internal" href="#deltametrics.utils.NoStratigraphyError"><code class="docutils literal notranslate"><span class="pre">NoStratigraphyError</span></code></a><ul>
+<li><a class="reference internal" href="#deltametrics.utils.NoStratigraphyError.with_traceback"><code class="docutils literal notranslate"><span class="pre">NoStratigraphyError.with_traceback()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -293,7 +307,7 @@ set self.__traceback__ to tb and return self.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
   </body>
 </html>

@@ -17,6 +17,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.cube.BaseCube" href="deltametrics.cube.BaseCube.html" />
@@ -638,6 +639,52 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">deltametrics.cube.StratigraphyCube</a><ul>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube</span></code></a><ul>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.__init__"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.H"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.H</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.L"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.L</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.W"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.W</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.Z"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.Z</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.__getitem__"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.__getitem__()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.coords"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.coords</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.data_path"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.data_path</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.dataio"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.dataio</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.dim0_coords"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.dim0_coords</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.dim1_coords"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.dim1_coords</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.dim2_coords"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.dim2_coords</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.export_frozen_variable"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.export_frozen_variable()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.extent"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.extent</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.from_DataCube"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.from_DataCube()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.planform_set"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.planform_set</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.planforms"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.planforms</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.quick_show"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.quick_show()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.read"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.read()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.register_plan"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.register_plan()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.register_planform"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.register_planform()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.register_section"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.register_section()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.section_set"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.section_set</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.sections"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.sections</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.shape"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.shape</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_cube"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.show_cube()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_plan"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.show_plan()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_planform"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.show_planform()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.show_section"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.show_section()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.sigma_dist"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.sigma_dist</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.strata"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.strata</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.variables"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.variables</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.varset"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.varset</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.StratigraphyCube.z"><code class="docutils literal notranslate"><span class="pre">StratigraphyCube.z</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="deltametrics.cube.DataCube.html"
                           title="previous chapter">deltametrics.cube.DataCube</a></p>
@@ -688,7 +735,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
   </body>
 </html>

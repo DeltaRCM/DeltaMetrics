@@ -17,6 +17,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.plot.VariableSet" href="deltametrics.plot.VariableSet.html" />
@@ -60,7 +61,7 @@ DeltaMetrics for plotting.</p>
 instantiation of the VariableInfo. For example, to set the colormap
 for a variable <code class="docutils literal notranslate"><span class="pre">vegetation_density</span></code> as a range of green shades we
 would create the VariableInfo as:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">deltametrics.plot</span> <span class="kn">import</span> <span class="n">VariableInfo</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">deltametrics.plot</span> <span class="kn">import</span> <span class="n">VariableInfo</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">veg</span> <span class="o">=</span> <span class="n">VariableInfo</span><span class="p">(</span><span class="s1">&#39;vegetation_density&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                   <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greens&#39;</span><span class="p">)</span>
 
@@ -74,14 +75,14 @@ would create the VariableInfo as:</p>
 <p>which creates a 64 interval colormap from the matplotlib <cite>Greens</cite>
 colormap. If instead we wanted just three colors, we could specify the
 colormap manually:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span> <span class="o">=</span> <span class="n">VariableInfo</span><span class="p">(</span><span class="s1">&#39;vegetation_density&#39;</span><span class="p">,</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span> <span class="o">=</span> <span class="n">VariableInfo</span><span class="p">(</span><span class="s1">&#39;vegetation_density&#39;</span><span class="p">,</span>
 <span class="gp">... </span>                    <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;Greens&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span><span class="o">.</span><span class="n">cmap</span><span class="o">.</span><span class="n">N</span>
 <span class="go">3</span>
 </pre></div>
 </div>
 <p>We can then set a more human-readable label for the variable:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;vegetation density&#39;</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span><span class="o">.</span><span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;vegetation density&#39;</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -185,6 +186,25 @@ used.</p></li>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">deltametrics.plot.VariableInfo</a><ul>
+<li><a class="reference internal" href="#deltametrics.plot.VariableInfo"><code class="docutils literal notranslate"><span class="pre">VariableInfo</span></code></a><ul>
+<li><a class="reference internal" href="#deltametrics.plot.VariableInfo.__init__"><code class="docutils literal notranslate"><span class="pre">VariableInfo.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plot.VariableInfo.cmap"><code class="docutils literal notranslate"><span class="pre">VariableInfo.cmap</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plot.VariableInfo.label"><code class="docutils literal notranslate"><span class="pre">VariableInfo.label</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plot.VariableInfo.name"><code class="docutils literal notranslate"><span class="pre">VariableInfo.name</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plot.VariableInfo.norm"><code class="docutils literal notranslate"><span class="pre">VariableInfo.norm</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plot.VariableInfo.vmax"><code class="docutils literal notranslate"><span class="pre">VariableInfo.vmax</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plot.VariableInfo.vmin"><code class="docutils literal notranslate"><span class="pre">VariableInfo.vmin</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="../reference/plot/index.html"
                           title="previous chapter">Plotting operations</a></p>
@@ -235,7 +255,7 @@ used.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
   </body>
 </html>

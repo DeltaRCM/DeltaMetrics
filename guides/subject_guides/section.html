@@ -17,6 +17,7 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Introduction to Masking objects" href="mask.html" />
@@ -52,7 +53,7 @@
 <p>Most importantly, a Section is defined by a set of coordinates in the <cite>dim1</cite>-<cite>dim2</cite> plane of a <cite>Cube</cite>.</p>
 <p>Therefore, we transform variable definitions when extracting the <cite>Section</cite>, and the coordinate system of the section is defined by the along-section direction <img class="math" src="../../_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/> and a vertical section coordinate, which is <img class="math" src="../../_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> when viewing stratigraphy, and <img class="math" src="../../_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/> when viewing a spacetime section.</p>
 <p>The data that make up the section can view the section as a <cite>spacetime</cite> section by simply calling a variable from the a section into a <cite>DataCube</cite>.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">distance_idx</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span>
 <span class="go">&lt;xarray.DataArray &#39;velocity&#39; (time: 101, s: 200)&gt;</span>
@@ -75,7 +76,7 @@
 </div>
 <p>If a <cite>DataCube</cite> has preservation information (i.e., if the <a class="reference internal" href="../../_autosummary/deltametrics.cube.DataCube.html#deltametrics.cube.DataCube.stratigraphy_from" title="deltametrics.cube.DataCube.stratigraphy_from"><code class="xref py py-meth docutils literal notranslate"><span class="pre">stratigraphy_from()</span></code></a> method has been called), then the <cite>xarray</cite> object that is returned has this information too.
 The same <cite>spacetime</cite> data can be requested in the “preserved” form, where non-preserved t-x-y points are masked with <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span><span class="p">[</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strat</span><span class="o">.</span><span class="n">as_preserved</span><span class="p">()</span>
 <span class="go">&lt;xarray.DataArray &#39;velocity&#39; (time: 101, s: 200)&gt;</span>
 <span class="go">array([[0.2, 0.2, 0.2, ..., 0.2, 0.2, 0.2],</span>
@@ -174,7 +175,7 @@ See the <a class="reference external" href="https://numpy.org/doc/stable/referen
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
   </body>
 </html>

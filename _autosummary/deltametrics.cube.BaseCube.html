@@ -17,6 +17,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Planview operations" href="../reference/plan/index.html" />
@@ -576,6 +577,49 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">deltametrics.cube.BaseCube</a><ul>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube"><code class="docutils literal notranslate"><span class="pre">BaseCube</span></code></a><ul>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.__init__"><code class="docutils literal notranslate"><span class="pre">BaseCube.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.H"><code class="docutils literal notranslate"><span class="pre">BaseCube.H</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.L"><code class="docutils literal notranslate"><span class="pre">BaseCube.L</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.W"><code class="docutils literal notranslate"><span class="pre">BaseCube.W</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.Z"><code class="docutils literal notranslate"><span class="pre">BaseCube.Z</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.__getitem__"><code class="docutils literal notranslate"><span class="pre">BaseCube.__getitem__()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.coords"><code class="docutils literal notranslate"><span class="pre">BaseCube.coords</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.data_path"><code class="docutils literal notranslate"><span class="pre">BaseCube.data_path</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.dataio"><code class="docutils literal notranslate"><span class="pre">BaseCube.dataio</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.dim0_coords"><code class="docutils literal notranslate"><span class="pre">BaseCube.dim0_coords</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.dim1_coords"><code class="docutils literal notranslate"><span class="pre">BaseCube.dim1_coords</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.dim2_coords"><code class="docutils literal notranslate"><span class="pre">BaseCube.dim2_coords</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.export_frozen_variable"><code class="docutils literal notranslate"><span class="pre">BaseCube.export_frozen_variable()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.extent"><code class="docutils literal notranslate"><span class="pre">BaseCube.extent</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.planform_set"><code class="docutils literal notranslate"><span class="pre">BaseCube.planform_set</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.planforms"><code class="docutils literal notranslate"><span class="pre">BaseCube.planforms</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.quick_show"><code class="docutils literal notranslate"><span class="pre">BaseCube.quick_show()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.read"><code class="docutils literal notranslate"><span class="pre">BaseCube.read()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.register_plan"><code class="docutils literal notranslate"><span class="pre">BaseCube.register_plan()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.register_planform"><code class="docutils literal notranslate"><span class="pre">BaseCube.register_planform()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.register_section"><code class="docutils literal notranslate"><span class="pre">BaseCube.register_section()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.section_set"><code class="docutils literal notranslate"><span class="pre">BaseCube.section_set</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.sections"><code class="docutils literal notranslate"><span class="pre">BaseCube.sections</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.shape"><code class="docutils literal notranslate"><span class="pre">BaseCube.shape</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.show_cube"><code class="docutils literal notranslate"><span class="pre">BaseCube.show_cube()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.show_plan"><code class="docutils literal notranslate"><span class="pre">BaseCube.show_plan()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.show_planform"><code class="docutils literal notranslate"><span class="pre">BaseCube.show_planform()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.show_section"><code class="docutils literal notranslate"><span class="pre">BaseCube.show_section()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.variables"><code class="docutils literal notranslate"><span class="pre">BaseCube.variables</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.varset"><code class="docutils literal notranslate"><span class="pre">BaseCube.varset</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.z"><code class="docutils literal notranslate"><span class="pre">BaseCube.z</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="deltametrics.cube.StratigraphyCube.html"
                           title="previous chapter">deltametrics.cube.StratigraphyCube</a></p>
@@ -626,7 +670,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
   </body>
 </html>

@@ -17,6 +17,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.section.BaseSection" href="deltametrics.section.BaseSection.html" />
@@ -376,7 +377,7 @@ create a new) <cite>Axes</cite> object.</p></li>
 </dl>
 <p class="rubric">Examples</p>
 <p><em>Example 1:</em> Display the <cite>velocity</cite> spacetime section of a DataCube.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">distance_idx</span><span class="o">=</span><span class="mi">5</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">sections</span><span class="p">[</span><span class="s1">&#39;demo&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s1">&#39;velocity&#39;</span><span class="p">)</span>
@@ -390,7 +391,7 @@ create a new) <cite>Axes</cite> object.</p></li>
 <code class="docutils literal notranslate"><span class="pre">golfcube.show_section('demo',</span> <span class="pre">'velocity')</span></code>.</p>
 <p><em>Example 2:</em> Display a section, with “quick” stratigraphy, as the
 <cite>depth</cite> attribute, displaying several different section styles.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">stratigraphy_from</span><span class="p">(</span><span class="s1">&#39;eta&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="s1">&#39;demo&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">distance</span><span class="o">=</span><span class="mi">250</span><span class="p">))</span>
@@ -484,6 +485,35 @@ Manipulates the <cite>matplotlib</cite> <cite>autoscale</cite> attribute. Defaul
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">deltametrics.section.RadialSection</a><ul>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection"><code class="docutils literal notranslate"><span class="pre">RadialSection</span></code></a><ul>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.__init__"><code class="docutils literal notranslate"><span class="pre">RadialSection.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.__getitem__"><code class="docutils literal notranslate"><span class="pre">RadialSection.__getitem__()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.azimuth"><code class="docutils literal notranslate"><span class="pre">RadialSection.azimuth</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.connect"><code class="docutils literal notranslate"><span class="pre">RadialSection.connect()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.idx_trace"><code class="docutils literal notranslate"><span class="pre">RadialSection.idx_trace</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.length"><code class="docutils literal notranslate"><span class="pre">RadialSection.length</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.name"><code class="docutils literal notranslate"><span class="pre">RadialSection.name</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.origin"><code class="docutils literal notranslate"><span class="pre">RadialSection.origin</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.s"><code class="docutils literal notranslate"><span class="pre">RadialSection.s</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.shape"><code class="docutils literal notranslate"><span class="pre">RadialSection.shape</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.show"><code class="docutils literal notranslate"><span class="pre">RadialSection.show()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.show_trace"><code class="docutils literal notranslate"><span class="pre">RadialSection.show_trace()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.strat_attr"><code class="docutils literal notranslate"><span class="pre">RadialSection.strat_attr</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.trace"><code class="docutils literal notranslate"><span class="pre">RadialSection.trace</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.trace_idx"><code class="docutils literal notranslate"><span class="pre">RadialSection.trace_idx</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.variables"><code class="docutils literal notranslate"><span class="pre">RadialSection.variables</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.RadialSection.z"><code class="docutils literal notranslate"><span class="pre">RadialSection.z</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="deltametrics.section.CircularSection.html"
                           title="previous chapter">deltametrics.section.CircularSection</a></p>
@@ -534,7 +564,7 @@ Manipulates the <cite>matplotlib</cite> <cite>autoscale</cite> attribute. Defaul
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
   </body>
 </html>

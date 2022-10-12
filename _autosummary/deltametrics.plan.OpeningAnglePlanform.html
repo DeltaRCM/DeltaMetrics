@@ -17,6 +17,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.plan.MorphologicalPlanform" href="deltametrics.plan.MorphologicalPlanform.html" />
@@ -190,7 +191,7 @@ thus passed to <a class="reference internal" href="deltametrics.plan.shaw_openin
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">_EM</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ElevationMask</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
 <span class="gp">... </span>    <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -236,7 +237,7 @@ turn used to create the <cite>OpeningAnglePlanform</cite>.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">OAP</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">OpeningAnglePlanform</span><span class="o">.</span><span class="n">from_elevation_data</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span>
@@ -313,6 +314,31 @@ create a new) <cite>Axes</cite> object.</p></li>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">deltametrics.plan.OpeningAnglePlanform</a><ul>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform</span></code></a><ul>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.__init__"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.__getitem__"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.__getitem__()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.below_mask"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.below_mask</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.composite_array"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.composite_array</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.data"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.data</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.from_ElevationMask()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_arrays"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.from_arrays()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_elevation_data"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.from_elevation_data()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_mask"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.from_mask()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.name"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.name</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.sea_angles"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.sea_angles</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.shape"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.shape</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.show"><code class="docutils literal notranslate"><span class="pre">OpeningAnglePlanform.show()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
     <h4>Previous topic</h4>
     <p class="topless"><a href="deltametrics.plan.Planform.html"
                           title="previous chapter">deltametrics.plan.Planform</a></p>
@@ -363,7 +389,7 @@ create a new) <cite>Axes</cite> object.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.1.1.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.2.3.
     </div>
   </body>
 </html>
