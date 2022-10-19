@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>deltametrics.plot.VariableInfo &#8212; DeltaMetrics 0.4.0 documentation</title>
+    <title>deltametrics.plot.VariableInfo &#8212; DeltaMetrics 0.4.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
@@ -35,7 +35,7 @@
         <li class="right" >
           <a href="../reference/plot/index.html" title="Plotting operations"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/plot/index.html" accesskey="U">Plotting operations</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">deltametrics.plot.VariableInfo</a></li> 
@@ -76,7 +76,7 @@ would create the VariableInfo as:</p>
 colormap. If instead we wanted just three colors, we could specify the
 colormap manually:</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span> <span class="o">=</span> <span class="n">VariableInfo</span><span class="p">(</span><span class="s1">&#39;vegetation_density&#39;</span><span class="p">,</span>
-<span class="gp">... </span>                    <span class="n">cmap</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;Greens&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">... </span>                    <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colormaps</span><span class="p">[</span><span class="s1">&#39;Greens&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">resampled</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">veg3</span><span class="o">.</span><span class="n">cmap</span><span class="o">.</span><span class="n">N</span>
 <span class="go">3</span>
 </pre></div>
@@ -247,7 +247,7 @@ used.</p></li>
         <li class="right" >
           <a href="../reference/plot/index.html" title="Plotting operations"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.0 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/plot/index.html" >Plotting operations</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">deltametrics.plot.VariableInfo</a></li> 
