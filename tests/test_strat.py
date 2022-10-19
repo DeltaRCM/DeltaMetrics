@@ -311,7 +311,7 @@ class TestOneDimStratigraphyExamples:
         assert s[-1] == e[-1]
         assert s[-1] == e[-1]
         assert np.all(np.isnan(c[2:]))  # from z>=1 to z==3
-        assert np.all(c[:2] == 0)
+        assert np.all(c[:2] == 1)
         assert lst == 1
 
     def test_onedim_traj_drop_at_end_to_zero(self):
@@ -335,7 +335,7 @@ class TestOneDimStratigraphyExamples:
         assert z[-1] == 7
         assert s[-1] == 6
         assert np.all(p.nonzero()[0] == (2, 3, 7, 10))
-        assert c[0] == 1
+        assert c[0] == 2
 
     def test_onedim_traj_upsanddowns_negatives(self):
         # e = np.array([0, 0, -1, -4, -2, 3, 3.5, 3, 3, 4, 4])

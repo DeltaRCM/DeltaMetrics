@@ -408,7 +408,10 @@ class TestGetDisplayArrays:
     def test_dsv_nostrat_get_display_arrays_spacetime(self):
         _data, _X, _Y = plot.get_display_arrays(self.dsv_nostrat,
                                                 data='spacetime')
-        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert (_data.shape[0] == _X.shape[0] - 1)
+        assert (_data.shape[1] == _Y.shape[1] - 1)
+        assert (_data.shape[0] == _X.shape[0] - 1)
+        assert (_data.shape[1] == _Y.shape[1] - 1)
         assert np.all(_data == self.dsv_nostrat)
 
     def test_dsv_nostrat_get_display_arrays_preserved(self):
@@ -424,13 +427,19 @@ class TestGetDisplayArrays:
     def test_dsv_get_display_arrays_spacetime(self):
         _data, _X, _Y = plot.get_display_arrays(self.dsv,
                                                 data='spacetime')
-        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert (_data.shape[0] == _X.shape[0] - 1)
+        assert (_data.shape[1] == _Y.shape[1] - 1)
+        assert (_data.shape[0] == _X.shape[0] - 1)
+        assert (_data.shape[1] == _Y.shape[1] - 1)
         assert np.all(_data == self.dsv)
 
     def test_dsv_get_display_arrays_preserved(self):
         _data, _X, _Y = plot.get_display_arrays(self.dsv,
                                                 data='preserved')
-        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert (_data.shape[0] == _X.shape[0] - 1)
+        assert (_data.shape[1] == _Y.shape[1] - 1)
+        assert (_data.shape[0] == _X.shape[0] - 1)
+        assert (_data.shape[1] == _Y.shape[1] - 1)
         assert np.any(np.isnan(_data))  # check that some are False
 
     def test_dsv_get_display_arrays_stratigraphy(self):
@@ -461,7 +470,10 @@ class TestGetDisplayArrays:
     def test_ssv_get_display_arrays_stratigraphy(self):
         _data, _X, _Y = plot.get_display_arrays(
             self.ssv, data='stratigraphy')
-        assert (_data.shape == _X.shape) and (_data.shape == _Y.shape)
+        assert (_data.shape[0] == _X.shape[0] - 1)
+        assert (_data.shape[1] == _Y.shape[1] - 1)
+        assert (_data.shape[0] == _X.shape[0] - 1)
+        assert (_data.shape[1] == _Y.shape[1] - 1)
 
     def test_ssv_get_display_arrays_badstring(self):
         with pytest.raises(ValueError, match=r'Bad data *.'):
