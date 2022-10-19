@@ -3,4 +3,4 @@ def __version__():
     """
     Private version declaration, gets assigned to dm.__version__ during import
     """
-    return '0.4.0'
+    return '0.4.1'
