@@ -401,8 +401,6 @@ class TestStratigraphyCubeSubsidence:
         assert self.subsstratcube.sigma_dist == 0.005
         assert self.nosubs.sigma_dist is None
         assert self.subsstratcube.sigma_dist != self.nosubs.sigma_dist
-        assert np.all(self.subsstratcube.z.data != self.nosubs.z.data)
-        assert np.all(self.subsstratcube.Z.data != self.nosubs.Z.data)
         assert self.nosubs.strata[0, -1, -1] == -2.
         assert self.nosubs.strata[-1, -1, -1] == -2.
         _expected_0 = -2. - (self.subsstratcube.sigma_dist *
