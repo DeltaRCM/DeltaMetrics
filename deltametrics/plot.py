@@ -737,13 +737,32 @@ def get_display_arrays(VarInst, data=None):
             _S, _Z = np.meshgrid(_s, _z)
             return VarInst.strat.as_preserved(), _S, _Z
         elif data in VarInst.strat._stratigraphy_names:
+            # for data sections and mesh quick strat display
+            #   there are a fair number of stylistic quirks here,
+            #   do not use this representation of the data for any
+            #   science calculations!
+
+            # make the sparse array dense
             _sp = VarInst.strat.as_stratigraphy()
-            _den = _sp.toarray()  # .view(section.DataSectionVariable)
+            _den = _sp.toarray()
+
+            # grab the y values for the array
             _arr_Y = VarInst.strat.strat_attr['psvd_flld'][:_sp.shape[0], ...]
+
+            # fix the bottom rows
+            _den[0, ...] = _den[1, ...]
+            _arr_Y[0, ...] = _arr_Y[1, ...]
+
+            # fix the dense values at tops
+            # not figured this out yet...
+
+            # pad the arrays to be data+1 in both dims
             _arr_X = np.tile(VarInst['s'], (_sp.shape[0], 1))
             _arr_Y = np.pad(_arr_Y, ((0, 0), (0, 1)), mode='edge')
             _z = VarInst[VarInst.dims[0]]
-            _p = np.min(_arr_Y) * np.ones((_arr_Y.shape[1]))  # prepend with base
+
+            # prepend the data with the lowest depth recorded to fill out image
+            _p = np.min(_arr_Y) * np.ones((_arr_Y.shape[1]))  # prepend base
             _arr_Y = np.vstack((_p, _arr_Y))
             _arr_X = np.pad(_arr_X, ((0, 1), (0, 1)), mode='edge')
             return _den, _arr_X, _arr_Y
