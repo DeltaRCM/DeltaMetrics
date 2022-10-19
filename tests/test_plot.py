@@ -36,7 +36,8 @@ class TestVariableInfo:
         assert vi.cmap(0)[0] == pytest.approx(0.96862745)
 
     def test_initialize_VariableInfo_cmap_spec(self):
-        vi = plot.VariableInfo('testinfo', cmap=plt.cm.get_cmap('Blues', 7))
+        vi = plot.VariableInfo(
+            'testinfo', cmap=matplotlib.colormaps['Blues'].resampled(7))
         assert vi.cmap.N == 7
         assert vi.cmap(0)[0] == pytest.approx(0.96862745)
 
@@ -62,7 +63,7 @@ class TestVariableInfo:
 
     def test_VariableInfo_change_cmap(self):
         vi = plot.VariableInfo('testinfo')
-        _jet = matplotlib.cm.get_cmap('jet', 21)
+        _jet = matplotlib.colormaps['jet'].resampled(21)
         vi.cmap = _jet
         assert vi.cmap == _jet
         assert vi.cmap.N == 21
@@ -806,7 +807,7 @@ class TestOverlaySparseArray:
 
     def test_makes_plot_cmap_obj(self):
         _e = np.random.uniform(0, 73, size=(50, 50))
-        _cmap = plt.cm.get_cmap('Oranges', 64)
+        _cmap = matplotlib.colormaps['Oranges'].resampled(64)
         fig, ax = plt.subplots()
         plot.overlay_sparse_array(
             _e, cmap=_cmap, ax=ax)

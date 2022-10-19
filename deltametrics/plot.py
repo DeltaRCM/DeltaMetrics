@@ -3,16 +3,16 @@ import xarray as xr
 
 import colorsys
 
-import matplotlib
+import matplotlib as mpl
 import matplotlib.pyplot as plt
-import matplotlib.cm as cm
+import matplotlib.ticker as ticker
 import matplotlib.colors as colors
 import matplotlib.patches as ptch
 import matplotlib.collections as coll
 import mpl_toolkits.axes_grid1 as axtk
 
 from . import strat
-from . import section
+# from . import section
 
 # plotting utilities
 
@@ -51,7 +51,7 @@ class VariableInfo(object):
     .. doctest::
 
         >>> veg3 = VariableInfo('vegetation_density',
-        ...                     cmap=plt.cm.get_cmap('Greens', 3))
+        ...                     cmap=mpl.colormaps['Greens'].resampled(3))
         >>> veg3.cmap.N
         3
 
@@ -94,7 +94,7 @@ class VariableInfo(object):
                 'name argument must be type `str`, but was %s' % type(name))
         self._name = name
 
-        self.cmap = kwargs.pop('cmap', cm.get_cmap('viridis', 64))
+        self.cmap = kwargs.pop('cmap', mpl.colormaps['viridis'].resampled(64))  #  .get_cmap('viridis', 64))
         self.label = kwargs.pop('label', None)
         self.norm = kwargs.pop('norm', None)
         self.vmin = kwargs.pop('vmin', None)
@@ -119,7 +119,8 @@ class VariableInfo(object):
         else:
             N = 64
         if type(var) is str:
-            self._cmap = cm.get_cmap(var, N)
+            # self._cmap = cm.get_cmap(var, N)
+            self._cmap = mpl.colormaps[var].resampled(N)
         elif issubclass(type(var), colors.Colormap):
             self._cmap = var
         else:
@@ -335,7 +336,8 @@ class VariableSet(object):
     @eta.setter
     def eta(self, var):
         if not var:
-            cmap = cm.get_cmap('cividis', 64)
+            # cmap = cm.get_cmap('cividis', 64)
+            cmap = mpl.colormaps['cividis'].resampled(64)
             self._eta = VariableInfo('eta', cmap=cmap,
                                      label='bed elevation')
         elif type(var) is VariableInfo:
@@ -367,7 +369,8 @@ class VariableSet(object):
     @depth.setter
     def depth(self, var):
         if not var:
-            cmap = cm.get_cmap('Blues', 64)
+            # cmap = cm.get_cmap('Blues', 64)
+            cmap = mpl.colormaps['Blues'].resampled(64)
             self._depth = VariableInfo('depth', cmap=cmap,
                                        vmin=0, label='flow depth')
         elif type(var) is VariableInfo:
@@ -384,7 +387,8 @@ class VariableSet(object):
     @discharge.setter
     def discharge(self, var):
         if not var:
-            cmap = cm.get_cmap('winter', 64)
+            # cmap = cm.get_cmap('winter', 64)
+            cmap = mpl.colormaps['winter'].resampled(64)
             self._discharge = VariableInfo('discharge', cmap=cmap,
                                            label='flow discharge')
         elif type(var) is VariableInfo:
@@ -401,7 +405,8 @@ class VariableSet(object):
     @velocity.setter
     def velocity(self, var):
         if not var:
-            cmap = cm.get_cmap('plasma', 64)
+            # cmap = cm.get_cmap('plasma', 64)
+            cmap = mpl.colormaps['plasma'].resampled(64)
             self._velocity = VariableInfo('velocity', cmap=cmap,
                                           label='flow velocity')
         elif type(var) is VariableInfo:
@@ -418,7 +423,8 @@ class VariableSet(object):
     @sedflux.setter
     def sedflux(self, var):
         if not var:
-            cmap = cm.get_cmap('magma', 64)
+            # cmap = cm.get_cmap('magma', 64)
+            cmap = mpl.colormaps['magma'].resampled(64)
             self._sedflux = VariableInfo('sedflux', cmap=cmap,
                                          label='sediment flux')
         elif type(var) is VariableInfo:
@@ -457,12 +463,12 @@ class VariableSet(object):
     def sandfrac(self, var):
         if not var:
             ends_str = ['saddlebrown',  'gold']  # define end points as strs
-            endpts_colors = [matplotlib.colors.to_rgb(col) for col in ends_str]
+            endpts_colors = [colors.to_rgb(col) for col in ends_str]
             endpts_colors = np.column_stack(  # interpolate 64 between end pts
                 [np.linspace(endpts_colors[0][i], endpts_colors[1][i], num=64)
                  for i in range(3)]  # for each column in RGB
                  )
-            sand_frac = matplotlib.colors.ListedColormap(endpts_colors)
+            sand_frac = colors.ListedColormap(endpts_colors)
             sand_frac.set_under('saddlebrown')
             self._sandfrac = VariableInfo('sandfrac',
                                           cmap=sand_frac,
@@ -495,9 +501,12 @@ class VariableSet(object):
     @net_to_gross.setter
     def net_to_gross(self, var):
         if not var:
-            oranges = cm.get_cmap('Oranges', 64)
-            greys = cm.get_cmap('Greys_r', 64)
-            whiteblack = cm.get_cmap('Greys', 2)
+            # oranges = cm.get_cmap('Oranges', 64)
+            # greys = cm.get_cmap('Greys_r', 64)
+            # whiteblack = cm.get_cmap('Greys', 2)
+            oranges = mpl.colormaps['Oranges'].resampled(64)
+            greys = mpl.colormaps['Greys_r'].resampled(64)
+            whiteblack = mpl.colormaps['Greys'].resampled(2)
             combined = np.vstack((greys(np.linspace(0.3, 0.6, 2)),
                                   oranges(np.linspace(0.2, 0.8, 6))))
             ntgcmap = colors.ListedColormap(combined, name='net_to_gross')
@@ -563,15 +572,15 @@ def cartographic_colormap(H_SL=0.0, h=4.5, n=1.0):
         cb1 = dm.plot.append_colorbar(im1, ax[1])
         plt.show()
     """
-    blues = matplotlib.cm.get_cmap('Blues_r', 64)
-    greens = matplotlib.cm.get_cmap('YlGn_r', 64)
+    blues = mpl.colormaps['Blues_r'].resampled(64)
+    greens = mpl.colormaps['YlGn_r'].resampled(64)
     combined = np.vstack((blues(np.linspace(0.1, 0.7, 5)),
                           greens(np.linspace(0.2, 0.8, 5))))
-    delta = matplotlib.colors.ListedColormap(combined, name='delta')
+    delta = colors.ListedColormap(combined, name='delta')
     bounds = np.hstack(
         (np.linspace(H_SL-h, H_SL-(h/2), 5),
          np.linspace(H_SL, H_SL+n, 6)))
-    norm = matplotlib.colors.BoundaryNorm(bounds, len(bounds)-1)
+    norm = colors.BoundaryNorm(bounds, len(bounds)-1)
     return delta, norm
 
 
@@ -669,7 +678,7 @@ def style_axes_km(*args):
 
         plt.show()
     """
-    if isinstance(args[0], matplotlib.axes.Axes):
+    if isinstance(args[0], mpl.axes.Axes):
         ax = args[0]
         if len(args) > 1:
             which = args[1]
@@ -1089,7 +1098,7 @@ def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
     ax.plot(t[p], s[p], color='0.5', marker='o',
             ls='none', label='psvd time')
     if len(t) < 100:
-        ax.xaxis.set_minor_locator(matplotlib.ticker.MultipleLocator(1))
+        ax.xaxis.set_minor_locator(ticker.MultipleLocator(1))
     ax.grid(which='both', axis='x')
 
     if show_strata:
@@ -1099,7 +1108,8 @@ def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
         ax_s.yaxis.tick_right()
         ax_s.xaxis.set_visible(False)
         __x, __y = np.meshgrid(np.array([0, 1]), z_disp)
-        _colmap = plt.cm.get_cmap('viridis', e.shape[0])
+        # _colmap = plt.cm.get_cmap('viridis', e.shape[0])
+        _colmap = mpl.colormaps['viridis'].resampled(e.shape[0])
         ax_s.pcolormesh(__x, __y, cp,
                         cmap=_colmap, vmin=0, vmax=e.shape[0],
                         rasterized=True, shading='flat')
@@ -1448,7 +1458,8 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
 
     # pull the cmap out
     if isinstance(cmap, str):
-        cmap = plt.cm.get_cmap(cmap)
+        # cmap = plt.cm.get_cmap(cmap)
+        cmap = mpl.colormaps[cmap]
     else:
         cmap = cmap
 
@@ -1485,18 +1496,18 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
         amax = np.nanmax(sparse_array)
 
     # normalize the alpha channel
-    alphas = matplotlib.colors.Normalize(
+    alphas = colors.Normalize(
         amin, amax, clip=True)(sparse_array)  # Normalize alphas
 
     # normalize the colors
-    colors = matplotlib.colors.Normalize(
+    ncolors = colors.Normalize(
         np.nanmin(sparse_array),
         np.nanmax(sparse_array))(sparse_array)  # Normalize colors
 
-    colors = cmap(colors)
-    colors[..., -1] = alphas
+    ncolors = cmap(ncolors)
+    ncolors[..., -1] = alphas
 
     im = ax.imshow(
-        colors, extent=_extent)
+        ncolors, extent=_extent)
 
     return im
