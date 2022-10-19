@@ -722,18 +722,50 @@ def get_display_arrays(VarInst, data=None):
         # #  DataSection  # #
         data = data or 'spacetime'
         if data in VarInst.strat._spacetime_names:
-            _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+            _z = VarInst[VarInst.dims[0]]
+            _z = np.append(_z, _z[-1])
+            _s = VarInst['s']
+            _s = np.append(_s, _s[-1])
+            _S, _Z = np.meshgrid(_s, _z)
             return VarInst.values, _S, _Z
         elif data in VarInst.strat._preserved_names:
             VarInst.strat._check_knows_spacetime()
-            _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+            _z = VarInst[VarInst.dims[0]]
+            _z = np.append(_z, _z[-1])
+            _s = VarInst['s']
+            _s = np.append(_s, _s[-1])
+            _S, _Z = np.meshgrid(_s, _z)
             return VarInst.strat.as_preserved(), _S, _Z
         elif data in VarInst.strat._stratigraphy_names:
+            # for data sections and mesh quick strat display
+            #   there are a fair number of stylistic quirks here,
+            #   do not use this representation of the data for any
+            #   science calculations!
+
+            # make the sparse array dense
             _sp = VarInst.strat.as_stratigraphy()
-            _den = _sp.toarray()  # .view(section.DataSectionVariable)
+            _den = _sp.toarray()
+
+            # grab the y values for the array
             _arr_Y = VarInst.strat.strat_attr['psvd_flld'][:_sp.shape[0], ...]
+
+            # fix the bottom rows
+            _den[0, ...] = _den[1, ...]
+            _arr_Y[0, ...] = _arr_Y[1, ...]
+
+            # fix the dense values at tops
+            # not figured this out yet...
+
+            # pad the arrays to be data+1 in both dims
             _arr_X = np.tile(VarInst['s'], (_sp.shape[0], 1))
-            return _den[1:, 1:], _arr_X, _arr_Y
+            _arr_Y = np.pad(_arr_Y, ((0, 0), (0, 1)), mode='edge')
+            _z = VarInst[VarInst.dims[0]]
+
+            # prepend the data with the lowest depth recorded to fill out image
+            _p = np.min(_arr_Y) * np.ones((_arr_Y.shape[1]))  # prepend base
+            _arr_Y = np.vstack((_p, _arr_Y))
+            _arr_X = np.pad(_arr_X, ((0, 1), (0, 1)), mode='edge')
+            return _den, _arr_X, _arr_Y
         else:
             raise ValueError('Bad data argument: %s' % str(data))
 
@@ -745,7 +777,11 @@ def get_display_arrays(VarInst, data=None):
         elif data in VarInst.strat._preserved_names:
             VarInst.strat._check_knows_spacetime()  # always False
         elif data in VarInst.strat._stratigraphy_names:
-            _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+            _z = VarInst[VarInst.dims[0]]
+            _z = np.append(_z, _z[-1])
+            _s = VarInst['s']
+            _s = np.append(_s, _s[-1])
+            _S, _Z = np.meshgrid(_s, _z)
             return VarInst, _S, _Z
         else:
             raise ValueError('Bad data argument: %s' % str(data))
@@ -1026,12 +1062,14 @@ def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
         e = strat._adjust_elevation_by_subsidence(e_in, sigma_dist)
     s, p = strat._compute_elevation_to_preservation(e)  # strat, preservation
     z = strat._determine_strat_coordinates(e, dz=dz, z=z, nz=nz)  # vert coordinates
+    z_disp = np.append(z, z[-1])
     sc, dc = strat._compute_preservation_to_cube(s, z)
     lst = np.argmin(s < s[-1])  # last elevation
 
     c = np.full_like(z, np.nan)
     c[sc[:, 0]] = t[dc[:, 0]]
     cp = np.tile(c, (2, 1)).T
+    cp = np.atleast_2d(c).T
 
     # make the plots
     if not ax:
@@ -1060,17 +1098,18 @@ def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
         ax_s = divider.append_axes("right", 0.5, pad=0.1, sharey=ax)
         ax_s.yaxis.tick_right()
         ax_s.xaxis.set_visible(False)
-        __x, __y = np.meshgrid(np.array([0, 1]), z)
+        __x, __y = np.meshgrid(np.array([0, 1]), z_disp)
         _colmap = plt.cm.get_cmap('viridis', e.shape[0])
         ax_s.pcolormesh(__x, __y, cp,
                         cmap=_colmap, vmin=0, vmax=e.shape[0],
-                        shading='auto')
+                        rasterized=True, shading='flat')
         ax_s.hlines(e[p], 0, 1, linestyles='dashed', colors='gray')
         _cstr = [str(int(cc)) if np.isfinite(cc) else 'nan' for cc in c.flatten()]
         ax_s.set_xlim(0, 1)
         if label_strata:
-            for i, __cstr in enumerate(_cstr):
-                ax_s.text(0.3, z[i], str(__cstr), fontsize=8)
+            for i, __cstr in enumerate(_cstr[:-1]):
+                ax_s.text(0.5, z[i]+((z[i+1]-z[i])/2), str(__cstr),
+                          fontsize=8, ha='center', va='center')
 
     # adjust and add legend
     if np.any(e < 0):

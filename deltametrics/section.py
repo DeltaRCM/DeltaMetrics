@@ -493,7 +493,7 @@ class BaseSection(abc.ABC):
             ci = ax.pcolormesh(_X, _Y, _data, cmap=_varinfo.cmap,
                                norm=_varinfo.norm,
                                vmin=_varinfo.vmin, vmax=_varinfo.vmax,
-                               rasterized=True, shading='auto')
+                               shading='flat', rasterized=True)
         elif style in ['line', 'lines']:
             _data, _segments = plot.get_display_lines(SectionVariableInstance,
                                                       data=data)

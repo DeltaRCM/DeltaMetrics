@@ -591,7 +591,7 @@ def _compute_preservation_to_cube(strata, z):
         with rows in `strat_coords`.
     """
     # preallocate boxy arrays and helpers
-    plate = np.atleast_1d(np.zeros(strata.shape[1:], dtype=np.int8))
+    plate = np.atleast_1d(np.zeros(strata.shape[1:], dtype=int))
     strat_coords, data_coords = [], []  # preallocate sparse idx lists
     _zero = np.array([0])
 
@@ -600,7 +600,7 @@ def _compute_preservation_to_cube(strata, z):
     for k in np.arange(len(z) - 1, -1, -1):  # for every z, from the top
         e = z[k]  # which elevation for this iteration
         whr = e < seek_elev  # where elev is below strat surface
-        t = np.maximum(_zero, (np.argmin(strata[:, ...] <= e, axis=0) - 1))
+        t = np.maximum(_zero, (np.argmin(strata[:, ...] <= e, axis=0)))
         plate[whr] = int(1)  # track locations in the plate
 
         xy = plate.nonzero()
