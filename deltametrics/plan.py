@@ -2034,7 +2034,7 @@ def compute_surface_deposit_time(data, surface_idx=-1, **kwargs):
         etas = data['eta'][:surface_idx, :, :]
         etas = np.array(etas)  # strip xarray for input to helper
     elif utils.is_ndarray_or_xarray(data):
-        etas = np.array(etas[:surface_idx, :, :])
+        etas = np.array(data[:surface_idx, :, :])
     else:
         # implement other options...
         raise TypeError(
