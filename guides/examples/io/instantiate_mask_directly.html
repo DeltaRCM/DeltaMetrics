@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>How to create a LandMask from arbitrary data &#8212; DeltaMetrics 0.4.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Aggradation and preserved time" href="../computations/aggradation_preserved_time.html" />
+    <link rel="prev" title="Shoreline roughness of a perfect half-circle" href="../computations/shoreline_roughness_perfect_direct.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../computations/aggradation_preserved_time.html" title="Aggradation and preserved time"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../computations/shoreline_roughness_perfect_direct.html" title="Shoreline roughness of a perfect half-circle"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">How to create a LandMask from arbitrary data</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="how-to-create-a-landmask-from-arbitrary-data">
+<h1>How to create a LandMask from arbitrary data<a class="headerlink" href="#how-to-create-a-landmask-from-arbitrary-data" title="Permalink to this heading">¶</a></h1>
+<p>Instantiating masks directly can be done as follows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">proportion</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]:</span>
+    <span class="n">anydata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">whr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">anydata</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">anydata</span><span class="o">.</span><span class="n">size</span><span class="o">*</span><span class="n">proportion</span><span class="p">))</span>
+    <span class="n">anydata</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">whr</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">lm</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">LandMask</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span>
+        <span class="n">anydata</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span>  <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+    <span class="n">lm</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<figure class="align-default" id="id1">
+<img alt="../../../_images/instantiate_mask_directly-1_00.png" class="plot-directive" src="../../../_images/instantiate_mask_directly-1_00.png" />
+<figcaption>
+<p><span class="caption-text">(<a class="reference external" href="../../../guides/examples/io/instantiate_mask_directly-1_00.png">png</a>, <a class="reference external" href="../../../guides/examples/io/instantiate_mask_directly-1_00.hires.png">hires.png</a>)</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id2">
+<img alt="../../../_images/instantiate_mask_directly-1_01.png" class="plot-directive" src="../../../_images/instantiate_mask_directly-1_01.png" />
+<figcaption>
+<p><span class="caption-text">(<a class="reference external" href="../../../guides/examples/io/instantiate_mask_directly-1_01.png">png</a>, <a class="reference external" href="../../../guides/examples/io/instantiate_mask_directly-1_01.hires.png">hires.png</a>)</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="id3">
+<img alt="../../../_images/instantiate_mask_directly-1_02.png" class="plot-directive" src="../../../_images/instantiate_mask_directly-1_02.png" />
+<figcaption>
+<p><span class="caption-text">(<a class="reference external" href="../../../guides/examples/io/instantiate_mask_directly-1_02.png">png</a>, <a class="reference external" href="../../../guides/examples/io/instantiate_mask_directly-1_02.hires.png">hires.png</a>)</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</figcaption>
+</figure>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../computations/shoreline_roughness_perfect_direct.html"
+                          title="previous chapter">Shoreline roughness of a perfect half-circle</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="../computations/aggradation_preserved_time.html"
+                          title="next chapter">Aggradation and preserved time</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/guides/examples/io/instantiate_mask_directly.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../computations/aggradation_preserved_time.html" title="Aggradation and preserved time"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../computations/shoreline_roughness_perfect_direct.html" title="Shoreline roughness of a perfect half-circle"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">How to create a LandMask from arbitrary data</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+    </div>
+  </body>
+</html>
