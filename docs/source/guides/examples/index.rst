@@ -12,6 +12,8 @@ Planforms
    :maxdepth: 1
 
    computations/radial_growth_pattern
+   computations/shoreline_roughness_perfect_direct
+   io/instantiate_mask_directly
 
 
 Sections
@@ -42,6 +44,7 @@ Input and output
 
    io/connect_to_nonstandard_data
    io/setup_any_dataset
+   io/instantiate_mask_directly
 
 
 Stratigraphy
