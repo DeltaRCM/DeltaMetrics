@@ -18,6 +18,7 @@
     <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.plan.compute_shoreline_length" href="deltametrics.plan.compute_shoreline_length.html" />
@@ -54,9 +55,9 @@
 <span class="sig-prename descclassname"><span class="pre">deltametrics.plan.</span></span><span class="sig-name descname"><span class="pre">compute_shoreline_roughness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">shore_mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">land_mask</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.compute_shoreline_roughness" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute shoreline roughness.</p>
 <p>Computes the shoreline roughness metric:</p>
-<div class="math">
-<p><img src="_images/math/79d33a1f884a50edef7ac9d44ba935e29659700f.png" alt="L_{shore} / \sqrt{A_{land}}"/></p>
-</div><p>given binary masks of the shoreline and land area. The length of the
+<div class="math notranslate nohighlight">
+\[L_{shore} / \sqrt{A_{land}}\]</div>
+<p>given binary masks of the shoreline and land area. The length of the
 shoreline is computed internally with <a class="reference internal" href="deltametrics.plan.compute_shoreline_length.html#deltametrics.plan.compute_shoreline_length" title="deltametrics.plan.compute_shoreline_length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_shoreline_length</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>

@@ -18,6 +18,7 @@
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Introduction to Masking objects" href="mask.html" />
@@ -51,7 +52,7 @@
 <p class="rubric">Section lexicon</p>
 <p>The <cite>Section</cite> module defines some terms that are used throughout the code and rest of the documentation.</p>
 <p>Most importantly, a Section is defined by a set of coordinates in the <cite>dim1</cite>-<cite>dim2</cite> plane of a <cite>Cube</cite>.</p>
-<p>Therefore, we transform variable definitions when extracting the <cite>Section</cite>, and the coordinate system of the section is defined by the along-section direction <img class="math" src="_images/math/106b04b320e75010b1d8029e59244f234f75e6f9.png" alt="s"/> and a vertical section coordinate, which is <img class="math" src="_images/math/8d051150f8669295ecdbe92367941012175a824d.png" alt="z"/> when viewing stratigraphy, and <img class="math" src="_images/math/907a4add6d5db5b7f197f7924f1371b8ac404fe6.png" alt="t"/> when viewing a spacetime section.</p>
+<p>Therefore, we transform variable definitions when extracting the <cite>Section</cite>, and the coordinate system of the section is defined by the along-section direction <span class="math notranslate nohighlight">\(s\)</span> and a vertical section coordinate, which is <span class="math notranslate nohighlight">\(z\)</span> when viewing stratigraphy, and <span class="math notranslate nohighlight">\(t\)</span> when viewing a spacetime section.</p>
 <p>The data that make up the section can view the section as a <cite>spacetime</cite> section by simply calling a variable from the a section into a <cite>DataCube</cite>.</p>
 <div class="highlight-pycon notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rcm8cube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">strike</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">rcm8cube</span><span class="p">,</span> <span class="n">distance_idx</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
