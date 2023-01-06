@@ -66,8 +66,7 @@ class BaseCube(abc.ABC):
         elif type(data) is dict:
             # handle a dict, arrays set up already, make an io class to wrap it
             self._data_path = None
-            self._dataio = io.DictionaryIO(
-                data, dimensions=dimensions)
+            self._dataio = io.DictionaryIO(data, dimensions=dimensions)
             self._read_meta_from_file()
         elif isinstance(data, DataCube):
             # handle initializing one cube type from another
@@ -105,13 +104,12 @@ class BaseCube(abc.ABC):
         correct IO handler.
         """
         _, ext = os.path.splitext(data_path)
-        if ext == '.nc':
-            self._dataio = io.NetCDFIO(data_path, 'netcdf')
-        elif ext == '.hdf5':
-            self._dataio = io.NetCDFIO(data_path, 'hdf5')
+        if ext == ".nc":
+            self._dataio = io.NetCDFIO(data_path, "netcdf")
+        elif ext == ".hdf5":
+            self._dataio = io.NetCDFIO(data_path, "hdf5")
         else:
-            raise ValueError(
-                'Invalid file extension for "data_path": %s' % data_path)
+            raise ValueError('Invalid file extension for "data_path": %s' % data_path)
 
     def _read_meta_from_file(self):
         """Read metadata information from variables in file.
@@ -140,9 +138,10 @@ class BaseCube(abc.ABC):
             self._dim2_idx = self._dataio[d2]
         else:
             raise TypeError(
-                'Shape of coordinate array was not 1d or 2d. '
-                'Maybe the name was not correctly identified in the dataset, '
-                'or the array is misformatted.')
+                "Shape of coordinate array was not 1d or 2d. "
+                "Maybe the name was not correctly identified in the dataset, "
+                "or the array is misformatted."
+            )
 
         # assign values to dimensions of cube
         self._dim0_coords = self._t = self._dim0_idx
@@ -189,7 +188,7 @@ class BaseCube(abc.ABC):
         if type(var) is plot.VariableSet:
             self._varset = var
         else:
-            raise TypeError('Pass a valid VariableSet instance.')
+            raise TypeError("Pass a valid VariableSet instance.")
 
     @property
     def data_path(self):
@@ -202,8 +201,7 @@ class BaseCube(abc.ABC):
 
     @property
     def dataio(self):
-        """:obj:`~deltametrics.io.BaseIO` subclass : Data I/O handler.
-        """
+        """:obj:`~deltametrics.io.BaseIO` subclass : Data I/O handler."""
         return self._dataio
 
     @property
@@ -213,14 +211,12 @@ class BaseCube(abc.ABC):
 
     @property
     def variables(self):
-        """`list` : List of variable names as strings.
-        """
+        """`list` : List of variable names as strings."""
         return self._variables
 
     @property
     def planform_set(self):
-        """:obj:`dict` : Set of planform instances.
-        """
+        """:obj:`dict` : Set of planform instances."""
         return self._planform_set
 
     @property
@@ -253,12 +249,13 @@ class BaseCube(abc.ABC):
         """
         if not issubclass(type(PlanformInstance), plan.BasePlanform):
             raise TypeError(
-                '`PlanformInstance` was not a `Planform`. '
-                'Instead, was: {0}'.format(type(PlanformInstance)))
+                "`PlanformInstance` was not a `Planform`. "
+                "Instead, was: {0}".format(type(PlanformInstance))
+            )
         if not isinstance(name, str):
             raise TypeError(
-                '`name` was not a string. '
-                'Instead, was: {0}'.format(type(name)))
+                "`name` was not a string. " "Instead, was: {0}".format(type(name))
+            )
         PlanformInstance.connect(self, name=name)  # attach cube
         self._planform_set[name] = PlanformInstance
         if return_planform:
@@ -266,8 +263,7 @@ class BaseCube(abc.ABC):
 
     @property
     def section_set(self):
-        """:obj:`dict` : Set of section instances.
-        """
+        """:obj:`dict` : Set of section instances."""
         return self._section_set
 
     @property
@@ -307,12 +303,13 @@ class BaseCube(abc.ABC):
         """
         if not issubclass(type(SectionInstance), section.BaseSection):
             raise TypeError(
-                '`SectionInstance` was not a `Section`. '
-                'Instead, was: {0}'.format(type(SectionInstance)))
+                "`SectionInstance` was not a `Section`. "
+                "Instead, was: {0}".format(type(SectionInstance))
+            )
         if not isinstance(name, str):
             raise TypeError(
-                '`name` was not a string. '
-                'Instead, was: {0}'.format(type(name)))
+                "`name` was not a string. " "Instead, was: {0}".format(type(name))
+            )
         SectionInstance.connect(self, name=name)  # attach cube
         self._section_set[name] = SectionInstance
         if return_section:
@@ -320,20 +317,17 @@ class BaseCube(abc.ABC):
 
     @property
     def dim0_coords(self):
-        """Coordinates along the first dimension of `cube`.
-        """
+        """Coordinates along the first dimension of `cube`."""
         return self.z
 
     @property
     def dim1_coords(self):
-        """Coordinates along the second dimension of `cube`.
-        """
+        """Coordinates along the second dimension of `cube`."""
         return self._dim1_coords
 
     @property
     def dim2_coords(self):
-        """Coordinates along the third dimension of `cube`.
-        """
+        """Coordinates along the third dimension of `cube`."""
         return self._dim2_coords
 
     @property
@@ -375,10 +369,11 @@ class BaseCube(abc.ABC):
         Useful for plotting.
         """
         _extent = [
-            self.dim2_coords[0],                         # dim1, 0
+            self.dim2_coords[0],  # dim1, 0
             self.dim2_coords[-1] + self.dim2_coords[1],  # dim1, end + dx
             self.dim1_coords[-1] + self.dim1_coords[1],  # dim0, end + dx
-            self.dim1_coords[0]]                         # dim0, 0
+            self.dim1_coords[0],
+        ]  # dim0, 0
         return _extent
 
     def export_frozen_variable(self, var, return_cube=False):
@@ -448,13 +443,12 @@ class BaseCube(abc.ABC):
             # this is a Dip section
             _obj = section.DipSection(self, distance_idx=idx)
         else:
-            raise ValueError(
-                'Invalid `axis` specified: {0}'.format(axis))
+            raise ValueError("Invalid `axis` specified: {0}".format(axis))
 
         # use the object to handle the showing
         _obj.show(var, **kwargs)
 
-    def show_cube(self, var, style='mesh', ve=200, ax=None):
+    def show_cube(self, var, style="mesh", ve=200, ax=None):
         """Show the cube in a 3D axis.
 
         .. important:: requires `pyvista` package for 3d visualization.
@@ -504,11 +498,9 @@ class BaseCube(abc.ABC):
         try:
             import pyvista as pv
         except ImportError:
-            ImportError(
-                '3d plotting dependency, pyvista, was not found.')
+            ImportError("3d plotting dependency, pyvista, was not found.")
         except ModuleNotFoundError:
-            ModuleNotFoundError(
-                '3d plotting dependency, pyvista, was not found.')
+            ModuleNotFoundError("3d plotting dependency, pyvista, was not found.")
         except Exception as e:
             raise e
 
@@ -519,27 +511,29 @@ class BaseCube(abc.ABC):
         _data = _data.transpose((2, 1, 0))
 
         mesh = pv.UniformGrid(_data.shape)
-        mesh[var] = _data.ravel(order='F')
-        mesh.spacing = (self.dim2_coords[1],
-                        self.dim1_coords[1],
-                        ve/self.dim1_coords[1])
+        mesh[var] = _data.ravel(order="F")
+        mesh.spacing = (
+            self.dim2_coords[1],
+            self.dim1_coords[1],
+            ve / self.dim1_coords[1],
+        )
         mesh.active_scalars_name = var
 
         p = pv.Plotter()
         p.add_mesh(mesh.outline(), color="k")
-        if style == 'mesh':
+        if style == "mesh":
 
             threshed = mesh.threshold([-np.inf, np.inf], all_scalars=True)
             p.add_mesh(threshed, cmap=self.varset[var].cmap)
 
-        elif style == 'fence':
+        elif style == "fence":
             # todo, improve this to manually create the sections so you can
             #   do more than three slices
             slices = mesh.slice_orthogonal()
             p.add_mesh(slices, cmap=self.varset[var].cmap)
 
         else:
-            raise ValueError('Bad value for style: {0}'.format(style))
+            raise ValueError("Bad value for style: {0}".format(style))
 
         p.show()
 
@@ -557,15 +551,16 @@ class BaseCube(abc.ABC):
         """
         # legacy method, ported over to show_planform.
         warnings.warn(
-            '`show_plan` is a deprecated method, and has been replaced by two '
-            'alternatives. To quickly show a planform slice of a cube, you '
-            'can use `quick_show()` with a similar API. The `show_planform` '
-            'method implements more features, but requires instantiating a '
-            '`Planform` object first. Passing arguments to `quick_show`.')
+            "`show_plan` is a deprecated method, and has been replaced by two "
+            "alternatives. To quickly show a planform slice of a cube, you "
+            "can use `quick_show()` with a similar API. The `show_planform` "
+            "method implements more features, but requires instantiating a "
+            "`Planform` object first. Passing arguments to `quick_show`."
+        )
         # pass `t` arg to `idx` for legacy
-        if 't' in kwargs.keys():
-            idx = kwargs.pop('t')
-            kwargs['idx'] = idx
+        if "t" in kwargs.keys():
+            idx = kwargs.pop("t")
+            kwargs["idx"] = idx
 
         self.quick_show(*args, **kwargs)
 
@@ -590,9 +585,7 @@ class BaseCube(abc.ABC):
         if isinstance(name, str):
             self._planform_set[name].show(variable, **kwargs)
         else:
-            raise TypeError(
-                '`name` was not a string, '
-                'was {0}'.format(type(name)))
+            raise TypeError("`name` was not a string, " "was {0}".format(type(name)))
 
     def show_section(self, name, variable, **kwargs):
         """Show a registered section by name and variable.
@@ -615,9 +608,7 @@ class BaseCube(abc.ABC):
         if isinstance(name, str):
             self._section_set[name].show(variable, **kwargs)
         else:
-            raise TypeError(
-                '`name` was not a string, '
-                'was {0}'.format(type(name)))
+            raise TypeError("`name` was not a string, " "was {0}".format(type(name)))
 
 
 class DataCube(BaseCube):
@@ -627,8 +618,9 @@ class DataCube(BaseCube):
     number of attached attributes (grain size, mud frac, elevation).
     """
 
-    def __init__(self, data, read=[], varset=None, stratigraphy_from=None,
-                 dimensions=None):
+    def __init__(
+        self, data, read=[], varset=None, stratigraphy_from=None, dimensions=None
+    ):
         """Initialize the BaseCube.
 
         Parameters
@@ -666,13 +658,17 @@ class DataCube(BaseCube):
 
         # set up the grid for time
         _, self._T, _ = np.meshgrid(
-            self.dim1_coords, self.dim0_coords, self.dim2_coords)
+            self.dim1_coords, self.dim0_coords, self.dim2_coords
+        )
 
         # get shape from a variable that is not x, y, or time
         i = 0
         while i < len(self.variables):
-            if self.variables[i] == 'x' or self.variables[i] == 'y' \
-               or self.variables[i] == 'time':
+            if (
+                self.variables[i] == "x"
+                or self.variables[i] == "y"
+                or self.variables[i] == "time"
+            ):
                 i += 1
             else:
                 _var = self.variables[i]
@@ -681,10 +677,13 @@ class DataCube(BaseCube):
         # set up dimension and coordinate fields for when slices of the cube
         # are made
         self._view_dimensions = self._dataio.dims
-        self._view_coordinates = copy.deepcopy({
-            self._view_dimensions[0]: self.dim0_coords,
-            self._view_dimensions[1]: self.dim1_coords,
-            self._view_dimensions[2]: self.dim2_coords})
+        self._view_coordinates = copy.deepcopy(
+            {
+                self._view_dimensions[0]: self.dim0_coords,
+                self._view_dimensions[1]: self.dim1_coords,
+                self._view_dimensions[2]: self.dim2_coords,
+            }
+        )
 
         # set the shape of the cube
         self._H, self._L, self._W = self[_var].data.shape
@@ -710,17 +709,17 @@ class DataCube(BaseCube):
         CubeVariable : `~deltametrics.cube.CubeVariable`
             The instantiated CubeVariable.
         """
-        if var == 'time':  # special case for time
+        if var == "time":  # special case for time
             # use the name of the first dimension, to enable
             #   unlabeled np.ndarrays and flexible name for time
             dim0_name = self.dataio.dims[0]
             dim0_coord = np.array(self.dataio.dataset[dim0_name])
-            _t = np.expand_dims(dim0_coord,
-                                axis=(1, 2))
+            _t = np.expand_dims(dim0_coord, axis=(1, 2))
             _xrt = xr.DataArray(
                 np.tile(_t, (1, *self.shape[1:])),
                 coords=self._view_coordinates,
-                dims=self._view_dimensions)
+                dims=self._view_dimensions,
+            )
             _obj = _xrt
         elif var in self._coords:
             # ensure coords can be called by cube[var]
@@ -730,18 +729,18 @@ class DataCube(BaseCube):
             _obj = self._dataio.dataset[var]
 
         else:
-            raise AttributeError('No variable of {cube} named {var}'.format(
-                                 cube=str(self), var=var))
+            raise AttributeError(
+                "No variable of {cube} named {var}".format(cube=str(self), var=var)
+            )
 
         # make _obj xarray if it not already
         if isinstance(_obj, np.ndarray):
             _obj = xr.DataArray(
-                _obj,
-                coords=self._view_coordinates,
-                dims=self._view_dimensions)
+                _obj, coords=self._view_coordinates, dims=self._view_dimensions
+            )
         return _obj
 
-    def stratigraphy_from(self, variable='eta', style='mesh', **kwargs):
+    def stratigraphy_from(self, variable="eta", style="mesh", **kwargs):
         """Compute stratigraphy attributes.
 
         Parameters
@@ -764,14 +763,14 @@ class DataCube(BaseCube):
             include specification for vertical resolution in `Boxy` case,
             see :obj:_determine_strat_coordinates`.
         """
-        if style == 'mesh':
-            self.strat_attr = \
-                strat.MeshStratigraphyAttributes(elev=self[variable],
-                                                 **kwargs)
-        elif style == 'boxy':
-            self.strat_attr = \
-                strat.BoxyStratigraphyAttributes(elev=self[variable],
-                                                 **kwargs)
+        if style == "mesh":
+            self.strat_attr = strat.MeshStratigraphyAttributes(
+                elev=self[variable], **kwargs
+            )
+        elif style == "boxy":
+            self.strat_attr = strat.BoxyStratigraphyAttributes(
+                elev=self[variable], **kwargs
+            )
         else:
             raise ValueError('Bad "style" argument supplied: %s' % str(style))
         self._knows_stratigraphy = True
@@ -806,9 +805,16 @@ class StratigraphyCube(BaseCube):
     This is a special case of a cube.
 
     """
+
     @staticmethod
-    def from_DataCube(DataCubeInstance, stratigraphy_from='eta',
-                      sigma_dist=None, dz=None, z=None, nz=None):
+    def from_DataCube(
+        DataCubeInstance,
+        stratigraphy_from="eta",
+        sigma_dist=None,
+        dz=None,
+        z=None,
+        nz=None,
+    ):
         """Create from a DataCube.
 
         Examples
@@ -842,14 +848,27 @@ class StratigraphyCube(BaseCube):
         StratigraphyCubeInstance : :obj:`StratigraphyCube`
             The new `StratigraphyCube` instance.
         """
-        return StratigraphyCube(DataCubeInstance,
-                                varset=DataCubeInstance.varset,
-                                stratigraphy_from=stratigraphy_from,
-                                sigma_dist=sigma_dist, dz=dz, z=z, nz=nz)
+        return StratigraphyCube(
+            DataCubeInstance,
+            varset=DataCubeInstance.varset,
+            stratigraphy_from=stratigraphy_from,
+            sigma_dist=sigma_dist,
+            dz=dz,
+            z=z,
+            nz=nz,
+        )
 
-    def __init__(self, data, read=[], varset=None,
-                 stratigraphy_from=None, sigma_dist=None,
-                 dz=None, z=None, nz=None):
+    def __init__(
+        self,
+        data,
+        read=[],
+        varset=None,
+        stratigraphy_from=None,
+        sigma_dist=None,
+        dz=None,
+        z=None,
+        nz=None,
+    ):
         """Initialize the StratigraphicCube.
 
         Any instantiation pathway must configure :obj:`z`, :obj:`H`, :obj:`L`,
@@ -875,9 +894,9 @@ class StratigraphyCube(BaseCube):
         """
         super().__init__(data, read, varset)
         if isinstance(data, str):
-            raise NotImplementedError('Precomputed NetCDF?')
+            raise NotImplementedError("Precomputed NetCDF?")
         elif isinstance(data, np.ndarray):
-            raise NotImplementedError('Precomputed numpy array?')
+            raise NotImplementedError("Precomputed numpy array?")
         elif isinstance(data, DataCube):
             # i.e., creating from a DataCube
             _elev = copy.deepcopy(data[stratigraphy_from])
@@ -885,28 +904,32 @@ class StratigraphyCube(BaseCube):
             # set up coordinates of the array
             if sigma_dist is not None:
                 _elev_adj = strat._adjust_elevation_by_subsidence(
-                    _elev.data, sigma_dist)
+                    _elev.data, sigma_dist
+                )
             else:
                 _elev_adj = _elev.data
-            _z = strat._determine_strat_coordinates(
-                _elev_adj, dz=dz, z=z, nz=nz)
-            self._z = xr.DataArray(_z, name='z', dims=['z'], coords={'z': _z})
+            _z = strat._determine_strat_coordinates(_elev_adj, dz=dz, z=z, nz=nz)
+            self._z = xr.DataArray(_z, name="z", dims=["z"], coords={"z": _z})
             self._H = len(self.z)
             self._L, self._W = _elev.shape[1:]
             self._Z = np.tile(self.z, (self.W, self.L, 1)).T
             self._sigma_dist = sigma_dist
 
             _out = strat.compute_boxy_stratigraphy_coordinates(
-                _elev_adj, sigma_dist=None, z=_z, return_strata=True)
+                _elev_adj, sigma_dist=None, z=_z, return_strata=True
+            )
             self.strata_coords, self.data_coords, self.strata = _out
         else:
-            raise TypeError('No other input types implemented yet.')
+            raise TypeError("No other input types implemented yet.")
 
-        self._view_dimensions = ['z', *data._dataio.dims[1:]]
-        self._view_coordinates = copy.deepcopy({
-            self._view_dimensions[0]: self._z,
-            self._view_dimensions[1]: self.dim1_coords,
-            self._view_dimensions[2]: self.dim2_coords})
+        self._view_dimensions = ["z", *data._dataio.dims[1:]]
+        self._view_coordinates = copy.deepcopy(
+            {
+                self._view_dimensions[0]: self._z,
+                self._view_dimensions[1]: self.dim1_coords,
+                self._view_dimensions[2]: self.dim2_coords,
+            }
+        )
 
     def __getitem__(self, var):
         """Return the variable.
@@ -925,14 +948,13 @@ class StratigraphyCube(BaseCube):
         CubeVariable : `~deltametrics.cube.CubeVariable`
             The instantiated CubeVariable.
         """
-        if var == 'time':
+        if var == "time":
             # a special attribute we add, which matches eta.shape
             #   use the name of the first dimension, to enable
             #   unlabeled np.ndarrays and flexible name for time
             dim0_name = self.dataio.dims[0]
             dim0_coord = np.array(self.dataio[dim0_name])
-            _t = np.expand_dims(dim0_coord,
-                                axis=(1, 2))
+            _t = np.expand_dims(dim0_coord, axis=(1, 2))
             _arr = np.full(self.shape, np.nan)
             _var = np.tile(_t, (1, *self.shape[1:]))
         elif var in self._variables:
@@ -940,22 +962,24 @@ class StratigraphyCube(BaseCube):
             # _var = np.array(self.dataio[var], copy=True)
             _var = self.dataio[var]
         else:
-            raise AttributeError('No variable of {cube} named {var}'.format(
-                                 cube=str(self), var=var))
+            raise AttributeError(
+                "No variable of {cube} named {var}".format(cube=str(self), var=var)
+            )
 
         # the following lines apply the data to stratigraphy mapping
         if isinstance(_var, xr.core.dataarray.DataArray):
             _vardata = _var.data
         else:
             _vardata = _var
-        _cut = _vardata[self.data_coords[:, 0], self.data_coords[:, 1],
-                        self.data_coords[:, 2]]
-        _arr[self.strata_coords[:, 0], self.strata_coords[:, 1],
-             self.strata_coords[:, 2]] = _cut
+        _cut = _vardata[
+            self.data_coords[:, 0], self.data_coords[:, 1], self.data_coords[:, 2]
+        ]
+        _arr[
+            self.strata_coords[:, 0], self.strata_coords[:, 1], self.strata_coords[:, 2]
+        ] = _cut
         _obj = xr.DataArray(
-            _arr,
-            coords=self._view_coordinates,
-            dims=self._view_dimensions)
+            _arr, coords=self._view_coordinates, dims=self._view_dimensions
+        )
         return _obj
 
     @property
