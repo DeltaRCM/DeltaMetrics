@@ -376,6 +376,23 @@ class BaseCube(abc.ABC):
         ]  # dim0, 0
         return _extent
 
+    @property
+    def extent_flipud(self):
+        """The `extent`, reversed up-down for special plotting.
+
+        limits of the dim1 by dim2 plane,
+        """
+        _extent = self.extent
+        return [_extent[:2], _extent[3], _extent[2]]
+
+    @property
+    def extent_zeros(self):
+        """A dummy variable of zeros with shape of `extent`.
+
+        Returns an array of zeros with the shape of the cube.
+        """
+        return np.zeros((len(self._dim1_coords), len(self._dim2_coords)), dtype=float)
+
     def export_frozen_variable(self, var, return_cube=False):
         """Export a cube with frozen values.
 
