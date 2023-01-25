@@ -12,6 +12,7 @@ import matplotlib.collections as coll
 import mpl_toolkits.axes_grid1 as axtk
 
 from . import strat
+
 # from . import section
 
 # plotting utilities
@@ -90,26 +91,25 @@ class VariableInfo(object):
 
         """
         if not type(name) is str:
-            raise TypeError(
-                'name argument must be type `str`, but was %s' % type(name))
+            raise TypeError("name argument must be type `str`, but was %s" % type(name))
         self._name = name
 
-        self.cmap = kwargs.pop('cmap', mpl.colormaps['viridis'].resampled(64))  #  .get_cmap('viridis', 64))
-        self.label = kwargs.pop('label', None)
-        self.norm = kwargs.pop('norm', None)
-        self.vmin = kwargs.pop('vmin', None)
-        self.vmax = kwargs.pop('vmax', None)
+        self.cmap = kwargs.pop(
+            "cmap", mpl.colormaps["viridis"].resampled(64)
+        )  #  .get_cmap('viridis', 64))
+        self.label = kwargs.pop("label", None)
+        self.norm = kwargs.pop("norm", None)
+        self.vmin = kwargs.pop("vmin", None)
+        self.vmax = kwargs.pop("vmax", None)
 
     @property
     def name(self):
-        """Name for variable to access from.
-        """
+        """Name for variable to access from."""
         return self._name
 
     @property
     def cmap(self):
-        """Colormap to use to diplay the variable.
-        """
+        """Colormap to use to diplay the variable."""
         return self._cmap
 
     @cmap.setter
@@ -128,8 +128,7 @@ class VariableInfo(object):
 
     @property
     def label(self):
-        """How to display the variable name when plotting.
-        """
+        """How to display the variable name when plotting."""
         return self._label
 
     @label.setter
@@ -143,8 +142,7 @@ class VariableInfo(object):
 
     @property
     def norm(self):
-        """???
-        """
+        """???"""
         return self._norm
 
     @norm.setter
@@ -153,8 +151,7 @@ class VariableInfo(object):
 
     @property
     def vmin(self):
-        """Limit the colormap or axes to this lower-bound value.
-        """
+        """Limit the colormap or axes to this lower-bound value."""
         return self._vmin
 
     @vmin.setter
@@ -163,8 +160,7 @@ class VariableInfo(object):
 
     @property
     def vmax(self):
-        """Limit the colormap or axes to this upper-bound value.
-        """
+        """Limit the colormap or axes to this upper-bound value."""
         return self._vmax
 
     @vmax.setter
@@ -196,6 +192,7 @@ class VariableSet(object):
         <deltametrics.plot.VariableSet object at 0x...>
 
     """
+
     _after_init = False  # for "freezing" instance after init
 
     def __init__(self, override_dict=None):
@@ -228,11 +225,21 @@ class VariableSet(object):
             or an Mx3 numpy array that can be coerced into a linear colormap.
         """
 
-        _added_list = ['net_to_gross']
-        self.known_list = ['eta', 'stage', 'depth', 'discharge',
-                           'velocity', 'sedflux', 'strata_sand_frac',
-                           'sandfrac'] + \
-                          ['x', 'y', 'time'] + _added_list
+        _added_list = ["net_to_gross"]
+        self.known_list = (
+            [
+                "eta",
+                "stage",
+                "depth",
+                "discharge",
+                "velocity",
+                "sedflux",
+                "strata_sand_frac",
+                "sandfrac",
+            ]
+            + ["x", "y", "time"]
+            + _added_list
+        )
 
         self._variables = []
         for var in self.known_list:
@@ -242,9 +249,10 @@ class VariableSet(object):
 
         if override_dict:  # loop override to set if given
             if not type(override_dict) is dict:
-                raise TypeError('Invalid type for "override_dict".'
-                                'Must be type dict, but was type: %s '
-                                % type(override_dict))
+                raise TypeError(
+                    'Invalid type for "override_dict".'
+                    "Must be type dict, but was type: %s " % type(override_dict)
+                )
             for var in override_dict:
                 setattr(self, var, override_dict[var])
                 self._variables.append(var)
@@ -293,8 +301,7 @@ class VariableSet(object):
                 # add it to the list of variables
                 self._variables.append(key)
             else:
-                raise TypeError(
-                    'Can only set attributes of type VariableInfo.')
+                raise TypeError("Can only set attributes of type VariableInfo.")
 
     @property
     def x(self):
@@ -302,7 +309,7 @@ class VariableSet(object):
 
     @x.setter
     def x(self, var):
-        self._x = VariableInfo('x')
+        self._x = VariableInfo("x")
 
     @property
     def y(self):
@@ -310,18 +317,17 @@ class VariableSet(object):
 
     @y.setter
     def y(self, var):
-        self._y = VariableInfo('y')
+        self._y = VariableInfo("y")
 
     @property
     def time(self):
-        """Temporal history style.
-        """
+        """Temporal history style."""
         return self._time
 
     @time.setter
     def time(self, var):
         if not var:
-            self._time = VariableInfo('time')
+            self._time = VariableInfo("time")
         elif type(var) is VariableInfo:
             self._time = var
         else:
@@ -329,17 +335,15 @@ class VariableSet(object):
 
     @property
     def eta(self):
-        """Bed elevation style.
-        """
+        """Bed elevation style."""
         return self._eta
 
     @eta.setter
     def eta(self, var):
         if not var:
             # cmap = cm.get_cmap('cividis', 64)
-            cmap = mpl.colormaps['cividis'].resampled(64)
-            self._eta = VariableInfo('eta', cmap=cmap,
-                                     label='bed elevation')
+            cmap = mpl.colormaps["cividis"].resampled(64)
+            self._eta = VariableInfo("eta", cmap=cmap, label="bed elevation")
         elif type(var) is VariableInfo:
             self._eta = var
         else:
@@ -347,14 +351,13 @@ class VariableSet(object):
 
     @property
     def stage(self):
-        """Flow stage style.
-        """
+        """Flow stage style."""
         return self._stage
 
     @stage.setter
     def stage(self, var):
         if not var:
-            self._stage = VariableInfo('stage')
+            self._stage = VariableInfo("stage")
         elif type(var) is VariableInfo:
             self._stage = var
         else:
@@ -362,17 +365,15 @@ class VariableSet(object):
 
     @property
     def depth(self):
-        """Flow depth style.
-        """
+        """Flow depth style."""
         return self._depth
 
     @depth.setter
     def depth(self, var):
         if not var:
             # cmap = cm.get_cmap('Blues', 64)
-            cmap = mpl.colormaps['Blues'].resampled(64)
-            self._depth = VariableInfo('depth', cmap=cmap,
-                                       vmin=0, label='flow depth')
+            cmap = mpl.colormaps["Blues"].resampled(64)
+            self._depth = VariableInfo("depth", cmap=cmap, vmin=0, label="flow depth")
         elif type(var) is VariableInfo:
             self._depth = var
         else:
@@ -380,17 +381,17 @@ class VariableSet(object):
 
     @property
     def discharge(self):
-        """Flow discharge style.
-        """
+        """Flow discharge style."""
         return self._discharge
 
     @discharge.setter
     def discharge(self, var):
         if not var:
             # cmap = cm.get_cmap('winter', 64)
-            cmap = mpl.colormaps['winter'].resampled(64)
-            self._discharge = VariableInfo('discharge', cmap=cmap,
-                                           label='flow discharge')
+            cmap = mpl.colormaps["winter"].resampled(64)
+            self._discharge = VariableInfo(
+                "discharge", cmap=cmap, label="flow discharge"
+            )
         elif type(var) is VariableInfo:
             self._discharge = var
         else:
@@ -398,17 +399,15 @@ class VariableSet(object):
 
     @property
     def velocity(self):
-        """Flow velocity style.
-        """
+        """Flow velocity style."""
         return self._velocity
 
     @velocity.setter
     def velocity(self, var):
         if not var:
             # cmap = cm.get_cmap('plasma', 64)
-            cmap = mpl.colormaps['plasma'].resampled(64)
-            self._velocity = VariableInfo('velocity', cmap=cmap,
-                                          label='flow velocity')
+            cmap = mpl.colormaps["plasma"].resampled(64)
+            self._velocity = VariableInfo("velocity", cmap=cmap, label="flow velocity")
         elif type(var) is VariableInfo:
             self._velocity = var
         else:
@@ -416,17 +415,15 @@ class VariableSet(object):
 
     @property
     def sedflux(self):
-        """Flow sedflux style.
-        """
+        """Flow sedflux style."""
         return self._sedflux
 
     @sedflux.setter
     def sedflux(self, var):
         if not var:
             # cmap = cm.get_cmap('magma', 64)
-            cmap = mpl.colormaps['magma'].resampled(64)
-            self._sedflux = VariableInfo('sedflux', cmap=cmap,
-                                         label='sediment flux')
+            cmap = mpl.colormaps["magma"].resampled(64)
+            self._sedflux = VariableInfo("sedflux", cmap=cmap, label="sediment flux")
         elif type(var) is VariableInfo:
             self._sedflux = var
         else:
@@ -434,20 +431,23 @@ class VariableSet(object):
 
     @property
     def strata_sand_frac(self):
-        """Sand fraction style.
-        """
+        """Sand fraction style."""
         return self._strata_sand_frac
 
     @strata_sand_frac.setter
     def strata_sand_frac(self, var):
         if not var:
             sandfrac = colors.ListedColormap(
-                ['saddlebrown', 'sienna', 'goldenrod', 'gold'])
-            sandfrac.set_under('saddlebrown')
-            self._strata_sand_frac = VariableInfo('strata_sand_frac',
-                                                  cmap=sandfrac,
-                                                  norm=None, vmin=0,
-                                                  label='sand fraction')
+                ["saddlebrown", "sienna", "goldenrod", "gold"]
+            )
+            sandfrac.set_under("saddlebrown")
+            self._strata_sand_frac = VariableInfo(
+                "strata_sand_frac",
+                cmap=sandfrac,
+                norm=None,
+                vmin=0,
+                label="sand fraction",
+            )
         elif type(var) is VariableInfo:
             self._strata_sand_frac = var
         else:
@@ -455,25 +455,25 @@ class VariableSet(object):
 
     @property
     def sandfrac(self):
-        """Sand fraction style.
-        """
+        """Sand fraction style."""
         return self._sandfrac
 
     @sandfrac.setter
     def sandfrac(self, var):
         if not var:
-            ends_str = ['saddlebrown',  'gold']  # define end points as strs
+            ends_str = ["saddlebrown", "gold"]  # define end points as strs
             endpts_colors = [colors.to_rgb(col) for col in ends_str]
             endpts_colors = np.column_stack(  # interpolate 64 between end pts
-                [np.linspace(endpts_colors[0][i], endpts_colors[1][i], num=64)
-                 for i in range(3)]  # for each column in RGB
-                 )
+                [
+                    np.linspace(endpts_colors[0][i], endpts_colors[1][i], num=64)
+                    for i in range(3)
+                ]  # for each column in RGB
+            )
             sand_frac = colors.ListedColormap(endpts_colors)
-            sand_frac.set_under('saddlebrown')
-            self._sandfrac = VariableInfo('sandfrac',
-                                          cmap=sand_frac,
-                                          norm=None, vmin=0,
-                                          label='sand fraction')
+            sand_frac.set_under("saddlebrown")
+            self._sandfrac = VariableInfo(
+                "sandfrac", cmap=sand_frac, norm=None, vmin=0, label="sand fraction"
+            )
         elif type(var) is VariableInfo:
             self._sandfrac = var
         else:
@@ -486,7 +486,7 @@ class VariableSet(object):
     @strata_depth.setter
     def strata_depth(self, var):
         if not var:
-            self._strata_depth = VariableInfo('strata_depth')
+            self._strata_depth = VariableInfo("strata_depth")
         elif type(var) is VariableInfo:
             self._strata_depth = var
         else:
@@ -494,8 +494,7 @@ class VariableSet(object):
 
     @property
     def net_to_gross(self):
-        """Net-to-gross style.
-        """
+        """Net-to-gross style."""
         return self._net_to_gross
 
     @net_to_gross.setter
@@ -504,16 +503,17 @@ class VariableSet(object):
             # oranges = cm.get_cmap('Oranges', 64)
             # greys = cm.get_cmap('Greys_r', 64)
             # whiteblack = cm.get_cmap('Greys', 2)
-            oranges = mpl.colormaps['Oranges'].resampled(64)
-            greys = mpl.colormaps['Greys_r'].resampled(64)
-            whiteblack = mpl.colormaps['Greys'].resampled(2)
-            combined = np.vstack((greys(np.linspace(0.3, 0.6, 2)),
-                                  oranges(np.linspace(0.2, 0.8, 6))))
-            ntgcmap = colors.ListedColormap(combined, name='net_to_gross')
+            oranges = mpl.colormaps["Oranges"].resampled(64)
+            greys = mpl.colormaps["Greys_r"].resampled(64)
+            whiteblack = mpl.colormaps["Greys"].resampled(2)
+            combined = np.vstack(
+                (greys(np.linspace(0.3, 0.6, 16)), oranges(np.linspace(0.2, 0.8, 48)))
+            )
+            ntgcmap = colors.ListedColormap(combined, name="net_to_gross")
             ntgcmap.set_bad("white", alpha=0)
-            self._net_to_gross = VariableInfo('net_to_gross',
-                                              cmap=ntgcmap,
-                                              label='net-to-gross')
+            self._net_to_gross = VariableInfo(
+                "net_to_gross", cmap=ntgcmap, label="net-to-gross"
+            )
         elif type(var) is VariableInfo:
             self.__net_to_gross = var
         else:
@@ -572,15 +572,16 @@ def cartographic_colormap(H_SL=0.0, h=4.5, n=1.0):
         cb1 = dm.plot.append_colorbar(im1, ax[1])
         plt.show()
     """
-    blues = mpl.colormaps['Blues_r'].resampled(64)
-    greens = mpl.colormaps['YlGn_r'].resampled(64)
-    combined = np.vstack((blues(np.linspace(0.1, 0.7, 5)),
-                          greens(np.linspace(0.2, 0.8, 5))))
-    delta = colors.ListedColormap(combined, name='delta')
+    blues = mpl.colormaps["Blues_r"].resampled(64)
+    greens = mpl.colormaps["YlGn_r"].resampled(64)
+    combined = np.vstack(
+        (blues(np.linspace(0.1, 0.7, 5)), greens(np.linspace(0.2, 0.8, 5)))
+    )
+    delta = colors.ListedColormap(combined, name="delta")
     bounds = np.hstack(
-        (np.linspace(H_SL-h, H_SL-(h/2), 5),
-         np.linspace(H_SL, H_SL+n, 6)))
-    norm = colors.BoundaryNorm(bounds, len(bounds)-1)
+        (np.linspace(H_SL - h, H_SL - (h / 2), 5), np.linspace(H_SL, H_SL + n, 6))
+    )
+    norm = colors.BoundaryNorm(bounds, len(bounds) - 1)
     return delta, norm
 
 
@@ -626,7 +627,7 @@ def append_colorbar(ci, ax, size=2, pad=2, labelsize=9, **kwargs):
         The colorbar instance created.
     """
     divider = axtk.axes_divider.make_axes_locatable(ax)
-    cax = divider.append_axes("right", size=str(size)+"%", pad=str(pad)+"%")
+    cax = divider.append_axes("right", size=str(size) + "%", pad=str(pad) + "%")
     cb = plt.colorbar(ci, cax=cax, **kwargs)
     cb.ax.tick_params(labelsize=labelsize)
     ax.use_sticky_edges = False
@@ -684,16 +685,16 @@ def style_axes_km(*args):
             which = args[1]
         else:
             # default is to apply to both xy
-            which = 'xy'
+            which = "xy"
         # recursive calls to this func!
-        if 'x' in which:
+        if "x" in which:
             ax.xaxis.set_major_formatter(style_axes_km)
-        if 'y' in which:
+        if "y" in which:
             ax.yaxis.set_major_formatter(style_axes_km)
 
     else:
         v = args[0]
-        return f'{v / 1000.:g}'
+        return f"{v / 1000.:g}"
 
 
 def get_display_arrays(VarInst, data=None):
@@ -727,13 +728,13 @@ def get_display_arrays(VarInst, data=None):
         x-coordinates and 3) display y-coordinates.
     """
     # # #  SectionVariables  # # #
-    if VarInst.slicetype == 'data_section':
+    if VarInst.slicetype == "data_section":
         # #  DataSection  # #
-        data = data or 'spacetime'
+        data = data or "spacetime"
         if data in VarInst.strat._spacetime_names:
             _z = VarInst[VarInst.dims[0]]
             _z = np.append(_z, _z[-1])
-            _s = VarInst['s']
+            _s = VarInst["s"]
             _s = np.append(_s, _s[-1])
             _S, _Z = np.meshgrid(_s, _z)
             return VarInst.values, _S, _Z
@@ -741,7 +742,7 @@ def get_display_arrays(VarInst, data=None):
             VarInst.strat._check_knows_spacetime()
             _z = VarInst[VarInst.dims[0]]
             _z = np.append(_z, _z[-1])
-            _s = VarInst['s']
+            _s = VarInst["s"]
             _s = np.append(_s, _s[-1])
             _S, _Z = np.meshgrid(_s, _z)
             return VarInst.strat.as_preserved(), _S, _Z
@@ -756,7 +757,7 @@ def get_display_arrays(VarInst, data=None):
             _den = _sp.toarray()
 
             # grab the y values for the array
-            _arr_Y = VarInst.strat.strat_attr['psvd_flld'][:_sp.shape[0], ...]
+            _arr_Y = VarInst.strat.strat_attr["psvd_flld"][: _sp.shape[0], ...]
 
             # fix the bottom rows
             _den[0, ...] = _den[1, ...]
@@ -766,21 +767,21 @@ def get_display_arrays(VarInst, data=None):
             # not figured this out yet...
 
             # pad the arrays to be data+1 in both dims
-            _arr_X = np.tile(VarInst['s'], (_sp.shape[0], 1))
-            _arr_Y = np.pad(_arr_Y, ((0, 0), (0, 1)), mode='edge')
+            _arr_X = np.tile(VarInst["s"], (_sp.shape[0], 1))
+            _arr_Y = np.pad(_arr_Y, ((0, 0), (0, 1)), mode="edge")
             _z = VarInst[VarInst.dims[0]]
 
             # prepend the data with the lowest depth recorded to fill out image
             _p = np.min(_arr_Y) * np.ones((_arr_Y.shape[1]))  # prepend base
             _arr_Y = np.vstack((_p, _arr_Y))
-            _arr_X = np.pad(_arr_X, ((0, 1), (0, 1)), mode='edge')
+            _arr_X = np.pad(_arr_X, ((0, 1), (0, 1)), mode="edge")
             return _den, _arr_X, _arr_Y
         else:
-            raise ValueError('Bad data argument: %s' % str(data))
+            raise ValueError("Bad data argument: %s" % str(data))
 
-    elif VarInst.slicetype == 'stratigraphy_section':
+    elif VarInst.slicetype == "stratigraphy_section":
         # #  StratigraphySection  # #
-        data = data or 'stratigraphy'
+        data = data or "stratigraphy"
         if data in VarInst.strat._spacetime_names:
             VarInst.strat._check_knows_spacetime()  # always False
         elif data in VarInst.strat._preserved_names:
@@ -788,12 +789,12 @@ def get_display_arrays(VarInst, data=None):
         elif data in VarInst.strat._stratigraphy_names:
             _z = VarInst[VarInst.dims[0]]
             _z = np.append(_z, _z[-1])
-            _s = VarInst['s']
+            _s = VarInst["s"]
             _s = np.append(_s, _s[-1])
             _S, _Z = np.meshgrid(_s, _z)
             return VarInst, _S, _Z
         else:
-            raise ValueError('Bad data argument: %s' % str(data))
+            raise ValueError("Bad data argument: %s" % str(data))
 
     # # #  PlanformVariables  # # #
     elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
@@ -835,14 +836,16 @@ def get_display_lines(VarInst, data=None):
         dimension of the array.
     """
     # # #  SectionVariables  # # #
-    if VarInst.slicetype == 'data_section':
+    if VarInst.slicetype == "data_section":
         # #  DataSection  # #
         def _reshape_long(X):
             # util for reshaping s- and z-values appropriately
-            return np.vstack((X[:, :-1].flatten(),
-                              X[:, 1:].flatten())).T.reshape(-1, 2, 1)
-        data = data or 'spacetime'
-        _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+            return np.vstack((X[:, :-1].flatten(), X[:, 1:].flatten())).T.reshape(
+                -1, 2, 1
+            )
+
+        data = data or "spacetime"
+        _S, _Z = np.meshgrid(VarInst["s"], VarInst[VarInst.dims[0]])
         if data in VarInst.strat._spacetime_names:
             z = _reshape_long(_Z)
             vals = VarInst[:, :-1]
@@ -851,10 +854,10 @@ def get_display_lines(VarInst, data=None):
             vals = VarInst.strat.as_preserved()[:, :-1]
         elif data in VarInst.strat._stratigraphy_names:
             VarInst.strat._check_knows_stratigraphy()  # need to check explicitly
-            z = _reshape_long(np.copy(VarInst.strat.strat_attr['strata']))
+            z = _reshape_long(np.copy(VarInst.strat.strat_attr["strata"]))
             vals = VarInst[:, :-1]
         else:
-            raise ValueError('Bad data argument: %s' % str(data))
+            raise ValueError("Bad data argument: %s" % str(data))
         s = _reshape_long(_S)
         segments = np.concatenate([s, z], axis=2)
         if data in VarInst.strat._stratigraphy_names:
@@ -863,9 +866,9 @@ def get_display_lines(VarInst, data=None):
             segments = np.flipud(segments)
         return np.array(vals), segments
 
-    elif VarInst.slicetype == 'stratigraphy_section':
+    elif VarInst.slicetype == "stratigraphy_section":
         # #  StratigraphySection  # #
-        data = data or 'stratigraphy'
+        data = data or "stratigraphy"
         if data in VarInst.strat._spacetime_names:
             VarInst.strat._check_knows_spacetime()  # always False
         elif data in VarInst.strat._preserved_names:
@@ -873,7 +876,7 @@ def get_display_lines(VarInst, data=None):
         elif data in VarInst.strat._stratigraphy_names:
             raise NotImplementedError  # not sure best implementation
         else:
-            raise ValueError('Bad data argument: %s' % str(data))
+            raise ValueError("Bad data argument: %s" % str(data))
 
     # # #  PlanformVariables  # # #
     elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
@@ -912,38 +915,34 @@ def get_display_limits(VarInst, data=None, factor=1.5):
         ``ax.set_xlim((xmin, xmax))``.
     """
     # # #  SectionVariables  # # #
-    if VarInst.slicetype == 'data_section':
+    if VarInst.slicetype == "data_section":
         # #  DataSection  # #
-        data = data or 'spacetime'
-        _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+        data = data or "spacetime"
+        _S, _Z = np.meshgrid(VarInst["s"], VarInst[VarInst.dims[0]])
         if data in VarInst.strat._spacetime_names:
-            return np.min(_S), np.max(_S), \
-                np.min(_Z), np.max(_Z)
+            return np.min(_S), np.max(_S), np.min(_Z), np.max(_Z)
         elif data in VarInst.strat._preserved_names:
             VarInst.strat._check_knows_stratigraphy()  # need to check explicitly
-            return np.min(_S), np.max(_S), \
-                np.min(_Z), np.max(_Z)
+            return np.min(_S), np.max(_S), np.min(_Z), np.max(_Z)
         elif data in VarInst.strat._stratigraphy_names:
             VarInst.strat._check_knows_stratigraphy()  # need to check explicitly
-            _strata = np.copy(VarInst.strat.strat_attr['strata'])
-            return np.min(_S), np.max(_S), \
-                np.min(_strata), np.max(_strata) * factor
+            _strata = np.copy(VarInst.strat.strat_attr["strata"])
+            return np.min(_S), np.max(_S), np.min(_strata), np.max(_strata) * factor
         else:
-            raise ValueError('Bad data argument: %s' % str(data))
+            raise ValueError("Bad data argument: %s" % str(data))
 
-    elif VarInst.slicetype == 'stratigraphy_section':
+    elif VarInst.slicetype == "stratigraphy_section":
         # #  StratigraphySection  # #
-        data = data or 'stratigraphy'
-        _S, _Z = np.meshgrid(VarInst['s'], VarInst[VarInst.dims[0]])
+        data = data or "stratigraphy"
+        _S, _Z = np.meshgrid(VarInst["s"], VarInst[VarInst.dims[0]])
         if data in VarInst.strat._spacetime_names:
             VarInst.strat._check_knows_spacetime()  # always False
         elif data in VarInst.strat._preserved_names:
             VarInst.strat._check_knows_spacetime()  # always False
         elif data in VarInst.strat._stratigraphy_names:
-            return np.min(_S), np.max(_S), \
-                np.min(_Z), np.max(_Z) * factor
+            return np.min(_S), np.max(_S), np.min(_Z), np.max(_Z) * factor
         else:
-            raise ValueError('Bad data argument: %s' % str(data))
+            raise ValueError("Bad data argument: %s" % str(data))
 
     # # #  PlanformVariables  # # #
     elif False:  # issubclass(type(VarInst), plan.BasePlanformVariable):
@@ -996,11 +995,16 @@ def _fill_steps(where, x=1, y=1, y0=0, **kwargs):
     return coll.PatchCollection(pl, match_original=True)
 
 
-def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
-                                              dz=None, z=None,
-                                              nz=None, ax=None,
-                                              show_strata=True,
-                                              label_strata=False):
+def show_one_dimensional_trajectory_to_strata(
+    e,
+    sigma_dist=None,
+    dz=None,
+    z=None,
+    nz=None,
+    ax=None,
+    show_strata=True,
+    label_strata=False,
+):
     """1d elevation to stratigraphy.
 
     This function creates and displays a one-dimensional elevation timeseries
@@ -1085,21 +1089,26 @@ def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
         fig, ax = plt.subplots()
     # timeseries plot
     pt = np.zeros_like(t)  # for psvd timesteps background
-    pt[np.union1d(p.nonzero()[0], np.array(
-        strat._compute_preservation_to_time_intervals(p).nonzero()[0]))] = 1
-    ax.add_collection(_fill_steps(p, x=1, y=np.max(e_in) - np.min(e),
-                                  y0=np.min(e), facecolor='0.8'))
-    ax.add_patch(ptch.Rectangle((0, 0), 0, 0, facecolor='0.8',
-                                label='psvd timesteps'))  # add for lgnd
-    ax.hlines(s[p], 0, e.shape[0], linestyles='dashed', colors='0.7')
-    ax.axvline(lst, c='k')
-    ax.step(t, e_in, where='post', label='elevation')
-    ax.step(t, s, linestyle='--', where='post', label='stratigraphy')
-    ax.plot(t[p], s[p], color='0.5', marker='o',
-            ls='none', label='psvd time')
+    pt[
+        np.union1d(
+            p.nonzero()[0],
+            np.array(strat._compute_preservation_to_time_intervals(p).nonzero()[0]),
+        )
+    ] = 1
+    ax.add_collection(
+        _fill_steps(p, x=1, y=np.max(e_in) - np.min(e), y0=np.min(e), facecolor="0.8")
+    )
+    ax.add_patch(
+        ptch.Rectangle((0, 0), 0, 0, facecolor="0.8", label="psvd timesteps")
+    )  # add for lgnd
+    ax.hlines(s[p], 0, e.shape[0], linestyles="dashed", colors="0.7")
+    ax.axvline(lst, c="k")
+    ax.step(t, e_in, where="post", label="elevation")
+    ax.step(t, s, linestyle="--", where="post", label="stratigraphy")
+    ax.plot(t[p], s[p], color="0.5", marker="o", ls="none", label="psvd time")
     if len(t) < 100:
         ax.xaxis.set_minor_locator(ticker.MultipleLocator(1))
-    ax.grid(which='both', axis='x')
+    ax.grid(which="both", axis="x")
 
     if show_strata:
         # boxy strata plot
@@ -1109,17 +1118,30 @@ def show_one_dimensional_trajectory_to_strata(e, sigma_dist=None,
         ax_s.xaxis.set_visible(False)
         __x, __y = np.meshgrid(np.array([0, 1]), z_disp)
         # _colmap = plt.cm.get_cmap('viridis', e.shape[0])
-        _colmap = mpl.colormaps['viridis'].resampled(e.shape[0])
-        ax_s.pcolormesh(__x, __y, cp,
-                        cmap=_colmap, vmin=0, vmax=e.shape[0],
-                        rasterized=True, shading='flat')
-        ax_s.hlines(e[p], 0, 1, linestyles='dashed', colors='gray')
-        _cstr = [str(int(cc)) if np.isfinite(cc) else 'nan' for cc in c.flatten()]
+        _colmap = mpl.colormaps["viridis"].resampled(e.shape[0])
+        ax_s.pcolormesh(
+            __x,
+            __y,
+            cp,
+            cmap=_colmap,
+            vmin=0,
+            vmax=e.shape[0],
+            rasterized=True,
+            shading="flat",
+        )
+        ax_s.hlines(e[p], 0, 1, linestyles="dashed", colors="gray")
+        _cstr = [str(int(cc)) if np.isfinite(cc) else "nan" for cc in c.flatten()]
         ax_s.set_xlim(0, 1)
         if label_strata:
             for i, __cstr in enumerate(_cstr[:-1]):
-                ax_s.text(0.5, z[i]+((z[i+1]-z[i])/2), str(__cstr),
-                          fontsize=8, ha='center', va='center')
+                ax_s.text(
+                    0.5,
+                    z[i] + ((z[i + 1] - z[i]) / 2),
+                    str(__cstr),
+                    fontsize=8,
+                    ha="center",
+                    va="center",
+                )
 
     # adjust and add legend
     if np.any(e < 0):
@@ -1227,7 +1249,7 @@ def show_histograms(*args, sets=None, ax=None, **kwargs):
     if not ax:
         fig, ax = plt.subplots()
 
-    if (sets is None):
+    if sets is None:
         n_sets = len(args)
         sets = np.arange(n_sets)
     else:
@@ -1235,24 +1257,36 @@ def show_histograms(*args, sets=None, ax=None, **kwargs):
         sets = np.array(sets)
 
     if len(sets) != len(args):
-        raise ValueError(
-            'Number of histogram tuples must match length of `sets` list.')
+        raise ValueError("Number of histogram tuples must match length of `sets` list.")
 
     for i in range(n_sets):
-        CN = 'C%d' % (i)
+        CN = "C%d" % (i)
         match = np.where((sets == i))[0]
         scales = np.linspace(0.8, 1.2, num=len(match))
         CNs = [_scale_lightness(colors.to_rgb(CN), sc) for s, sc in enumerate(scales)]
         for n in range(len(match)):
             hist, bins = args[match[n]]
-            bin_width = (bins[1:] - bins[:-1])
-            bin_cent = bins[:-1] + (bin_width/2)
-            ax.bar(bin_cent, hist, width=bin_width,
-                   edgecolor=CNs[n], facecolor=CNs[n], **kwargs)
+            bin_width = bins[1:] - bins[:-1]
+            bin_cent = bins[:-1] + (bin_width / 2)
+            ax.bar(
+                bin_cent,
+                hist,
+                width=bin_width,
+                edgecolor=CNs[n],
+                facecolor=CNs[n],
+                **kwargs,
+            )
 
 
-def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
-                colorbar_kw={}, return_im=False, **kwargs):
+def aerial_view(
+    elevation_data,
+    datum=0,
+    ax=None,
+    ticks=False,
+    colorbar_kw={},
+    return_im=False,
+    **kwargs,
+):
     """Show an aerial plot of an elevation dataset.
 
     See also: implementation wrapper for a cube.
@@ -1310,27 +1344,27 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
         fig, ax = plt.subplots()
 
     # process to make a cmap
-    h = kwargs.pop('h', 3)
-    n = kwargs.pop('n', 1)
+    h = kwargs.pop("h", 3)
+    n = kwargs.pop("n", 1)
     carto_cm, carto_norm = cartographic_colormap(H_SL=0, h=h, n=n)
 
     # get the extent to plot
     if isinstance(elevation_data, xr.core.dataarray.DataArray):
         d0, d1 = elevation_data.dims
         d0_arr, d1_arr = elevation_data[d0], elevation_data[d1]
-        _extent = [d1_arr[0],                  # dim1, 0
-                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
-                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
-                   d0_arr[0]]                  # dim0, 0
+        _extent = [
+            d1_arr[0],  # dim1, 0
+            d1_arr[-1] + d1_arr[1],  # dim1, end + dx
+            d0_arr[-1] + d0_arr[1],  # dim0, end + dx
+            d0_arr[0],
+        ]  # dim0, 0
     else:
-        _extent = [0, elevation_data.shape[1],
-                   elevation_data.shape[0], 0]
+        _extent = [0, elevation_data.shape[1], elevation_data.shape[0], 0]
 
     # plot the data
     im = ax.imshow(
-        elevation_data - datum,
-        cmap=carto_cm, norm=carto_norm,
-        extent=_extent, **kwargs)
+        elevation_data - datum, cmap=carto_cm, norm=carto_norm, extent=_extent, **kwargs
+    )
 
     cb = append_colorbar(im, ax, **colorbar_kw)
     if not ticks:
@@ -1343,8 +1377,14 @@ def aerial_view(elevation_data, datum=0, ax=None, ticks=False,
         return cb
 
 
-def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
-                         alpha_clip=(None, 90), clip_type='percentile'):
+def overlay_sparse_array(
+    sparse_array,
+    ax=None,
+    cmap="Reds",
+    alpha_clip=(None, 90),
+    clip_type="percentile",
+    **kwargs,
+):
     """Convenient plotting method to overlay a sparse 2D array on an image.
 
     Should only be used with data arrays that are sparse: i.e., where many
@@ -1441,20 +1481,20 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
     # check this is a tuple or list
     if isinstance(alpha_clip, tuple) or isinstance(alpha_clip, list):
         if len(alpha_clip) != 2:
-            raise ValueError(
-                '`alpha_clip` must be tuple or list of length 2.')
+            raise ValueError("`alpha_clip` must be tuple or list of length 2.")
     else:  # if it is a tuple, check the length
         raise TypeError(
-            '`alpha_clip` must be type `tuple`, '
-            'but was type {0}.'.format(type(alpha_clip)))
+            "`alpha_clip` must be type `tuple`, "
+            "but was type {0}.".format(type(alpha_clip))
+        )
 
     # check the clip_type flag
-    clip_type_allow = ['percentile', 'value']
+    clip_type_allow = ["percentile", "value"]
     if clip_type not in clip_type_allow:
         raise ValueError(
-            'Bad value given for `clip_type` argument. Input argument must '
-            'be one of `{0}`, but was `{1}`'.format(
-                clip_type_allow, clip_type))
+            "Bad value given for `clip_type` argument. Input argument must "
+            "be one of `{0}`, but was `{1}`".format(clip_type_allow, clip_type)
+        )
 
     # pull the cmap out
     if isinstance(cmap, str):
@@ -1464,50 +1504,51 @@ def overlay_sparse_array(sparse_array, ax=None, cmap='Reds',
         cmap = cmap
 
     # get the extent to plot
+    if "extent" in kwargs:
+        _extent = kwargs.pop("extent")
     if isinstance(sparse_array, xr.core.dataarray.DataArray):
         d0, d1 = sparse_array.dims
         d0_arr, d1_arr = sparse_array[d0], sparse_array[d1]
-        _extent = [d1_arr[0],                  # dim1, 0
-                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
-                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
-                   d0_arr[0]]                  # dim0, 0
+        _extent = [
+            d1_arr[0],  # dim1, 0
+            d1_arr[-1] + d1_arr[1],  # dim1, end + dx
+            d0_arr[-1] + d0_arr[1],  # dim0, end + dx
+            d0_arr[0],
+        ]  # dim0, 0
     else:
-        _extent = [0, sparse_array.shape[1],
-                   sparse_array.shape[0], 0]
+        _extent = [0, sparse_array.shape[1], sparse_array.shape[0], 0]
 
     # process the clip field
     #  if first argument is given and percentile
-    if (not (alpha_clip[0] is None)) and (clip_type == 'percentile'):
+    if (not (alpha_clip[0] is None)) and (clip_type == "percentile"):
         amin = np.nanpercentile(sparse_array, alpha_clip[0])
     #  if first argument is given and value
-    elif (not (alpha_clip[0] is None)) and (clip_type == 'value'):
+    elif (not (alpha_clip[0] is None)) and (clip_type == "value"):
         amin = alpha_clip[0]
     #  if first argument is not given
     else:
         amin = np.nanmin(sparse_array)
     #  if second argument is given and percentile
-    if (not (alpha_clip[1] is None)) and (clip_type == 'percentile'):
+    if (not (alpha_clip[1] is None)) and (clip_type == "percentile"):
         amax = np.nanpercentile(sparse_array, alpha_clip[1])
     #  if second argument is given and value
-    elif (not (alpha_clip[1] is None)) and (clip_type == 'value'):
+    elif (not (alpha_clip[1] is None)) and (clip_type == "value"):
         amax = alpha_clip[1]
     #  if second argument is not given
     else:
         amax = np.nanmax(sparse_array)
 
     # normalize the alpha channel
-    alphas = colors.Normalize(
-        amin, amax, clip=True)(sparse_array)  # Normalize alphas
+    alphas = colors.Normalize(amin, amax, clip=True)(sparse_array)  # Normalize alphas
 
     # normalize the colors
-    ncolors = colors.Normalize(
-        np.nanmin(sparse_array),
-        np.nanmax(sparse_array))(sparse_array)  # Normalize colors
+    ncolors = colors.Normalize(np.nanmin(sparse_array), np.nanmax(sparse_array))(
+        sparse_array
+    )  # Normalize colors
 
     ncolors = cmap(ncolors)
     ncolors[..., -1] = alphas
 
-    im = ax.imshow(
-        ncolors, extent=_extent)
+    im = ax.imshow(ncolors, extent=_extent, **kwargs)
 
     return im
