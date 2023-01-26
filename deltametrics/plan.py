@@ -1491,6 +1491,152 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
         return np.nanmean(_dists), np.nanstd(_dists)
 
 
+def _determine_equally_spaced_azimuths(*args, **kwargs):
+    """Helper to determine equally spaced azimuths for other computations.
+
+    Parameters
+    ----------
+    num : :obj:`int` or :obj:`float`
+        Number of azimuths to return. Coerced to `int`.
+
+    start : :obj:`float`
+        Starting azimuth.
+
+    end : :obj:`float`
+        Ending azimuth.
+
+    buffered
+        Whether `start` and `end` represent the bounds for the calculation and
+        should be buffered before the first and last azimuth, or if `start`
+        and `end` are the actual end points of the azimuth array. This is
+        helpful when `start` and `end` represent model or experimental domain
+        edges. Default is `True`, include buffer.
+
+    .. doctest::
+
+        >>> _determine_equally_spaced_azimuths(3, 0, 180, buffered=False)
+        [  0.  90. 180.]
+
+        >>> _determine_equally_spaced_azimuths(3, 0, 180, buffered=True)
+        [ 45.  90. 135.]
+
+        >>> _determine_equally_spaced_azimuths(
+        ...     num=5, start=22.5, end=157.5, buffered=True)
+        [ 45.   67.5  90.  112.5 135. ]
+
+        >>> _determine_equally_spaced_azimuths()
+        [ 15.  30.  45.  60.  75.  90. 105. 120. 135. 150. 165.]
+
+    """
+    # process the input arguments
+    if len(args) > 0:
+        # must specify all four as args
+        if len(args) != 4:
+            raise ValueError(
+                "Must specify all four arguments as positional, "
+                "if specifying any as positional."
+            )
+        # unpack args
+        num, start, end, buffered = args[0], args[1], args[2], args[3]
+    else:
+        # arguments have been specified as keywords or use defaults
+        num = kwargs.pop("num", 11)
+        start = kwargs.pop("start", 0)
+        end = kwargs.pop("end", 180)
+        buffered = kwargs.pop("buffered", True)
+
+    # create the azimuths
+    if buffered:
+        azimuths = np.linspace(start, end, num + 2, dtype=float)
+        azimuths = azimuths[1:-1]
+    else:
+        azimuths = np.linspace(start, end, num, dtype=float)
+    return azimuths
+
+
+def compute_shoreline_radius(shore_mask, origin=[0, 0], return_radii=False, **kwargs):
+    """Radially-averaged shoreline radius.
+
+    .. note::
+
+        In implementation, this metric uses the last (farthest) intersection
+        of the radial section at `azimuth` and the shoreline mask.
+
+    See also:
+        :obj:`compute_shoreline_distance`.
+    """
+    azimuths = _determine_equally_spaced_azimuths(**kwargs)
+    radii = np.zeros((len(azimuths),))
+    # note:
+    for a, azimuth in enumerate(azimuths):
+        a_section = dm.section.RadialSection(
+            cube, azimuth=azimuth, origin_idx=[0, eta_diff.shape[1] // 2]
+        )
+
+        # find where interescts shoreline mask
+        shoreline_mask_alongsection = deposit_percentile_line[
+            a_section.trace_idx[:, 0], a_section.trace_idx[:, 1]
+        ]
+        where_intersects = np.nonzero(shoreline_mask_alongsection)[0]
+        if where_intersects.size > 0:
+            radii[a] = a_section.s[where_intersects[-1]]
+        else:
+            radii[a] = np.nan
+
+    if return_radii:
+        return np.nanmean(slopes), np.nanstd(slopes), slopes
+    else:
+        return np.nanmean(slopes), np.nanstd(slopes)
+
+
+def compute_topset_slope(
+    shore_mask,
+    elevation_data,
+    origin=[0, 0],
+    elevation_threshold=0,
+    point_threshold=5,
+    return_slopes=False,
+):
+    """
+
+    Parameters
+    ----------
+
+    point_threshold
+        How many points above sea level must be identified in order to fit a
+        line.
+    """
+    azimuths = _determine_equally_spaced_azimuths(**kwargs)
+    slopes = np.zeros((len(azimuths),))
+    for a, azimuth in enumerate(azimuths):
+        a_section = dm.section.RadialSection(
+            cube, azimuth=azimuth, origin_idx=[0, eta_diff.shape[1] // 2]
+        )
+
+        _HSL = cube.meta["H_SL"][t_idx].data
+        yvalues = np.array(a_section["eta"][t_idx, :])
+        xvalues = np.array(a_section.s)
+        if np.isnan(_HSL):
+            # is no sea level, take locations where deposited
+            _keep_bool = yvalues > a_section["eta"][0, :]
+        else:
+            # if sea level, take locations where above sl
+            _keep_bool = yvalues > (_HSL - 0.25)
+        yvalues_above = yvalues[_keep_bool]
+        xvalues_above = xvalues[_keep_bool]
+
+        if xvalues_above.size > point_threshold:
+            m, b = np.polyfit(xvalues_above, yvalues_above, 1)
+        else:
+            m = np.nan
+        slopes[a] = m
+
+    if return_slopes:
+        return np.nanmean(slopes), np.nanstd(slopes), slopes
+    else:
+        return np.nanmean(slopes), np.nanstd(slopes)
+
+
 @njit
 def _compute_angles_between(c1, shoreandborder, Shallowsea, numviews):
     """Private helper for shaw_opening_angle_method.
