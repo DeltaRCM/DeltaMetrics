@@ -192,6 +192,7 @@ class BaseSection(abc.ABC):
         self._shape = None
         self._variables = None
         self._underlying = None
+        self._underlying_type = None
 
         self.section_type = section_type
         self._name = name  # default `name` is None
@@ -254,15 +255,6 @@ class BaseSection(abc.ABC):
                 "but received was {_gottype}.".format(_gottype=type(InputInstance))
             )
 
-            # elif issubclass(type(layout_from), mask.BaseMask):
-
-            # elif issubclass(type(layout_from), plan.BasePlanform):
-            #     raise NotImplementedError("Not implemented but should be possible.")
-            # else:
-            #     raise ValueError(
-            #         f"`layout_from` was type {type(layout_from)}. Not expected and not implemented."
-            #     )
-
         self.name = name  # use the setter to determine the _name
         self._compute_section_coords()
         self._compute_section_attrs()
@@ -315,11 +307,14 @@ class BaseSection(abc.ABC):
         Compute the along-section coordinate array from dimensions in the
         cube (`dim1`, `dim2`) definining the section.
         """
+        underlying_dx = float(
+            self._underlying_dim1_coords[1] - self._underlying_dim1_coords[0]
+        )
         self._trace_idx = np.column_stack((self._dim1_idx, self._dim2_idx))
         self._trace = np.column_stack(
             (
-                self._underlying_dim2_coords[self._dim2_idx],
-                self._underlying_dim1_coords[self._dim1_idx],
+                self._underlying_dim2_coords[self._dim2_idx] + underlying_dx / 2,
+                self._underlying_dim1_coords[self._dim1_idx] + underlying_dx / 2,
             )
         )
 
@@ -336,6 +331,7 @@ class BaseSection(abc.ABC):
             )
         )
         self._s = xr.DataArray(_s, name="s", dims=["s"], coords={"s": _s})
+        self._length = float(_s[-1]) + underlying_dx
 
         # set shape from the coordinates
         if not (self._z is None):
@@ -365,6 +361,11 @@ class BaseSection(abc.ABC):
     def s(self):
         """Along-section coordinate."""
         return self._s
+
+    @property
+    def length(self):
+        """Length of section in dimensional coordinates."""
+        return self._length
 
     @property
     def z(self):
@@ -414,7 +415,7 @@ class BaseSection(abc.ABC):
         Returns
         -------
         data : :obj:`DataArray`
-            The undelrying data returned as an xarray `DataArray`, maintaining
+            The underlying data returned as an xarray `DataArray`, maintaining
             coordinates.
         """
         if self._underlying_type == "cube":
@@ -453,19 +454,28 @@ class BaseSection(abc.ABC):
                     },
                 )
                 return _xrDA
+            else:
+                raise TypeError(
+                    "Unknown Cube type encountered: %s" % type(self._underlying)
+                )
         elif self._underlying_type in ["mask", "plan", "array"]:
             _xrDA = xr.DataArray(
                 self._underlying[var].data[self._dim1_idx, self._dim2_idx],
                 coords={"s": self._s},
                 dims=["s"],
-                name=var)
+                name=var,
+            )
             return _xrDA
         elif self._underlying is None:
             raise AttributeError(
-                "No cube connected. Are you sure you ran `.connect()`?"
+                "No underlying data connected. Are you sure you ran `.connect()`?"
             )
         else:
-            raise TypeError("Unknown Cube type encountered: %s" % type(self.cube))
+            raise TypeError(
+                f"Unknown underlying type string encountered "
+                f"{str(self._underlying_type)}. Type of underlying is "
+                f"{type(self._underlying)}."
+            )
 
     def show(
         self,
@@ -569,6 +579,12 @@ class BaseSection(abc.ABC):
 
         .. plot:: section/section_demo_quick_strat.py
         """
+        # check that someting is attached
+        if self._underlying is None:
+            raise AttributeError(
+                "No underlying data connected. Are you sure you ran `.connect()`?"
+            )
+
         # process arguments and inputs
         if len(args) == 0:
             SectionAttribute = self._underlying.variables[0]
@@ -580,12 +596,6 @@ class BaseSection(abc.ABC):
             )
         if not ax:
             ax = plt.gca()
-
-        # check that someting is attached
-        if self._underlying is None:
-            raise AttributeError(
-                "No undelrying data attached to section, so cannot display anything."
-            )
 
         # work through display options based on type of underlying
         SectionVariableInstance = self[SectionAttribute]
@@ -688,8 +698,10 @@ class BaseSection(abc.ABC):
 
         _label = kwargs.pop("label", self.name)
 
-        _x = self._underlying_dim2_coords[self._dim2_idx]
-        _y = self._underlying_dim1_coords[self._dim1_idx]
+        # _x = self._underlying_dim2_coords[self._dim2_idx]
+        # _y = self._underlying_dim1_coords[self._dim1_idx]
+        _x = self._trace[:, 0]
+        _y = self._trace[:, 1]
 
         # get the limits to be able to reset if autoscale false
         lims = [ax.get_xlim(), ax.get_ylim()]
@@ -816,20 +828,24 @@ class PathSection(BaseSection):
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section."""
+
+        dim1_coords = self._underlying_dim1_coords
+        dim2_coords = self._underlying_dim2_coords
+
         # note: _path is given as N x dim1,dim2
         # if input path is given, we need to convert to indices
         if not (self._input_path is None):
             _dim1_pts = np.argmin(
                 np.abs(
                     self._input_path[:, 0]
-                    - np.tile(self.cube.dim1_coords, (self._input_path.shape[0], 1)).T
+                    - np.tile(dim1_coords, (self._input_path.shape[0], 1)).T
                 ),
                 axis=0,
             )
             _dim2_pts = np.argmin(
                 np.abs(
                     self._input_path[:, 1]
-                    - np.tile(self.cube.dim2_coords, (self._input_path.shape[0], 1)).T
+                    - np.tile(dim2_coords, (self._input_path.shape[0], 1)).T
                 ),
                 axis=0,
             )
@@ -856,10 +872,10 @@ class PathSection(BaseSection):
         self._path_idx = unsorted_unique(_cell)
         self._vertices_idx = unsorted_unique(_path)
         self._vertices = np.column_stack(
-            (dim1_coords[_path[:, 0]], self.cube.dim2_coords[_path[:, 1]])
+            (dim1_coords[_path[:, 0]], dim2_coords[_path[:, 1]])
         )
 
-        self.self._path_idx[:, 1]
+        self._dim1_idx = self._path_idx[:, 1]
         self._dim2_idx = self._path_idx[:, 0]
 
     @property
@@ -947,23 +963,23 @@ class LineSection(BaseSection):
 
     @property
     def distance(self):
-        """Distance of section from `dim1` lower edge, in `dim1` coordinates."""
+        """Distance of section from reference edge, in perpendicular-reference coordinates."""
         return self._distance
 
     @property
     def distance_idx(self):
-        """Distance of section from `dim1` lower edge, in `dim1` indices."""
+        """Distance of section from from reference edge, in perpendicular-reference indices."""
         return self._distance_idx
 
-    @property
-    def length(self):
-        """Bounding `dim2` coordinates of section."""
-        return self._length
+    # @property
+    # def length(self):
+    #     """Bounding `dim2` coordinates of section."""
+    #     return self._length
 
-    @property
-    def length_idx(self):
-        """Bounding `dim2` indices of section."""
-        return self._length_idx
+    # @property
+    # def length_idx(self):
+    #     """Bounding `dim2` indices of section."""
+    #     return self._length_idx
 
 
 class StrikeSection(LineSection):
@@ -1111,17 +1127,21 @@ class StrikeSection(LineSection):
 
     def _compute_section_coords(self):
         """Calculate coordinates of the strike section."""
+
+        dim1_coords = self._underlying_dim1_coords
+        dim2_coords = self._underlying_dim2_coords
+
         # if input length is None, we need to use endpoints of the dim2 coords
         if self._input_length is None:
             # if the value is given as distance
             if not (self._input_distance is None):
                 _length = (
-                    float(self.cube.dim2_coords[0]),
-                    float(self.cube.dim2_coords[-1]),
+                    float(dim2_coords[0]),
+                    float(dim2_coords[-1]),
                 )
             # if the value is given as idx
             else:
-                _length = (0, self.cube.W)
+                _length = (0, self._W - 1)
 
         else:
             # quick check that value for length is valid
@@ -1138,8 +1158,8 @@ class StrikeSection(LineSection):
             _idx = np.argmin(np.abs(np.array(dim1_coords) - self._input_distance))
             # treat length as coordinates
             #   should have somechecks here for valid values?
-            _start_idx = np.argmin(np.abs(np.array(self.cube.dim2_coords) - _length[0]))
-            _end_idx = np.argmin(np.abs(np.array(self.cube.dim2_coords) - _length[1]))
+            _start_idx = np.argmin(np.abs(np.array(dim2_coords) - _length[0]))
+            _end_idx = np.argmin(np.abs(np.array(dim2_coords) - _length[1])) - 1
         else:
             # apply the input idx value
             _idx = int(self._input_distance_idx)
@@ -1148,12 +1168,13 @@ class StrikeSection(LineSection):
 
         self._distance = float(dim1_coords[_idx])
         self._distance_idx = _idx
-        self._length = _length
-        self._length_idx = _st_end_idx
+        self._start_end = _length
+        self._start_end_idx = (_start_idx, _end_idx)
 
         # now compute the indices to use for the section
-        self._dim2_idx = np.arange(_start_idx, _end_idx, dtype=int)
+        self._dim2_idx = np.arange(_start_idx, _end_idx + 1, dtype=int)
         self._dim1_idx = np.tile(self._distance_idx, (len(self._dim2_idx)))
+        self._length_idx = len(self._dim2_idx)
 
     @property
     def y(self):
@@ -1213,6 +1234,8 @@ class DipSection(LineSection):
         if :obj:`distance_idx` is given and as `dim1` coordinates
         if :obj:`distance` is given. If no value is supplied, the section is
         drawn across the entire `dim1` axis (i.e., across the whole domain).
+        Note that when indicies are given, the end point of length is treated
+        as inclusive (e.g., `(10, 20)` results in a 21-cell section).
 
     x : :obj:`int`, optional, deprecated
         The number of cells in from the `dim2` lower domain edge. If used, the
@@ -1316,6 +1339,10 @@ class DipSection(LineSection):
 
     def _compute_section_coords(self):
         """Calculate coordinates of the dip section."""
+
+        dim1_coords = self._underlying_dim1_coords
+        dim2_coords = self._underlying_dim2_coords
+
         # if input length is None, we need to use endpoints of the dim1 coords
         if self._input_length is None:
             # if the value is given as distance
@@ -1326,7 +1353,7 @@ class DipSection(LineSection):
                 )
             # if the valueas idx
             else:
-                _length = (0, self.cube.L)
+                _length = (0, self._L - 1)
 
         else:
             # quick check that value for length is valid
@@ -1340,25 +1367,26 @@ class DipSection(LineSection):
         # if the value is given as distance
         if not (self._input_distance is None):
             # interpolate to an idx
-            _idx = np.argmin(
-                np.abs(np.array(self.cube.dim2_coords) - self._input_distance)
-            )
+            _idx = np.argmin(np.abs(np.array(dim2_coords) - self._input_distance))
             # treat length as coordinates
             #   should have some kind of checks here for valid values?
             _start_idx = np.argmin(np.abs(np.array(dim1_coords) - _length[0]))
             _end_idx = np.argmin(np.abs(np.array(dim1_coords) - _length[1]))
         else:
-            # apply the input idx value= int(self._input_distance_idx)treat length as indices
+            # apply the input idx value
+            _idx = int(self._input_distance_idx)
+            # treat length as indices
             _start_idx, _end_idx = _length
 
-        self._distance = float(self.cube.dim2_coords[_idx])
+        self._distance = float(dim2_coords[_idx])
         self._distance_idx = _idx
-        self._length = _length
-        self._length_idx = (_start_idx, _end_idx)
+        # self._length = _length
+        # self._length_idx = (_start_idx, _end_idx)
 
         # now compute the indices to use for the section
-        self._dim1_idx = np.arange(_start_idx, _end_idx, dtype=int)
+        self._dim1_idx = np.arange(_start_idx, _end_idx + 1, dtype=int)
         self._dim2_idx = np.tile(self._distance_idx, (len(self._dim1_idx)))
+        self._length_idx = len(self._dim1_idx)
 
     @property
     def y(self):
@@ -1513,10 +1541,17 @@ class CircularSection(BaseSection):
         super().__init__("circular", *args, **kwargs)
 
     def _compute_section_coords(self):
+
+        dim1_coords = self._underlying_dim1_coords
+        dim2_coords = self._underlying_dim2_coords
+
         # determine the radius in indices
         if (self._input_radius is None) and (self._input_radius_idx is None):
             # if no inputs are provided, use a default based on domain dims
-            self._radius_idx = int(np.min(self.cube.shape[1:]) / 2)
+            if self._underlying_type == "cube":
+                self._radius_idx = int(np.min(self._underlying.shape[1:]) / 2)
+            else:
+                self._radius_idx = int(np.min(self._underlying.shape) / 2)
         elif not (self._input_radius is None):
             # if radius was given in coords
             self._radius_idx = np.argmin(
@@ -1529,23 +1564,31 @@ class CircularSection(BaseSection):
         # determine the origin in indices
         if (self._input_origin is None) and (self._input_origin_idx is None):
             # if no inputs are provided, try to guess from metadata or land
-            # warnings.warn(
-            #     'Trying to determine the origin, this is unlikely to work '
-            #     'as expected for anything but pyDeltaRCM output data. '
-            #     'Instead, specify the `origin` or `origin_idx` '
-            #     'parameter directly when creating a `CircularSection`.')
-            if self.cube.meta is None:
-                # try and guess the value (should issue a warning?)
-                #   what if no field called 'eta'?? this will fail.
-                land_width = np.minimum(
-                    utils.guess_land_width_from_land(self.cube["eta"][-1, :, 0]), 5
-                )
+            if self._underlying_type == "cube":
+                # cube is attached and can be used
+                center_dim2 = int(
+                    self._underlying.shape[2] // 2
+                )  # center of the dim2 axis
+                if self._underlying.meta is None:
+                    # try and guess the value (should issue a warning?)
+                    #   if no field called 'eta'?? this will fail.
+                    warnings.warn(
+                        "Trying to guess origin distance from dim1==0. "
+                        "This is unlikely to work for data not generated from pyDeltaRCM."
+                    )
+                    land_width = np.minimum(
+                        utils.guess_land_width_from_land(
+                            self._underlying["eta"][-1, :, 0]
+                        ),
+                        5,
+                    )
+                else:
+                    # extract L0 from the cube metadata
+                    land_width = int(self._underlying.meta["L0"])
             else:
-                # extract L0 from the cube metadata
-                land_width = int(self.cube.meta["L0"])
-
-            # now find the center of the dim2 axis
-            center_dim2 = int(self.cube.shape[2] / 2)
+                # no cube is known
+                land_width = 0
+                center_dim2 = len(dim2_coords) // 2
             # combine into the origin as a (dim1, dim2) point
             self._origin_idx = (land_width, center_dim2)
         elif not (self._input_origin is None):
@@ -1572,6 +1615,7 @@ class CircularSection(BaseSection):
             float(dim2_coords[self._origin_idx[1]]),
         )
 
+    @property
     def radius(self):
         """Radius of the section in dimensional coordinates."""
         return self._radius
@@ -1748,22 +1792,14 @@ class RadialSection(BaseSection):
         # find the coordinates
         pass
 
-    def _compute_section_coords(self, layout_from=None):
+    def _compute_section_coords(self):
         """Compute the coordinates of the section.
 
         This method is called by `connect`, and should generally not be used
         directly by the user, unless some advanced use case requires.
-
-        Parameters
-        ----------
-        layout_from
-            An object (probably a 2d array) for which the coordinates of the
-            section should be computed. In standard instantiations with a
-            `Cube` passed as the first positional argument when instantiating
-            the
         """
-        _L = self._L - 1
-        _W = self._W - 1
+        _L = self._L
+        _W = self._W
         dim1_coords = self._underlying_dim1_coords
         dim2_coords = self._underlying_dim2_coords
 
@@ -1777,7 +1813,6 @@ class RadialSection(BaseSection):
         if (self._input_origin is None) and (self._input_origin_idx is None):
             # if no inputs are provided, try to guess from metadata or land,
             #   or fall back on just using (0, len(dim2) / 2)
-            # if self.cube is None:
             if self._underlying_type == "cube":
                 # cube is attached and can be used
                 center_dim2 = int(
@@ -1807,21 +1842,9 @@ class RadialSection(BaseSection):
             self._origin_idx = (land_width, center_dim2)
 
         elif not (self._input_origin is None):
-            # if origin was given in coords
-            # if self.cube is None:
-            if self._underlying_type == "cube":
-                raise NotImplementedError(
-                    "Origin given in coordinates, but no cube was found. "
-                    "It may be possible to solve this, but hasn't been tried."
-                )
-            else:
-                idx_dim1 = np.argmin(
-                    np.abs(np.array(dim1_coords) - self._input_origin[0])
-                )
-                idx_dim2 = np.argmin(
-                    np.abs(np.array(dim2_coords) - self._input_origin[1])
-                )
-                self._origin_idx = (idx_dim1, idx_dim2)
+            idx_dim1 = np.argmin(np.abs(np.array(dim1_coords) - self._input_origin[0]))
+            idx_dim2 = np.argmin(np.abs(np.array(dim2_coords) - self._input_origin[1]))
+            self._origin_idx = (idx_dim1, idx_dim2)
 
         else:
             # if origin was given in indices
@@ -1854,17 +1877,17 @@ class RadialSection(BaseSection):
                     + ((m * _W + b) - self._origin_idx[0]) ** 2
                 ) ** 0.5
                 length_to_L = (
-                    (((_L - b) / m) - self._origin_idx[1]) ** 2
+                    (((_L - b) / (m + 1e-16)) - self._origin_idx[1]) ** 2
                     + (_L - self._origin_idx[0]) ** 2
                 ) ** 0.5
                 _length_idx = np.minimum(length_to_W, length_to_L)
             elif self.azimuth > 90 and self.azimuth <= 180:
                 length_to_0 = (
                     (self._origin_idx[1] - 0) ** 2
-                    + (self._origin_idx[0] - (m * 0 + b)) ** 2
+                    + (self._origin_idx[0] - (m * (0) + b)) ** 2
                 ) ** 0.5
                 length_to_L = (
-                    (((_L - b) / m) - self._origin_idx[1]) ** 2
+                    (((_L - b) / (m + 1e-16)) - self._origin_idx[1]) ** 2
                     + (_L - self._origin_idx[0]) ** 2
                 ) ** 0.5
                 _length_idx = np.minimum(length_to_0, length_to_L)
@@ -1894,23 +1917,17 @@ class RadialSection(BaseSection):
 
         # note that origin idx and end point are in x-y cartesian convention!
         origin_idx_rev = tuple(reversed(self._origin_idx))  # input must be x,y
-        xy = utils.line_to_cells(origin_idx_rev, end_point)
+        x, y = utils.line_to_cells(origin_idx_rev, end_point)
 
-        self._dim1_idx = xy[1]
-        self._dim2_idx = xy[0]
+        # validate and clean the xy array
+        yvalid = np.logical_and(y >= 0, y <= (_L - 1))
+        xvalid = np.logical_and(x >= 0, x <= (_W - 1))
+        xyvalid = np.logical_and(yvalid, xvalid)
 
-        self._end_point_idx = tuple(reversed(end_point))
-        self._length = float(
-            np.sqrt(
-                (dim1_coords[self._end_point_idx[0]] - dim1_coords[self._origin_idx[0]])
-                ** 2
-                + (
-                    dim2_coords[self._end_point_idx[1]]
-                    - dim2_coords[self._origin_idx[1]]
-                )
-                ** 2
-            )
-        )
+        self._dim1_idx = y[xyvalid]
+        self._dim2_idx = x[xyvalid]
+
+        self._end_point_idx = (self._dim1_idx, self._dim2_idx)
         self._origin = (
             float(dim1_coords[self._origin_idx[0]]),
             float(dim2_coords[self._origin_idx[1]]),
@@ -1920,11 +1937,6 @@ class RadialSection(BaseSection):
     def azimuth(self):
         """Azimuth of section (degrees)."""
         return self._azimuth
-
-    @property
-    def length(self):
-        """Length of section in dimensional coordinates."""
-        return self._length
 
     @property
     def origin(self):
