@@ -23,6 +23,7 @@ Sections
    :maxdepth: 1
 
    computations/aggradation_preserved_time
+   create_from/sections_into_arbitrary
 
 
 Plotting

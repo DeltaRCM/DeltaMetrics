@@ -8,6 +8,10 @@ The `Section` module defines some terms that are used throughout the code and re
 
 Most importantly, a Section is defined by a set of coordinates in the `dim1`-`dim2` plane of a `Cube`.
 
+.. note::
+
+    For advanced use cases, it is possible to create a `Section` into a `Mask`, `Planform` or any array-like data. For this guide, it will be helpful to focus on sections as they cut into a `Cube`. 
+
 Therefore, we transform variable definitions when extracting the `Section`, and the coordinate system of the section is defined by the along-section direction :math:`s` and a vertical section coordinate, which is :math:`z` when viewing stratigraphy, and :math:`t` when viewing a spacetime section.
 
 The data that make up the section can view the section as a `spacetime` section by simply calling a variable from the a section into a `DataCube`.
@@ -79,3 +83,12 @@ We can display the arrays using `matplotlib` to examine the spatiotemporal chang
 
 Note that in this visual all non-preserved spacetime points have been masked and are shown as white.
 See the `numpy MaskedArray documentation <https://numpy.org/doc/stable/reference/maskedarray.generic.html>`_ for more information on interacting with masked arrays.
+
+
+Creating sections into other data types
+---------------------------------------
+
+You can also create `Sections` into an object other than a `Cube`, such as a `Mask` or `Planform` or arbitrary data.
+
+See the `example here </guides/examples/create_from/sections_into_arbitrary>`_ for several examples.
+
