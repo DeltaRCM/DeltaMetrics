@@ -5,6 +5,8 @@ import xarray as xr
 import matplotlib.pyplot as plt
 
 from deltametrics import cube
+from deltametrics import mask
+from deltametrics import plan
 
 from deltametrics import section
 from deltametrics import utils
@@ -1233,3 +1235,98 @@ class TestDipSection:
         assert rcm8cube.sections["list"]._dim1_idx.shape[0] == 31
         assert np.all(rcm8cube.sections["list"]._dim2_idx == 150)
         assert np.all(rcm8cube.sections["tuple"]._dim2_idx == 150)
+
+
+class TestSectionsIntoMasks:
+
+    golfcube = cube.DataCube(golf_path)
+    EM = mask.ElevationMask(golfcube["eta"][-1], elevation_threshold=0)
+
+    def test_section_types(self):
+        mcs = section.CircularSection(self.EM, radius=500)
+        _got = mcs["mask"]
+        assert _got.ndim == 1
+        assert np.all(np.logical_or(_got == 1, _got == 0))
+        mrs = section.RadialSection(self.EM, azimuth=50)
+        _got = mrs["mask"]
+        assert _got.ndim == 1
+        assert np.all(np.logical_or(_got == 1, _got == 0))
+        mss = section.StrikeSection(self.EM, distance=500)
+        _got = mss["mask"]
+        assert _got.ndim == 1
+        assert np.all(np.logical_or(_got == 1, _got == 0))
+
+    def test_show(self):
+        mss = section.StrikeSection(self.EM, distance=500)
+        fig, ax = plt.subplots()
+        mss.show("mask", ax=ax)
+        plt.close()
+
+    def test_show_trace(self):
+        mss = section.StrikeSection(self.EM, distance=500)
+        fig, ax = plt.subplots()
+        mss.show_trace(ax=ax)
+        plt.close()
+
+
+class TestSectionsIntoPlans:
+
+    golfcube = cube.DataCube(golf_path)
+    pl = plan.Planform(golfcube, idx=-1)
+
+    def test_section_types(self):
+        mcs = section.CircularSection(self.pl, radius=500)
+        _got = mcs["eta"]
+        assert _got.ndim == 1
+        assert np.all(np.isfinite(_got))
+        mrs = section.RadialSection(self.pl, azimuth=50)
+        _got = mrs["eta"]
+        assert _got.ndim == 1
+        assert np.all(np.isfinite(_got))
+        mss = section.StrikeSection(self.pl, distance=500)
+        _got = mss["eta"]
+        assert _got.ndim == 1
+        assert np.all(np.isfinite(_got))
+
+    def test_show(self):
+        mss = section.StrikeSection(self.pl, distance=500)
+        fig, ax = plt.subplots()
+        mss.show("eta", ax=ax)
+        plt.close()
+
+    def test_show_trace(self):
+        mss = section.StrikeSection(self.pl, distance=500)
+        fig, ax = plt.subplots()
+        mss.show_trace(ax=ax)
+        plt.close()
+
+
+class TestSectionsIntoArrays:
+
+    arr = np.random.uniform(size=(100, 200))
+
+    def test_section_types(self):
+        mcs = section.CircularSection(self.arr, radius=500)
+        _got = mcs[None]
+        assert _got.ndim == 1
+        assert np.all(np.logical_or(_got <= 1, _got >= 0))
+        mrs = section.RadialSection(self.arr, azimuth=50)
+        _got = mrs[None]
+        assert _got.ndim == 1
+        assert np.all(np.logical_or(_got <= 1, _got >= 0))
+        mss = section.StrikeSection(self.arr, distance=500)
+        _got = mss[None]
+        assert _got.ndim == 1
+        assert np.all(np.logical_or(_got <= 1, _got >= 0))
+
+    def test_show(self):
+        mss = section.StrikeSection(self.arr, distance=500)
+        fig, ax = plt.subplots()
+        mss.show("mask", ax=ax)
+        plt.close()
+
+    def test_show_trace(self):
+        mss = section.StrikeSection(self.arr, distance=500)
+        fig, ax = plt.subplots()
+        mss.show_trace(ax=ax)
+        plt.close()

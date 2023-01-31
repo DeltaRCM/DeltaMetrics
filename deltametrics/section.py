@@ -243,12 +243,19 @@ class BaseSection(abc.ABC):
                 self._underlying_dim1_coords = InputInstance[InputInstance.dims[0]]
                 self._underlying_dim2_coords = InputInstance[InputInstance.dims[1]]
             elif isinstance(InputInstance, np.ndarray):
-                self._underlying_dim1_coords = np.arange(_L, dtype=float)
-                self._underlying_dim2_coords = np.arange(_W, dtype=float)
+                self._underlying_dim1_coords = np.arange(self._L, dtype=float)
+                self._underlying_dim2_coords = np.arange(self._W, dtype=float)
             self._z = None
         elif issubclass(type(InputInstance), plan.Planform):
-            raise NotImplementedError("todo")
-            # self._z =  # take from plan?
+            self._underlying = InputInstance
+            self._underlying_type = "planform"
+            self._variables = InputInstance.variables
+            self._L = InputInstance.shape[0]
+            self._W = InputInstance.shape[1]
+            _plan_xarray = InputInstance[self._variables[0]]
+            self._underlying_dim1_coords = _plan_xarray[_plan_xarray.dims[0]]
+            self._underlying_dim2_coords = _plan_xarray[_plan_xarray.dims[1]]
+            self._z = None  # take from plan?
         else:
             raise TypeError(
                 "Expected type is subclass of Cube, Planform, or Mask, "
@@ -394,8 +401,8 @@ class BaseSection(abc.ABC):
         NoStratigraphyError
             If no stratigraphy information is found for the section.
         """
-        if self.cube._knows_stratigraphy:
-            return self.cube.strat_attr
+        if self._underlying._knows_stratigraphy:
+            return self._underlying.strat_attr
         else:
             raise utils.NoStratigraphyError(obj=self, var="strat_attr")
 
@@ -458,9 +465,17 @@ class BaseSection(abc.ABC):
                 raise TypeError(
                     "Unknown Cube type encountered: %s" % type(self._underlying)
                 )
-        elif self._underlying_type in ["mask", "plan", "array"]:
+        elif self._underlying_type in ["mask", "planform"]:
             _xrDA = xr.DataArray(
                 self._underlying[var].data[self._dim1_idx, self._dim2_idx],
+                coords={"s": self._s},
+                dims=["s"],
+                name=var,
+            )
+            return _xrDA
+        elif self._underlying_type == "array":
+            _xrDA = xr.DataArray(
+                self._underlying[self._dim1_idx, self._dim2_idx],
                 coords={"s": self._s},
                 dims=["s"],
                 name=var,
