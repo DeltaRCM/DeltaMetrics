@@ -80,7 +80,7 @@ Similarly to creating a `Section` into the `Planform`, we can use an underlying 
 
 
 Arbitrary data
---------------
+~~~~~~~~~~~~~~
 
 You can also create a `Section` into any array-like data. 
 
