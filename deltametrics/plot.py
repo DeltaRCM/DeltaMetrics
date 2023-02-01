@@ -570,6 +570,7 @@ def cartographic_colormap(H_SL=0.0, h=4.5, n=1.0):
         im1 = ax[1].imshow(golfcube['eta'][-1, ...], origin='lower',
                        cmap=cmap1, norm=norm1)
         cb1 = dm.plot.append_colorbar(im1, ax[1])
+        plt.tight_layout()
         plt.show()
     """
     blues = mpl.colormaps['Blues_r'].resampled(64)
@@ -634,6 +635,7 @@ def vintage_colormap(H_SL=0.0, h=4.5, n=1.0):
         im1 = ax[1].imshow(golfcube['eta'][-1, ...], origin='lower',
                        cmap=cmap1, norm=norm1)
         cb1 = dm.plot.append_colorbar(im1, ax[1])
+        plt.tight_layout()
         plt.show()
 
     To use the colormap exactly as described in Pearson's original publication, use parameters
@@ -693,7 +695,7 @@ def vintage_colormap(H_SL=0.0, h=4.5, n=1.0):
     bounds = np.hstack(
         (
             H_SL + (-h * np.array([20, 16, 12, 8, 5, 3, 1.2]) / 20),
-            (n * np.array([0, 1.4, 10]) / 10)
+            H_SL + (n * np.array([0, 1.4, 10]) / 10)
         )
     )
     norm = colors.BoundaryNorm(bounds, len(bounds)+1, extend='both')
@@ -725,6 +727,7 @@ def append_colorbar(ci, ax, size=2, pad=2, labelsize=9, **kwargs):
 
     **kwargs
         Passed to `matplotlib.pyplot.colorbar`.
+        For example, `spacing="proportional"`.
 
     Returns
     -------
