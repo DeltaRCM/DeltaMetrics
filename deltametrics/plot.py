@@ -570,6 +570,7 @@ def cartographic_colormap(H_SL=0.0, h=4.5, n=1.0):
         im1 = ax[1].imshow(golfcube['eta'][-1, ...], origin='lower',
                        cmap=cmap1, norm=norm1)
         cb1 = dm.plot.append_colorbar(im1, ax[1])
+        plt.tight_layout()
         plt.show()
     """
     blues = mpl.colormaps["Blues_r"].resampled(64)
@@ -593,6 +594,113 @@ def aerial_colormap():
     """
 
     raise NotImplementedError
+
+
+def vintage_colormap(H_SL=0.0, h=4.5, n=1.0):
+    """Colormap in a vintage map style.
+
+    This colormap uses a set of colors originally used by 1950s maps of the
+    Wadden Sea [1]_. The colormap is adapted from Stuart Pearson's matlab version
+    of the colormap [2]_ [3]_. That colormap carries a `CC BY 4.0 license
+    <https://creativecommons.org/licenses/by/4.0/legalcode>`_.
+
+    .. [1] Vinckers, J.A. Beckering. Amelander Gat (1943). Report D98 in
+       Dutch. Rijkswaterstaat Studiedienst Hoorn, Hoorn.
+
+    .. [2] Stuart Pearson. "Custom Colourmapping." Coastally Curious
+       (personal blog). (2022).
+       https://coastallycurious.com/2022/02/20/custom-colourmapping/
+
+    .. [3] Elias, Edwin P.L. et al. "Understanding sediment bypassing
+       processes through analysis of high-frequency observations of Ameland
+       Inlet, the Netherlands." Marine Geology 415 (2019)
+       10.1016/j.margeo.2019.06.001
+
+    Examples
+    --------
+    To display with default depth and relief parameters (left) and with adjust
+    parameters to highlight depth variability (right):
+
+    .. plot::
+        :include-source:
+
+        golfcube = dm.sample_data.golf()
+
+        cmap0, norm0 = dm.plot.vintage_colormap(H_SL=0)
+        cmap1, norm1 = dm.plot.vintage_colormap(H_SL=0, h=3, n=0.25)
+
+        fig, ax = plt.subplots(1, 2, figsize=(10, 4))
+        im0 = ax[0].imshow(golfcube['eta'][-1, ...], origin='lower',
+                       cmap=cmap0, norm=norm0)
+        cb0 = dm.plot.append_colorbar(im0, ax[0])
+        im1 = ax[1].imshow(golfcube['eta'][-1, ...], origin='lower',
+                       cmap=cmap1, norm=norm1)
+        cb1 = dm.plot.append_colorbar(im1, ax[1])
+        plt.tight_layout()
+        plt.show()
+
+    To use the colormap exactly as described in Pearson's original publication, use parameters
+
+    .. code::
+
+        cmap, norm = dm.plot.vintage_colormap(H_SL=0, h=20, n=10)
+
+    .. plot::
+
+        X, Y = np.meshgrid(np.linspace(-30, 10), np.arange(10))
+        
+        cmapd, normd = dm.plot.vintage_colormap(H_SL=0, h=20, n=10)
+        
+        fig, ax = plt.subplots(
+            figsize=(4, 2),
+            gridspec_kw=dict(
+                left=0.07, right=0.85, bottom=0.25))
+        imd = ax.imshow(
+            X, extent=(-30, 10, 0, 20),
+            cmap=cmapd, norm=normd)
+        cbd = dm.plot.append_colorbar(imd, ax)
+        ax.set_yticks([])
+        ax.set_xlabel('elevation [m]')
+
+        plt.show()
+
+    """
+    # In implementation, we differ from Pearson's version. Pearson's version
+    # takes in `vertSpacing`, a 10-column array with elevations of each
+    # contour, and intervals at which colour changes: vertSpacing =
+    # [-20; -16; -12; -8; -5; -3; -1.2; 0; 1.4; 10]. In our implementation,
+    # we take a value for sea level and a total water depth and elevation
+    # that should be covered by the colormap. We then map the range of
+    # elevations between the vertical limits to the same spacing as defined
+    # in the original colormap.
+
+    # colours in colormap
+    base_colors = (
+        np.array(
+            [
+                [27, 126, 129],  # Deepest (darkest green-blue): -20 m NAP
+                [41, 155, 151],  # Deeper (dark green-blue): -16 m NAP
+                [56, 170, 164],  # Deep (green-blue): -12 m NAP
+                [130, 199, 180],  # Subtidal (light green-blue): -8 m NAP
+                [220, 231, 194],  # Shallow Subtidal (lighter green blue): -5 m NAP
+                [255, 240, 196],  # Shoal (off-white): -3 m NAP
+                [244, 214, 176],  # Low Tide (light brown): -1.2 m NAP
+                [217, 188, 146],  # High Tide (darker brown): 0 m NAP
+                [255, 221, 146],  # Beach (yellowy brown): 1.4 m NAP
+                [226, 129, 61],  # Dune (orange): 10 m NAP
+            ]
+        )
+        / 255
+    )
+    delta = colors.ListedColormap(base_colors, name="delta")
+    bounds = np.hstack(
+        (
+            H_SL + (-h * np.array([20, 16, 12, 8, 5, 3, 1.2]) / 20),
+            H_SL + (n * np.array([0, 1.4, 10]) / 10)
+        )
+    )
+    norm = colors.BoundaryNorm(bounds, len(bounds)+1, extend='both')
+    return delta, norm
 
 
 def append_colorbar(ci, ax, size=2, pad=2, labelsize=9, **kwargs):
@@ -620,6 +728,7 @@ def append_colorbar(ci, ax, size=2, pad=2, labelsize=9, **kwargs):
 
     **kwargs
         Passed to `matplotlib.pyplot.colorbar`.
+        For example, `spacing="proportional"`.
 
     Returns
     -------

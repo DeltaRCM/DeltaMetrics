@@ -73,6 +73,7 @@ DeltaMetrics colormaps
 
 .. autofunction:: cartographic_colormap
 .. autofunction:: aerial_colormap
+.. autofunction:: vintage_colormap
 
 
 Plotting utility functions

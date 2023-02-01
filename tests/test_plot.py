@@ -675,6 +675,59 @@ class TestColorMapFunctions:
         assert norm.boundaries[0] == H_SL-_h
         assert norm.boundaries[-1] == H_SL+(_n)
 
+    def test_vintage_SL0_defaults(self):
+        H_SL = 0
+        cmap, norm = plot.vintage_colormap(H_SL)
+
+        assert cmap.colors.shape == (10, 3)
+        assert norm.boundaries[0] == H_SL-4.5
+        assert norm.boundaries[-1] == H_SL+1
+
+    def test_vintage_SL0_h(self):
+        H_SL = 0
+        _h = 10
+        cmap, norm = plot.vintage_colormap(H_SL, h=_h)
+
+        assert cmap.colors.shape == (10, 3)
+        assert norm.boundaries[0] == H_SL-_h
+        assert norm.boundaries[-1] == H_SL+1
+
+    def test_vintage_SL0_n(self):
+        H_SL = 0
+        _n = 0.1
+        cmap, norm = plot.vintage_colormap(H_SL, n=_n)
+
+        assert cmap.colors.shape == (10, 3)
+        assert norm.boundaries[0] == H_SL-4.5
+        assert norm.boundaries[-1] == H_SL+(_n)
+
+    def test_vintage_SLn1_defaults(self):
+        H_SL = -1
+        cmap, norm = plot.vintage_colormap(H_SL)
+
+        assert cmap.colors.shape == (10, 3)
+        assert norm.boundaries[0] == H_SL-4.5
+        assert norm.boundaries[-1] == 0  # default n=1 H_SL+1=0
+
+    def test_vintage_SL1_hn(self):
+        H_SL = -1
+        _h = 10
+        _n = 0.1
+        cmap, norm = plot.vintage_colormap(H_SL, h=_h, n=_n)
+
+        assert cmap.colors.shape == (10, 3)
+        assert norm.boundaries[0] == H_SL-_h
+        assert norm.boundaries[-1] == H_SL+(_n)
+
+    def test_vintage_pearson_recovered(self):
+        # use pearsons bounds to recover the original
+        cmap, norm = plot.vintage_colormap(H_SL=0, h=20, n=10)
+
+        assert cmap.colors.shape == (10, 3)
+        assert norm.boundaries[0] == -20
+        assert norm.boundaries[-1] == 10
+        assert np.all(norm.boundaries == np.array([-20, -16, -12, -8, -5, -3, -1.2, 0, 1.4, 10]))
+
 
 class TestScaleLightness:
 
