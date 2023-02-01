@@ -63,16 +63,16 @@ orientation).</p>
 <span class="n">arr</span> <span class="o">=</span> <span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
 <span class="n">gmsk</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">GeometricMask</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
 
-<span class="c1"># Define an angular mask to cover half the domain from 0 to pi/2.</span>
-<span class="n">gmsk</span><span class="o">.</span><span class="n">angular</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># Define an angular mask to cover part of the domain from pi/4 to pi/2.</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">angular</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
 
-<span class="c1"># Further mask this region by defining bounds in the strike direction.</span>
-<span class="n">gmsk</span><span class="o">.</span><span class="n">strike</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="c1"># Further mask this region by defining bounds in the radial direction.</span>
+<span class="n">gmsk</span><span class="o">.</span><span class="n">circular</span><span class="p">(</span><span class="n">rad1</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rad2</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
 
 <span class="c1"># Visualize the mask:</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 <span class="n">gmsk</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">*</span><span class="n">gmsk</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">*</span><span class="n">gmsk</span><span class="o">.</span><span class="n">mask</span><span class="p">)</span>
 <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([]);</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">([])</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -106,10 +106,45 @@ inlet location. The <cite>origin</cite> is used as the mathematical origin
 point for computation setting the mask within the <cite>GeometricMask</cite>
 methods. If unspecified, it is inferred, based on the default
 configuration of a pyDeltaRCM model inlet.</p></li>
+<li><p><strong>**kwargs</strong> – Keyword arguments can be specified to instantiate a
+<cite>GeometricMask</cite> and apply one (or more) of the geometric masking
+operations during instantiation. Accepted arguments are
+<cite>angular</cite>, <cite>circular</cite>, <cite>strike</cite>, and <cite>dip</cite>. Each argument must
+have a dictionary as it’s key, which contains the
+keyword-argument pairs to be passed to that geometric masking
+function (see examples).</p></li>
 </ul>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
+<p>Create an <cite>angular</cite> <cite>GeometricMask</cite> two different ways.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+<span class="n">gmsk0</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">GeometricMask</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+<span class="n">gmsk0</span><span class="o">.</span><span class="n">angular</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">gmsk1</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">GeometricMask</span><span class="p">(</span>
+    <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">),</span> <span class="n">angular</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span>
+        <span class="n">theta1</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">theta2</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">gmsk0</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+<span class="n">gmsk1</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-2.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-2.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../_images/deltametrics-mask-GeometricMask-2.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-2.png" />
+</figure>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>See additional examples in the method docstring for each geometric
+masking
+operation: <a class="reference internal" href="#deltametrics.mask.GeometricMask.angular" title="deltametrics.mask.GeometricMask.angular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angular</span></code></a>, <a class="reference internal" href="#deltametrics.mask.GeometricMask.circular" title="deltametrics.mask.GeometricMask.circular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">circular</span></code></a>, <a class="reference internal" href="#deltametrics.mask.GeometricMask.strike" title="deltametrics.mask.GeometricMask.strike"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strike</span></code></a>,
+and <a class="reference internal" href="#deltametrics.mask.GeometricMask.dip" title="deltametrics.mask.GeometricMask.dip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dip</span></code></a>.</p>
+</div>
 </dd></dl>
 
 <p class="rubric">Methods</p>
@@ -118,13 +153,13 @@ configuration of a pyDeltaRCM model inlet.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.__init__" title="deltametrics.mask.GeometricMask.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args[, origin])</p></td>
 <td><p>Initialize the GeometricMask.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.angular" title="deltametrics.mask.GeometricMask.angular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angular</span></code></a>(theta1, theta2)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.angular" title="deltametrics.mask.GeometricMask.angular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">angular</span></code></a>([theta1, theta2])</p></td>
 <td><p>Make a mask based on two angles.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.circular" title="deltametrics.mask.GeometricMask.circular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">circular</span></code></a>(rad1[, rad2, origin])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.circular" title="deltametrics.mask.GeometricMask.circular"><code class="xref py py-obj docutils literal notranslate"><span class="pre">circular</span></code></a>([rad1, rad2, origin])</p></td>
 <td><p>Make a circular mask bounded by two radii.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.dip" title="deltametrics.mask.GeometricMask.dip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dip</span></code></a>(ind1[, ind2])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.dip" title="deltametrics.mask.GeometricMask.dip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">dip</span></code></a>([ind1, ind2])</p></td>
 <td><p>Make a mask parallel to the inlet.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.from_array" title="deltametrics.mask.GeometricMask.from_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_array</span></code></a>(_arr)</p></td>
@@ -133,7 +168,7 @@ configuration of a pyDeltaRCM model inlet.</p></li>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.show" title="deltametrics.mask.GeometricMask.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>([ax, title, ticks, colorbar])</p></td>
 <td><p>Show the mask.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.strike" title="deltametrics.mask.GeometricMask.strike"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strike</span></code></a>(ind1[, ind2])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.strike" title="deltametrics.mask.GeometricMask.strike"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strike</span></code></a>([ind1, ind2])</p></td>
 <td><p>Make a mask based on two indices.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.mask.GeometricMask.trim_mask" title="deltametrics.mask.GeometricMask.trim_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trim_mask</span></code></a>(*args[, value, axis, length])</p></td>
@@ -177,7 +212,7 @@ only ‘mask’ or ‘integer’.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.GeometricMask.angular">
-<span class="sig-name descname"><span class="pre">angular</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.angular" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">angular</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">theta1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.141592653589793</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.angular" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a mask based on two angles.</p>
 <p>Computes a mask that is bounded by 2 angles input by the user.</p>
 <div class="admonition note">
@@ -194,8 +229,10 @@ determined.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>theta1</strong> (<em>float</em>) – Radian value controlling the left bound of the mask</p></li>
-<li><p><strong>theta2</strong> (<em>float</em>) – Radian value controlling the right bound of the mask</p></li>
+<li><p><strong>theta1</strong> (<em>float</em>) – Radian value controlling the left bound of the mask. If
+unspecified, this bound is set to 0.</p></li>
+<li><p><strong>theta2</strong> (<em>float</em>) – Radian value controlling the right bound of the mask. If
+unspecified, this bound is set to <cite>pi=3.14</cite>…</p></li>
 </ul>
 </dd>
 </dl>
@@ -217,22 +254,23 @@ determined.</p>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-2.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-2.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-3.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-3.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../_images/deltametrics-mask-GeometricMask-2.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-2.png" />
+<img alt="../_images/deltametrics-mask-GeometricMask-3.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-3.png" />
 </figure>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.GeometricMask.circular">
-<span class="sig-name descname"><span class="pre">circular</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rad1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rad2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.circular" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">circular</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rad1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rad2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">origin</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.circular" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a circular mask bounded by two radii.</p>
 <p>Computes a mask that is bounded by 2 radial distances which are input
 by the user.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>rad1</strong> (<em>int</em>) – Index value to set the inner radius.</p></li>
+<li><p><strong>rad1</strong> (<em>int</em>) – Index value to set the inner radius. If unspecified, this bound is
+set to  <cite>0</cite>.</p></li>
 <li><p><strong>rad2</strong> (<em>int</em><em>, </em><em>optional</em>) – Index value to set the outer radius. If unspecified, this bound
 is set to extend as the larger dimension of the domain.</p></li>
 <li><p><strong>origin</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">tuple</span></code>, optional) – Optionally specify an origin to use for computing the circle. Will
@@ -258,15 +296,15 @@ use the <cite>GeometricMask</cite> origin, if not supplied.</p></li>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-3.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-3.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-4.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-4.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../_images/deltametrics-mask-GeometricMask-3.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-3.png" />
+<img alt="../_images/deltametrics-mask-GeometricMask-4.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-4.png" />
 </figure>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.GeometricMask.dip">
-<span class="sig-name descname"><span class="pre">dip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.dip" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">dip</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.dip" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a mask parallel to the inlet.</p>
 <p>Makes a mask that is parallel to the direction of flow in the inlet.
 If only one value is supplied, then this mask is centered on the
@@ -300,9 +338,9 @@ ind1 sets the width of a mask centered on the inlet.</p></li>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-4.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-4.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-5.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-5.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../_images/deltametrics-mask-GeometricMask-4.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-4.png" />
+<img alt="../_images/deltametrics-mask-GeometricMask-5.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-5.png" />
 </figure>
 </dd></dl>
 
@@ -387,7 +425,7 @@ black and white.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.GeometricMask.strike">
-<span class="sig-name descname"><span class="pre">strike</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.strike" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">strike</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.GeometricMask.strike" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a mask based on two indices.</p>
 <p>Makes a mask bounded by lines perpendicular to the direction of the
 flow in the inlet channel.</p>
@@ -418,9 +456,9 @@ optional, if unspecified, this is set to the length of the domain.</p></li>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-5.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-5.hires.png">hires.png</a>)</p>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-6.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mask-GeometricMask-6.hires.png">hires.png</a>)</p>
 <figure class="align-default">
-<img alt="../_images/deltametrics-mask-GeometricMask-5.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-5.png" />
+<img alt="../_images/deltametrics-mask-GeometricMask-6.png" class="plot-directive" src="../_images/deltametrics-mask-GeometricMask-6.png" />
 </figure>
 </dd></dl>
 
