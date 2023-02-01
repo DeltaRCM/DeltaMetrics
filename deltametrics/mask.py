@@ -2093,16 +2093,16 @@ class GeometricMask(BaseMask):
         arr = golfcube['eta'][-1, :, :]
         gmsk = dm.mask.GeometricMask(arr)
 
-        # Define an angular mask to cover half the domain from 0 to pi/2.
-        gmsk.angular(0, np.pi/2)
+        # Define an angular mask to cover part of the domain from pi/4 to pi/2.
+        gmsk.angular(np.pi/4, np.pi/2)
 
-        # Further mask this region by defining bounds in the strike direction.
-        gmsk.strike(10, 50)
+        # Further mask this region by defining bounds in the radial direction.
+        gmsk.circular(rad1=10, rad2=50)
 
         # Visualize the mask:
         fig, ax = plt.subplots(1, 2, figsize=(8, 4))
         gmsk.show(ax=ax[0])
-        ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask, origin='lower')
+        ax[1].imshow(golfcube['eta'][-1, :, :]*gmsk.mask)
         ax[1].set_xticks([]); ax[1].set_yticks([])
         plt.show()
 
@@ -2159,9 +2159,53 @@ class GeometricMask(BaseMask):
             methods. If unspecified, it is inferred, based on the default
             configuration of a pyDeltaRCM model inlet.
 
+        **kwargs
+
+            Keyword arguments can be specified to instantiate a
+            `GeometricMask` and apply one (or more) of the geometric masking
+            operations during instantiation. Accepted arguments are
+            `angular`, `circular`, `strike`, and `dip`. Each argument must
+            have a dictionary as it's key, which contains the
+            keyword-argument pairs to be passed to that geometric masking
+            function (see examples).
+
         Examples
         --------
+        Create an `angular` `GeometricMask` two different ways.
+
+        .. plot::
+            :include-source:
+
+            arr = np.random.uniform(size=(100, 200))
+            gmsk0 = dm.mask.GeometricMask(arr)
+            gmsk0.angular(np.pi/4, np.pi/2)
+            
+            gmsk1 = dm.mask.GeometricMask(
+                (100, 200), angular=dict(
+                    theta1=np.pi/4, theta2=np.pi/2)
+                )
+
+            fig, ax = plt.subplots(1, 2)
+            gmsk0.show(ax[0])
+            gmsk1.show(ax[1])
+            plt.tight_layout()
+            plt.show()
+
+        .. note::
+
+            See additional examples in the method docstring for each geometric
+            masking
+            operation: :obj:`angular`, :obj:`circular`, :obj:`strike`,
+            and :obj:`dip`.
         """
+        if len(args) > 0:
+            # most argument are fine, but we need to convert an input tuple
+            # (specific only to GeometricMask type) into an array to be the
+            # basis.
+            if isinstance(args[0], tuple):
+                # args[0] = np.zeros(args[0])
+                args = np.zeros(args[0]),
+
         super().__init__('geometric', *args, **kwargs)
 
         # FOR GEOMETRIC, NEED START FROM ALL TRUE
@@ -2187,6 +2231,9 @@ class GeometricMask(BaseMask):
         else:
             raise ValueError
 
+        # enable the methods to be passed as keyword arguments
+        self._compute_mask(**kwargs)
+
     @property
     def xc(self):
         """x-coordinate of origin point."""
@@ -2197,7 +2244,7 @@ class GeometricMask(BaseMask):
         """y-coordinate of origin point."""
         return self._yc
 
-    def angular(self, theta1, theta2):
+    def angular(self, theta1=0, theta2=np.pi):
         """Make a mask based on two angles.
 
         Computes a mask that is bounded by 2 angles input by the user.
@@ -2216,10 +2263,12 @@ class GeometricMask(BaseMask):
         Parameters
         ----------
         theta1 : float
-            Radian value controlling the left bound of the mask
+            Radian value controlling the left bound of the mask. If
+            unspecified, this bound is set to 0.
 
         theta2 : float
-            Radian value controlling the right bound of the mask
+            Radian value controlling the right bound of the mask. If
+            unspecified, this bound is set to `pi=3.14`...
 
         Examples
         --------
@@ -2256,7 +2305,7 @@ class GeometricMask(BaseMask):
 
         self._mask[:] = self._mask * anglemap
 
-    def circular(self, rad1, rad2=None, origin=None):
+    def circular(self, rad1=0, rad2=None, origin=None):
         """Make a circular mask bounded by two radii.
 
         Computes a mask that is bounded by 2 radial distances which are input
@@ -2265,7 +2314,8 @@ class GeometricMask(BaseMask):
         Parameters
         ----------
         rad1 : int
-            Index value to set the inner radius.
+            Index value to set the inner radius. If unspecified, this bound is
+            set to  `0`.
 
         rad2 : int, optional
             Index value to set the outer radius. If unspecified, this bound
@@ -2321,7 +2371,7 @@ class GeometricMask(BaseMask):
         # combine with current mask via multiplication
         self._mask[:] = self._mask * raddist
 
-    def strike(self, ind1, ind2=None):
+    def strike(self, ind1=0, ind2=None):
         """Make a mask based on two indices.
 
         Makes a mask bounded by lines perpendicular to the direction of the
@@ -2366,7 +2416,7 @@ class GeometricMask(BaseMask):
 
         self._mask[:] = self._mask * temp_mask
 
-    def dip(self, ind1, ind2=None):
+    def dip(self, ind1=0, ind2=None):
         """Make a mask parallel to the inlet.
 
         Makes a mask that is parallel to the direction of flow in the inlet.
@@ -2415,9 +2465,29 @@ class GeometricMask(BaseMask):
 
         self._mask[:] = self._mask * temp_mask
 
-    def _compute_mask(self):
-        """Does Nothing!"""
-        pass
+    def _compute_mask(self, **kwargs):
+        """Process kwargs to make mask.
+
+        If any keyword arguments are given during instantiation, they are
+        passed to the geometric functions.
+
+        .. important::
+
+            All argument must be specified as keyword arguments.
+
+        """
+        if "angular" in kwargs:
+            angular = kwargs.pop("angular")
+            self.angular(**angular)
+        if "circular" in kwargs:
+            circular = kwargs.pop("circular")
+            self.circular(**circular)
+        if "strike" in kwargs:
+            strike = kwargs.pop("strike")
+            self.strike(**strike)
+        if "dip" in kwargs:
+            dip = kwargs.pop("dip")
+            self.dip(**dip)
 
 
 class DepositMask(BaseMask):

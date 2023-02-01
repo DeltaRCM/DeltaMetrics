@@ -1707,12 +1707,29 @@ class TestGeometricMask:
         assert gmsk.xc == gmsk._xc
         assert gmsk.yc == gmsk._yc
 
+    def test_initialize_gm_tuple(self):
+        """Test initialization."""
+        gmsk = mask.GeometricMask((100, 200))
+
+        # assert the mask is empty
+        assert gmsk.mask_type == 'geometric'
+        assert np.shape(gmsk._mask) == (100, 200)
+        assert np.all(gmsk._mask == 1)
+        assert gmsk._xc == 0
+        assert gmsk._yc == 100
+        assert gmsk.xc == gmsk._xc
+        assert gmsk.yc == gmsk._yc
+
     def test_circular_default(self):
         """Test circular mask with defaults, small case."""
         arr = np.zeros((5, 5))
         gmsk = mask.GeometricMask(arr)
         gmsk.circular(1)
         assert gmsk._mask[0, 2] == 0
+
+        gmsk2 = mask.GeometricMask(
+            arr, circular=dict(rad1=1))
+        assert np.all(gmsk2.mask == gmsk.mask)
 
     def test_circular_2radii(self):
         """Test circular mask with 2 radii, small case."""
@@ -1723,6 +1740,10 @@ class TestGeometricMask:
         assert np.all(gmsk._mask[:, -1] == 0)
         assert np.all(gmsk._mask[:, 0] == 0)
         assert np.all(gmsk._mask[-1, :] == 0)
+
+        gmsk2 = mask.GeometricMask(
+            arr, circular=dict(rad1=1, rad2=2))
+        assert np.all(gmsk2.mask == gmsk.mask)
 
     def test_circular_custom_origin(self):
         """Test circular mask with defined origin."""
@@ -1743,6 +1764,10 @@ class TestGeometricMask:
         assert gmsk.xc == 0
         assert gmsk.yc == 3
 
+        gmsk2 = mask.GeometricMask(
+            arr, circular=dict(rad1=1, rad2=2, origin=(3, 3)))
+        assert np.all(gmsk2.mask == gmsk.mask)
+
     def test_strike_one(self):
         """Test strike masking with one value."""
         arr = np.zeros((7, 7))
@@ -1750,6 +1775,10 @@ class TestGeometricMask:
         gmsk.strike(2)
         assert np.all(gmsk._mask[:2, :] == 0)
         assert np.all(gmsk._mask[2:, :] == 1)
+
+        gmsk2 = mask.GeometricMask(
+            arr, strike=dict(ind1=2))
+        assert np.all(gmsk2.mask == gmsk.mask)
 
     def test_strike_two(self):
         """Test strike masking with two values."""
@@ -1760,6 +1789,10 @@ class TestGeometricMask:
         assert np.all(gmsk._mask[2:4, :] == 1)
         assert np.all(gmsk._mask[4:, :] == 0)
 
+        gmsk2 = mask.GeometricMask(
+            arr, strike=dict(ind1=2, ind2=4))
+        assert np.all(gmsk2.mask == gmsk.mask)
+
     def test_dip_one(self):
         """Test dip masking with one value."""
         arr = np.zeros((7, 7))
@@ -1769,6 +1802,10 @@ class TestGeometricMask:
         assert np.all(gmsk._mask[:, 0] == 0)
         assert np.all(gmsk._mask[:, -1] == 0)
 
+        gmsk2 = mask.GeometricMask(
+            arr, dip=dict(ind1=5))
+        assert np.all(gmsk2.mask == gmsk.mask)
+
     def test_dip_two(self):
         """Test dip masking with two values."""
         arr = np.zeros((7, 7))
@@ -1777,6 +1814,10 @@ class TestGeometricMask:
         assert np.all(gmsk._mask[:, 0:2] == 0)
         assert np.all(gmsk._mask[:, 2:4] == 1)
         assert np.all(gmsk._mask[:, 4:] == 0)
+
+        gmsk2 = mask.GeometricMask(
+            arr, dip=dict(ind1=2, ind2=4))
+        assert np.all(gmsk2.mask == gmsk.mask)
 
     def test_angular_half(self):
         """Test angular mask over half of domain"""
@@ -1788,6 +1829,10 @@ class TestGeometricMask:
         # assert 1s half
         assert np.all(gmsk._mask[:, :101] == 1)
         assert np.all(gmsk._mask[:, 101:] == 0)
+
+        gmsk2 = mask.GeometricMask(
+            arr, angular=dict(theta1=theta1, theta2=theta2))
+        assert np.all(gmsk2.mask == gmsk.mask)
 
     def test_angular_bad_dims(self):
         """raise error."""
