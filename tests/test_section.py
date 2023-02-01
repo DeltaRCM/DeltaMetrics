@@ -503,23 +503,53 @@ class TestRadialSection:
         _section2 = rcm8cube.register_section("test", section.RadialSection(azimuth=30))
         assert _section2 is None
 
-    def test_autodetect_origin_range_aziumths(self):
+    def test_autodetect_origin_0_aziumth(self):
         rcm8cube = cube.DataCube(golf_path)
         rcm8cube.register_section("test", section.RadialSection(azimuth=0))
-        _cshp = rcm8cube.shape
-        L0 = float(rcm8cube.meta["L0"])
+        _cshp, L0 = rcm8cube.shape, float(rcm8cube.meta["L0"])
         assert isinstance(rcm8cube.sections["test"], section.RadialSection)
         assert rcm8cube.sections["test"].trace.shape[0] == _cshp[2] // 2
         assert rcm8cube.sections["test"]._dim2_idx[-1] == _cshp[2] - 1
-        assert rcm8cube.sections["test"]._dim1_idx[-1] == 3
+        assert rcm8cube.sections["test"]._dim1_idx[-1] == L0
         assert rcm8cube.sections["test"]["velocity"].shape == (_cshp[0], _cshp[1])
+
+    def test_autodetect_origin_180_aziumth(self):
+        rcm8cube = cube.DataCube(golf_path)
+        rcm8cube.register_section("test", section.RadialSection(azimuth=180))
+        _cshp, L0 = (rcm8cube.shape, float(rcm8cube.meta["L0"]))
+        assert isinstance(rcm8cube.sections["test"], section.RadialSection)
+        assert (
+            rcm8cube.sections["test"].trace.shape[0] == (_cshp[2] // 2) + 1
+        )  # inclusive left
+        assert rcm8cube.sections["test"]._dim2_idx[-1] == 0
+        assert rcm8cube.sections["test"]._dim1_idx[-1] == L0
+        assert rcm8cube.sections["test"]["velocity"].shape == (_cshp[0], _cshp[1] + 1)
+
+    def test_autodetect_origin_90_aziumth(self):
+        rcm8cube = cube.DataCube(golf_path)
+        rcm8cube.register_section("test", section.RadialSection(azimuth=90))
+        _cshp, L0 = rcm8cube.shape, float(rcm8cube.meta["L0"])
+        assert isinstance(rcm8cube.sections["test"], section.RadialSection)
+        assert rcm8cube.sections["test"].trace.shape[0] == _cshp[1] - L0
+        assert rcm8cube.sections["test"]._dim2_idx[-1] == _cshp[2] // 2
+        assert rcm8cube.sections["test"]._dim1_idx[-1] == _cshp[1] - 1
+        assert rcm8cube.sections["test"]["velocity"].shape == (_cshp[0], _cshp[1] - L0)
+
+    def test_autodetect_origin_45_aziumth(self):
+        rcm8cube = cube.DataCube(golf_path)
         rcm8cube.register_section("test2", section.RadialSection(azimuth=45))
+        _cshp, L0 = rcm8cube.shape, float(rcm8cube.meta["L0"])
+
         assert isinstance(rcm8cube.sections["test2"], section.RadialSection)
         assert rcm8cube.sections["test2"].trace.shape[0] == _cshp[1] - L0
         assert rcm8cube.sections["test2"]._dim2_idx[-1] == _cshp[2] - 1 - L0
         assert rcm8cube.sections["test2"]._dim1_idx[-1] == _cshp[1] - 1
         assert rcm8cube.sections["test2"]["velocity"].shape == (_cshp[0], _cshp[1] - L0)
+
+    def test_autodetect_origin_85_aziumth(self):
+        rcm8cube = cube.DataCube(golf_path)
         rcm8cube.register_section("test3", section.RadialSection(azimuth=85))
+        _cshp, L0 = rcm8cube.shape, float(rcm8cube.meta["L0"])
         assert isinstance(rcm8cube.sections["test3"], section.RadialSection)
         assert rcm8cube.sections["test3"].trace.shape[0] < _cshp[1]  # slight oblique
         assert (
@@ -529,7 +559,11 @@ class TestRadialSection:
             rcm8cube.sections["test3"]._dim1_idx[-1] == _cshp[1] - 1
         )  # slight oblique
         assert rcm8cube.sections["test3"]["velocity"].shape[0] == _cshp[0]
+
+    def test_autodetect_origin_115_aziumth(self):
+        rcm8cube = cube.DataCube(golf_path)
         rcm8cube.register_section("test4", section.RadialSection(azimuth=115))
+        _cshp, L0 = rcm8cube.shape, float(rcm8cube.meta["L0"])
         assert isinstance(rcm8cube.sections["test4"], section.RadialSection)
         assert rcm8cube.sections["test4"].trace.shape[0] < _cshp[1]  # slight oblique
         assert (
@@ -539,13 +573,20 @@ class TestRadialSection:
             rcm8cube.sections["test4"]._dim1_idx[-1] == _cshp[1] - 1
         )  # slight oblique
         assert rcm8cube.sections["test4"]["velocity"].shape[0] == _cshp[0]
+
+    def test_autodetect_origin_165_aziumth(self):
+        rcm8cube = cube.DataCube(golf_path)
         rcm8cube.register_section("test5", section.RadialSection(azimuth=165))
+        _cshp, L0 = rcm8cube.shape, float(rcm8cube.meta["L0"])
         assert isinstance(rcm8cube.sections["test5"], section.RadialSection)
         assert rcm8cube.sections["test5"].trace.shape[0] > _cshp[1]  # obtuse
         assert rcm8cube.sections["test5"]._dim2_idx[-1] == 0
         assert rcm8cube.sections["test5"]._dim2_idx[0] == _cshp[2] // 2
         assert rcm8cube.sections["test5"]._dim1_idx[-1] < _cshp[1] // 2  # acute
         assert rcm8cube.sections["test5"]["velocity"].shape[0] == _cshp[0]
+
+    def test_autodetect_origin_OOB_aziumth(self):
+        rcm8cube = cube.DataCube(golf_path)
         with pytest.raises(ValueError, match=r"Azimuth must be *."):
             rcm8cube.register_section("testfail", section.RadialSection(azimuth=-10))
         with pytest.raises(ValueError, match=r"Azimuth must be *."):
