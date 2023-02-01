@@ -63,23 +63,25 @@ class BasePlanform(abc.ABC):
 
     @name.setter
     def name(self, var):
-        if (self._name is None):
+        if self._name is None:
             # _name is not yet set
             self._name = var or self.planform_type
         else:
             # _name is already set
             if not (var is None):
                 warnings.warn(
-                    UserWarning("`name` argument supplied to instantiated "
-                                "`Planform` object. To change the name of "
-                                "a Planform, you must set the attribute "
-                                "directly with `plan._name = 'name'`."))
+                    UserWarning(
+                        "`name` argument supplied to instantiated "
+                        "`Planform` object. To change the name of "
+                        "a Planform, you must set the attribute "
+                        "directly with `plan._name = 'name'`."
+                    )
+                )
             # do nothing
 
     @property
     def shape(self):
-        """Planform shape.
-        """
+        """Planform shape."""
         return self._shape
 
     def _show(self, field, varinfo, **kwargs):
@@ -102,11 +104,11 @@ class BasePlanform(abc.ABC):
             more information.
         """
         # process arguments and inputs
-        ax = kwargs.pop('ax', None)
-        title = kwargs.pop('title', None)
-        ticks = kwargs.pop('ticks', False)
-        colorbar = kwargs.pop('colorbar', True)
-        colorbar_label = kwargs.pop('colorbar_label', False)
+        ax = kwargs.pop("ax", None)
+        title = kwargs.pop("title", None)
+        ticks = kwargs.pop("ticks", False)
+        colorbar = kwargs.pop("colorbar", True)
+        colorbar_label = kwargs.pop("colorbar_label", False)
 
         if not ax:
             ax = plt.gca()
@@ -114,24 +116,28 @@ class BasePlanform(abc.ABC):
         # get the extent as arbitrary dimensions
         d0, d1 = field.dims
         d0_arr, d1_arr = field[d0], field[d1]
-        _extent = [d1_arr[0],                  # dim1, 0
-                   d1_arr[-1] + d1_arr[1],     # dim1, end + dx
-                   d0_arr[-1] + d0_arr[1],     # dim0, end + dx
-                   d0_arr[0]]                  # dim0, 0
+        _extent = [
+            d1_arr[0],  # dim1, 0
+            d1_arr[-1] + d1_arr[1],  # dim1, end + dx
+            d0_arr[-1] + d0_arr[1],  # dim0, end + dx
+            d0_arr[0],
+        ]  # dim0, 0
 
-        im = ax.imshow(field,
-                       cmap=varinfo.cmap,
-                       norm=varinfo.norm,
-                       vmin=varinfo.vmin,
-                       vmax=varinfo.vmax,
-                       extent=_extent)
+        im = ax.imshow(
+            field,
+            cmap=varinfo.cmap,
+            norm=varinfo.norm,
+            vmin=varinfo.vmin,
+            vmax=varinfo.vmax,
+            extent=_extent,
+        )
 
         if colorbar:
             cb = plot.append_colorbar(im, ax)
             if colorbar_label:
-                _colorbar_label = \
-                    varinfo.label if (colorbar_label is True) \
-                    else str(colorbar_label)  # use custom if passed
+                _colorbar_label = (
+                    varinfo.label if (colorbar_label is True) else str(colorbar_label)
+                )  # use custom if passed
                 cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
 
         if not ticks:
@@ -177,11 +183,11 @@ class Planform(BasePlanform):
         this need will depend on the type of `Planform`.
         """
         if (not (z is None)) and (not (idx is None)):
-            raise TypeError('Cannot specify both `z` and `idx`.')
+            raise TypeError("Cannot specify both `z` and `idx`.")
         if (not (t is None)) and (not (idx is None)):
-            raise TypeError('Cannot specify both `t` and `idx`.')
+            raise TypeError("Cannot specify both `t` and `idx`.")
         if (not (z is None)) and (not (t is None)):
-            raise TypeError('Cannot specify both `z` and `t`.')
+            raise TypeError("Cannot specify both `z` and `t`.")
 
         self.cube = None
         self._dim0_idx = None
@@ -190,7 +196,7 @@ class Planform(BasePlanform):
         self._input_t = t
         self._input_idx = idx
 
-        super().__init__('data', *args, **kwargs)
+        super().__init__("data", *args, **kwargs)
 
         if len(args) > 0:
             self.connect(args[0])
@@ -199,24 +205,23 @@ class Planform(BasePlanform):
 
     @property
     def variables(self):
-        """List of variables.
-        """
+        """List of variables."""
         return self._variables
 
     @property
     def idx(self):
-        """Index into underlying Cube along axis 0.
-        """
+        """Index into underlying Cube along axis 0."""
         return self._dim0_idx
 
     def connect(self, CubeInstance, name=None):
-        """Connect this Planform instance to a Cube instance.
-        """
+        """Connect this Planform instance to a Cube instance."""
         if not issubclass(type(CubeInstance), cube.BaseCube):
-            raise TypeError('Expected type is subclass of {_exptype}, '
-                            'but received was {_gottype}.'.format(
-                                _exptype=type(cube.BaseCube),
-                                _gottype=type(CubeInstance)))
+            raise TypeError(
+                "Expected type is subclass of {_exptype}, "
+                "but received was {_gottype}.".format(
+                    _exptype=type(cube.BaseCube), _gottype=type(CubeInstance)
+                )
+            )
         self.cube = CubeInstance
         self._variables = self.cube.variables
         self.name = name  # use the setter to determine the _name
@@ -243,8 +248,9 @@ class Planform(BasePlanform):
             # silently used  to interpolate the dim0 coordinates to find the
             # nearest index
             dim0_val = self._input_z or self._input_t
-            self._dim0_idx = np.argmin(np.abs(
-                np.array(self.cube.dim0_coords) - dim0_val))
+            self._dim0_idx = np.argmin(
+                np.abs(np.array(self.cube.dim0_coords) - dim0_val)
+            )
         else:
             # then idx must have been given
             self._dim0_idx = self._input_idx
@@ -270,30 +276,37 @@ class Planform(BasePlanform):
         """
         if isinstance(self.cube, cube.DataCube):
             _xrDA = self.cube[var][self._dim0_idx, :, :]
-            _xrDA.attrs = {'slicetype': 'data_planform',
-                           'knows_stratigraphy': self.cube._knows_stratigraphy,
-                           'knows_spacetime': True}
+            _xrDA.attrs = {
+                "slicetype": "data_planform",
+                "knows_stratigraphy": self.cube._knows_stratigraphy,
+                "knows_spacetime": True,
+            }
             if self.cube._knows_stratigraphy:
                 _xrDA.strat.add_information(
-                    _psvd_mask=self.cube.strat_attr.psvd_idx[self._dim0_idx, :, :],  # noqa: E501
-                    _strat_attr=self.cube.strat_attr(
-                        'planform', self._dim0_idx, None))
+                    _psvd_mask=self.cube.strat_attr.psvd_idx[
+                        self._dim0_idx, :, :
+                    ],  # noqa: E501
+                    _strat_attr=self.cube.strat_attr("planform", self._dim0_idx, None),
+                )
             return _xrDA
         elif isinstance(self.cube, cube.StratigraphyCube):
             _xrDA = self.cube[var][self._dim0_idx, :, :]
-            _xrDA.attrs = {'slicetype': 'stratigraphy_planform',
-                           'knows_stratigraphy': True,
-                           'knows_spacetime': False}
+            _xrDA.attrs = {
+                "slicetype": "stratigraphy_planform",
+                "knows_stratigraphy": True,
+                "knows_spacetime": False,
+            }
             return _xrDA
-        elif (self.cube is None):
+        elif self.cube is None:
             raise AttributeError(
-                'No cube connected. Are you sure you ran `.connect()`?')
+                "No cube connected. Are you sure you ran `.connect()`?"
+            )
         else:
-            raise TypeError('Unknown Cube type encountered: %s'
-                            % type(self.cube))
+            raise TypeError("Unknown Cube type encountered: %s" % type(self.cube))
 
-    def show(self, var, ax=None, title=None, ticks=False,
-             colorbar=True, colorbar_label=False):
+    def show(
+        self, var, ax=None, title=None, ticks=False, colorbar=True, colorbar_label=False
+    ):
         """Show the planform.
 
         Method enumerates convenient routines for visualizing planform data
@@ -341,16 +354,23 @@ class Planform(BasePlanform):
             >>> plt.show()
         """
         # process the planform attribute to a field
-        _varinfo = self.cube.varset[var] if \
-            issubclass(type(self.cube), cube.BaseCube) else \
-            plot.VariableSet()[var]
+        _varinfo = (
+            self.cube.varset[var]
+            if issubclass(type(self.cube), cube.BaseCube)
+            else plot.VariableSet()[var]
+        )
         _field = self[var]
 
         # call the internal _show method
         im = self._show(
-            _field, _varinfo,
-            ax=ax, title=title, ticks=ticks,
-            colorbar=colorbar, colorbar_label=colorbar_label)
+            _field,
+            _varinfo,
+            ax=ax,
+            title=title,
+            ticks=ticks,
+            colorbar=colorbar,
+            colorbar_label=colorbar_label,
+        )
 
         return im
 
@@ -411,8 +431,7 @@ class SpecialtyPlanform(BasePlanform):
         """
         super().__init__(planform_type, *args, **kwargs)
 
-        self._default_varinfo = plot.VariableInfo(
-            'data', label='data')
+        self._default_varinfo = plot.VariableInfo("data", label="data")
 
     @property
     @abc.abstractmethod
@@ -432,8 +451,15 @@ class SpecialtyPlanform(BasePlanform):
         """
         return self.data[slc]
 
-    def show(self, var=None, ax=None, title=None, ticks=False,
-             colorbar=True, colorbar_label=False):
+    def show(
+        self,
+        var=None,
+        ax=None,
+        title=None,
+        ticks=False,
+        colorbar=True,
+        colorbar_label=False,
+    ):
         """Show the planform.
 
         Display a field of the planform, called by attribute name.
@@ -467,23 +493,28 @@ class SpecialtyPlanform(BasePlanform):
             provided, a call is made to ``plt.gca()`` to get the current (or
             create a new) `Axes` object.
         """
-        if (var is None):
+        if var is None:
             _varinfo = self._default_varinfo
             _field = self.data
-        elif (isinstance(var, str)):
+        elif isinstance(var, str):
             _field = self.__getattribute__(var)  # will error if var not attr
-            _expected_varinfo = '_' + var + '_varinfo'
+            _expected_varinfo = "_" + var + "_varinfo"
             if hasattr(self, _expected_varinfo):
                 _varinfo = self.__getattribute__(_expected_varinfo)
             else:
                 _varinfo = self._default_varinfo
         else:
-            raise TypeError('Bad value for `var`: {0}'.format(var))
+            raise TypeError("Bad value for `var`: {0}".format(var))
 
         self._show(
-            _field, _varinfo,
-            ax=ax, title=title, ticks=ticks,
-            colorbar=colorbar, colorbar_label=colorbar_label)
+            _field,
+            _varinfo,
+            ax=ax,
+            title=title,
+            ticks=ticks,
+            colorbar=colorbar,
+            colorbar_label=colorbar_label,
+        )
 
 
 class OpeningAnglePlanform(SpecialtyPlanform):
@@ -588,8 +619,7 @@ class OpeningAnglePlanform(SpecialtyPlanform):
             ...     elevation_threshold=0)
         """
         # make a temporary mask
-        _em = mask.ElevationMask(
-            elevation_data, **kwargs)
+        _em = mask.ElevationMask(elevation_data, **kwargs)
 
         # invert the mask for the below sea level area
         _below_mask = ~(_em.mask)
@@ -626,7 +656,7 @@ class OpeningAnglePlanform(SpecialtyPlanform):
             ...     _EM)
         """
         if not isinstance(ElevationMask, mask.ElevationMask):
-            raise TypeError('Must be type: ElevationMask.')
+            raise TypeError("Must be type: ElevationMask.")
 
         # invert the mask for the below sea level area
         _below_mask = ~(ElevationMask.mask)
@@ -636,10 +666,8 @@ class OpeningAnglePlanform(SpecialtyPlanform):
 
     @staticmethod
     def from_mask(UnknownMask, **kwargs):
-        """Wraps :obj:`from_ElevationMask`.
-        """
-        return OpeningAnglePlanform.from_ElevationMask(
-                UnknownMask, **kwargs)
+        """Wraps :obj:`from_ElevationMask`."""
+        return OpeningAnglePlanform.from_ElevationMask(UnknownMask, **kwargs)
 
     def __init__(self, *args, **kwargs):
         """Init.
@@ -649,75 +677,78 @@ class OpeningAnglePlanform(SpecialtyPlanform):
         .. note:: needs docstring.
 
         """
-        super().__init__('opening angle', *args)
+        super().__init__("opening angle", *args)
         self._shape = None
         self._sea_angles = None
         self._below_mask = None
 
         # set variable info display options
         self._sea_angles_varinfo = plot.VariableInfo(
-            'sea_angles', cmap=plt.cm.jet, label='opening angle')
+            "sea_angles", cmap=plt.cm.jet, label="opening angle"
+        )
         self._below_mask_varinfo = plot.VariableInfo(
-            'below_mask', cmap=plt.cm.gray, label='where below')
+            "below_mask", cmap=plt.cm.gray, label="where below"
+        )
         self._default_varinfo = self._sea_angles_varinfo
 
         # check for inputs to return or proceed
-        if (len(args) == 0):
-            _allow_empty = kwargs.pop('allow_empty', False)
+        if len(args) == 0:
+            _allow_empty = kwargs.pop("allow_empty", False)
             if _allow_empty:
                 # do nothing and return partially instantiated object
                 return
             else:
-                raise ValueError(
-                    'Expected 1 input, got 0.')
+                raise ValueError("Expected 1 input, got 0.")
         if not (len(args) == 1):
-            raise ValueError(
-                'Expected 1 input, got %s.' % str(len(args)))
+            raise ValueError("Expected 1 input, got %s." % str(len(args)))
 
         # process the argument to the omask needed for Shaw OAM
         if utils.is_ndarray_or_xarray(args[0]):
             _arr = args[0]
             # check that is boolean or integer binary
-            if (_arr.dtype == bool):
+            if _arr.dtype == bool:
                 _below_mask = _arr
-            elif (_arr.dtype == int):
+            elif _arr.dtype == int:
                 if np.all(np.logical_or(_arr == 0, _arr == 1)):
                     _below_mask = _arr
                 else:
                     ValueError(
-                        'The input was an integer array, but some elements in '
-                        'the array were not 0 or 1.')
+                        "The input was an integer array, but some elements in "
+                        "the array were not 0 or 1."
+                    )
             else:
                 raise TypeError(
-                    'The input was not an integer or boolean array, but was '
-                    '{0}. If you are trying to instantiate an OAP from '
-                    'elevation data directly, see static method '
-                    '`OpeningAnglePlanform.from_elevation_data`.')
+                    "The input was not an integer or boolean array, but was "
+                    "{0}. If you are trying to instantiate an OAP from "
+                    "elevation data directly, see static method "
+                    "`OpeningAnglePlanform.from_elevation_data`."
+                )
 
             # now check the type and allocate the arrays as xr.DataArray
             if isinstance(_below_mask, xr.core.dataarray.DataArray):
                 self._below_mask = xr.zeros_like(_below_mask, dtype=bool)
-                self._below_mask.name = 'below_mask'
+                self._below_mask.name = "below_mask"
                 self._sea_angles = xr.zeros_like(_below_mask, dtype=float)
-                self._sea_angles.name = 'sea_angles'
+                self._sea_angles.name = "sea_angles"
             elif isinstance(_below_mask, np.ndarray):
                 # this will use meshgrid to fill out with dx=1 in shape of array
                 self._below_mask = xr.DataArray(
-                    data=np.zeros(_below_mask.shape, dtype=bool),
-                    name='below_mask')
+                    data=np.zeros(_below_mask.shape, dtype=bool), name="below_mask"
+                )
                 self._sea_angles = xr.DataArray(
-                    data=np.zeros(_below_mask.shape, dtype=float),
-                    name='sea_angles')
+                    data=np.zeros(_below_mask.shape, dtype=float), name="sea_angles"
+                )
             else:
-                raise TypeError('Invalid type {0}'.format(type(_below_mask)))
+                raise TypeError("Invalid type {0}".format(type(_below_mask)))
 
         elif issubclass(type(args[0]), cube.BaseCube):
             raise NotImplementedError(
-                'Instantiation from a Cube is not yet implemented.')
+                "Instantiation from a Cube is not yet implemented."
+            )
 
         else:
             # bad type supplied as argument
-            raise TypeError('Invalid type for argument.')
+            raise TypeError("Invalid type for argument.")
 
         self._shape = _below_mask.shape
 
@@ -746,18 +777,22 @@ class OpeningAnglePlanform(SpecialtyPlanform):
 
             # pull out the shaw oam keywords
             shaw_kwargs = {}
-            if 'numviews' in kwargs:
-                shaw_kwargs['numviews'] = kwargs.pop('numviews')
+            if "numviews" in kwargs:
+                shaw_kwargs["numviews"] = kwargs.pop("numviews")
 
             # pixels present in the mask
             shoreangles, seaangles = shaw_opening_angle_method(
-                below_mask, **shaw_kwargs)
+                below_mask, **shaw_kwargs
+            )
 
             # translate flat seaangles values to the shoreline image
             #  this is a good target for optimization (return reshaped?)
-            flat_inds = list(map(
-                lambda x: np.ravel_multi_index(x, sea_angles.shape),
-                seaangles[:2, :].T.astype(int)))
+            flat_inds = list(
+                map(
+                    lambda x: np.ravel_multi_index(x, sea_angles.shape),
+                    seaangles[:2, :].T.astype(int),
+                )
+            )
             sea_angles.flat[flat_inds] = seaangles[-1, :]
 
         # assign shore_image to the mask object with proper size
@@ -893,8 +928,7 @@ class MorphologicalPlanform(SpecialtyPlanform):
             ...     max_disk=3)
         """
         # make a temporary mask
-        _em = mask.ElevationMask(
-            elevation_data, **kwargs)
+        _em = mask.ElevationMask(elevation_data, **kwargs)
 
         # compute from __init__ pathway
         return MorphologicalPlanform(_em, max_disk, **kwargs)
@@ -943,71 +977,71 @@ class MorphologicalPlanform(SpecialtyPlanform):
             may not be what you expect.
 
         """
-        super().__init__('morphological method', *args)
+        super().__init__("morphological method", *args)
         self._shape = None
         self._elevation_mask = None
         self._max_disk = None
 
         # set variable info display options
-        self._mean_image_varinfo = plot.VariableInfo(
-            'mean_image', label='mean image')
+        self._mean_image_varinfo = plot.VariableInfo("mean_image", label="mean image")
         self._default_varinfo = self._mean_image_varinfo
 
         # check for input or allowable emptiness
-        if (len(args) == 0):
-            _allow_empty = kwargs.pop('allow_empty', False)
+        if len(args) == 0:
+            _allow_empty = kwargs.pop("allow_empty", False)
             if _allow_empty:
                 # do nothing and return partially instantiated object
                 return
             else:
-                raise ValueError(
-                    'Expected at least 1 input, got 0.')
+                raise ValueError("Expected at least 1 input, got 0.")
         # assign first argument to attribute of self
         if issubclass(type(args[0]), mask.BaseMask):
             self._elevation_mask = args[0]._mask
         elif utils.is_ndarray_or_xarray(args[0]):
             self._elevation_mask = args[0]
         else:
-            raise TypeError(
-                'Type of first argument is unrecognized or unsupported')
+            raise TypeError("Type of first argument is unrecognized or unsupported")
         # now check the type and allocate the arrays as xr.DataArray
         if isinstance(self._elevation_mask, xr.core.dataarray.DataArray):
             self._mean_image = xr.zeros_like(self._elevation_mask, dtype=float)
-            self._mean_image.name = 'mean_image'
+            self._mean_image.name = "mean_image"
         elif isinstance(self._elevation_mask, np.ndarray):
             # this will use meshgrid to fill out with dx=1 in shape of array
             self._mean_image = xr.DataArray(
                 data=np.zeros(self._elevation_mask.shape, dtype=float),
-                name='mean_image')
+                name="mean_image",
+            )
         else:
-            raise TypeError(
-                'Invalid type {0}'.format(type(self._elevation_mask)))
+            raise TypeError("Invalid type {0}".format(type(self._elevation_mask)))
 
         # see if the inlet width is provided, if not see if cube is avail
-        if (len(args) > 1):
+        if len(args) > 1:
             if isinstance(args[1], (int, float)):
                 self._max_disk = int(args[1])
             else:
                 raise TypeError(
-                    'Expected single number to set max inlet size, got: '
-                    '{0}'.format(args[1]))
+                    "Expected single number to set max inlet size, got: "
+                    "{0}".format(args[1])
+                )
         elif isinstance(self.cube, cube.BaseCube):
             try:
-                self._max_disk = self.cube.meta['N0'].data
+                self._max_disk = self.cube.meta["N0"].data
             except Exception:
                 raise TypeError(
-                    'Data cube does not contain metadata, you must '
-                    'specify the inlet size.')
+                    "Data cube does not contain metadata, you must "
+                    "specify the inlet size."
+                )
         else:
             raise TypeError(
-                'Something went wrong. Check second input argument for '
-                'inlet width.')
+                "Something went wrong. Check second input argument for " "inlet width."
+            )
 
         self._shape = self._elevation_mask.shape
 
         # run the computation
         all_images, mean_image = morphological_closing_method(
-            self._elevation_mask, biggestdisk=self._max_disk)
+            self._elevation_mask, biggestdisk=self._max_disk
+        )
 
         # assign arrays to object
         self._mean_image[:] = np.ones_like(mean_image) - mean_image
@@ -1153,31 +1187,28 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
     if isinstance(land_mask, mask.LandMask):
         land_mask = land_mask.mask
         _lm = land_mask.values
-        _dx = float(land_mask[land_mask.dims[0]][1] -
-                    land_mask[land_mask.dims[0]][0])
+        _dx = float(land_mask[land_mask.dims[0]][1] - land_mask[land_mask.dims[0]][0])
     elif isinstance(land_mask, xr.core.dataarray.DataArray):
         _lm = land_mask.values
-        _dx = float(land_mask[land_mask.dims[0]][1] -
-                    land_mask[land_mask.dims[0]][0])
+        _dx = float(land_mask[land_mask.dims[0]][1] - land_mask[land_mask.dims[0]][0])
     elif isinstance(land_mask, np.ndarray):
         _lm = land_mask
         _dx = 1
     else:
-        raise TypeError('Invalid type {0}'.format(type(land_mask)))
+        raise TypeError("Invalid type {0}".format(type(land_mask)))
 
-    _ = kwargs.pop('return_line', None)  # trash this variable if passed
-    shorelength = compute_shoreline_length(
-        shore_mask, return_line=False, **kwargs)
+    _ = kwargs.pop("return_line", None)  # trash this variable if passed
+    shorelength = compute_shoreline_length(shore_mask, return_line=False, **kwargs)
 
     # compute the length of the shoreline and area of land
     shore_len_pix = shorelength
     land_area_pix = np.sum(_lm) * _dx * _dx
 
-    if (land_area_pix > 0):
+    if land_area_pix > 0:
         # compute roughness
         rough = shore_len_pix / np.sqrt(land_area_pix)
     else:
-        raise ValueError('No pixels in land mask.')
+        raise ValueError("No pixels in land mask.")
 
     return rough
 
@@ -1261,21 +1292,23 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     if isinstance(shore_mask, mask.ShorelineMask):
         shore_mask = shore_mask.mask
         _sm = shore_mask.values
-        _dx = float(shore_mask[shore_mask.dims[0]][1] -
-                    shore_mask[shore_mask.dims[0]][0])
+        _dx = float(
+            shore_mask[shore_mask.dims[0]][1] - shore_mask[shore_mask.dims[0]][0]
+        )
     elif isinstance(shore_mask, xr.core.dataarray.DataArray):
         _sm = shore_mask.values
-        _dx = float(shore_mask[shore_mask.dims[0]][1] -
-                    shore_mask[shore_mask.dims[0]][0])
+        _dx = float(
+            shore_mask[shore_mask.dims[0]][1] - shore_mask[shore_mask.dims[0]][0]
+        )
     elif isinstance(shore_mask, np.ndarray):
         _sm = shore_mask
         _dx = 1
         # should we have a warning that no dx was found here?
     else:
-        raise TypeError('Invalid type {0}'.format(type(shore_mask)))
+        raise TypeError("Invalid type {0}".format(type(shore_mask)))
 
     if not (np.sum(_sm) > 0):
-        raise ValueError('No pixels in shoreline mask.')
+        raise ValueError("No pixels in shoreline mask.")
 
     if _sm.ndim == 3:
         _sm = _sm.squeeze()
@@ -1284,12 +1317,15 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     _y, _x = np.argwhere(_sm).T
 
     # preallocate line arrays
-    line_xs_0 = np.zeros(len(_x),)
-    line_ys_0 = np.zeros(len(_y),)
+    line_xs_0 = np.zeros(
+        len(_x),
+    )
+    line_ys_0 = np.zeros(
+        len(_y),
+    )
 
     # determine a starting coordinate based on the proximity to the origin
-    _closest = np.argmin(
-        np.sqrt((_x - origin[0])**2 + (_y - origin[1])**2))
+    _closest = np.argmin(np.sqrt((_x - origin[0]) ** 2 + (_y - origin[1]) ** 2))
     line_xs_0[0] = _x[_closest]
     line_ys_0[0] = _y[_closest]
 
@@ -1298,14 +1334,15 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     hit_pts[_closest] = True
 
     # compute the distance to the next point
-    dists_pts = np.sqrt((_x[~hit_pts]-_x[_closest])**2 +
-                        (_y[~hit_pts]-_y[_closest])**2)
+    dists_pts = np.sqrt(
+        (_x[~hit_pts] - _x[_closest]) ** 2 + (_y[~hit_pts] - _y[_closest]) ** 2
+    )
     dist_next = np.min(dists_pts)
     dist_max = np.sqrt(100)
 
     # # loop through all of the other points and organize into a line
     idx = 0
-    while (dist_next <= dist_max):
+    while dist_next <= dist_max:
 
         idx += 1
 
@@ -1322,31 +1359,36 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
 
         # compute distance from ith point to all other points
         _xi, _yi = line_xs_0[idx], line_ys_0[idx]
-        dists_pts = np.sqrt((_x[~hit_pts]-_xi)**2 + (_y[~hit_pts]-_yi)**2)
-        if (not np.all(hit_pts)):
+        dists_pts = np.sqrt((_x[~hit_pts] - _xi) ** 2 + (_y[~hit_pts] - _yi) ** 2)
+        if not np.all(hit_pts):
             dist_next = np.min(dists_pts)
         else:
             dist_next = np.inf
 
     # trim the list
-    line_xs_0 = np.copy(line_xs_0[:idx+1])
-    line_ys_0 = np.copy(line_ys_0[:idx+1])
+    line_xs_0 = np.copy(line_xs_0[: idx + 1])
+    line_ys_0 = np.copy(line_ys_0[: idx + 1])
 
     #############################################
     # return to the first point and iterate again
-    line_xs_1 = np.zeros(len(_x),)
-    line_ys_1 = np.zeros(len(_y),)
+    line_xs_1 = np.zeros(
+        len(_x),
+    )
+    line_ys_1 = np.zeros(
+        len(_y),
+    )
 
-    if (not np.all(hit_pts)):
+    if not np.all(hit_pts):
 
         # compute dists from the intial point
-        dists_pts = np.sqrt((_x[~hit_pts]-line_xs_0[0])**2 +
-                            (_y[~hit_pts]-line_ys_0[0])**2)
+        dists_pts = np.sqrt(
+            (_x[~hit_pts] - line_xs_0[0]) ** 2 + (_y[~hit_pts] - line_ys_0[0]) ** 2
+        )
         dist_next = np.min(dists_pts)
 
         # loop through all of the other points and organize into a line
         idx = -1
-        while (dist_next <= dist_max):
+        while dist_next <= dist_max:
 
             idx += 1
 
@@ -1363,16 +1405,15 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
 
             # compute distance from ith point to all other points
             _xi, _yi = line_xs_1[idx], line_ys_1[idx]
-            dists_pts = np.sqrt((_x[~hit_pts]-_xi)**2 +
-                                (_y[~hit_pts]-_yi)**2)
-            if (not np.all(hit_pts)):
+            dists_pts = np.sqrt((_x[~hit_pts] - _xi) ** 2 + (_y[~hit_pts] - _yi) ** 2)
+            if not np.all(hit_pts):
                 dist_next = np.min(dists_pts)
             else:
                 dist_next = np.inf
 
         # trim the list
-        line_xs_1 = np.copy(line_xs_1[:idx+1])
-        line_ys_1 = np.copy(line_ys_1[:idx+1])
+        line_xs_1 = np.copy(line_xs_1[: idx + 1])
+        line_ys_1 = np.copy(line_ys_1[: idx + 1])
     else:
         line_xs_1 = np.array([])
         line_ys_1 = np.array([])
@@ -1383,8 +1424,14 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
 
     # combine the xs and ys AND multiply by dx
     line = np.column_stack((line_xs, line_ys)) * _dx
-    length = np.sum(np.sqrt((line_xs[1:]-line_xs[:-1])**2 +
-                            (line_ys[1:]-line_ys[:-1])**2)) * _dx
+    length = (
+        np.sum(
+            np.sqrt(
+                (line_xs[1:] - line_xs[:-1]) ** 2 + (line_ys[1:] - line_ys[:-1]) ** 2
+            )
+        )
+        * _dx
+    )
 
     if return_line:
         return length, line
@@ -1392,8 +1439,7 @@ def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
         return length
 
 
-def compute_shoreline_distance(shore_mask, origin=[0, 0],
-                               return_distances=False):
+def compute_shoreline_distance(shore_mask, origin=[0, 0], return_distances=False):
     """Compute mean and stddev distance from the delta apex to the shoreline.
 
     Algorithm computes the mean distance from the delta apex/origin to all
@@ -1461,20 +1507,22 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
     if isinstance(shore_mask, mask.ShorelineMask):
         shore_mask = shore_mask.mask
         _sm = shore_mask.values
-        _dx = float(shore_mask[shore_mask.dims[0]][1] -
-                    shore_mask[shore_mask.dims[0]][0])
+        _dx = float(
+            shore_mask[shore_mask.dims[0]][1] - shore_mask[shore_mask.dims[0]][0]
+        )
     elif isinstance(shore_mask, xr.core.dataarray.DataArray):
         _sm = shore_mask.values
-        _dx = float(shore_mask[shore_mask.dims[0]][1] -
-                    shore_mask[shore_mask.dims[0]][0])
+        _dx = float(
+            shore_mask[shore_mask.dims[0]][1] - shore_mask[shore_mask.dims[0]][0]
+        )
     elif isinstance(shore_mask, np.ndarray):
         _sm = shore_mask
         _dx = 1
     else:
-        raise TypeError('Invalid type {0}'.format(type(shore_mask)))
+        raise TypeError("Invalid type {0}".format(type(shore_mask)))
 
     if not (np.sum(_sm) > 0):
-        raise ValueError('No pixels in shoreline mask.')
+        raise ValueError("No pixels in shoreline mask.")
 
     if _sm.ndim == 3:
         _sm = _sm.squeeze()
@@ -1483,7 +1531,7 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0],
     _y, _x = np.argwhere(_sm).T
 
     # determine the distances (multiply by dx)
-    _dists = np.sqrt((_x - origin[0])**2 + (_y - origin[1])**2) * _dx
+    _dists = np.sqrt((_x - origin[0]) ** 2 + (_y - origin[1]) ** 2) * _dx
 
     if return_distances:
         return np.nanmean(_dists), np.nanstd(_dists), _dists
@@ -1506,7 +1554,7 @@ def _compute_angles_between(c1, shoreandborder, Shallowsea, numviews):
         y = diff[1]
 
         angles = np.arctan2(x, y)
-        angles = np.sort(angles) * 180. / np.pi
+        angles = np.sort(angles) * 180.0 / np.pi
 
         dangles = np.zeros_like(angles)
         dangles[:-1] = angles[1:] - angles[:-1]
@@ -1562,22 +1610,23 @@ def shaw_opening_angle_method(below_mask, numviews=3):
     """
 
     Sx, Sy = np.gradient(below_mask)
-    G = np.sqrt((Sx*Sx) + (Sy*Sy))
+    G = np.sqrt((Sx * Sx) + (Sy * Sy))
 
     # threshold the gradient to produce edges
     edges = np.logical_and((G > 0), (below_mask > 0))
 
     if np.sum(edges) == 0:
         raise ValueError(
-            'No pixels identified in below_mask. '
-            'Cannot compute the Opening Angle Method.')
+            "No pixels identified in below_mask. "
+            "Cannot compute the Opening Angle Method."
+        )
 
     # extract coordinates of the edge pixels and define convex hull
-    bordermap = np.pad(np.zeros_like(edges), 1, 'edge')
+    bordermap = np.pad(np.zeros_like(edges), 1, "edge")
     bordermap[:-2, 1:-1] = edges
     bordermap[0, :] = 1
     points = np.fliplr(np.array(np.where(edges > 0)).T)
-    hull = ConvexHull(points, qhull_options='Qc')
+    hull = ConvexHull(points, qhull_options="Qc")
 
     # identify set of points to evaluate
     sea = np.fliplr(np.array(np.where(below_mask > 0.5)).T)
@@ -1590,16 +1639,17 @@ def shaw_opening_angle_method(below_mask, numviews=3):
 
     Shallowsea_ = sea[In]
     seamap = np.zeros(bordermap.shape)
-    flat_inds = list(map(lambda x: np.ravel_multi_index(x, seamap.shape),
-                         np.fliplr(Shallowsea_)))
+    flat_inds = list(
+        map(lambda x: np.ravel_multi_index(x, seamap.shape), np.fliplr(Shallowsea_))
+    )
     seamap.flat[flat_inds] = 1
     seamap[:3, :] = 0
 
     # define other points as these 'Deepsea' points
     Deepsea_ = sea[~In]
-    Deepsea = np.zeros((numviews+2, len(Deepsea_)))
+    Deepsea = np.zeros((numviews + 2, len(Deepsea_)))
     Deepsea[:2, :] = np.flipud(Deepsea_.T)
-    Deepsea[-1, :] = 180.  # 180 is a background value for waves1s later
+    Deepsea[-1, :] = 180.0  # 180 is a background value for waves1s later
 
     # define points for the shallow sea and the shoreborder
     Shallowsea = np.array(np.where(seamap > 0.5))
@@ -1633,7 +1683,7 @@ def _custom_closing(img, disksize):
     while (_changed != 0) and (_iter < 100):
         _iter += 1
         _newimg = morphology.binary_closing(img, footprint=disk)
-        _changed = np.sum(_newimg.astype(float)-img.astype(float))
+        _changed = np.sum(_newimg.astype(float) - img.astype(float))
         _closed = _newimg
     return _closed
 
@@ -1679,8 +1729,10 @@ def morphological_closing_method(elevationmask, biggestdisk=None):
         emsk = np.array(elevationmask)
     else:
         raise TypeError(
-            'Input for `elevationmask` was unrecognized type: {}.'.format(
-                type(elevationmask)))
+            "Input for `elevationmask` was unrecognized type: {}.".format(
+                type(elevationmask)
+            )
+        )
 
     # check biggestdisk
     if biggestdisk is None:
@@ -1689,8 +1741,8 @@ def morphological_closing_method(elevationmask, biggestdisk=None):
         biggestdisk = 1
 
     # loop through and do binary closing for each disk size up to biggestdisk
-    imageset = np.zeros((biggestdisk+1, emsk.shape[0], emsk.shape[1]))
-    for i in range(biggestdisk+1):
+    imageset = np.zeros((biggestdisk + 1, emsk.shape[0], emsk.shape[1]))
+    for i in range(biggestdisk + 1):
         imageset[i, ...] = _custom_closing(emsk, i)
 
     return imageset, imageset.mean(axis=0)
@@ -1784,30 +1836,33 @@ def compute_channel_width(channelmask, section=None, return_widths=False):
     # coerce the channel mask to just the raw mask values
     if utils.is_ndarray_or_xarray(channelmask):
         if isinstance(channelmask, xr.core.dataarray.DataArray):
-            _dx = float(channelmask[channelmask.dims[0]][1] -
-                        channelmask[channelmask.dims[0]][0])
+            _dx = float(
+                channelmask[channelmask.dims[0]][1]
+                - channelmask[channelmask.dims[0]][0]
+            )
         elif isinstance(channelmask, np.ndarray):
             _dx = 1
     elif isinstance(channelmask, mask.ChannelMask):
         channelmask = channelmask.mask
-        _dx = float(channelmask[channelmask.dims[0]][1] -
-                    channelmask[channelmask.dims[0]][0])
+        _dx = float(
+            channelmask[channelmask.dims[0]][1] - channelmask[channelmask.dims[0]][0]
+        )
         channelmask = np.array(channelmask)
     else:
         raise TypeError(
-            'Input for `channelmask` was wrong type: {}.'.format(
-                type(channelmask)))
+            "Input for `channelmask` was wrong type: {}.".format(type(channelmask))
+        )
 
     # get channel starts and ends
-    _channelstarts, _channelends = \
-        _get_channel_starts_and_ends(channelmask, section_trace)
+    _channelstarts, _channelends = _get_channel_starts_and_ends(
+        channelmask, section_trace
+    )
 
     # compute the metric
     #   Note: channel widths are pulled from the coordinates of the section,
     #   which incorporate grid-spacing information. So, we DO NOT multiply
     #   the width by dx here.
-    _channelwidths = (section_coord[_channelends - 1] -
-                      section_coord[_channelstarts - 1])
+    _channelwidths = section_coord[_channelends - 1] - section_coord[_channelstarts - 1]
 
     _m, _s = np.nanmean(_channelwidths), np.nanstd(_channelwidths)
 
@@ -1832,10 +1887,10 @@ def _get_channel_starts_and_ends(channelmask, section_trace):
         not the coordinate values that are returned from `section.idx_trace`.
 
     """
-    _channelseries = channelmask[section_trace[:, 0],
-                                 section_trace[:, 1]].astype(int)
-    _padchannelseries = np.pad(_channelseries, (1,), 'constant',
-                               constant_values=(False)).astype(int)
+    _channelseries = channelmask[section_trace[:, 0], section_trace[:, 1]].astype(int)
+    _padchannelseries = np.pad(
+        _channelseries, (1,), "constant", constant_values=(False)
+    ).astype(int)
     _channelseries_diff = _padchannelseries[1:] - _padchannelseries[:-1]
     _channelstarts = np.where(_channelseries_diff == 1)[0]
     _channelstarts = np.where(_channelstarts == 0, 1, _channelstarts)
@@ -1843,8 +1898,9 @@ def _get_channel_starts_and_ends(channelmask, section_trace):
     return _channelstarts, _channelends
 
 
-def compute_channel_depth(channelmask, depth, section=None,
-                          depth_type='thalweg', return_depths=False):
+def compute_channel_depth(
+    channelmask, depth, section=None, depth_type="thalweg", return_depths=False
+):
     """Compute channel depth from a mask and section.
 
     Compute the depth of channels identified in a ChannelMask along a section.
@@ -1916,15 +1972,16 @@ def compute_channel_depth(channelmask, depth, section=None,
         channelmask = np.array(channelmask.mask)
     else:
         raise TypeError(
-            'Input for `channelmask` was wrong type: {}.'.format(
-                type(channelmask)))
+            "Input for `channelmask` was wrong type: {}.".format(type(channelmask))
+        )
 
     # get channel starts and ends
-    _channelstarts, _channelends = \
-        _get_channel_starts_and_ends(channelmask, section_trace)
+    _channelstarts, _channelends = _get_channel_starts_and_ends(
+        channelmask, section_trace
+    )
 
     # compute channel widths
-    _channelwidths = section_coord[_channelends-1] - section_coord[_channelstarts-1]
+    _channelwidths = section_coord[_channelends - 1] - section_coord[_channelstarts - 1]
 
     # get the depth array along the section
     _depthslice = np.copy(depth)
@@ -1936,7 +1993,7 @@ def compute_channel_depth(channelmask, depth, section=None,
     # _channel_depth_area = np.full(len(_channelwidths), np.nan)
     for k in np.arange(len(_channelwidths)):
         # extract the depths for the kth channel
-        _kth_channel_depths = _depthseries[_channelstarts[k]:_channelends[k]]
+        _kth_channel_depths = _depthseries[_channelstarts[k] : _channelends[k]]
 
         # compute the mean depth of kth channel and the thalweg of this channel
         _channel_depth_means[k] = np.nanmean(_kth_channel_depths)
@@ -1944,14 +2001,12 @@ def compute_channel_depth(channelmask, depth, section=None,
         # compute the max depth, aka the thalweg
         _channel_depth_thalweg[k] = np.max(_kth_channel_depths)
 
-    if depth_type == 'thalweg':
+    if depth_type == "thalweg":
         _channel_depth_list = _channel_depth_thalweg
-    elif depth_type == 'mean':
+    elif depth_type == "mean":
         _channel_depth_list = _channel_depth_means
     else:
-        raise ValueError(
-            'Invalid argument to `depth_type` {}'.format(
-                str(depth_type)))
+        raise ValueError("Invalid argument to `depth_type` {}".format(str(depth_type)))
 
     _m, _s = np.mean(_channel_depth_list), np.std(_channel_depth_list)
     if return_depths:
@@ -2027,18 +2082,17 @@ def compute_surface_deposit_time(data, surface_idx=-1, **kwargs):
     # sanitize the input surface declared
     if surface_idx == 0:
         raise ValueError(
-            '`surface_idx` must not be 0 '
-            ' (i.e., this would yield no timeseries)')
+            "`surface_idx` must not be 0 " " (i.e., this would yield no timeseries)"
+        )
 
     if isinstance(data, cube.DataCube):
-        etas = data['eta'][:surface_idx, :, :]
+        etas = data["eta"][:surface_idx, :, :]
         etas = np.array(etas)  # strip xarray for input to helper
     elif utils.is_ndarray_or_xarray(data):
         etas = np.array(data[:surface_idx, :, :])
     else:
         # implement other options...
-        raise TypeError(
-            'Unexpected data type input: {0}'.format(type(data)))
+        raise TypeError("Unexpected data type input: {0}".format(type(data)))
 
     sfc_date = _compute_surface_deposit_time_from_etas(etas, **kwargs)
 
@@ -2120,7 +2174,8 @@ def _compute_surface_deposit_time_from_etas(etas, stasis_tol=0.01):
     """
     if not (stasis_tol > 0):
         raise ValueError(
-            f'`stasis_tol must be nonzero and positive, but was {stasis_tol}')
+            f"`stasis_tol must be nonzero and positive, but was {stasis_tol}"
+        )
 
     etaf = np.array(etas[-1, :, :])
 

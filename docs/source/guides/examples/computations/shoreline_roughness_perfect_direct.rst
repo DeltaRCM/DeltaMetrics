@@ -7,7 +7,7 @@ The metric arises from the fact that a delta shoreline intrinsically bounds a de
 
 .. math::
 
-    R = L_{shore} / \\sqrt{A_{land}}
+    R = L_{shore} / \sqrt{A_{land}}
 
 For the same delta area, a shoreline that is longer would take more turns and be less straight; this indicates a higher shoreline roughness.
 The intuition of shoreline roughness derives from the ratio of a circle's circumference and area with increasing radius; the shoreline roughness of a perfect circle is a null value to compare delta data against.
@@ -22,7 +22,7 @@ The area of a half circle is given:
 
 .. math::
 
-    A = (1/2)~\\pi r^2
+    A = (1/2)~\pi r^2
 
 
 The circumference of a circle is given:

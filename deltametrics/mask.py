@@ -41,6 +41,9 @@ class BaseMask(abc.ABC):
         is_mask = kwargs.pop('is_mask', None)
         self._check_deprecated_is_mask(is_mask)
 
+        # set variables known
+        self._variables = ['mask', 'integer']
+
         # determine the types of inputs given
         if len(args) == 0:
             self._input_flag = None
@@ -170,6 +173,20 @@ class BaseMask(abc.ABC):
     def _compute_mask(self):
         ...
 
+    def __getitem__(self, var):
+        """Implement slicing.
+
+        Return values directly from the mask. Supported variables are
+        only 'mask' or 'integer'.
+        """
+        if var == 'mask':
+            return self._mask
+        elif var == 'integer':
+            return self.integer_mask
+        else:
+            raise ValueError(
+                "Only 'mask' and 'integer' are supported variables.")
+
     @property
     def mask_type(self):
         """Type of the mask (string)
@@ -179,6 +196,10 @@ class BaseMask(abc.ABC):
     @property
     def shape(self):
         return self._shape
+
+    @property
+    def variables(self):
+        return self._variables
 
     @property
     def mask(self):
