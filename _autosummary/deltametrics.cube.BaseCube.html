@@ -6,16 +6,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>deltametrics.cube.BaseCube &#8212; DeltaMetrics 0.4.1 documentation</title>
+    <title>deltametrics.cube.BaseCube &#8212; DeltaMetrics 0.4.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,7 +32,7 @@
         <li class="right" >
           <a href="deltametrics.cube.StratigraphyCube.html" title="deltametrics.cube.StratigraphyCube"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/cube/index.html" accesskey="U">Cube operations</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">deltametrics.cube.BaseCube</a></li> 
@@ -160,6 +157,12 @@ in a dictionary.</p></li>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.extent" title="deltametrics.cube.BaseCube.extent"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extent</span></code></a></p></td>
 <td><p>The limits of the dim1 by dim2 plane.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.extent_flipud" title="deltametrics.cube.BaseCube.extent_flipud"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extent_flipud</span></code></a></p></td>
+<td><p>The <cite>extent</cite>, reversed up-down for special plotting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.cube.BaseCube.extent_zeros" title="deltametrics.cube.BaseCube.extent_zeros"><code class="xref py py-obj docutils literal notranslate"><span class="pre">extent_zeros</span></code></a></p></td>
+<td><p>A dummy variable of zeros with shape of <cite>extent</cite>.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta</span></code></p></td>
 <td><p></p></td>
@@ -292,6 +295,20 @@ data off-disk as needed.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extent</span></span><a class="headerlink" href="#deltametrics.cube.BaseCube.extent" title="Permalink to this definition">¶</a></dt>
 <dd><p>The limits of the dim1 by dim2 plane.</p>
 <p>Useful for plotting.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.BaseCube.extent_flipud">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extent_flipud</span></span><a class="headerlink" href="#deltametrics.cube.BaseCube.extent_flipud" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <cite>extent</cite>, reversed up-down for special plotting.</p>
+<p>limits of the dim1 by dim2 plane,</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.cube.BaseCube.extent_zeros">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">extent_zeros</span></span><a class="headerlink" href="#deltametrics.cube.BaseCube.extent_zeros" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dummy variable of zeros with shape of <cite>extent</cite>.</p>
+<p>Returns an array of zeros with the shape of the cube.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -595,6 +612,8 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
 <li><a class="reference internal" href="#deltametrics.cube.BaseCube.dim2_coords"><code class="docutils literal notranslate"><span class="pre">BaseCube.dim2_coords</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.cube.BaseCube.export_frozen_variable"><code class="docutils literal notranslate"><span class="pre">BaseCube.export_frozen_variable()</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.cube.BaseCube.extent"><code class="docutils literal notranslate"><span class="pre">BaseCube.extent</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.extent_flipud"><code class="docutils literal notranslate"><span class="pre">BaseCube.extent_flipud</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.cube.BaseCube.extent_zeros"><code class="docutils literal notranslate"><span class="pre">BaseCube.extent_zeros</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.cube.BaseCube.planform_set"><code class="docutils literal notranslate"><span class="pre">BaseCube.planform_set</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.cube.BaseCube.planforms"><code class="docutils literal notranslate"><span class="pre">BaseCube.planforms</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.cube.BaseCube.quick_show"><code class="docutils literal notranslate"><span class="pre">BaseCube.quick_show()</span></code></a></li>
@@ -662,7 +681,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
         <li class="right" >
           <a href="deltametrics.cube.StratigraphyCube.html" title="deltametrics.cube.StratigraphyCube"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/cube/index.html" >Cube operations</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">deltametrics.cube.BaseCube</a></li> 
@@ -670,7 +689,7 @@ to <a class="reference internal" href="deltametrics.section.BaseSection.html#del
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
   </body>
 </html>

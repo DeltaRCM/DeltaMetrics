@@ -6,16 +6,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>deltametrics.section.RadialSection &#8212; DeltaMetrics 0.4.1 documentation</title>
+    <title>deltametrics.section.RadialSection &#8212; DeltaMetrics 0.4.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,7 +32,7 @@
         <li class="right" >
           <a href="deltametrics.section.CircularSection.html" title="deltametrics.section.CircularSection"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/section/index.html" accesskey="U">Section operations</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">deltametrics.section.RadialSection</a></li> 
@@ -94,15 +91,17 @@ channel inlet.</p></li>
 specified as a two-element tuple <code class="docutils literal notranslate"><span class="pre">(dim1,</span> <span class="pre">dim2)</span></code>. This is the
 starting point of the radial line. Mutually exclusive
 with <cite>origin</cite>.</p></li>
-<li><p><strong>length</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, <cite>int</cite>, optional) – <p>The length of the section (note this must be given in pixel length).
-If no value is given, the length defaults to the length required to
-reach a model boundary (if a connection to underlying <cite>Cube</cite> exists).
-If neither <a class="reference internal" href="#deltametrics.section.RadialSection.origin" title="deltametrics.section.RadialSection.origin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">origin</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">origin_idx</span></code> is specified, <cite>length</cite>
-is assumed to be in dimensional coordinates.</p>
+<li><p><strong>length</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, <cite>int</cite>, optional) – <p>The length of the section, assumed to be in the same coordinate
+specification as the origin was defined. If no value is given, the
+length defaults to the length required to reach a domain boundary
+(if a connection to underlying <cite>Cube</cite> exists). If
+neither <a class="reference internal" href="#deltametrics.section.RadialSection.origin" title="deltametrics.section.RadialSection.origin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">origin</span></code></a> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">origin_idx</span></code> is specified, <cite>length</cite> is
+assumed to be in dimensional coordinates.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>length is used as a <em>guide</em> for the section length, as the section
-is approximated to cell indices.</p>
+is approximated to cell indices. This is unlikely to work as
+expected for grid spacing that is not equal in both dimensions.</p>
 </div>
 </p></li>
 <li><p><strong>**kwargs</strong> – Keyword arguments are passed to <cite>BaseSection.__init__()</cite>. Supported
@@ -122,7 +121,7 @@ during instantiation.</p>
 </dl>
 <p class="rubric">Examples</p>
 <p>Create a <cite>RadialSection</cite> that is registered to a <cite>DataCube</cite> at
-specified <cite>origin</cite> coordinate, and spans the entire model domain:</p>
+specified <cite>origin</cite> coordinate, and spans the entire domain:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">register_section</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="s1">&#39;radial&#39;</span><span class="p">,</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">RadialSection</span><span class="p">(</span><span class="n">azimuth</span><span class="o">=</span><span class="mi">45</span><span class="p">))</span>
@@ -201,10 +200,10 @@ any functionality (via the <a class="reference internal" href="#deltametrics.sec
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.__init__" title="deltametrics.section.RadialSection.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args[, azimuth, origin, ...])</p></td>
 <td><p>Identify coordinates defining the section.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.connect" title="deltametrics.section.RadialSection.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(CubeInstance[, name])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.connect" title="deltametrics.section.RadialSection.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(InputInstance[, name])</p></td>
 <td><p>Connect this Section instance to a Cube instance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.show" title="deltametrics.section.RadialSection.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(SectionAttribute[, style, data, label, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.show" title="deltametrics.section.RadialSection.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(*args[, style, data, label, colorbar, ...])</p></td>
 <td><p>Show the section.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.RadialSection.show_trace" title="deltametrics.section.RadialSection.show_trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_trace</span></code></a>(*args[, ax, autoscale])</p></td>
@@ -268,7 +267,7 @@ from data, for variable <code class="docutils literal notranslate"><span class="
 <dd class="field-odd"><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to slice.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>data</strong> – The undelrying data returned as an xarray <cite>DataArray</cite>, maintaining
+<dd class="field-even"><p><strong>data</strong> – The underlying data returned as an xarray <cite>DataArray</cite>, maintaining
 coordinates.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -285,7 +284,7 @@ coordinates.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.section.RadialSection.connect">
-<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CubeInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection.connect" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">InputInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connect this Section instance to a Cube instance.</p>
 </dd></dl>
 
@@ -334,7 +333,7 @@ for plotting in Cartesian coordinates.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.section.RadialSection.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SectionAttribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'shaded'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection.show" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'shaded'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.RadialSection.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the section.</p>
 <p>Method enumerates convenient routines for visualizing sections of data
 and stratigraphy. Includes support for multiple data <cite>style</cite> and
@@ -349,7 +348,9 @@ from the lower-left-end edge node of the quad.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>SectionAttribute</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">SectionVariableInstance</span></code>) – Which attribute to show. Can be a string for a named <cite>Cube</cite>
-attribute, or any arbitrary data.</p></li>
+attribute, or any arbitrary data. Additionally, pass no arguments
+and the first variable in the underlying data source list will be
+used.</p></li>
 <li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – What style to display the section with. Choices are ‘mesh’ or
 ‘line’.</p></li>
 <li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Argument passed to
@@ -556,7 +557,7 @@ Manipulates the <cite>matplotlib</cite> <cite>autoscale</cite> attribute. Defaul
         <li class="right" >
           <a href="deltametrics.section.CircularSection.html" title="deltametrics.section.CircularSection"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/section/index.html" >Section operations</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">deltametrics.section.RadialSection</a></li> 
@@ -564,7 +565,7 @@ Manipulates the <cite>matplotlib</cite> <cite>autoscale</cite> attribute. Defaul
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
   </body>
 </html>

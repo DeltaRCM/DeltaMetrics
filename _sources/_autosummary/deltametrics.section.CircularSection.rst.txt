@@ -27,6 +27,7 @@
    .. autosummary::
    
       ~CircularSection.idx_trace
+      ~CircularSection.length
       ~CircularSection.name
       ~CircularSection.origin
       ~CircularSection.radius

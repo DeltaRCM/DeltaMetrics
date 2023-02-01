@@ -34,5 +34,6 @@
       ~EdgeMask.mask
       ~EdgeMask.mask_type
       ~EdgeMask.shape
+      ~EdgeMask.variables
    
    

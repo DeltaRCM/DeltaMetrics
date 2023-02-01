@@ -6,16 +6,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>deltametrics.mask.WetMask &#8212; DeltaMetrics 0.4.1 documentation</title>
+    <title>deltametrics.mask.WetMask &#8212; DeltaMetrics 0.4.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,7 +32,7 @@
         <li class="right" >
           <a href="deltametrics.mask.ShorelineMask.html" title="deltametrics.mask.ShorelineMask"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" accesskey="U">Masking operations</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">deltametrics.mask.WetMask</a></li> 
@@ -148,8 +145,19 @@ appropriate.</p></li>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></p></td>
 <td><p></p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></p></td>
+<td><p></p></td>
+</tr>
 </tbody>
 </table>
+<dl class="py method">
+<dt class="sig sig-object py" id="deltametrics.mask.WetMask.__getitem__">
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Implement slicing.</p>
+<p>Return values directly from the mask. Supported variables are
+only ‘mask’ or ‘integer’.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.from_Planform">
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_Planform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_Planform</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.from_Planform" title="Permalink to this definition">¶</a></dt>
@@ -286,6 +294,7 @@ the top domain edge.</p></li>
 <li><a class="reference internal" href="#">deltametrics.mask.WetMask</a><ul>
 <li><a class="reference internal" href="#deltametrics.mask.WetMask"><code class="docutils literal notranslate"><span class="pre">WetMask</span></code></a><ul>
 <li><a class="reference internal" href="#deltametrics.mask.WetMask.__init__"><code class="docutils literal notranslate"><span class="pre">WetMask.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.mask.WetMask.__getitem__"><code class="docutils literal notranslate"><span class="pre">WetMask.__getitem__()</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.mask.WetMask.from_Planform"><code class="docutils literal notranslate"><span class="pre">WetMask.from_Planform()</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.mask.WetMask.from_array"><code class="docutils literal notranslate"><span class="pre">WetMask.from_array()</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.mask.WetMask.from_mask"><code class="docutils literal notranslate"><span class="pre">WetMask.from_mask()</span></code></a></li>
@@ -344,7 +353,7 @@ the top domain edge.</p></li>
         <li class="right" >
           <a href="deltametrics.mask.ShorelineMask.html" title="deltametrics.mask.ShorelineMask"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/mask/index.html" >Masking operations</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">deltametrics.mask.WetMask</a></li> 
@@ -352,7 +361,7 @@ the top domain edge.</p></li>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
   </body>
 </html>

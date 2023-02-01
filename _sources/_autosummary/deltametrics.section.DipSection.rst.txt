@@ -30,7 +30,6 @@
       ~DipSection.distance_idx
       ~DipSection.idx_trace
       ~DipSection.length
-      ~DipSection.length_idx
       ~DipSection.name
       ~DipSection.s
       ~DipSection.shape

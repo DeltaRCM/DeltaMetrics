@@ -32,5 +32,6 @@
       ~FlowMask.mask_type
       ~FlowMask.shape
       ~FlowMask.threshold
+      ~FlowMask.variables
    
    

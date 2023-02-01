@@ -34,5 +34,6 @@
       ~LandMask.mask
       ~LandMask.mask_type
       ~LandMask.shape
+      ~LandMask.variables
    
    

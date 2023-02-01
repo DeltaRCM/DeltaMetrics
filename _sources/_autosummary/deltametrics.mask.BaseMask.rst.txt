@@ -29,5 +29,6 @@
       ~BaseMask.mask
       ~BaseMask.mask_type
       ~BaseMask.shape
+      ~BaseMask.variables
    
    

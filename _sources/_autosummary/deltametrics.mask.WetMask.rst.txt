@@ -33,5 +33,6 @@
       ~WetMask.mask
       ~WetMask.mask_type
       ~WetMask.shape
+      ~WetMask.variables
    
    

@@ -30,7 +30,6 @@
       ~StrikeSection.distance_idx
       ~StrikeSection.idx_trace
       ~StrikeSection.length
-      ~StrikeSection.length_idx
       ~StrikeSection.name
       ~StrikeSection.s
       ~StrikeSection.shape

@@ -34,5 +34,6 @@
       ~ChannelMask.mask
       ~ChannelMask.mask_type
       ~ChannelMask.shape
+      ~ChannelMask.variables
    
    

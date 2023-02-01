@@ -27,6 +27,7 @@
    .. autosummary::
    
       ~PathSection.idx_trace
+      ~PathSection.length
       ~PathSection.name
       ~PathSection.path
       ~PathSection.s

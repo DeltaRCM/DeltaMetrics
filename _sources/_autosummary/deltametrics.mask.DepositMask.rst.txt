@@ -30,5 +30,6 @@
       ~DepositMask.mask
       ~DepositMask.mask_type
       ~DepositMask.shape
+      ~DepositMask.variables
    
    

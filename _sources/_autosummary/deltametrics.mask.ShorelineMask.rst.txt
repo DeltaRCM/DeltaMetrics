@@ -35,5 +35,6 @@
       ~ShorelineMask.mask
       ~ShorelineMask.mask_type
       ~ShorelineMask.shape
+      ~ShorelineMask.variables
    
    

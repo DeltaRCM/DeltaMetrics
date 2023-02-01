@@ -33,5 +33,6 @@
       ~ElevationMask.mask_type
       ~ElevationMask.shape
       ~ElevationMask.threshold
+      ~ElevationMask.variables
    
    

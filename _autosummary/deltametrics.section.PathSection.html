@@ -6,16 +6,13 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>deltametrics.section.PathSection &#8212; DeltaMetrics 0.4.1 documentation</title>
+    <title>deltametrics.section.PathSection &#8212; DeltaMetrics 0.4.2 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/jquery.js"></script>
-    <script src="../_static/underscore.js"></script>
-    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -35,7 +32,7 @@
         <li class="right" >
           <a href="../reference/section/index.html" title="Section operations"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/section/index.html" accesskey="U">Section operations</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">deltametrics.section.PathSection</a></li> 
@@ -146,10 +143,10 @@ section from.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.__init__" title="deltametrics.section.PathSection.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(*args[, path, path_idx])</p></td>
 <td><p>Instantiate.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.connect" title="deltametrics.section.PathSection.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(CubeInstance[, name])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.connect" title="deltametrics.section.PathSection.connect"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connect</span></code></a>(InputInstance[, name])</p></td>
 <td><p>Connect this Section instance to a Cube instance.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.show" title="deltametrics.section.PathSection.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(SectionAttribute[, style, data, label, ...])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.show" title="deltametrics.section.PathSection.show"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show</span></code></a>(*args[, style, data, label, colorbar, ...])</p></td>
 <td><p>Show the section.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.show_trace" title="deltametrics.section.PathSection.show_trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_trace</span></code></a>(*args[, ax, autoscale])</p></td>
@@ -163,34 +160,37 @@ section from.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.idx_trace" title="deltametrics.section.PathSection.idx_trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">idx_trace</span></code></a></p></td>
 <td><p>Alias for <cite>self.trace_idx</cite>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.name" title="deltametrics.section.PathSection.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.length" title="deltametrics.section.PathSection.length"><code class="xref py py-obj docutils literal notranslate"><span class="pre">length</span></code></a></p></td>
+<td><p>Length of section in dimensional coordinates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.name" title="deltametrics.section.PathSection.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
 <td><p>Section name.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.path" title="deltametrics.section.PathSection.path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">path</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.path" title="deltametrics.section.PathSection.path"><code class="xref py py-obj docutils literal notranslate"><span class="pre">path</span></code></a></p></td>
 <td><p>Path of the PathSection.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.s" title="deltametrics.section.PathSection.s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.s" title="deltametrics.section.PathSection.s"><code class="xref py py-obj docutils literal notranslate"><span class="pre">s</span></code></a></p></td>
 <td><p>Along-section coordinate.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.shape" title="deltametrics.section.PathSection.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.shape" title="deltametrics.section.PathSection.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Section shape.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.strat_attr" title="deltametrics.section.PathSection.strat_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strat_attr</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.strat_attr" title="deltametrics.section.PathSection.strat_attr"><code class="xref py py-obj docutils literal notranslate"><span class="pre">strat_attr</span></code></a></p></td>
 <td><p>Stratigraphic attributes data object.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.trace" title="deltametrics.section.PathSection.trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.trace" title="deltametrics.section.PathSection.trace"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace</span></code></a></p></td>
 <td><p>Coordinates of the section in the <cite>dim1</cite>-<cite>dim2</cite> plane.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.trace_idx" title="deltametrics.section.PathSection.trace_idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace_idx</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.trace_idx" title="deltametrics.section.PathSection.trace_idx"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace_idx</span></code></a></p></td>
 <td><p>Indices of section points in the <cite>dim1</cite>-<cite>dim2</cite> plane.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.variables" title="deltametrics.section.PathSection.variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.variables" title="deltametrics.section.PathSection.variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></a></p></td>
 <td><p>List of variables.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.vertices" title="deltametrics.section.PathSection.vertices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vertices</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.vertices" title="deltametrics.section.PathSection.vertices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">vertices</span></code></a></p></td>
 <td><p>Vertices defining the path in dimensional coordinates.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.z" title="deltametrics.section.PathSection.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.section.PathSection.z" title="deltametrics.section.PathSection.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
 <td><p>Up-section (vertical) coordinate.</p></td>
 </tr>
 </tbody>
@@ -210,7 +210,7 @@ from data, for variable <code class="docutils literal notranslate"><span class="
 <dd class="field-odd"><p><strong>var</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – Which variable to slice.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>data</strong> – The undelrying data returned as an xarray <cite>DataArray</cite>, maintaining
+<dd class="field-even"><p><strong>data</strong> – The underlying data returned as an xarray <cite>DataArray</cite>, maintaining
 coordinates.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
@@ -221,7 +221,7 @@ coordinates.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.section.PathSection.connect">
-<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">CubeInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.PathSection.connect" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">InputInstance</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.PathSection.connect" title="Permalink to this definition">¶</a></dt>
 <dd><p>Connect this Section instance to a Cube instance.</p>
 </dd></dl>
 
@@ -229,6 +229,12 @@ coordinates.</p>
 <dt class="sig sig-object py" id="deltametrics.section.PathSection.idx_trace">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">idx_trace</span></span><a class="headerlink" href="#deltametrics.section.PathSection.idx_trace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Alias for <cite>self.trace_idx</cite>.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.section.PathSection.length">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">length</span></span><a class="headerlink" href="#deltametrics.section.PathSection.length" title="Permalink to this definition">¶</a></dt>
+<dd><p>Length of section in dimensional coordinates.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -260,7 +266,7 @@ coordinates.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.section.PathSection.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SectionAttribute</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'shaded'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.PathSection.show" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'shaded'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.section.PathSection.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Show the section.</p>
 <p>Method enumerates convenient routines for visualizing sections of data
 and stratigraphy. Includes support for multiple data <cite>style</cite> and
@@ -275,7 +281,9 @@ from the lower-left-end edge node of the quad.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>SectionAttribute</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">SectionVariableInstance</span></code>) – Which attribute to show. Can be a string for a named <cite>Cube</cite>
-attribute, or any arbitrary data.</p></li>
+attribute, or any arbitrary data. Additionally, pass no arguments
+and the first variable in the underlying data source list will be
+used.</p></li>
 <li><p><strong>style</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – What style to display the section with. Choices are ‘mesh’ or
 ‘line’.</p></li>
 <li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – Argument passed to
@@ -425,6 +433,7 @@ Manipulates the <cite>matplotlib</cite> <cite>autoscale</cite> attribute. Defaul
 <li><a class="reference internal" href="#deltametrics.section.PathSection.__getitem__"><code class="docutils literal notranslate"><span class="pre">PathSection.__getitem__()</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.section.PathSection.connect"><code class="docutils literal notranslate"><span class="pre">PathSection.connect()</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.section.PathSection.idx_trace"><code class="docutils literal notranslate"><span class="pre">PathSection.idx_trace</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.section.PathSection.length"><code class="docutils literal notranslate"><span class="pre">PathSection.length</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.section.PathSection.name"><code class="docutils literal notranslate"><span class="pre">PathSection.name</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.section.PathSection.path"><code class="docutils literal notranslate"><span class="pre">PathSection.path</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.section.PathSection.s"><code class="docutils literal notranslate"><span class="pre">PathSection.s</span></code></a></li>
@@ -487,7 +496,7 @@ Manipulates the <cite>matplotlib</cite> <cite>autoscale</cite> attribute. Defaul
         <li class="right" >
           <a href="../reference/section/index.html" title="Section operations"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.1 documentation</a> &#187;</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.2 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="../reference/section/index.html" >Section operations</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">deltametrics.section.PathSection</a></li> 
@@ -495,7 +504,7 @@ Manipulates the <cite>matplotlib</cite> <cite>autoscale</cite> attribute. Defaul
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 5.3.0.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
     </div>
   </body>
 </html>

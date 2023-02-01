@@ -30,5 +30,6 @@
       ~ThresholdValueMask.mask_type
       ~ThresholdValueMask.shape
       ~ThresholdValueMask.threshold
+      ~ThresholdValueMask.variables
    
    

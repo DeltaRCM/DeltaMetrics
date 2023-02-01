@@ -44,6 +44,8 @@
       ~BaseCube.dim1_coords
       ~BaseCube.dim2_coords
       ~BaseCube.extent
+      ~BaseCube.extent_flipud
+      ~BaseCube.extent_zeros
       ~BaseCube.meta
       ~BaseCube.planform_set
       ~BaseCube.planforms

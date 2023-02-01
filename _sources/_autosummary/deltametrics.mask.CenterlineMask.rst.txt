@@ -35,5 +35,6 @@
       ~CenterlineMask.mask_type
       ~CenterlineMask.method
       ~CenterlineMask.shape
+      ~CenterlineMask.variables
    
    

@@ -45,6 +45,8 @@
       ~StratigraphyCube.dim1_coords
       ~StratigraphyCube.dim2_coords
       ~StratigraphyCube.extent
+      ~StratigraphyCube.extent_flipud
+      ~StratigraphyCube.extent_zeros
       ~StratigraphyCube.meta
       ~StratigraphyCube.planform_set
       ~StratigraphyCube.planforms

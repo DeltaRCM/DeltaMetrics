@@ -34,6 +34,7 @@
       ~GeometricMask.mask
       ~GeometricMask.mask_type
       ~GeometricMask.shape
+      ~GeometricMask.variables
       ~GeometricMask.xc
       ~GeometricMask.yc
    
