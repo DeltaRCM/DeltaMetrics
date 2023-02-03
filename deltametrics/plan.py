@@ -981,6 +981,7 @@ class MorphologicalPlanform(SpecialtyPlanform):
         self._shape = None
         self._elevation_mask = None
         self._max_disk = None
+        self._below_mask = None
 
         # set variable info display options
         self._mean_image_varinfo = plot.VariableInfo("mean_image", label="mean image")
@@ -1038,6 +1039,9 @@ class MorphologicalPlanform(SpecialtyPlanform):
 
         self._shape = self._elevation_mask.shape
 
+        # assign below mask
+        self._below_mask = ~(self._elevation_mask)
+
         # run the computation
         all_images, mean_image = morphological_closing_method(
             self._elevation_mask, biggestdisk=self._max_disk
@@ -1065,6 +1069,12 @@ class MorphologicalPlanform(SpecialtyPlanform):
         value when making land and shoreline masks.
         """
         return self._mean_image
+
+    @property
+    def below_mask(self):
+        """Mask for below sea level pixels.
+        """
+        return self._below_mask
 
     @property
     def data(self):

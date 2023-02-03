@@ -875,7 +875,7 @@ class TestLandMask:
         # some comparisons to check that things are similar (loose checks!)
         assert mfem.shape == self._ElevationMask.shape
         assert float(mfem._mask.sum()) == pytest.approx(float(landmask._mask.sum()), rel=1)
-        assert (float(mfem._mask.sum() / mfem._mask.size) == 
+        assert (float(mfem._mask.sum() / mfem._mask.size) ==
                 pytest.approx(float(landmask._mask.sum()/landmask._mask.size), abs=1))
         assert float(mfem._mask.sum()) > float(self._ElevationMask._mask.sum())
 
@@ -1019,6 +1019,13 @@ class TestWetMask:
 
         assert np.all(landmask._mask == mfOAP._mask)
         assert np.all(landmask_05._mask == mfOAP_05._mask)
+
+    def test_static_from_MP(self):
+        # this test covers the broken pathway from issue #93
+        # make mask from a morphological planform
+        mfMP = mask.WetMask.from_Planform(_MPM_0)
+        # assertions about it existing
+        assert isinstance(mfMP, mask.WetMask) is True
 
     def test_static_from_mask_ElevationMask(self):
         wetmask = mask.WetMask(
@@ -1751,7 +1758,7 @@ class TestGeometricMask:
         gmsk = mask.GeometricMask(arr)
         gmsk.circular(1, 2, origin=(3, 3))
         assert gmsk._mask[3, 3] == 0
-        assert np.all(gmsk._mask.values == 
+        assert np.all(gmsk._mask.values ==
                       np.array([[[0., 0., 0., 0., 0., 0., 0.],
                                  [0., 0., 0., 1., 0., 0., 0.],
                                  [0., 0., 1., 1., 1., 0., 0.],
@@ -1940,4 +1947,3 @@ class TestDepositMask:
         assert depositmask._input_flag == 'cube'
         assert depositmask.mask_type == 'deposit'
         assert depositmask._mask.dtype == bool
-   
