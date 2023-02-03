@@ -27,6 +27,7 @@
    .. autosummary::
    
       ~MorphologicalPlanform.all_images
+      ~MorphologicalPlanform.below_mask
       ~MorphologicalPlanform.composite_array
       ~MorphologicalPlanform.data
       ~MorphologicalPlanform.mean_image

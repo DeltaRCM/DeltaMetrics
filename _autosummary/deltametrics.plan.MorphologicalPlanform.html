@@ -143,19 +143,22 @@ may not be what you expect.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.all_images" title="deltametrics.plan.MorphologicalPlanform.all_images"><code class="xref py py-obj docutils literal notranslate"><span class="pre">all_images</span></code></a></p></td>
 <td><p>3-D array of all binary closed arrays.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.composite_array" title="deltametrics.plan.MorphologicalPlanform.composite_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">composite_array</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.below_mask" title="deltametrics.plan.MorphologicalPlanform.below_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">below_mask</span></code></a></p></td>
+<td><p>Mask for below sea level pixels.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.composite_array" title="deltametrics.plan.MorphologicalPlanform.composite_array"><code class="xref py py-obj docutils literal notranslate"><span class="pre">composite_array</span></code></a></p></td>
 <td><p>Alias for <cite>mean_image</cite>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.data" title="deltametrics.plan.MorphologicalPlanform.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.data" title="deltametrics.plan.MorphologicalPlanform.data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code></a></p></td>
 <td><p>The public data field.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.mean_image" title="deltametrics.plan.MorphologicalPlanform.mean_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_image</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.mean_image" title="deltametrics.plan.MorphologicalPlanform.mean_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">mean_image</span></code></a></p></td>
 <td><p>Average of all binary closing arrays.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.name" title="deltametrics.plan.MorphologicalPlanform.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.name" title="deltametrics.plan.MorphologicalPlanform.name"><code class="xref py py-obj docutils literal notranslate"><span class="pre">name</span></code></a></p></td>
 <td><p>Planform name.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.shape" title="deltametrics.plan.MorphologicalPlanform.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.shape" title="deltametrics.plan.MorphologicalPlanform.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Planform shape.</p></td>
 </tr>
 </tbody>
@@ -172,6 +175,12 @@ to <cite>self.data</cite>. I.e., the returned slice is <code class="docutils lit
 <dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.all_images">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">all_images</span></span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.all_images" title="Permalink to this definition">¶</a></dt>
 <dd><p>3-D array of all binary closed arrays.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="deltametrics.plan.MorphologicalPlanform.below_mask">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">below_mask</span></span><a class="headerlink" href="#deltametrics.plan.MorphologicalPlanform.below_mask" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mask for below sea level pixels.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -300,6 +309,7 @@ create a new) <cite>Axes</cite> object.</p></li>
 <li><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.__init__"><code class="docutils literal notranslate"><span class="pre">MorphologicalPlanform.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.__getitem__"><code class="docutils literal notranslate"><span class="pre">MorphologicalPlanform.__getitem__()</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.all_images"><code class="docutils literal notranslate"><span class="pre">MorphologicalPlanform.all_images</span></code></a></li>
+<li><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.below_mask"><code class="docutils literal notranslate"><span class="pre">MorphologicalPlanform.below_mask</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.composite_array"><code class="docutils literal notranslate"><span class="pre">MorphologicalPlanform.composite_array</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.data"><code class="docutils literal notranslate"><span class="pre">MorphologicalPlanform.data</span></code></a></li>
 <li><a class="reference internal" href="#deltametrics.plan.MorphologicalPlanform.from_elevation_data"><code class="docutils literal notranslate"><span class="pre">MorphologicalPlanform.from_elevation_data()</span></code></a></li>
