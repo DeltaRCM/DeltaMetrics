@@ -1093,6 +1093,11 @@ def compute_land_area(land_mask):
     is the area of each cell where :math:`A_{ij} =dx^2` if the mask is
     `True`, otherwise :math:`A_{ij} = 0`.
 
+    Will return area with the same base units as the spatial coordinates of
+    input array (i.e., for a :obj:`Mask` or `xarray.DataArray`). In the case
+    of a `numpy` array without coordinates, a unit dimension is assumed for
+    each cell.
+
     .. note::
 
         In implementation, this is a simple 1-liner summation over the mask.
