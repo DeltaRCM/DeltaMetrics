@@ -12,6 +12,7 @@ from deltametrics import cube
 from deltametrics import plan
 from deltametrics import section
 
+# a simple custom layout
 simple_land = np.zeros((10, 10))
 simple_shore = np.zeros((10, 10))
 simple_land[:4, :] = 1
@@ -20,6 +21,21 @@ simple_shore_array = np.array([[3, 3, 4, 4, 4, 4, 4, 3, 3, 3],
                                [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]]).T
 simple_shore[simple_shore_array[:, 0], simple_shore_array[:, 1]] = 1
 
+# a perfect half-circle layout
+hcirc = np.zeros((500, 1000), dtype=bool)
+hcirc_dx = 10
+x, y = np.meshgrid(
+    np.linspace(0, hcirc_dx*hcirc.shape[1], num=hcirc.shape[1]),
+    np.linspace(0, hcirc_dx*hcirc.shape[0], num=hcirc.shape[0]))
+center = (0, 5000)
+
+dists = (np.sqrt((y - center[0])**2 +
+                 (x - center[1])**2))
+dists_flat = dists.flatten()
+in_idx = np.where(dists_flat <= 3000)[0]
+hcirc.flat[in_idx] = True
+
+# golf
 golf_path = _get_golf_path()
 
 
@@ -330,6 +346,38 @@ class TestShawOpeningAngleMethod:
 
     def test_null(self):
         pass
+
+
+class TestDeltaArea:
+
+    golf_path = _get_golf_path()
+    golfcube = cube.DataCube(golf_path)
+
+    lm = mask.LandMask(
+        golfcube['eta'][-1, :, :],
+        elevation_threshold=golfcube.meta['H_SL'][-1],
+        elevation_offset=-0.5)
+    lm.trim_mask(length=golfcube.meta['L0'].data+1)
+    
+    def test_simple_case(self):
+        land_area = plan.compute_land_area(simple_land)
+        assert land_area == 45
+
+    def test_golf_case(self):
+        land_area = plan.compute_land_area(self.lm)
+        assert land_area / 1e6 == pytest.approx(14.5, abs=1)
+
+    def test_golf_array_case(self):
+        # calculation without dx
+        lm_array = np.copy(self.lm._mask.data)
+        land_area = plan.compute_land_area(lm_array)
+        assert land_area == pytest.approx(14.5 * 1e6 / 50 / 50, abs=50)
+
+    def test_half_circle(self):
+        # circ radius is 3000
+        land_area = plan.compute_land_area(hcirc) # does not have dimensions
+        land_area = land_area * hcirc_dx * hcirc_dx / 1e6
+        assert land_area == pytest.approx(0.5*np.pi*(3000**2)/1e6, abs=1)
 
 
 class TestShorelineRoughness:

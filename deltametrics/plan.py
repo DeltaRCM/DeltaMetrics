@@ -1072,13 +1072,91 @@ class MorphologicalPlanform(SpecialtyPlanform):
 
     @property
     def below_mask(self):
-        """Mask for below sea level pixels.
-        """
+        """Mask for below sea level pixels."""
         return self._below_mask
 
     @property
     def data(self):
         return self._mean_image
+
+
+def compute_land_area(land_mask):
+    """Compute land (delta) area.
+
+    Computes the land area for a LandMask as:
+
+    .. math::
+
+        \\sum_{i=1}^L \\sum_{j=1}^W A_{ij}
+
+    where :math:`L` and :math:`W` are the mask dimensions, and :math:`A_{ij}`
+    is the area of each cell where :math:`A_{ij} =dx^2` if the mask is
+    `True`, otherwise :math:`A_{ij} = 0`.
+
+    Will return area with the same base units as the spatial coordinates of
+    input array (i.e., for a :obj:`Mask` or `xarray.DataArray`). In the case
+    of a `numpy` array without coordinates, a unit dimension is assumed for
+    each cell.
+
+    .. note::
+
+        In implementation, this is a simple 1-liner summation over the mask.
+        It is implemented as a function here for convenience and consistency
+        in the api.
+
+        .. code::
+
+            land_area = np.sum(land_mask.integer_mask) * dx * dx
+
+    Parameters
+    ----------
+    land_mask : :obj:`~deltametrics.mask.LandMask`, :obj:`ndarray`
+        Land mask. Can be a :obj:`~deltametrics.mask.LandMask` object,
+        or a binarized array.
+
+    Returns
+    -------
+    land_area : :obj:`float`
+        Land area, computed as described above.
+
+    Examples
+    --------
+    .. plot::
+        :include-source:
+        :context: reset
+
+        golf = dm.sample_data.golf()
+
+        lm = dm.mask.LandMask(
+            golf['eta'][-1, :, :],
+            elevation_threshold=golf.meta['H_SL'][-1],
+            elevation_offset=-0.5)
+
+        lm.trim_mask(length=golf.meta['L0'].data+1)
+
+        land_area = dm.plan.compute_land_area(lm)
+
+        fig, ax = plt.subplots()
+        lm.show(ax=ax, ticks=True)
+        ax.set_title(f'Land area is {land_area/1e6:.1f} km$^2$')
+        plt.show()
+
+    """
+    # extract data from masks
+    if isinstance(land_mask, mask.LandMask):
+        land_mask = land_mask.mask
+        _lm = land_mask.values
+        _dx = float(land_mask[land_mask.dims[0]][1] - land_mask[land_mask.dims[0]][0])
+    elif isinstance(land_mask, xr.core.dataarray.DataArray):
+        _lm = land_mask.values
+        _dx = float(land_mask[land_mask.dims[0]][1] - land_mask[land_mask.dims[0]][0])
+    elif isinstance(land_mask, np.ndarray):
+        _lm = land_mask
+        _dx = 1
+    else:
+        raise TypeError("Invalid type {0}".format(type(land_mask)))
+
+    return np.sum(_lm) * _dx * _dx
 
 
 def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
