@@ -39,6 +39,7 @@ Functions
 .. autosummary::
     :toctree: ../../_autosummary
 
+    compute_land_area
     compute_shoreline_roughness
     compute_shoreline_length
     compute_shoreline_distance

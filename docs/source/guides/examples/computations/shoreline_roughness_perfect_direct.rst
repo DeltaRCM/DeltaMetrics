@@ -25,11 +25,11 @@ The area of a half circle is given:
     A = (1/2)~\pi r^2
 
 
-The circumference of a circle is given:
+The circumference of a half circle is given:
 
 .. math::
 
-    P = \\pi r
+    P = \pi r
 
 Establish values for the radius :math:`r`, and evaluate the shoreline roughness metric directly:
 
