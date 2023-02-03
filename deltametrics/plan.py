@@ -1040,7 +1040,7 @@ class MorphologicalPlanform(SpecialtyPlanform):
         self._shape = self._elevation_mask.shape
 
         # assign below mask
-        self._below_mask = ~(self._elevation_mask)
+        self._below_mask = ~(self._elevation_mask.astype(bool))
 
         # run the computation
         all_images, mean_image = morphological_closing_method(
