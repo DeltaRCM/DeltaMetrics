@@ -58,9 +58,9 @@ The intuition of shoreline roughness derives from the ratio of a circle’s circ
 <p>The area of a half circle is given:</p>
 <div class="math notranslate nohighlight">
 \[A = (1/2)~\pi r^2\]</div>
-<p>The circumference of a circle is given:</p>
+<p>The circumference of a half circle is given:</p>
 <div class="math notranslate nohighlight">
-\[\begin{split}P = \\pi r\end{split}\]</div>
+\[P = \pi r\]</div>
 <p>Establish values for the radius <span class="math notranslate nohighlight">\(r\)</span>, and evaluate the shoreline roughness metric directly:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
 <span class="n">R</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">r</span> <span class="o">*</span> <span class="n">r</span><span class="p">)</span>
@@ -87,16 +87,16 @@ The intuition of shoreline roughness derives from the ratio of a circle’s circ
     <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">dx</span><span class="o">*</span><span class="n">hcirc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num</span><span class="o">=</span><span class="n">hcirc</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
 <span class="n">center</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5000</span><span class="p">)</span>
 
-<span class="n">dists</span> <span class="o">=</span> <span class="p">(</span><span class="n">dx</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
-                      <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">dists</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
+                 <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
 <span class="n">dists_flat</span> <span class="o">=</span> <span class="n">dists</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 
 <span class="c1"># apply the landscape change inside the domain</span>
-<span class="n">in_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dists_flat</span> <span class="o">&lt;=</span> <span class="mi">12000</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">in_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">dists_flat</span> <span class="o">&lt;=</span> <span class="mi">3000</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">hcirc</span><span class="o">.</span><span class="n">flat</span><span class="p">[</span><span class="n">in_idx</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">hcirc</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">hcirc</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">y</span><span class="o">.</span><span class="n">min</span><span class="p">()])</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>

@@ -1,0 +1,6 @@
+﻿deltametrics.plan.compute\_land\_area
+=====================================
+
+.. currentmodule:: deltametrics.plan
+
+.. autofunction:: compute_land_area
