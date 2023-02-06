@@ -35,6 +35,105 @@ def compute_compensation(line1, line2):
     pass
 
 
+def _determine_deposit_from_background(sediment_volume, background):
+    """Helper for stratigraphic functions.
+
+    Determine the boolean mask of the deposit, i.e., excluding the
+    pre-deposition basin topography.
+
+    Parameters
+    ----------
+    sediment_volume
+
+    background
+
+    Returns
+    -------
+    deposit
+        Boolean, with same shape as `background`, indicating where the volume
+        is deposit (True).
+    """
+    if (background is None):
+        deposit = np.ones(sediment_volume.shape, dtype=bool)
+    elif (isinstance(background, float) or isinstance(background, int)):
+        deposit = (sediment_volume == background)
+    elif (isinstance(background, np.ndarray)):
+        deposit = background.astype(bool)  # ensure boolean
+    else:
+        raise TypeError('Invalid type for `background`.')
+
+    return deposit
+
+
+def compute_sedimentograph(
+    sediment_volume,
+    num_sections=10,
+    last_section_radius=None,
+    sediment_bins=None,
+    background=None,
+    **kwargs):
+    """Compute the sedimentograph.
+
+    Parameters
+    ----------
+
+    kwargs
+        Passed to `CircularSection` instantiation. Hint: You likely want to
+        supply the `origin` parameter.
+
+    Returns
+    -------
+    sedimentograph : ndarray
+        A `num` x `len(sediment_bins)` array of sediment volume fraction in each bin
+        (columns) for each `CircularSection` with increasing distance from
+        the origin.
+
+    section_radii
+
+    sediment_bins
+    """
+    deposit = _determine_deposit_from_background(background)
+
+    # figure out the sediment_bins
+    if sediment_bins is None:
+        # two bins, midpoint of dataset is break
+        sediment_bins = np.array([
+            np.nanmin(sediment_volume),
+            (np.nanmin(sediment_volume) + np.nanmax(sediment_volume)) / 2,
+            np.nanmax(sediment_volume)])
+
+    # figure out the last section radius
+    if last_section_radius is None:
+        # figure it out somehow?
+        raise NotImplementedError()
+
+    # make a list of sections to draw out
+    section_radii = np.linspace(0, last_section_radius, num=num_sections+1)[1:]
+
+    # loop through the sections and compute the sediment vols
+    for i, sect_rad in enumerate(section_radii):
+        sect = section.CircularSection(
+            sediment_volume, 
+            radius=sect_rad, **kwargs)
+
+
+def compute_depth_averaged_sand_fraction(
+    sediment_volume,
+    background=None):
+    """Compute the depth averaged sand fraction and return as array.
+    """
+    deposit = _determine_deposit_from_background(sediment_volume, background)
+
+    deposit_sediment = np.copy(sediment_volume)
+    deposit_sediment[~deposit] = np.nan
+
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", message="Mean of empty slice")
+        depth_avg = np.nanmean(deposit_sediment, axis=0)
+
+    return depth_avg
+
+
 def compute_boxy_stratigraphy_volume(elev, prop, sigma_dist=None,
                                      z=None, dz=None, nz=None,
                                      return_cube=False):
