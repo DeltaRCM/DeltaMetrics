@@ -47,7 +47,6 @@ def _determine_deposit_from_background(sediment_volume, background):
         `background` is specified as a constant, or for shape if no input is
         given.
 
-
     background : `xarray`, `ndarray`, or `float`, optional
         Value indicating the background or basin voxels that should be
         excluded from computation. If an array matching the size
@@ -106,7 +105,6 @@ def _determine_deposit_from_background(sediment_volume, background):
         ax[1, 1].imshow(background2[59], cmap='Greys_r')  # just below initial basin depth
         plt.tight_layout()
         plt.show()
-
     """
     if (background is None):
         deposit = np.ones(sediment_volume.shape, dtype=bool)
@@ -125,12 +123,12 @@ def compute_net_to_gross(
     net_threshold=None,
     background=None):
     """Compute net-to-gross for stratigraphy.
-    
+
     Computes a spatially-resolved net-to-gross for a deposit. This computation
     is based on thresholding some data to indicate what volume is "net"
     (usually grain size or sand fraction data). The first axis of the data is
     assumed to be the vertical elevation dimension. 
-    
+
     Parameters
     ----------
     sediment_volume : :obj:`xarray` or `ndarray`
@@ -155,7 +153,7 @@ def compute_net_to_gross(
     -------
     net_to_gross : :obj:`ndarray` or :obj:`DataArray`
         A spatially-resolved net-to-gross "map".
-    
+
     Examples
     --------
 
@@ -184,7 +182,6 @@ def compute_net_to_gross(
         dm.plot.append_colorbar(im1, ax=ax[1])
         plt.tight_layout()
         plt.show(block=False)
-
     """
     # process the optional inputs
     if (net_threshold is None):
@@ -236,7 +233,6 @@ def compute_thickness_surfaces(top_surface, bottom_surface):
 
     Examples
     --------
-
     .. plot::
         :include-source:
         :context: reset
