@@ -171,7 +171,7 @@ def compute_net_to_gross(
             net_threshold=0.5,
             background=background)
 
-        fig, ax = plt.subplots(1, 2, figsize=(6, 3))
+        fig, ax = plt.subplots(1, 2)
         im0 = ax[0].imshow(
             net_to_gross,
             extent=golfstrat.extent)
@@ -208,15 +208,15 @@ def compute_thickness_surfaces(top_surface, bottom_surface):
     """Compute deposit thickness.
 
     This computation determines the deposit thickness, based on two bounding
-    surfaces. It is a calcualtion of ``(surface - bottom_surface)``, with
+    surfaces. It is a calculation of ``(top_surface - bottom_surface)``, with
     corrections to invalidate areas of no-deposition or net erosion, i.e.,
     hightlighting only where net deposition has occurred.
 
     .. note::
 
-        This function does not operate directly on `StratigraphyCube`, but on
-        two surfaces of interest (which could be extracted from a
-        `StratigraphyCube`. See example.
+        This function does not operate directly on :obj:`StratigraphyCube`,
+        but on two surfaces of interest (which could be extracted from a
+        :obj:`StratigraphyCube`). See example.
 
     Parameters
     ----------
@@ -231,7 +231,8 @@ def compute_thickness_surfaces(top_surface, bottom_surface):
     Returns
     -------
     difference : :obj:`ndarray` or :obj:`DataArray`
-        Difference in elevation between `top_surface` and `bottom_surface`.
+        Difference in elevation between :obj:`top_surface`
+        and :obj:`bottom_surface`.
 
     Examples
     --------
