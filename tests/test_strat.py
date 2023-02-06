@@ -500,3 +500,139 @@ class TestSubsidenceElevationAdjustment:
         assert adj[0] == 0.0
         # final value should equal combo of topo and subsidence at end
         assert adj[-1] == topo[-1] + sigma_dist[-1]
+
+
+class TestComputeNetToGross:
+
+    golfstrat = cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
+
+    def test_net_to_gross_nobg(self):
+        net_to_gross = strat.compute_net_to_gross(
+            self.golfstrat['sandfrac'],
+            net_threshold=0.5,
+            background=None)
+        assert np.all(net_to_gross) <= 1
+        assert np.all(net_to_gross) >= 0
+
+    def test_net_to_gross(self):
+        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        net_to_gross = strat.compute_net_to_gross(
+            self.golfstrat['sandfrac'],
+            net_threshold=0.5,
+            background=background)
+        assert np.all(net_to_gross) <= 1
+        assert np.all(net_to_gross) >= 0
+
+    def test_net_to_gross_thresh0(self):
+        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        net_to_gross = strat.compute_net_to_gross(
+            self.golfstrat['sandfrac'],
+            net_threshold=0.01,
+            background=background)
+        assert np.all(net_to_gross) <= 1
+        assert np.all(net_to_gross) >= 0
+
+
+class TestComputeThicknessSurfaces:
+
+    def test_compute_thickness_0(self):
+        deposit_thickness0 = strat.compute_thickness_surfaces(
+            golfcube['eta'][0, :, :],
+            golfcube['eta'][0, :, :])
+        zeros = (deposit_thickness0 == 0)
+        nans = np.isnan(deposit_thickness0)
+        assert np.all(np.logical_or(zeros, nans))  # all 0 or nan
+
+    def test_compute_thickness_1(self):
+        deposit_thickness1 = strat.compute_thickness_surfaces(
+            golfcube['eta'][0, :, :],
+            golfcube['eta'][1, :, :])
+        zeros = (deposit_thickness1 == 0)
+        nans = np.isnan(deposit_thickness1)
+        assert np.any(~np.logical_or(zeros, nans))  # any not nan or 0
+
+    def test_compute_thickness_total(self):
+        deposit_thickness = strat.compute_thickness_surfaces(
+            golfcube['eta'][-1, :, :],
+            np.min(golfcube['eta'], axis=0))
+        # zeros = (deposit_thickness == 0)
+        gtr_hb = (deposit_thickness > golfcube.meta['hb'].data)
+        # nans = np.isnan(deposit_thickness)
+        assert np.any(gtr_hb) # any greater than thickness
+
+
+class TestComputeSedimentograph:
+
+    golfstrat = cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
+
+    def test_two_bins(self):
+        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        (s, r, b) = strat.compute_sedimentograph(
+            self.golfstrat['sandfrac'],
+            background=background)
+        assert np.all(np.logical_or(s <= 1, np.isnan(s)))
+        assert s.shape[0] == 10  # default is 10 sections
+        assert s.shape[1] == 2  # default is 2 bins
+        assert b.shape[0] == 3  # default is 2 bins, 3 edges
+        assert r.shape[0] == s.shape[0]
+        assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
+
+    def test_two_bins_with_origin(self):
+        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        (s, r, b) = strat.compute_sedimentograph(
+            self.golfstrat['sandfrac'],
+            background=background,
+            origin_idx=[3, 100])
+        assert np.all(np.logical_or(s <= 1, np.isnan(s)))
+        assert s.shape[0] == 10  # default is 10 sections
+        assert r.shape[0] == s.shape[0]
+        assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
+
+    def test_two_bins_more_sects(self):
+        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        (s, r, b) = strat.compute_sedimentograph(
+            self.golfstrat['sandfrac'],
+            num_sections=50,
+            background=background,
+            origin_idx=[3, 100])
+        assert np.all(np.logical_or(s <= 1, np.isnan(s)))
+        assert s.shape[0] == 50  # match input
+        assert r.shape[0] == s.shape[0]
+        assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
+
+    def test_two_bins_cust_rad(self):
+        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        (s, r, b) = strat.compute_sedimentograph(
+            self.golfstrat['sandfrac'],
+            last_section_radius=2750,
+            background=background,
+            origin_idx=[3, 100])
+        assert np.all(np.logical_or(s <= 1, np.isnan(s)))
+        assert r.shape[0] == s.shape[0]
+        assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
+        assert r[-1] == 2750
+
+    def test_five_bins(self):
+        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        (s, r, b) = strat.compute_sedimentograph(
+            self.golfstrat['sandfrac'],
+            sediment_bins=np.linspace(0, 1, num=6, endpoint=True),
+            background=background,
+            origin_idx=[3, 100])
+        assert np.all(np.logical_or(s <= 1, np.isnan(s)))
+        assert s.shape[1] == 5  # default is 2 bins
+        assert b.shape[0] == 6  # default is 2 bins, 3 edges
+        assert r.shape[0] == s.shape[0]
+        assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
+
+    def test_time_variable(self):
+        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        
+        (s, r, b) = strat.compute_sedimentograph(
+            self.golfstrat['time'],
+            num_sections=50,
+            last_section_radius=2750,
+            sediment_bins=np.linspace(0, golfcube.t[-1], num=5),
+            background=background,
+            origin_idx=[3, 100])
+        assert np.all(np.logical_or(s <= 1, np.isnan(s)))
