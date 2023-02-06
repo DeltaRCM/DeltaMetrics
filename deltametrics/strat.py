@@ -4,17 +4,15 @@ import warnings
 import numpy as np
 import xarray as xr
 
-
-def compute_trajectory():
-    """Show 1d profile at point.
-    """
-    pass
+from . import section
 
 
 def compute_compensation(line1, line2):
     """Compute compensation statistic betwen two lines.
 
-    Explain the stat.
+    .. warning::
+
+        Not Implemented.
 
     Parameters
     ----------
@@ -32,7 +30,7 @@ def compute_compensation(line1, line2):
         Compensation statistic.
 
     """
-    pass
+    raise NotImplementedError()
 
 
 def _determine_deposit_from_background(sediment_volume, background):
@@ -43,20 +41,77 @@ def _determine_deposit_from_background(sediment_volume, background):
 
     Parameters
     ----------
-    sediment_volume
+     sediment_volume : :obj:`xarray` or `ndarray`
+        The deposit voxel array. First dimension is vertical spatial
+        dimension. In this function, the data here is used only when
+        `background` is specified as a constant, or for shape if no input is
+        given.
 
-    background
+
+    background : `xarray`, `ndarray`, or `float`, optional
+        Value indicating the background or basin voxels that should be
+        excluded from computation. If an array matching the size
+        of :obj:`sediment_volume` is supplied, this array is assumed to be a binary
+        array indicating the voxels to be excluded. If a float is passed,
+        this is treated as a "no-data" value, and used to determine the
+        background voxels. If no value is supplied, no voxels are excluded.
 
     Returns
     -------
-    deposit
+    deposit : :obj:`ndarray` or :obj:`DataArray`
         Boolean, with same shape as `background`, indicating where the volume
         is deposit (True).
+
+    Examples
+    --------
+    This example shows how choice of background affect the background used for
+    stratigraphic computations. 
+
+    The first background calculation simply uses the initial basin topography
+    to determine the background voxels, but this ignores erosion and
+    subsequent infilling.
+
+    The second background calculation considers this infilling of erosional
+    channels by including the inflill in the deposit, and not in the
+    background.
+
+    The third background shows the effect of using a constant value as the
+    background value; hint: this is generally a bad idea unless your data has
+    a background value encoded into it (like ``-1`` or `9999`).
+
+    .. plot::
+        :include-source:
+        :context: reset
+
+        golfcube = dm.sample_data.golf()
+        golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.05)
+
+        # background determined from initial basin topography
+        background0 = dm.strat._determine_deposit_from_background(
+            golfcube['sandfrac'],
+            background=golfstrat.Z > golfcube['eta'][0].data)
+        # background determined from min of bed elevation timeseries
+        background1 = dm.strat._determine_deposit_from_background(
+            golfcube['sandfrac'],
+            background=(golfstrat.Z > np.min(golfcube['eta'].data, axis=0)))
+        # background determined from a fixed sandfrac value
+        background2 = dm.strat._determine_deposit_from_background(
+            golfcube['sandfrac'],
+            background=0)
+
+        fig, ax = plt.subplots(2, 2, figsize=(6, 4))
+        ax[0, 0].imshow(background0[59], cmap='Greys_r')  # just below initial basin depth
+        ax[0, 1].imshow(background0[60], cmap='Greys_r')  # just above initial basin depth
+        ax[1, 0].imshow(background1[59], cmap='Greys_r')  # just below initial basin depth
+        ax[1, 1].imshow(background2[59], cmap='Greys_r')  # just below initial basin depth
+        plt.tight_layout()
+        plt.show()
+
     """
     if (background is None):
         deposit = np.ones(sediment_volume.shape, dtype=bool)
     elif (isinstance(background, float) or isinstance(background, int)):
-        deposit = (sediment_volume == background)
+        deposit = (sediment_volume != background)
     elif (isinstance(background, np.ndarray)):
         deposit = background.astype(bool)  # ensure boolean
     else:
@@ -65,34 +120,248 @@ def _determine_deposit_from_background(sediment_volume, background):
     return deposit
 
 
+def compute_net_to_gross(
+    sediment_volume,
+    net_threshold=None,
+    background=None):
+    """Compute net-to-gross for stratigraphy.
+    
+    Computes a spatially-resolved net-to-gross for a deposit. This computation
+    is based on thresholding some data to indicate what volume is "net"
+    (usually grain size or sand fraction data). The first axis of the data is
+    assumed to be the vertical elevation dimension. 
+    
+    Parameters
+    ----------
+    sediment_volume : :obj:`xarray` or `ndarray`
+        The deposit voxel array. First dimension is vertical spatial dimension.
+
+    net_threshold : `float`, optional
+        Threshold to use for splitting out the "net". Voxels with value
+        greater than or equal to `net_threshold` will be included in the net.
+        If no value is supplied, the unweighted midpoint of the :obj:`sediment_volume`
+        distribution (i.e., ``(max + min)/2``) will be used as the
+        threshold.
+
+    background : `xarray`, `ndarray`, or `float`, optional
+        Value indicating the background or basin voxels that should be
+        excluded from computation. If an array matching the size
+        of :obj:`sediment_volume` is supplied, this array is assumed to be a binary
+        array indicating the voxels to be excluded. If a float is passed,
+        this is treated as a "no-data" value, and used to determine the
+        background voxels. If no value is supplied, no voxels are excluded.
+
+    Returns
+    -------
+    net_to_gross : :obj:`ndarray` or :obj:`DataArray`
+        A spatially-resolved net-to-gross "map".
+    
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        golfcube = dm.sample_data.golf()
+        golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
+        background = (golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+
+        net_to_gross = dm.strat.compute_net_to_gross(
+            golfstrat['sandfrac'],
+            net_threshold=0.5,
+            background=background)
+
+        fig, ax = plt.subplots(1, 2, figsize=(6, 3))
+        im0 = ax[0].imshow(
+            net_to_gross,
+            extent=golfstrat.extent)
+        dm.plot.append_colorbar(im0, ax=ax[0])
+        im1 = ax[1].imshow(
+            net_to_gross,
+            cmap=golfstrat.varset['net_to_gross'].cmap,
+            norm=golfstrat.varset['net_to_gross'].norm,
+            extent=golfstrat.extent)
+        dm.plot.append_colorbar(im1, ax=ax[1])
+        plt.tight_layout()
+        plt.show(block=False)
+
+    """
+    # process the optional inputs
+    if (net_threshold is None):
+        net_threshold = np.min(sediment_volume) + ((max-min)/2)
+        net_threshold = (np.nanmin(sediment_volume) + np.nanmax(sediment_volume)) / 2
+
+    deposit = _determine_deposit_from_background(sediment_volume, background)
+
+    # determine the net and gross
+    net = (sediment_volume > net_threshold)
+    gross = (sediment_volume >= 0)
+
+    net = np.nansum(np.logical_and(net, deposit), axis=0).astype(float)
+    gross = np.nansum(np.logical_and(gross, deposit), axis=0).astype(float)
+    gross[gross == 0] = np.nan
+
+    return (net / gross)
+
+
+def compute_thickness_surfaces(top_surface, bottom_surface):
+    """Compute deposit thickness.
+
+    This computation determines the deposit thickness, based on two bounding
+    surfaces. It is a calcualtion of ``(surface - bottom_surface)``, with
+    corrections to invalidate areas of no-deposition or net erosion, i.e.,
+    hightlighting only where net deposition has occurred.
+
+    .. note::
+
+        This function does not operate directly on `StratigraphyCube`, but on
+        two surfaces of interest (which could be extracted from a
+        `StratigraphyCube`. See example.
+
+    Parameters
+    ----------
+    top_surface
+        Elevation of top-bounding surface for computation. This is often the
+        air-sediment surface, or an isochron surface in stratigraphy.
+
+    bottom_surface
+        Elevation of bottom-bounding surface for computation. This is often
+        the pre-deposition basin surface.
+
+    Returns
+    -------
+    difference : :obj:`ndarray` or :obj:`DataArray`
+        Difference in elevation between `top_surface` and `bottom_surface`.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+        :context: reset
+
+        golfcube = dm.sample_data.golf()
+        deposit_thickness0 = dm.strat.compute_thickness_surfaces(
+            golfcube['eta'][-1, :, :],
+            golfcube['eta'][0, :, :])
+        deposit_thickness1 = dm.strat.compute_thickness_surfaces(
+            golfcube['eta'][-1, :, :],
+            np.min(golfcube['eta'], axis=0))
+
+        fig, ax = plt.subplots(1, 2)
+        im = ax[0].imshow(deposit_thickness0)
+        dm.plot.append_colorbar(im, ax=ax[0])
+        ax[0].set_title('thickness above initial basin')
+        im = ax[1].imshow(deposit_thickness1)
+        dm.plot.append_colorbar(im, ax=ax[1])
+        ax[1].set_title('total deposit thickness')
+        plt.tight_layout()
+        plt.show()
+    """
+    difference = top_surface - bottom_surface
+    whr = (difference <= 0)
+    if isinstance(difference, xr.DataArray):
+        difference.data[whr] = np.nan
+    else:
+        difference[whr] = np.nan
+    return difference
+
+
 def compute_sedimentograph(
     sediment_volume,
+    sediment_bins=None,
     num_sections=10,
     last_section_radius=None,
-    sediment_bins=None,
     background=None,
     **kwargs):
     """Compute the sedimentograph.
 
     Parameters
     ----------
+    sediment_volume : :obj:`xarray` or `ndarray`
+        The deposit voxel array. First dimension is vertical spatial dimension.
 
-    kwargs
+    sediment_bins : :obj:`ndarray`
+        Threshold values to use for splitting out the sediment grain size or
+        sand fraction bins. Lower bound is inclusive for all bins, and upper
+        bound is inclusive (but not unbounded) for last bin. If no value is
+        supplied, the unweighted midpoint of the :obj:`sediment_volume`
+        distribution will divide two bins (i.e., ``[min, (max + min)/2,
+        max]``).
+
+    num_sections : :obj:`int`, optional
+        Number of sections to calculate for the sedimentograph. Default is
+        10.
+
+    last_section_radius : :obj:`float`, optional
+        Radius of the last section for the sedimentograph. If no value is
+        supplied, last section will be placed at the half the maximum
+        coordinate of the `dim1` axis (first spatial coordinate) of the
+        `sediment_volume` volume.
+
+    background : `xarray`, `ndarray`, or `float`, optional
+        Value indicating the background or basin voxels that should be
+        excluded from computation. If an array matching the size
+        of :obj:`sediment_volume` is supplied, this array is assumed to be a binary
+        array indicating the voxels to be excluded. If a float is passed,
+        this is treated as a "no-data" value, and used to determine the
+        background voxels. If no value is supplied, no voxels are excluded.
+
+    **kwargs
         Passed to `CircularSection` instantiation. Hint: You likely want to
         supply the `origin` parameter.
 
     Returns
     -------
-    sedimentograph : ndarray
+    sedimentograph : :obj:`ndarray`
         A `num` x `len(sediment_bins)` array of sediment volume fraction in each bin
         (columns) for each `CircularSection` with increasing distance from
         the origin.
 
-    section_radii
+    section_radii : :obj:`ndarray`
+        Radii where the :obj:`CircularSection` for the sedimentograph were
+        located.
 
-    sediment_bins
+    sediment_bins : :obj:`ndarray`
+        Bins used to classify values in `sediment_volume`.
+
+    Examples
+    --------
+    Compute the sedimentograph for the `golf` data `sandfrac`, using the
+    default bins. Note that this yields two bins, which are simply `
+    (1-other)`, so we only plot the second bin --- indicating the sandy
+    fraction of the deposit for the `golf` `sandfrac` data.
+
+    .. plot::
+        :include-source:
+        :context: reset
+
+        golfcube = dm.sample_data.golf()
+        golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
+
+        background = (golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+
+        (sedimentograph, radii, bins) = dm.strat.compute_sedimentograph(
+            golfstrat['sandfrac'],
+            num_sections=50,
+            last_section_radius=2750,
+            background=background,
+            origin_idx=[3, 100])
+
+        fig, ax = plt.subplots()
+        ax.plot(
+            radii,
+            sedimentograph[:, 1],
+            marker='o', ls='-')
+        ax.set_xlabel('section radius (m)')
+        ax.set_ylabel(f'fraction > {bins[1]}')
+        plt.show()
     """
-    deposit = _determine_deposit_from_background(background)
+    # implementation note: this could be refactored to take advantage of numpy
+    # histogram/bin counting, rather than manually searching.
+
+    # get the deposit only
+    deposit = _determine_deposit_from_background(sediment_volume, background)
 
     # figure out the sediment_bins
     if sediment_bins is None:
@@ -105,33 +374,39 @@ def compute_sedimentograph(
     # figure out the last section radius
     if last_section_radius is None:
         # figure it out somehow?
-        raise NotImplementedError()
+        last_section_radius = float(sediment_volume[sediment_volume.dims[1]][-1]) / 2 
 
     # make a list of sections to draw out
     section_radii = np.linspace(0, last_section_radius, num=num_sections+1)[1:]
+    sedimentograph = np.zeros(shape=(len(section_radii), len(sediment_bins)-1))
 
     # loop through the sections and compute the sediment vols
     for i, sect_rad in enumerate(section_radii):
         sect = section.CircularSection(
-            sediment_volume, 
+            sediment_volume[0, :, :],  # must be a 2d slice to make section 
             radius=sect_rad, **kwargs)
+        # manually slice, because not set up for sections into arbitrary 3d volume
+        sect_slice = sediment_volume.data[:, sect._dim1_idx, sect._dim2_idx]
+        sect_deposit = deposit[:, sect._dim1_idx, sect._dim2_idx]
+        # manually loop bins
+        for b in np.arange(len(sediment_bins)-1):
+            low_bin = sediment_bins[b]
+            high_bin = sediment_bins[b+1]
 
+            if b < (len(sediment_bins)-2):
+                in_bin = np.logical_and(sect_slice >= low_bin, sect_slice < high_bin)
+            else:
+                in_bin = np.logical_and(sect_slice >= low_bin, sect_slice <= high_bin) 
+            in_bin_count = np.sum(np.logical_and(in_bin, sect_deposit))
+            total_count = np.sum(np.logical_and(~np.isnan(sect_slice), sect_deposit))
 
-def compute_depth_averaged_sand_fraction(
-    sediment_volume,
-    background=None):
-    """Compute the depth averaged sand fraction and return as array.
-    """
-    deposit = _determine_deposit_from_background(sediment_volume, background)
+            if total_count.size > 0:
+                frac = in_bin_count / total_count
+            else:
+                frac = np.nan
+            sedimentograph[i, b] = frac
 
-    deposit_sediment = np.copy(sediment_volume)
-    deposit_sediment[~deposit] = np.nan
-
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore", message="Mean of empty slice")
-        depth_avg = np.nanmean(deposit_sediment, axis=0)
-
-    return depth_avg
+    return sedimentograph, section_radii, sediment_bins
 
 
 def compute_boxy_stratigraphy_volume(elev, prop, sigma_dist=None,
