@@ -273,6 +273,17 @@ def compute_sedimentograph(
     **kwargs):
     """Compute the sedimentograph.
 
+    The sedimentograph [1]_ is a measure of sand fraction of delta
+    stratigraphy. In this implementation, a series of concentric
+    `CircularSection` are drawn with increasing radius, so the sedimentograph
+    is a function of space. 
+
+    .. hint::
+
+        To compute the sedimentograph as a function of time and space, loop
+        over stratigraphic volumes computed from a subset of the timeseries,
+        and apply this metric.
+
     Parameters
     ----------
     sediment_volume : :obj:`xarray` or `ndarray`
@@ -353,6 +364,11 @@ def compute_sedimentograph(
         ax.set_xlabel('section radius (m)')
         ax.set_ylabel(f'fraction > {bins[1]}')
         plt.show()
+
+    .. [1] Liang, M., Van Dyk, C., and Passalacqua, P. (2016), Quantifying
+           the patterns and dynamics of river deltas under conditions of 
+           steady forcing and relative sea level rise, J. Geophys. Res. 
+           Earth Surf., 121, 465– 496, doi:10.1002/2015JF003653.
     """
     # implementation note: this could be refactored to take advantage of numpy
     # histogram/bin counting, rather than manually searching.

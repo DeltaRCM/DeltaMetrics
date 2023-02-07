@@ -10,20 +10,10 @@ stratigraphy.
 The functions are defined in ``deltametrics.strat``. 
 
 
-Compute stratigraphy routines
-=============================
-
-.. currentmodule:: deltametrics.strat
-
-.. autosummary::
-    :toctree: ../../_autosummary
-
-    compute_boxy_stratigraphy_volume
-    compute_boxy_stratigraphy_coordinates
-
-
 Stratigraphy statistics functions
 =================================
+
+Metrics and statistics of stratigraphy.
 
 .. autosummary::
     :toctree: ../../_autosummary
@@ -32,6 +22,20 @@ Stratigraphy statistics functions
     compute_net_to_gross
     compute_thickness_surfaces
     compute_sedimentograph
+
+
+Compute stratigraphy routines
+=============================
+
+Routines to compute stratigraphic volumes.
+
+.. currentmodule:: deltametrics.strat
+
+.. autosummary::
+    :toctree: ../../_autosummary
+
+    compute_boxy_stratigraphy_volume
+    compute_boxy_stratigraphy_coordinates
 
 
 Quick-stratigraphy attributes classes
