@@ -9,6 +9,8 @@ stratigraphy.
 
 The functions are defined in ``deltametrics.strat``. 
 
+.. currentmodule:: deltametrics.strat
+
 
 Stratigraphy statistics functions
 =================================
@@ -28,8 +30,6 @@ Compute stratigraphy routines
 =============================
 
 Routines to compute stratigraphic volumes.
-
-.. currentmodule:: deltametrics.strat
 
 .. autosummary::
     :toctree: ../../_autosummary
