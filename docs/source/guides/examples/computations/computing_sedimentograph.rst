@@ -54,7 +54,8 @@ The result is a (only slightly) different sedimentograph.
             theta1=np.pi/8,
             theta2=np.pi/2-(np.pi/8))
         )
-    frozen_sand_mask = frozen_sand.where(~GM.mask, np.nan)
+    GM_mask_strat = np.tile(GM.mask, (showcubes[0][1].shape[0], 1, 1))  # a mask with same dimensions as stratigraphy
+    frozen_sand_mask = frozen_sand.where(GM_mask_strat, np.nan)
 
     (sedimentograph2,
         section_radii2,
