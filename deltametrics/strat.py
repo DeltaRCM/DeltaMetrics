@@ -41,7 +41,7 @@ def _determine_deposit_from_background(sediment_volume, background):
 
     Parameters
     ----------
-     sediment_volume : :obj:`xarray` or `ndarray`
+    sediment_volume : :obj:`xarray` or `ndarray`
         The deposit voxel array. First dimension is vertical spatial
         dimension. In this function, the data here is used only when
         `background` is specified as a constant, or for shape if no input is
