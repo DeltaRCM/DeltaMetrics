@@ -1301,6 +1301,73 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
     return rough
 
 
+def compute_shoreline_rugosity(shore_mask, **kwargs):
+    """Compute shoreline rugosity.
+
+    Computes the shoreline rugosity metric:
+
+    .. math::
+
+        R_j = \\sqrt{1/N \\sum_{i=1}^N \\left( \\frac{r_{i,j}-\\bar{r}}{\\bar{r}}\\right)^2}
+
+    where ...
+
+    Parameters
+    ----------
+    shore_mask : :obj:`~deltametrics.mask.ShorelineMask`, :obj:`ndarray`
+        Shoreline mask. Can be a :obj:`~deltametrics.mask.ShorelineMask` object,
+        or a binarized array.
+
+    **kwargs
+        Keyword argument are passed to :obj:`compute_shoreline_length`
+        internally.
+
+    Returns
+    -------
+    rugosity : :obj:`float`
+        Shoreline rugosity, computed as described above.
+
+    Examples
+    --------
+    Compare the rugosity of the shoreline early in the model simulation with
+    the rugosity later. Here, we use the `elevation_offset` parameter (passed
+    to :obj:`~deltametrics.mask.ElevationMask`) to better capture the
+    topography of the `pyDeltaRCM` model results.
+
+    after Barefoot
+    """
+    # extract data from masks
+    if isinstance(shore_mask, mask.ShorelineMask):
+        shore_mask = shore_mask.mask
+        _sm = shore_mask.values
+        _dx = float(shore_mask[shore_mask.dims[0]][1] -
+                    shore_mask[shore_mask.dims[0]][0])
+    elif isinstance(shore_mask, xr.core.dataarray.DataArray):
+        _sm = shore_mask.values
+        _dx = float(shore_mask[shore_mask.dims[0]][1] -
+                    shore_mask[shore_mask.dims[0]][0])
+    elif isinstance(shore_mask, np.ndarray):
+        _sm = shore_mask
+        _dx = 1
+    else:
+        raise TypeError('Invalid type {0}'.format(type(shore_mask)))
+
+    # _ = kwargs.pop('return_line', None)  # trash this variable if passed
+    # shorelength = compute_shoreline_length(
+    #     shore_mask, return_line=False, **kwargs)
+    # find where the mask is True (all x-y pairs along shore)
+    _y, _x = np.argwhere(_sm).T
+
+    N = np.sum(_sm)
+    if N > 0:
+        # compute rugosity
+        rugosity = np.sqrt(1/N * np.sum())
+    else:
+        raise ValueError('No pixels in land mask.')
+
+    return rugosity
+
+
 def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     """Compute the length of a shoreline from a mask of the shoreline.
 
@@ -1625,6 +1692,152 @@ def compute_shoreline_distance(shore_mask, origin=[0, 0], return_distances=False
         return np.nanmean(_dists), np.nanstd(_dists), _dists
     else:
         return np.nanmean(_dists), np.nanstd(_dists)
+
+
+def _determine_equally_spaced_azimuths(*args, **kwargs):
+    """Helper to determine equally spaced azimuths for other computations.
+
+    Parameters
+    ----------
+    num : :obj:`int` or :obj:`float`
+        Number of azimuths to return. Coerced to `int`.
+
+    start : :obj:`float`
+        Starting azimuth.
+
+    end : :obj:`float`
+        Ending azimuth.
+
+    buffered
+        Whether `start` and `end` represent the bounds for the calculation and
+        should be buffered before the first and last azimuth, or if `start`
+        and `end` are the actual end points of the azimuth array. This is
+        helpful when `start` and `end` represent model or experimental domain
+        edges. Default is `True`, include buffer.
+
+    .. doctest::
+
+        >>> _determine_equally_spaced_azimuths(3, 0, 180, buffered=False)
+        [  0.  90. 180.]
+
+        >>> _determine_equally_spaced_azimuths(3, 0, 180, buffered=True)
+        [ 45.  90. 135.]
+
+        >>> _determine_equally_spaced_azimuths(
+        ...     num=5, start=22.5, end=157.5, buffered=True)
+        [ 45.   67.5  90.  112.5 135. ]
+
+        >>> _determine_equally_spaced_azimuths()
+        [ 15.  30.  45.  60.  75.  90. 105. 120. 135. 150. 165.]
+
+    """
+    # process the input arguments
+    if len(args) > 0:
+        # must specify all four as args
+        if len(args) != 4:
+            raise ValueError(
+                "Must specify all four arguments as positional, "
+                "if specifying any as positional."
+            )
+        # unpack args
+        num, start, end, buffered = args[0], args[1], args[2], args[3]
+    else:
+        # arguments have been specified as keywords or use defaults
+        num = kwargs.pop("num", 11)
+        start = kwargs.pop("start", 0)
+        end = kwargs.pop("end", 180)
+        buffered = kwargs.pop("buffered", True)
+
+    # create the azimuths
+    if buffered:
+        azimuths = np.linspace(start, end, num + 2, dtype=float)
+        azimuths = azimuths[1:-1]
+    else:
+        azimuths = np.linspace(start, end, num, dtype=float)
+    return azimuths
+
+
+def compute_shoreline_radius(shore_mask, origin=[0, 0], return_radii=False, **kwargs):
+    """Radially-averaged shoreline radius.
+
+    .. note::
+
+        In implementation, this metric uses the last (farthest) intersection
+        of the radial section at `azimuth` and the shoreline mask.
+
+    See also:
+        :obj:`compute_shoreline_distance`.
+    """
+    azimuths = _determine_equally_spaced_azimuths(**kwargs)
+    radii = np.zeros((len(azimuths),))
+    # note:
+    for a, azimuth in enumerate(azimuths):
+        a_section = dm.section.RadialSection(
+            cube, azimuth=azimuth, origin_idx=[0, eta_diff.shape[1] // 2]
+        )
+
+        # find where interescts shoreline mask
+        shoreline_mask_alongsection = deposit_percentile_line[
+            a_section.trace_idx[:, 0], a_section.trace_idx[:, 1]
+        ]
+        where_intersects = np.nonzero(shoreline_mask_alongsection)[0]
+        if where_intersects.size > 0:
+            radii[a] = a_section.s[where_intersects[-1]]
+        else:
+            radii[a] = np.nan
+
+    if return_radii:
+        return np.nanmean(slopes), np.nanstd(slopes), slopes
+    else:
+        return np.nanmean(slopes), np.nanstd(slopes)
+
+
+def compute_topset_slope(
+    shore_mask,
+    elevation_data,
+    origin=[0, 0],
+    elevation_threshold=0,
+    point_threshold=5,
+    return_slopes=False,
+):
+    """
+
+    Parameters
+    ----------
+
+    point_threshold
+        How many points above sea level must be identified in order to fit a
+        line.
+    """
+    azimuths = _determine_equally_spaced_azimuths(**kwargs)
+    slopes = np.zeros((len(azimuths),))
+    for a, azimuth in enumerate(azimuths):
+        a_section = dm.section.RadialSection(
+            cube, azimuth=azimuth, origin_idx=[0, eta_diff.shape[1] // 2]
+        )
+
+        _HSL = cube.meta["H_SL"][t_idx].data
+        yvalues = np.array(a_section["eta"][t_idx, :])
+        xvalues = np.array(a_section.s)
+        if np.isnan(_HSL):
+            # is no sea level, take locations where deposited
+            _keep_bool = yvalues > a_section["eta"][0, :]
+        else:
+            # if sea level, take locations where above sl
+            _keep_bool = yvalues > (_HSL - 0.25)
+        yvalues_above = yvalues[_keep_bool]
+        xvalues_above = xvalues[_keep_bool]
+
+        if xvalues_above.size > point_threshold:
+            m, b = np.polyfit(xvalues_above, yvalues_above, 1)
+        else:
+            m = np.nan
+        slopes[a] = m
+
+    if return_slopes:
+        return np.nanmean(slopes), np.nanstd(slopes), slopes
+    else:
+        return np.nanmean(slopes), np.nanstd(slopes)
 
 
 @njit
@@ -2215,6 +2428,11 @@ def compute_surface_deposit_age(data, surface_idx, **kwargs):
         function :obj:`_compute_surface_deposit_time_from_etas`. Hint: you
         may want to control the `stasis_tol` parameter.
 
+    Returns
+    -------
+    sfc_age : :obj:`np.ndarray`
+        Age of surface (in indices).
+
     Examples
     --------
 
@@ -2228,12 +2446,12 @@ def compute_surface_deposit_age(data, surface_idx, **kwargs):
         ax.imshow(sfc_time, cmap='YlGn_r')
         plt.show()
     """
-    sfc_date = compute_surface_deposit_time(data, surface_idx, **kwargs)
+    sfc_time = compute_surface_deposit_time(data, surface_idx, **kwargs)
     # handle indices less than 0
     if surface_idx < 0:
         # wrap to find the index
         surface_idx = surface_idx % data.shape[0]
-    return surface_idx - sfc_date
+    return surface_idx - sfc_time
 
 
 def _compute_surface_deposit_time_from_etas(etas, stasis_tol=0.01):
@@ -2258,7 +2476,8 @@ def _compute_surface_deposit_time_from_etas(etas, stasis_tol=0.01):
 
     Returns
     -------
-    sfc_date : obj:`ndarray`
+    sfc_time : :obj:`ndarray`
+        Time idx of surface.
     """
     if not (stasis_tol > 0):
         raise ValueError(
@@ -2268,6 +2487,6 @@ def _compute_surface_deposit_time_from_etas(etas, stasis_tol=0.01):
     etaf = np.array(etas[-1, :, :])
 
     whr = np.abs(etaf - etas) < stasis_tol
-    sfc_date = np.argmax(whr, axis=0)
+    sfc_time = np.argmax(whr, axis=0)
 
-    return sfc_date
+    return sfc_time

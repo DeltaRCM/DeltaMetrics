@@ -49,3 +49,4 @@ Functions
     compute_surface_deposit_age
     shaw_opening_angle_method
     morphological_closing_method
+    _compute_surface_deposit_time_from_etas
