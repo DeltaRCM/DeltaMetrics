@@ -1182,6 +1182,73 @@ def compute_shoreline_roughness(shore_mask, land_mask, **kwargs):
     return rough
 
 
+def compute_shoreline_rugosity(shore_mask, **kwargs):
+    """Compute shoreline rugosity.
+
+    Computes the shoreline rugosity metric:
+
+    .. math::
+
+        R_j = \\sqrt{1/N \\sum_{i=1}^N \\left( \\frac{r_{i,j}-\\bar{r}}{\\bar{r}}\\right)^2}
+
+    where ...
+
+    Parameters
+    ----------
+    shore_mask : :obj:`~deltametrics.mask.ShorelineMask`, :obj:`ndarray`
+        Shoreline mask. Can be a :obj:`~deltametrics.mask.ShorelineMask` object,
+        or a binarized array.
+
+    **kwargs
+        Keyword argument are passed to :obj:`compute_shoreline_length`
+        internally.
+
+    Returns
+    -------
+    rugosity : :obj:`float`
+        Shoreline rugosity, computed as described above.
+
+    Examples
+    --------
+    Compare the rugosity of the shoreline early in the model simulation with
+    the rugosity later. Here, we use the `elevation_offset` parameter (passed
+    to :obj:`~deltametrics.mask.ElevationMask`) to better capture the
+    topography of the `pyDeltaRCM` model results.
+
+    after Barefoot
+    """
+    # extract data from masks
+    if isinstance(shore_mask, mask.ShorelineMask):
+        shore_mask = shore_mask.mask
+        _sm = shore_mask.values
+        _dx = float(shore_mask[shore_mask.dims[0]][1] -
+                    shore_mask[shore_mask.dims[0]][0])
+    elif isinstance(shore_mask, xr.core.dataarray.DataArray):
+        _sm = shore_mask.values
+        _dx = float(shore_mask[shore_mask.dims[0]][1] -
+                    shore_mask[shore_mask.dims[0]][0])
+    elif isinstance(shore_mask, np.ndarray):
+        _sm = shore_mask
+        _dx = 1
+    else:
+        raise TypeError('Invalid type {0}'.format(type(shore_mask)))
+
+    # _ = kwargs.pop('return_line', None)  # trash this variable if passed
+    # shorelength = compute_shoreline_length(
+    #     shore_mask, return_line=False, **kwargs)
+    # find where the mask is True (all x-y pairs along shore)
+    _y, _x = np.argwhere(_sm).T
+
+    N = np.sum(_sm)
+    if N > 0:
+        # compute rugosity
+        rugosity = np.sqrt(1/N * np.sum())
+    else:
+        raise ValueError('No pixels in land mask.')
+
+    return rugosity
+
+
 def compute_shoreline_length(shore_mask, origin=[0, 0], return_line=False):
     """Compute the length of a shoreline from a mask of the shoreline.
 
@@ -2219,6 +2286,11 @@ def compute_surface_deposit_age(data, surface_idx, **kwargs):
         function :obj:`_compute_surface_deposit_time_from_etas`. Hint: you
         may want to control the `stasis_tol` parameter.
 
+    Returns
+    -------
+    sfc_age : :obj:`np.ndarray`
+        Age of surface (in indices).
+
     Examples
     --------
 
@@ -2232,12 +2304,12 @@ def compute_surface_deposit_age(data, surface_idx, **kwargs):
         ax.imshow(sfc_time, cmap='YlGn_r')
         plt.show()
     """
-    sfc_date = compute_surface_deposit_time(data, surface_idx, **kwargs)
+    sfc_time = compute_surface_deposit_time(data, surface_idx, **kwargs)
     # handle indices less than 0
     if surface_idx < 0:
         # wrap to find the index
         surface_idx = surface_idx % data.shape[0]
-    return surface_idx - sfc_date
+    return surface_idx - sfc_time
 
 
 def _compute_surface_deposit_time_from_etas(etas, stasis_tol=0.01):
@@ -2262,7 +2334,8 @@ def _compute_surface_deposit_time_from_etas(etas, stasis_tol=0.01):
 
     Returns
     -------
-    sfc_date : obj:`ndarray`
+    sfc_time : :obj:`ndarray`
+        Time idx of surface.
     """
     if not (stasis_tol > 0):
         raise ValueError(
@@ -2271,6 +2344,6 @@ def _compute_surface_deposit_time_from_etas(etas, stasis_tol=0.01):
     etaf = np.array(etas[-1, :, :])
 
     whr = np.abs(etaf - etas) < stasis_tol
-    sfc_date = np.argmax(whr, axis=0)
+    sfc_time = np.argmax(whr, axis=0)
 
-    return sfc_date
+    return sfc_time
