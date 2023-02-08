@@ -6,7 +6,6 @@ In this example, we explore the sedimentograph [1]_.
 The sedimentograph is a measure of sand fraction of delta stratigraphy. In this implementation, a series of concentric CircularSection are drawn with increasing radius, so the sedimentograph is a function of space.
 
 
-
 First, a simple example of computing the sedimentograph, using the :obj:`~deltametrics.strat.compute_sedimentograph` function.
 
 By default, the function will generate two bins for the data input for the ``sediment_volume`` argument, with the bin divider in the data-range midpoint (i.e., ``0.5`` for ``sandfrac`` data).
@@ -19,7 +18,7 @@ By default, the function will generate two bins for the data input for the ``sed
     golfcube = dm.sample_data.golf()
     golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.05)
 
-    background = (golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+    background = (golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
     frozen_sand = golfstrat.export_frozen_variable('sandfrac')
 
     (sedimentograph,
@@ -54,7 +53,7 @@ The result is a (only slightly) different sedimentograph.
             theta1=np.pi/8,
             theta2=np.pi/2-(np.pi/8))
         )
-    GM_mask_strat = np.tile(GM.mask, (showcubes[0][1].shape[0], 1, 1))  # a mask with same dimensions as stratigraphy
+    GM_mask_strat = np.tile(GM.mask, (golfstrat.shape[0], 1, 1))  # a mask with same dimensions as stratigraphy
     frozen_sand_mask = frozen_sand.where(GM_mask_strat, np.nan)
 
     (sedimentograph2,

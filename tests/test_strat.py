@@ -515,7 +515,7 @@ class TestComputeNetToGross:
         assert np.all(net_to_gross) >= 0
 
     def test_net_to_gross(self):
-        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (self.golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
         net_to_gross = strat.compute_net_to_gross(
             self.golfstrat['sandfrac'],
             net_threshold=0.5,
@@ -524,7 +524,7 @@ class TestComputeNetToGross:
         assert np.all(net_to_gross) >= 0
 
     def test_net_to_gross_thresh0(self):
-        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (self.golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
         net_to_gross = strat.compute_net_to_gross(
             self.golfstrat['sandfrac'],
             net_threshold=0.01,
@@ -533,7 +533,7 @@ class TestComputeNetToGross:
         assert np.all(net_to_gross) >= 0
 
     def test_net_to_gross_nothresh_default_is_half(self):
-        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (self.golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
         net_to_gross_05 = strat.compute_net_to_gross(
             self.golfstrat['sandfrac'],
             net_threshold=0.5,
@@ -581,7 +581,7 @@ class TestComputeSedimentograph:
     golfstrat = cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
 
     def test_two_bins(self):
-        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (self.golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
         (s, r, b) = strat.compute_sedimentograph(
             self.golfstrat['sandfrac'],
             background=background)
@@ -593,7 +593,7 @@ class TestComputeSedimentograph:
         assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
 
     def test_two_bins_with_origin(self):
-        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (self.golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
         (s, r, b) = strat.compute_sedimentograph(
             self.golfstrat['sandfrac'],
             background=background,
@@ -604,7 +604,7 @@ class TestComputeSedimentograph:
         assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
 
     def test_two_bins_more_sects(self):
-        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (self.golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
         (s, r, b) = strat.compute_sedimentograph(
             self.golfstrat['sandfrac'],
             num_sections=50,
@@ -616,7 +616,7 @@ class TestComputeSedimentograph:
         assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
 
     def test_two_bins_cust_rad(self):
-        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (self.golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
         (s, r, b) = strat.compute_sedimentograph(
             self.golfstrat['sandfrac'],
             last_section_radius=2750,
@@ -628,7 +628,7 @@ class TestComputeSedimentograph:
         assert r[-1] == 2750
 
     def test_two_bins_cust_rad_long(self):
-        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (self.golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
         (s, r, b) = strat.compute_sedimentograph(
             self.golfstrat['sandfrac'],
             last_section_radius=4000,
@@ -641,7 +641,7 @@ class TestComputeSedimentograph:
         assert np.any(np.isnan(s))# should be some nan
 
     def test_five_bins(self):
-        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (self.golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
         (s, r, b) = strat.compute_sedimentograph(
             self.golfstrat['sandfrac'],
             sediment_bins=np.linspace(0, 1, num=6, endpoint=True),
@@ -654,7 +654,7 @@ class TestComputeSedimentograph:
         assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
 
     def test_time_variable(self):
-        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (self.golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
         
         (s, r, b) = strat.compute_sedimentograph(
             self.golfstrat['time'],

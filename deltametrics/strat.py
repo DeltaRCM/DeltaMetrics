@@ -50,16 +50,17 @@ def _determine_deposit_from_background(sediment_volume, background):
     background : `xarray`, `ndarray`, or `float`, optional
         Value indicating the background or basin voxels that should be
         excluded from computation. If an array matching the size
-        of :obj:`sediment_volume` is supplied, this array is assumed to be a binary
-        array indicating the voxels to be excluded. If a float is passed,
-        this is treated as a "no-data" value, and used to determine the
-        background voxels. If no value is supplied, no voxels are excluded.
+        of :obj:`sediment_volume` is supplied, this array is assumed to be a
+        binary array indicating the voxels to be excluded (i.e., the
+        `deposit` is the inverse of `background`). If a float is passed, this
+        is treated as a "no-data" value, and used to determine the background
+        voxels. If no value is supplied, no voxels are excluded.
 
     Returns
     -------
     deposit : :obj:`ndarray` or :obj:`DataArray`
         Boolean, with same shape as `background`, indicating where the volume
-        is deposit (True).
+        is deposit (`True`).
 
     Examples
     --------
@@ -88,11 +89,11 @@ def _determine_deposit_from_background(sediment_volume, background):
         # background determined from initial basin topography
         background0 = dm.strat._determine_deposit_from_background(
             golfcube['sandfrac'],
-            background=golfstrat.Z > golfcube['eta'][0].data)
+            background=golfstrat.Z < golfcube['eta'][0].data)
         # background determined from min of bed elevation timeseries
         background1 = dm.strat._determine_deposit_from_background(
             golfcube['sandfrac'],
-            background=(golfstrat.Z > np.min(golfcube['eta'].data, axis=0)))
+            background=(golfstrat.Z < np.min(golfcube['eta'].data, axis=0)))
         # background determined from a fixed sandfrac value
         background2 = dm.strat._determine_deposit_from_background(
             golfcube['sandfrac'],
@@ -111,7 +112,7 @@ def _determine_deposit_from_background(sediment_volume, background):
     elif (isinstance(background, float) or isinstance(background, int)):
         deposit = (sediment_volume != background)
     elif (isinstance(background, np.ndarray)):
-        deposit = background.astype(bool)  # ensure boolean
+        deposit = ~background.astype(bool)  # ensure boolean
     else:
         raise TypeError('Invalid type for `background`.')
 
@@ -144,10 +145,11 @@ def compute_net_to_gross(
     background : `xarray`, `ndarray`, or `float`, optional
         Value indicating the background or basin voxels that should be
         excluded from computation. If an array matching the size
-        of :obj:`sediment_volume` is supplied, this array is assumed to be a binary
-        array indicating the voxels to be excluded. If a float is passed,
-        this is treated as a "no-data" value, and used to determine the
-        background voxels. If no value is supplied, no voxels are excluded.
+        of :obj:`sediment_volume` is supplied, this array is assumed to be a
+        binary array indicating the voxels to be excluded (i.e., the
+        `deposit` is the inverse of `background`). If a float is passed, this
+        is treated as a "no-data" value, and used to determine the background
+        voxels. If no value is supplied, no voxels are excluded.
 
     Returns
     -------
@@ -162,7 +164,7 @@ def compute_net_to_gross(
 
         golfcube = dm.sample_data.golf()
         golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
-        background = (golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
 
         net_to_gross = dm.strat.compute_net_to_gross(
             golfstrat['sandfrac'],
@@ -181,7 +183,7 @@ def compute_net_to_gross(
             extent=golfstrat.extent)
         dm.plot.append_colorbar(im1, ax=ax[1])
         plt.tight_layout()
-        plt.show(block=False)
+        plt.show()
     """
     # process the optional inputs
     if (net_threshold is None):
@@ -309,10 +311,11 @@ def compute_sedimentograph(
     background : `xarray`, `ndarray`, or `float`, optional
         Value indicating the background or basin voxels that should be
         excluded from computation. If an array matching the size
-        of :obj:`sediment_volume` is supplied, this array is assumed to be a binary
-        array indicating the voxels to be excluded. If a float is passed,
-        this is treated as a "no-data" value, and used to determine the
-        background voxels. If no value is supplied, no voxels are excluded.
+        of :obj:`sediment_volume` is supplied, this array is assumed to be a
+        binary array indicating the voxels to be excluded (i.e., the
+        `deposit` is the inverse of `background`). If a float is passed, this
+        is treated as a "no-data" value, and used to determine the background
+        voxels. If no value is supplied, no voxels are excluded.
 
     **kwargs
         Passed to `CircularSection` instantiation. Hint: You likely want to
@@ -346,7 +349,7 @@ def compute_sedimentograph(
         golfcube = dm.sample_data.golf()
         golfstrat = dm.cube.StratigraphyCube.from_DataCube(golfcube, dz=0.1)
 
-        background = (golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        background = (golfstrat.Z < np.min(golfcube['eta'].data, axis=0))
 
         (sedimentograph, radii, bins) = dm.strat.compute_sedimentograph(
             golfstrat['sandfrac'],
