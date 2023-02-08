@@ -1,0 +1,6 @@
+﻿deltametrics.strat.compute\_thickness\_surfaces
+===============================================
+
+.. currentmodule:: deltametrics.strat
+
+.. autofunction:: compute_thickness_surfaces

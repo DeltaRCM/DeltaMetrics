@@ -57,3 +57,4 @@ Stratigraphy
    computations/preserved_velocities
    computations/comparing_speeds_of_stratigraphy_access
    computations/accounting_for_subsidence
+   computations/computing_sedimentograph

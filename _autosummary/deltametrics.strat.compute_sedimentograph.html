@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>deltametrics.strat.compute_sedimentograph &#8212; DeltaMetrics 0.4.2 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../_static/style.css" type="text/css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="deltametrics.strat.compute_boxy_stratigraphy_volume" href="deltametrics.strat.compute_boxy_stratigraphy_volume.html" />
+    <link rel="prev" title="deltametrics.strat.compute_thickness_surfaces" href="deltametrics.strat.compute_thickness_surfaces.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="deltametrics.strat.compute_boxy_stratigraphy_volume.html" title="deltametrics.strat.compute_boxy_stratigraphy_volume"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.strat.compute_thickness_surfaces.html" title="deltametrics.strat.compute_thickness_surfaces"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/strat/index.html" accesskey="U">Stratigraphy operations</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.strat.compute_sedimentograph</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="deltametrics-strat-compute-sedimentograph">
+<h1>deltametrics.strat.compute_sedimentograph<a class="headerlink" href="#deltametrics-strat-compute-sedimentograph" title="Permalink to this heading">¶</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="deltametrics.strat.compute_sedimentograph">
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">compute_sedimentograph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sediment_volume</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sediment_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_sections</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">last_section_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat.compute_sedimentograph" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the sedimentograph.</p>
+<p>The sedimentograph <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> is a measure of sand fraction of delta
+stratigraphy. In this implementation, a series of concentric
+<cite>CircularSection</cite> are drawn with increasing radius, so the sedimentograph
+is a function of space.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>To compute the sedimentograph as a function of time and space, loop
+over stratigraphic volumes computed from a subset of the timeseries,
+and apply this metric.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sediment_volume</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">xarray</span></code> or <cite>ndarray</cite>) – The deposit voxel array. First dimension is vertical spatial dimension.</p></li>
+<li><p><strong>sediment_bins</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Threshold values to use for splitting out the sediment grain size or
+sand fraction bins. Lower bound is inclusive for all bins, and upper
+bound is inclusive (but not unbounded) for last bin. If no value is
+supplied, the unweighted midpoint of the <code class="xref py py-obj docutils literal notranslate"><span class="pre">sediment_volume</span></code>
+distribution will divide two bins (i.e., <code class="docutils literal notranslate"><span class="pre">[min,</span> <span class="pre">(max</span> <span class="pre">+</span> <span class="pre">min)/2,</span>
+<span class="pre">max]</span></code>).</p></li>
+<li><p><strong>num_sections</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Number of sections to calculate for the sedimentograph. Default is
+10.</p></li>
+<li><p><strong>last_section_radius</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – Radius of the last section for the sedimentograph. If no value is
+supplied, last section will be placed at the half the maximum
+coordinate of the <cite>dim1</cite> axis (first spatial coordinate) of the
+<cite>sediment_volume</cite> volume.</p></li>
+<li><p><strong>background</strong> (<cite>xarray</cite>, <cite>ndarray</cite>, or <cite>float</cite>, optional) – Value indicating the background or basin voxels that should be
+excluded from computation. If an array matching the size
+of <code class="xref py py-obj docutils literal notranslate"><span class="pre">sediment_volume</span></code> is supplied, this array is assumed to be a
+binary array indicating the voxels to be excluded (i.e., the
+<cite>deposit</cite> is the inverse of <cite>background</cite>). If a float is passed, this
+is treated as a “no-data” value, and used to determine the background
+voxels. If no value is supplied, no voxels are excluded.</p></li>
+<li><p><strong>**kwargs</strong> – Passed to <cite>CircularSection</cite> instantiation. Hint: You likely want to
+supply the <cite>origin</cite> parameter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>sedimentograph</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – A <cite>num</cite> x <cite>len(sediment_bins)</cite> array of sediment volume fraction in each bin
+(columns) for each <cite>CircularSection</cite> with increasing distance from
+the origin.</p></li>
+<li><p><strong>section_radii</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Radii where the <code class="xref py py-obj docutils literal notranslate"><span class="pre">CircularSection</span></code> for the sedimentograph were
+located.</p></li>
+<li><p><strong>sediment_bins</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – Bins used to classify values in <cite>sediment_volume</cite>.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>Compute the sedimentograph for the <cite>golf</cite> data <cite>sandfrac</cite>, using the
+default bins. Note that this yields two bins, which are simply `
+(1-other)`, so we only plot the second bin — indicating the sandy
+fraction of the deposit for the <cite>golf</cite> <cite>sandfrac</cite> data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
+<span class="n">golfstrat</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">StratigraphyCube</span><span class="o">.</span><span class="n">from_DataCube</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+
+<span class="n">background</span> <span class="o">=</span> <span class="p">(</span><span class="n">golfstrat</span><span class="o">.</span><span class="n">Z</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">golfcube</span><span class="p">[</span><span class="s1">&#39;eta&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+<span class="p">(</span><span class="n">sedimentograph</span><span class="p">,</span> <span class="n">radii</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">strat</span><span class="o">.</span><span class="n">compute_sedimentograph</span><span class="p">(</span>
+    <span class="n">golfstrat</span><span class="p">[</span><span class="s1">&#39;sandfrac&#39;</span><span class="p">],</span>
+    <span class="n">num_sections</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>
+    <span class="n">last_section_radius</span><span class="o">=</span><span class="mi">2750</span><span class="p">,</span>
+    <span class="n">background</span><span class="o">=</span><span class="n">background</span><span class="p">,</span>
+    <span class="n">origin_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">radii</span><span class="p">,</span>
+    <span class="n">sedimentograph</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;section radius (m)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;fraction &gt; </span><span class="si">{</span><span class="n">bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href="../_autosummary/deltametrics-strat-compute_sedimentograph-1.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-strat-compute_sedimentograph-1.hires.png">hires.png</a>)</p>
+<figure class="align-default">
+<img alt="../_images/deltametrics-strat-compute_sedimentograph-1.png" class="plot-directive" src="../_images/deltametrics-strat-compute_sedimentograph-1.png" />
+</figure>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Liang, M., Van Dyk, C., and Passalacqua, P. (2016), Quantifying
+the patterns and dynamics of river deltas under conditions of
+steady forcing and relative sea level rise, J. Geophys. Res.
+Earth Surf., 121, 465– 496, doi:10.1002/2015JF003653.</p>
+</aside>
+</aside>
+</dd></dl>
+
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">deltametrics.strat.compute_sedimentograph</a><ul>
+<li><a class="reference internal" href="#deltametrics.strat.compute_sedimentograph"><code class="docutils literal notranslate"><span class="pre">compute_sedimentograph()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="deltametrics.strat.compute_thickness_surfaces.html"
+                          title="previous chapter">deltametrics.strat.compute_thickness_surfaces</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="deltametrics.strat.compute_boxy_stratigraphy_volume.html"
+                          title="next chapter">deltametrics.strat.compute_boxy_stratigraphy_volume</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_autosummary/deltametrics.strat.compute_sedimentograph.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="deltametrics.strat.compute_boxy_stratigraphy_volume.html" title="deltametrics.strat.compute_boxy_stratigraphy_volume"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="deltametrics.strat.compute_thickness_surfaces.html" title="deltametrics.strat.compute_thickness_surfaces"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">DeltaMetrics 0.4.2 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../reference/index.html" >API reference</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../reference/strat/index.html" >Stratigraphy operations</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">deltametrics.strat.compute_sedimentograph</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+  </body>
+</html>

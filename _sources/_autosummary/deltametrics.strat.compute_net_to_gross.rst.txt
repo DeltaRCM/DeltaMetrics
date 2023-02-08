@@ -1,0 +1,6 @@
+﻿deltametrics.strat.compute\_net\_to\_gross
+==========================================
+
+.. currentmodule:: deltametrics.strat
+
+.. autofunction:: compute_net_to_gross
