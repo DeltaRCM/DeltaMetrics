@@ -185,14 +185,13 @@ def compute_net_to_gross(
     """
     # process the optional inputs
     if (net_threshold is None):
-        net_threshold = np.min(sediment_volume) + ((max-min)/2)
         net_threshold = (np.nanmin(sediment_volume) + np.nanmax(sediment_volume)) / 2
 
     deposit = _determine_deposit_from_background(sediment_volume, background)
 
     # determine the net and gross
-    net = (sediment_volume > net_threshold)
-    gross = (sediment_volume >= 0)
+    net = (sediment_volume >= net_threshold)
+    gross = (sediment_volume >= np.nanmin(sediment_volume))  # use ~np.isnan()
 
     net = np.nansum(np.logical_and(net, deposit), axis=0).astype(float)
     gross = np.nansum(np.logical_and(gross, deposit), axis=0).astype(float)
@@ -413,7 +412,7 @@ def compute_sedimentograph(
             in_bin_count = np.sum(np.logical_and(in_bin, sect_deposit))
             total_count = np.sum(np.logical_and(~np.isnan(sect_slice), sect_deposit))
 
-            if total_count.size > 0:
+            if total_count > 0:
                 frac = in_bin_count / total_count
             else:
                 frac = np.nan

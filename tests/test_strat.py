@@ -532,6 +532,21 @@ class TestComputeNetToGross:
         assert np.all(net_to_gross) <= 1
         assert np.all(net_to_gross) >= 0
 
+    def test_net_to_gross_nothresh_default_is_half(self):
+        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        net_to_gross_05 = strat.compute_net_to_gross(
+            self.golfstrat['sandfrac'],
+            net_threshold=0.5,
+            background=background)
+        net_to_gross_def = strat.compute_net_to_gross(
+            self.golfstrat['sandfrac'],
+            background=background)
+        assert np.all(net_to_gross_def) <= 1
+        assert np.all(net_to_gross_def) >= 0
+        assert np.all(
+            net_to_gross_def[~np.isnan(net_to_gross_def)]
+            == net_to_gross_05[~np.isnan(net_to_gross_05)])
+
 
 class TestComputeThicknessSurfaces:
 
@@ -611,6 +626,19 @@ class TestComputeSedimentograph:
         assert r.shape[0] == s.shape[0]
         assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
         assert r[-1] == 2750
+
+    def test_two_bins_cust_rad_long(self):
+        background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
+        (s, r, b) = strat.compute_sedimentograph(
+            self.golfstrat['sandfrac'],
+            last_section_radius=4000,
+            background=background,
+            origin_idx=[3, 100])
+        assert np.all(np.logical_or(s <= 1, np.isnan(s)))
+        assert r.shape[0] == s.shape[0]
+        assert b.shape[0] - 1 == s.shape[1]  # edges - 1 is shape of sedgraph
+        assert r[-1] == 4000
+        assert np.any(np.isnan(s))# should be some nan
 
     def test_five_bins(self):
         background = (self.golfstrat.Z > np.min(golfcube['eta'].data, axis=0))
