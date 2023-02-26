@@ -5,13 +5,23 @@ Introduction to mobility functions
 
 To use the mobility functions, you need a set of masks covering various time
 points from the model output. These can be in the form of a list of mask
-objects, numpy ndarrays, or xarrays. Or these can be 3-D arrays or xarrays.
+objects, numpy ndarrays, or xarrays. Or these can be 3-D arrays or xarrays
+arranged with dimensions `t-x-y`.
 
 For this example a few masks will be generated and put into lists. Then these
-lists of masks will be used to compute metrics of channel mobility,
-which will then be plotted.
+lists of masks will be used to compute and plot channel mobility metrics.
 
-.. note:: needs to be expanded!
+
+Calculation of channel and land masks
+-------------------------------------
+
+The first step to quantifying channel mobility is to determine the location
+of the land and channels through time. We do this via the calculation of
+both :obj:`deltametrics.mask.LandMask` and :obj:`deltametrics.mask.ChannelMask`
+objects. These masks are binary representations of the land and channel
+locations, respectively. To read more about masking, refer to the :doc:`mask`,
+:doc:`planform`, and :doc:`Masking operations API <../../reference/mask/index>`
+sections of the documentation.
 
 .. plot::
     :include-source:
@@ -28,6 +38,27 @@ which will then be plotted.
     ...         golfcube['eta'][i, ...], golfcube['velocity'][i, ...],
     ...         elevation_threshold=0, flow_threshold=0.3))
 
+Calculation of mobility metrics
+-------------------------------
+
+Next the lists of masks are used to calculate channel mobility metrics.
+The metrics calculated are the dry fraction, planform overlap, reworking
+fraction, and abandoned fraction. These metrics are calculated using the
+functions :func:`deltametrics.mobility.calculate_channel_decay`,
+:func:`deltametrics.mobility.calculate_planform_overlap`,
+:func:`deltametrics.mobility.calculate_reworking_fraction`, and
+:func:`deltametrics.mobility.calculate_channel_abandonment`, respectively.
+All of these function require at least one list of masks, and can take
+additional arguments to specify the base values and window size for the
+sliding window calculations. For more information on these functions, refer
+to the :doc:`Masking operations API <../../reference/mask/index>` section of
+the documentation.
+
+
+.. plot::
+    :include-source:
+    :context:
+
     >>> dryfrac = dm.mobility.calculate_channel_decay(
     ...     channelmask_list, landmask_list,
     ...     basevalues_idx=[0, 1, 2], window_idx=5)
@@ -40,6 +71,23 @@ which will then be plotted.
     >>> PwetA = dm.mobility.calculate_channel_abandonment(
     ...     channelmask_list,
     ...     basevalues_idx=[0, 1, 2], window_idx=5)
+
+Plotting the mobility metrics
+------------------------------
+
+Finally, the mobility metrics are plotted. The metrics are on a single
+figure below with the dry fraction on the top left, the planform overlap
+on the top right, the reworking fraction on the bottom left, and the
+abandoned fraction on the bottom right. The mobility metric for each base
+time step is plotted in a different color. The base time steps are the
+first three time steps in the list of masks (per the `basevalues_idx`
+argument in the calculation of the mobility metrics). Time is expressed in
+terms of model seconds, and is known from the Mask objects used to construct
+the list of masks passed to the mobility functions.
+
+.. plot::
+    :include-source:
+    :context:
 
     >>> fig, ax = plt.subplots(2, 2)
     >>> dryfrac.plot.line(x='time', ax=ax[0, 0])

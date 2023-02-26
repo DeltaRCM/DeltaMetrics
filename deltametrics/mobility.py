@@ -1,14 +1,20 @@
 """Functions for channel mobility metrics.
 
 Current available mobility metrics include:
-    - Dry fraction decay from Cazanacli et al 2002
-    - Planform overlap from Wickert et al 2013
-    - Reworking index from Wickert et al 2013
-    - Channel abandonment from Liang et al 2016
-    - Channelized response variance from Jarriel et al 2019
+    - Dry fraction decay from [Cazanacli et al 2002]_
+    - Planform overlap from [Wickert et al 2013]_
+    - Reworking index from [Wickert et al 2013]_
+    - Channel abandonment from [Liang et al 2016]_
+    - Channelized response variance from [Jarriel et al 2019]_
 
 Also included are functions to fit curves to the output from the mobility
 functions, allowing for decay constants and timescales to be quantified.
+
+.. [Cazanacli et al 2002] Cazanacli, Dan, Chris Paola, and Gary Parker. "Experimental steep, braided flow: application to flooding risk on fans." Journal of Hydraulic Engineering 128, no. 3 (2002): 322-330.
+.. [Wickert et al 2013] Wickert, Andrew D., John M. Martin, Michal Tal, Wonsuck Kim, Ben Sheets, and Chris Paola. "River channel lateral mobility: Metrics, time scales, and controls." Journal of Geophysical Research: Earth Surface 118, no. 2 (2013): 396-412.
+.. [Liang et al 2016] Liang, Man, Corey Van Dyk, and Paola Passalacqua. "Quantifying the patterns and dynamics of river deltas under conditions of steady forcing and relative sea level rise." Journal of Geophysical Research: Earth Surface 121, no. 2 (2016): 465-496.
+.. [Jarriel et al 2019] Jarriel, Teresa, Leo F. Isikdogan, Alan Bovik, and Paola Passalacqua. "Characterization of deltaic channel morphodynamics from imagery time series using the channelized response variance." Journal of Geophysical Research: Earth Surface 124, no. 12 (2019): 3022-3042.
+
 """
 
 import numpy as np
@@ -197,10 +203,12 @@ def calculate_channel_decay(chmap, landmap,
     """
     Calculate channel decay (reduction in dry fraction).
 
-    Uses a method similar to that in Cazanacli et al 2002 to measure the
+    Uses a method similar to that in Cazanacli et al 2002 [1]_ to measure the
     dry fraction of a delta over time. This requires providing an input channel
     map, an input land map, choosing a set of base maps to use, and a time
     lag/time window over which to do the analysis.
+
+    .. [1] Cazanacli, Dan, Chris Paola, and Gary Parker. "Experimental steep, braided flow: application to flooding risk on fans." Journal of Hydraulic Engineering 128, no. 3 (2002): 322-330.
 
     Parameters
     ----------
@@ -281,10 +289,12 @@ def calculate_planform_overlap(chmap, landmap,
     """
     Calculate channel planform overlap.
 
-    Uses a method similar to that described in Wickert et al 2013 to measure
-    the loss of channel system overlap with previous channel patterns. This
-    requires an input channel map, land map, as well as defining the base maps
-    to use and the time window over which you want to look.
+    Uses a method similar to that described in Wickert et al 2013 [1]_ to
+    measure the loss of channel system overlap with previous channel patterns.
+    This requires an input channel map, land map, as well as defining the base
+    maps to use and the time window over which you want to look.
+
+    .. [1] Wickert, Andrew D., John M. Martin, Michal Tal, Wonsuck Kim, Ben Sheets, and Chris Paola. "River channel lateral mobility: Metrics, time scales, and controls." Journal of Geophysical Research: Earth Surface 118, no. 2 (2013): 396-412.
 
     Parameters
     ----------
@@ -366,10 +376,12 @@ def calculate_reworking_fraction(chmap, landmap,
     """
     Calculate the reworking fraction.
 
-    Uses a method similar to that described in Wickert et al 2013 to measure
-    the reworking of the fluvial surface with time. This requires an input
-    channel map, land map, as well as defining the base maps to use and the
-    time window over which you want to look.
+    Uses a method similar to that described in Wickert et al 2013 [1]_ to
+    measure the reworking of the fluvial surface with time. This requires an
+    input channel map, land map, as well as defining the base maps to use and
+    the time window over which you want to look.
+
+    .. [1] Wickert, Andrew D., John M. Martin, Michal Tal, Wonsuck Kim, Ben Sheets, and Chris Paola. "River channel lateral mobility: Metrics, time scales, and controls." Journal of Geophysical Research: Earth Surface 118, no. 2 (2013): 396-412.
 
     Parameters
     ----------
@@ -465,10 +477,12 @@ def calculate_channel_abandonment(chmap, basevalues=None, basevalues_idx=None,
     Calculate channel abandonment.
 
     Measure the number of channelized pixels that are no longer channelized as
-    a signature of channel mobility based on method in Liang et al 2016. This
-    requires providing an input channel map, and setting parameters for the
-    min/max values to compare to, and the time window over which the evaluation
-    can be done.
+    a signature of channel mobility based on method in Liang et al 2016 [1]_.
+    This requires providing an input channel map, and setting parameters for
+    the min/max values to compare to, and the time window over which the
+    evaluation can be done.
+
+    .. [1] Liang, Man, Corey Van Dyk, and Paola Passalacqua. "Quantifying the patterns and dynamics of river deltas under conditions of steady forcing and relative sea level rise." Journal of Geophysical Research: Earth Surface 121, no. 2 (2016): 465-496.
 
     Parameters
     ----------
@@ -539,7 +553,7 @@ def channel_presence(chmap):
     Calculate the normalized channel presence at each pixel location.
 
     Measure the normalized fraction of time a given pixel is channelized,
-    based on method in Liang et al 2016. This requires providing a 3-D input
+    based on method in [Liang et al 2016]_. This requires providing a 3-D input
     channel map (t-x-y).
 
     Parameters
@@ -622,7 +636,7 @@ def calculate_channelized_response_variance(
                   arr, threshold=0.2, normalize_input=False,
                   normalize_output=False):
     """
-    Calculate the Channelized Response Variance (CRV).
+    Calculate the Channelized Response Variance (CRV) [1]_.
 
     This function takes a t-x-y array and calculates its directional CRV.
     In short, the function does the following:
@@ -634,6 +648,8 @@ def calculate_channelized_response_variance(
         4. Calculates the directional CRV using a slope threshold value.
         5. Returns the CRV magnitude, slopes, and directional CRV
            values
+
+    .. [1] Jarriel, Teresa, Leo F. Isikdogan, Alan Bovik, and Paola Passalacqua. "Characterization of deltaic channel morphodynamics from imagery time series using the channelized response variance." Journal of Geophysical Research: Earth Surface 124, no. 12 (2019): 3022-3042.
 
     Parameters
     ----------
