@@ -65,7 +65,7 @@ def _determine_deposit_from_background(sediment_volume, background):
     Examples
     --------
     This example shows how choice of background affect the background used for
-    stratigraphic computations. 
+    stratigraphic computations.
 
     The first background calculation simply uses the initial basin topography
     to determine the background voxels, but this ignores erosion and
@@ -128,7 +128,7 @@ def compute_net_to_gross(
     Computes a spatially-resolved net-to-gross for a deposit. This computation
     is based on thresholding some data to indicate what volume is "net"
     (usually grain size or sand fraction data). The first axis of the data is
-    assumed to be the vertical elevation dimension. 
+    assumed to be the vertical elevation dimension.
 
     Parameters
     ----------
@@ -277,7 +277,7 @@ def compute_sedimentograph(
     The sedimentograph [1]_ is a measure of sand fraction of delta
     stratigraphy. In this implementation, a series of concentric
     `CircularSection` are drawn with increasing radius, so the sedimentograph
-    is a function of space. 
+    is a function of space.
 
     .. hint::
 
@@ -368,8 +368,8 @@ def compute_sedimentograph(
         plt.show()
 
     .. [1] Liang, M., Van Dyk, C., and Passalacqua, P. (2016), Quantifying
-           the patterns and dynamics of river deltas under conditions of 
-           steady forcing and relative sea level rise, J. Geophys. Res. 
+           the patterns and dynamics of river deltas under conditions of
+           steady forcing and relative sea level rise, J. Geophys. Res.
            Earth Surf., 121, 465– 496, doi:10.1002/2015JF003653.
     """
     # implementation note: this could be refactored to take advantage of numpy
@@ -389,7 +389,7 @@ def compute_sedimentograph(
     # figure out the last section radius
     if last_section_radius is None:
         # figure it out somehow?
-        last_section_radius = float(sediment_volume[sediment_volume.dims[1]][-1]) / 2 
+        last_section_radius = float(sediment_volume[sediment_volume.dims[1]][-1]) / 2
 
     # make a list of sections to draw out
     section_radii = np.linspace(0, last_section_radius, num=num_sections+1)[1:]
@@ -398,7 +398,7 @@ def compute_sedimentograph(
     # loop through the sections and compute the sediment vols
     for i, sect_rad in enumerate(section_radii):
         sect = section.CircularSection(
-            sediment_volume[0, :, :],  # must be a 2d slice to make section 
+            sediment_volume[0, :, :],  # must be a 2d slice to make section
             radius=sect_rad, **kwargs)
         # manually slice, because not set up for sections into arbitrary 3d volume
         sect_slice = sediment_volume.data[:, sect._dim1_idx, sect._dim2_idx]
@@ -411,7 +411,7 @@ def compute_sedimentograph(
             if b < (len(sediment_bins)-2):
                 in_bin = np.logical_and(sect_slice >= low_bin, sect_slice < high_bin)
             else:
-                in_bin = np.logical_and(sect_slice >= low_bin, sect_slice <= high_bin) 
+                in_bin = np.logical_and(sect_slice >= low_bin, sect_slice <= high_bin)
             in_bin_count = np.sum(np.logical_and(in_bin, sect_deposit))
             total_count = np.sum(np.logical_and(~np.isnan(sect_slice), sect_deposit))
 
@@ -431,7 +431,7 @@ def compute_boxy_stratigraphy_volume(elev, prop, sigma_dist=None,
 
     This function returns a "frozen" cube of stratigraphy
     with values of the supplied property/variable (:obj:`prop`) placed into a
-    three-dimesional real-valued 3D array.
+    three-dimensional real-valued 3D array.
 
     By default, the data are returned as a numpy `ndarray`, however, specify
     :obj:`return_Cube` as `True` to return a
@@ -442,10 +442,10 @@ def compute_boxy_stratigraphy_volume(elev, prop, sigma_dist=None,
     Parameters
     ----------
     elev : :obj:`ndarray`
-        The `t-x-y` ndarry of elevation data to determine stratigraphy.
+        The `t-x-y` ndarray of elevation data to determine stratigraphy.
 
     prop : :obj:`ndarray`
-        The `t-x-y` ndarry of property data to process into the stratigraphy.
+        The `t-x-y` ndarray of property data to process into the stratigraphy.
 
     sigma_dist : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
         Optional subsidence distance argument used to adjust the elevation
@@ -533,7 +533,7 @@ def compute_boxy_stratigraphy_coordinates(elev, sigma_dist=None,
     Parameters
     ----------
     elev : :obj:`ndarray`
-        The `t-x-y` ndarry of elevation data to determine stratigraphy.
+        The `t-x-y` ndarray of elevation data to determine stratigraphy.
 
     sigma_dist : :obj:`ndarray`, :obj:`float`, :obj:`int`, optional
         Optional subsidence distance argument used to adjust the elevation
@@ -585,7 +585,7 @@ def compute_boxy_stratigraphy_coordinates(elev, sigma_dist=None,
         computation implementation.
 
     strata : :obj:`ndarray`
-        A `t-x-y` `ndarry` of stratal surface elevations. Returned as third
+        A `t-x-y` `ndarray` of stratal surface elevations. Returned as third
         argument only if `return_strata=True`.
     """
     # compute preservation from low-level funcs
@@ -712,7 +712,6 @@ class MeshStratigraphyAttributes(BaseStratigraphyAttributes):
 
         Parameters
         ---------
-
         elev :
             elevation t-x-y array to compute from
 
@@ -1109,7 +1108,7 @@ def _adjust_elevation_by_subsidence(elev, sigma_dist):
         the domain for a given time. If a full 3-D array is provided, it is
         assumed to follow the same `t-x-y` convention as the elevation data.
         Positive distances indicate subsidence, negative distances are uplift.
-        
+
     Returns
     -------
     elev_adjusted : :obj:`ndarray`

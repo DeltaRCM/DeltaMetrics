@@ -1,14 +1,20 @@
 """Functions for channel mobility metrics.
 
 Current available mobility metrics include:
-    - Dry fraction decay from Cazanacli et al 2002
-    - Planform overlap from Wickert et al 2013
-    - Reworking index from Wickert et al 2013
-    - Channel abandonment from Liang et al 2016
-    - Channelized response variance from Jarriel et al 2019
+    - Dry fraction decay from [Cazanacli et al 2002]_
+    - Planform overlap from [Wickert et al 2013]_
+    - Reworking index from [Wickert et al 2013]_
+    - Channel abandonment from [Liang et al 2016]_
+    - Channelized response variance from [Jarriel et al 2019]_
 
 Also included are functions to fit curves to the output from the mobility
 functions, allowing for decay constants and timescales to be quantified.
+
+.. [Cazanacli et al 2002] Cazanacli, Dan, Chris Paola, and Gary Parker. "Experimental steep, braided flow: application to flooding risk on fans." Journal of Hydraulic Engineering 128, no. 3 (2002): 322-330.
+.. [Wickert et al 2013] Wickert, Andrew D., John M. Martin, Michal Tal, Wonsuck Kim, Ben Sheets, and Chris Paola. "River channel lateral mobility: Metrics, time scales, and controls." Journal of Geophysical Research: Earth Surface 118, no. 2 (2013): 396-412.
+.. [Liang et al 2016] Liang, Man, Corey Van Dyk, and Paola Passalacqua. "Quantifying the patterns and dynamics of river deltas under conditions of steady forcing and relative sea level rise." Journal of Geophysical Research: Earth Surface 121, no. 2 (2016): 465-496.
+.. [Jarriel et al 2019] Jarriel, Teresa, Leo F. Isikdogan, Alan Bovik, and Paola Passalacqua. "Characterization of deltaic channel morphodynamics from imagery time series using the channelized response variance." Journal of Geophysical Research: Earth Surface 124, no. 12 (2019): 3022-3042.
+
 """
 
 import numpy as np
@@ -49,6 +55,10 @@ def check_inputs(chmap, basevalues=None, basevalues_idx=None, window=None,
         Either a list of 2-D deltametrics.mask, xarray.DataArray, or
         numpy.ndarray objects, or a t-x-y 3-D xarray.DataArray or numpy.ndarray
         with land mask values.
+
+    Returns
+    -------
+    Same as input, but with some type sanitization.
 
     """
     # handle input maps - try to convert some expected types
@@ -184,7 +194,7 @@ def check_inputs(chmap, basevalues=None, basevalues_idx=None, window=None,
     if Kmax > out_maps['chmap'].shape[0]:
         raise ValueError('Largest basevalue + time_window exceeds max time.')
 
-    # collect name of the first dimenstion (should be time assuming t-x-y)
+    # collect name of the first dimension (should be time assuming t-x-y)
     dim0 = out_maps['chmap'].dims[0]
 
     # return the sanitized variables
@@ -197,10 +207,25 @@ def calculate_channel_decay(chmap, landmap,
     """
     Calculate channel decay (reduction in dry fraction).
 
-    Uses a method similar to that in Cazanacli et al 2002 to measure the
+    Uses a method similar to that in Cazanacli et al 2002 [1]_ to measure the
     dry fraction of a delta over time. This requires providing an input channel
     map, an input land map, choosing a set of base maps to use, and a time
     lag/time window over which to do the analysis.
+
+    The dry fraction is calculated as the fraction of the land map that is
+    not channelized (per the channel map) at a given time. The dry fraction
+    is calculated as it changes relative to a base time. Multiple base times
+    can be used, and the resulting 2-D array provides the decay of the dry
+    fraction relative to each base time along each row of the array. Each
+    column of the array represents the decay of the dry fraction at a given
+    time lag relative to the base time. Consistent with Cazanacli et al 2002,
+    the dry fraction is *not* normalized, and thus the initial dry fraction
+    at the base time is not fixed at 1.0 (and likely should not be 1.0 unless
+    starting with an entirely dry surface).
+
+    .. [1] Cazanacli, Dan, Chris Paola, and Gary Parker. "Experimental steep,
+           braided flow: application to flooding risk on fans." Journal of
+           Hydraulic Engineering 128, no. 3 (2002): 322-330.
 
     Parameters
     ----------
@@ -281,10 +306,53 @@ def calculate_planform_overlap(chmap, landmap,
     """
     Calculate channel planform overlap.
 
-    Uses a method similar to that described in Wickert et al 2013 to measure
-    the loss of channel system overlap with previous channel patterns. This
-    requires an input channel map, land map, as well as defining the base maps
-    to use and the time window over which you want to look.
+    This metric is calculated per Wickert et al 2013 [1]_ and measures
+    the loss of channel system overlap with previous channel patterns.
+    This requires an input channel map, land map, as well as defining the base
+    maps to use and the time window over which you want to look.
+
+    The normalized overlap is calculated as:
+
+    .. math::
+
+        O_\\Phi = 1 - \\left( \\frac{D}{A \\cdot \\Phi} \\right)
+
+    where :math:`D` is the number of chaneged pixels between the base and
+    target maps, :math:`A` is the total number of pixels in a single map,
+    and :math:`\\Phi` is a random scatter parameter.
+
+    :math:`D` is calculated as:
+
+    .. math::
+
+        D(B, T) = \\sum\\limits^{m_r}_{i=1} \\sum\\limits^{n_c}_{j=1} \\left| K_B - K_T \\right|
+
+    where :math:`K_B` and :math:`K_T` are the channel mask values at the base
+    and target maps, respectively.
+
+    :math:`\Phi` is calculated as:
+
+    .. math::
+
+        \\Phi = f_{w,B} \\cdot f_{d,T} + f_{d,B} \\cdot f_{w,T}
+
+    where :math:`f_{w,B}` is the fraction of water pixels in the base map,
+    :math:`f_{d,B}` is the fraction of dry pixels in the base map,
+    :math:`f_{w,T}` is the fraction of water pixels in the target map, and
+    :math:`f_{d,T}` is the fraction of dry pixels in the target map.
+
+    The calculation of :math:`O_\\Phi` is conducted between the base map(s) and
+    channel maps (target maps) at each time lag for the duration of the
+    time window specified. When multiple base maps are used, this calculation
+    is conducted for each base map and its corresponding target maps, and
+    the results are returned as an array in which each row represents the
+    overlap results for a given base map. Each column represents the overlap
+    results for a given time lag relative to the base map.
+
+    .. [1] Wickert, Andrew D., John M. Martin, Michal Tal, Wonsuck Kim,
+           Ben Sheets, and Chris Paola. "River channel lateral mobility:
+           Metrics, time scales, and controls." Journal of Geophysical
+           Research: Earth Surface 118, no. 2 (2013): 396-412.
 
     Parameters
     ----------
@@ -366,10 +434,38 @@ def calculate_reworking_fraction(chmap, landmap,
     """
     Calculate the reworking fraction.
 
-    Uses a method similar to that described in Wickert et al 2013 to measure
-    the reworking of the fluvial surface with time. This requires an input
-    channel map, land map, as well as defining the base maps to use and the
-    time window over which you want to look.
+    Uses a method similar to that described in Wickert et al 2013 [1]_ to
+    measure the reworking of the fluvial surface with time. This requires an
+    input channel map, land map, as well as defining the base maps to use and
+    the time window over which you want to look.
+
+    The reworking fraction is calculated as:
+
+    .. math::
+
+        f_{R} = 1 - \\frac{N'_{B,T}}{A \\cdot f_{d,B}}
+
+    where :math:`f_{R}` is the reworking fraction, :math:`N'_{B,T}` is the
+    number of unreworked cells in the transient map, :math:`A` is the area of
+    fluvial surface, and :math:`f_{d,B}` is the dry fraction of the base map.
+
+    :math:`N'_{B,T}` is calculated as:
+
+    .. math::
+
+        N'_{B,T} = \\sum_{i=1}^{m_r} \\sum_{j=1}^{n_c} \\left[ \\left(\\sum_{\\beta = B+1}^{T} K'_{\\beta} \\right) \\equiv 0 \\right]
+
+    where :math:`m_r` and :math:`n_c` are the number of rows and columns in the
+    base map, :math:`K'_{\\beta}` is the channel mask at time :math:`\\beta` when
+    :math:`\\beta` is used for each time step after the baseline time. This
+    results in :math:`N'_{B,T}` being the number of cells that are not
+    reworked at some transient time :math:`T` relative to the base time
+    :math:`B`.
+
+    .. [1] Wickert, Andrew D., John M. Martin, Michal Tal, Wonsuck Kim,
+           Ben Sheets, and Chris Paola. "River channel lateral mobility:
+           Metrics, time scales, and controls." Journal of Geophysical
+           Research: Earth Surface 118, no. 2 (2013): 396-412.
 
     Parameters
     ----------
@@ -465,10 +561,23 @@ def calculate_channel_abandonment(chmap, basevalues=None, basevalues_idx=None,
     Calculate channel abandonment.
 
     Measure the number of channelized pixels that are no longer channelized as
-    a signature of channel mobility based on method in Liang et al 2016. This
-    requires providing an input channel map, and setting parameters for the
-    min/max values to compare to, and the time window over which the evaluation
-    can be done.
+    a signature of channel mobility based on method in Liang et al 2016 [1]_.
+    This requires providing an input channel map, and setting parameters for
+    the min/max values to compare to, and the time window over which the
+    evaluation can be done.
+
+    This calculation is performed by first identifying the number of channel
+    pixels at some base time. Then, for each time step after the base time,
+    we measure the number of pixels that are no longer channelized. This
+    measurement is used to calculate the fraction of channel pixels that are
+    abandoned relative to the base channel map for each time step. Multiple
+    base times can be provided. The results are returned as a 2-D array in
+    which each row represents the abandonment values associated with a given
+    base value and the columns are associated with each time lag.
+
+    .. [1] Liang, Man, Wonsuck Kim, and Paola Passalacqua. "How much subsidence
+           is enough to change the morphology of river deltas?." Geophysical
+           Research Letters 43, no. 19 (2016): 10-266.
 
     Parameters
     ----------
@@ -539,8 +648,13 @@ def channel_presence(chmap):
     Calculate the normalized channel presence at each pixel location.
 
     Measure the normalized fraction of time a given pixel is channelized,
-    based on method in Liang et al 2016. This requires providing a 3-D input
+    based on method in Liang et al 2016 [1]_. This requires providing a 3-D input
     channel map (t-x-y).
+
+    .. [1] Liang, Man, Corey Van Dyk, and Paola Passalacqua. "Quantifying the
+           patterns and dynamics of river deltas under conditions of steady
+           forcing and relative sea level rise." Journal of Geophysical
+           Research: Earth Surface 121, no. 2 (2016): 465-496.
 
     Parameters
     ----------
@@ -622,7 +736,7 @@ def calculate_channelized_response_variance(
                   arr, threshold=0.2, normalize_input=False,
                   normalize_output=False):
     """
-    Calculate the Channelized Response Variance (CRV).
+    Calculate the Channelized Response Variance (CRV) [1]_.
 
     This function takes a t-x-y array and calculates its directional CRV.
     In short, the function does the following:
@@ -634,6 +748,12 @@ def calculate_channelized_response_variance(
         4. Calculates the directional CRV using a slope threshold value.
         5. Returns the CRV magnitude, slopes, and directional CRV
            values
+
+    .. [1] Jarriel, Teresa, Leo F. Isikdogan, Alan Bovik, and Paola
+           Passalacqua. "Characterization of deltaic channel morphodynamics
+           from imagery time series using the channelized response variance."
+           Journal of Geophysical Research: Earth Surface 124, no. 12 (2019):
+           3022-3042.
 
     Parameters
     ----------
