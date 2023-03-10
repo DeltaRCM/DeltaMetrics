@@ -51,8 +51,17 @@
 <span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">channel_presence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chmap</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.channel_presence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the normalized channel presence at each pixel location.</p>
 <p>Measure the normalized fraction of time a given pixel is channelized,
-based on method in Liang et al 2016. This requires providing a 3-D input
+based on method in Liang et al 2016 <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. This requires providing a 3-D input
 channel map (t-x-y).</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Liang, Man, Corey Van Dyk, and Paola Passalacqua. “Quantifying the
+patterns and dynamics of river deltas under conditions of steady
+forcing and relative sea level rise.” Journal of Geophysical
+Research: Earth Surface 121, no. 2 (2016): 465-496.</p>
+</aside>
+</aside>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>chmap</strong> (<em>ndarray</em>) – A t-x-y shaped array with binary channel maps</p>
@@ -81,7 +90,7 @@ channel map (t-x-y).</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../_autosummary/deltametrics-mobility-channel_presence-1.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mobility-channel_presence-1.hires.png">hires.png</a>)</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/5b1dad0923345c208299280ef3b84e66/deltametrics-mobility-channel_presence-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/3486b44c6f01e4418607958bda93a475/deltametrics-mobility-channel_presence-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</p>
 <figure class="align-default">
 <img alt="../_images/deltametrics-mobility-channel_presence-1.png" class="plot-directive" src="../_images/deltametrics-mobility-channel_presence-1.png" />
 </figure>

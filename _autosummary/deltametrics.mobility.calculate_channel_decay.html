@@ -50,10 +50,28 @@
 <dt class="sig sig-object py" id="deltametrics.mobility.calculate_channel_decay">
 <span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">calculate_channel_decay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">landmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.calculate_channel_decay" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate channel decay (reduction in dry fraction).</p>
-<p>Uses a method similar to that in Cazanacli et al 2002 to measure the
+<p>Uses a method similar to that in Cazanacli et al 2002 <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> to measure the
 dry fraction of a delta over time. This requires providing an input channel
 map, an input land map, choosing a set of base maps to use, and a time
 lag/time window over which to do the analysis.</p>
+<p>The dry fraction is calculated as the fraction of the land map that is
+not channelized (per the channel map) at a given time. The dry fraction
+is calculated as it changes relative to a base time. Multiple base times
+can be used, and the resulting 2-D array provides the decay of the dry
+fraction relative to each base time along each row of the array. Each
+column of the array represents the decay of the dry fraction at a given
+time lag relative to the base time. Consistent with Cazanacli et al 2002,
+the dry fraction is <em>not</em> normalized, and thus the initial dry fraction
+at the base time is not fixed at 1.0 (and likely should not be 1.0 unless
+starting with an entirely dry surface).</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Cazanacli, Dan, Chris Paola, and Gary Parker. “Experimental steep,
+braided flow: application to flooding risk on fans.” Journal of
+Hydraulic Engineering 128, no. 3 (2002): 322-330.</p>
+</aside>
+</aside>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

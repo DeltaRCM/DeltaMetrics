@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.mobility.calculate_channel_abandonment" href="deltametrics.mobility.calculate_channel_abandonment.html" />
@@ -50,10 +51,34 @@
 <dt class="sig sig-object py" id="deltametrics.mobility.calculate_reworking_fraction">
 <span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">calculate_reworking_fraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">landmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.calculate_reworking_fraction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the reworking fraction.</p>
-<p>Uses a method similar to that described in Wickert et al 2013 to measure
-the reworking of the fluvial surface with time. This requires an input
-channel map, land map, as well as defining the base maps to use and the
-time window over which you want to look.</p>
+<p>Uses a method similar to that described in Wickert et al 2013 <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> to
+measure the reworking of the fluvial surface with time. This requires an
+input channel map, land map, as well as defining the base maps to use and
+the time window over which you want to look.</p>
+<p>The reworking fraction is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[f_{R} = 1 - \frac{N'_{B,T}}{A \cdot f_{d,B}}\]</div>
+<p>where <span class="math notranslate nohighlight">\(f_{R}\)</span> is the reworking fraction, <span class="math notranslate nohighlight">\(N'_{B,T}\)</span> is the
+number of unreworked cells in the transient map, <span class="math notranslate nohighlight">\(A\)</span> is the area of
+fluvial surface, and <span class="math notranslate nohighlight">\(f_{d,B}\)</span> is the dry fraction of the base map.</p>
+<p><span class="math notranslate nohighlight">\(N'_{B,T}\)</span> is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[N'_{B,T} = \sum_{i=1}^{m_r} \sum_{j=1}^{n_c} \left[ \left(\sum_{\beta = B+1}^{T} K'_{\beta} \right) \equiv 0 \right]\]</div>
+<p>where <span class="math notranslate nohighlight">\(m_r\)</span> and <span class="math notranslate nohighlight">\(n_c\)</span> are the number of rows and columns in the
+base map, <span class="math notranslate nohighlight">\(K'_{\beta}\)</span> is the channel mask at time <span class="math notranslate nohighlight">\(\beta\)</span> when
+<span class="math notranslate nohighlight">\(\beta\)</span> is used for each time step after the baseline time. This
+results in <span class="math notranslate nohighlight">\(N'_{B,T}\)</span> being the number of cells that are not
+reworked at some transient time <span class="math notranslate nohighlight">\(T\)</span> relative to the base time
+<span class="math notranslate nohighlight">\(B\)</span>.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Wickert, Andrew D., John M. Martin, Michal Tal, Wonsuck Kim,
+Ben Sheets, and Chris Paola. “River channel lateral mobility:
+Metrics, time scales, and controls.” Journal of Geophysical
+Research: Earth Surface 118, no. 2 (2013): 396-412.</p>
+</aside>
+</aside>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

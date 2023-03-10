@@ -51,10 +51,26 @@
 <span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">calculate_channel_abandonment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.calculate_channel_abandonment" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate channel abandonment.</p>
 <p>Measure the number of channelized pixels that are no longer channelized as
-a signature of channel mobility based on method in Liang et al 2016. This
-requires providing an input channel map, and setting parameters for the
-min/max values to compare to, and the time window over which the evaluation
-can be done.</p>
+a signature of channel mobility based on method in Liang et al 2016 <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.
+This requires providing an input channel map, and setting parameters for
+the min/max values to compare to, and the time window over which the
+evaluation can be done.</p>
+<p>This calculation is performed by first identifying the number of channel
+pixels at some base time. Then, for each time step after the base time,
+we measure the number of pixels that are no longer channelized. This
+measurement is used to calculate the fraction of channel pixels that are
+abandoned relative to the base channel map for each time step. Multiple
+base times can be provided. The results are returned as a 2-D array in
+which each row represents the abandonment values associated with a given
+base value and the columns are associated with each time lag.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Liang, Man, Wonsuck Kim, and Paola Passalacqua. “How much subsidence
+is enough to change the morphology of river deltas?.” Geophysical
+Research Letters 43, no. 19 (2016): 10-266.</p>
+</aside>
+</aside>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

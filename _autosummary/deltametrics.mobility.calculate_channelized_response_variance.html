@@ -49,7 +49,7 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.mobility.calculate_channelized_response_variance">
 <span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">calculate_channelized_response_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalize_output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.calculate_channelized_response_variance" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the Channelized Response Variance (CRV).</p>
+<dd><p>Calculate the Channelized Response Variance (CRV) <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <p>This function takes a t-x-y array and calculates its directional CRV.
 In short, the function does the following:</p>
 <blockquote>
@@ -64,6 +64,16 @@ the slopes.</p></li>
 values</p></li>
 </ol>
 </div></blockquote>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Jarriel, Teresa, Leo F. Isikdogan, Alan Bovik, and Paola
+Passalacqua. “Characterization of deltaic channel morphodynamics
+from imagery time series using the channelized response variance.”
+Journal of Geophysical Research: Earth Surface 124, no. 12 (2019):
+3022-3042.</p>
+</aside>
+</aside>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -107,7 +117,7 @@ The default is False.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>(<a class="reference external" href="../_autosummary/deltametrics-mobility-calculate_channelized_response_variance-1.png">png</a>, <a class="reference external" href="../_autosummary/deltametrics-mobility-calculate_channelized_response_variance-1.hires.png">hires.png</a>)</p>
+<p>(<a class="reference download internal" download="" href="../_downloads/06e5f0d11400d697abe97b509b593305/deltametrics-mobility-calculate_channelized_response_variance-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../_downloads/ab176f9f9533cc84281990a5f99ac44c/deltametrics-mobility-calculate_channelized_response_variance-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</p>
 <figure class="align-default">
 <img alt="../_images/deltametrics-mobility-calculate_channelized_response_variance-1.png" class="plot-directive" src="../_images/deltametrics-mobility-calculate_channelized_response_variance-1.png" />
 </figure>

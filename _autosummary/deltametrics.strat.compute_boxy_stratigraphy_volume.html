@@ -52,7 +52,7 @@
 <dd><p>Process t-x-y data volume to boxy stratigraphy volume.</p>
 <p>This function returns a “frozen” cube of stratigraphy
 with values of the supplied property/variable (<code class="xref py py-obj docutils literal notranslate"><span class="pre">prop</span></code>) placed into a
-three-dimesional real-valued 3D array.</p>
+three-dimensional real-valued 3D array.</p>
 <p>By default, the data are returned as a numpy <cite>ndarray</cite>, however, specify
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">return_Cube</span></code> as <cite>True</cite> to return a
 <code class="xref py py-obj docutils literal notranslate"><span class="pre">FrozenStratigraphyCube</span></code>. If <cite>False</cite>, function
@@ -61,8 +61,8 @@ three-dimesional real-valued 3D array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of elevation data to determine stratigraphy.</p></li>
-<li><p><strong>prop</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarry of property data to process into the stratigraphy.</p></li>
+<li><p><strong>elev</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarray of elevation data to determine stratigraphy.</p></li>
+<li><p><strong>prop</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>) – The <cite>t-x-y</cite> ndarray of property data to process into the stratigraphy.</p></li>
 <li><p><strong>sigma_dist</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – Optional subsidence distance argument used to adjust the elevation
 data to account for subsidence when computing stratigraphy. See
 <a class="reference internal" href="../reference/strat/index.html#deltametrics.strat._adjust_elevation_by_subsidence" title="deltametrics.strat._adjust_elevation_by_subsidence"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_adjust_elevation_by_subsidence</span></code></a> for a complete description.</p></li>

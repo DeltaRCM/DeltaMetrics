@@ -15,6 +15,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/sphinx_highlight.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.mobility.calculate_reworking_fraction" href="deltametrics.mobility.calculate_reworking_fraction.html" />
@@ -50,10 +51,44 @@
 <dt class="sig sig-object py" id="deltametrics.mobility.calculate_planform_overlap">
 <span class="sig-prename descclassname"><span class="pre">deltametrics.mobility.</span></span><span class="sig-name descname"><span class="pre">calculate_planform_overlap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">landmap</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">basevalues_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_idx</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mobility.calculate_planform_overlap" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate channel planform overlap.</p>
-<p>Uses a method similar to that described in Wickert et al 2013 to measure
-the loss of channel system overlap with previous channel patterns. This
-requires an input channel map, land map, as well as defining the base maps
-to use and the time window over which you want to look.</p>
+<p>This metric is calculated per Wickert et al 2013 <a class="footnote-reference brackets" href="#id2" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and measures
+the loss of channel system overlap with previous channel patterns.
+This requires an input channel map, land map, as well as defining the base
+maps to use and the time window over which you want to look.</p>
+<p>The normalized overlap is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[O_\Phi = 1 - \left( \frac{D}{A \cdot \Phi} \right)\]</div>
+<p>where <span class="math notranslate nohighlight">\(D\)</span> is the number of chaneged pixels between the base and
+target maps, <span class="math notranslate nohighlight">\(A\)</span> is the total number of pixels in a single map,
+and <span class="math notranslate nohighlight">\(\Phi\)</span> is a random scatter parameter.</p>
+<p><span class="math notranslate nohighlight">\(D\)</span> is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[D(B, T) = \sum\limits^{m_r}_{i=1} \sum\limits^{n_c}_{j=1} \left| K_B - K_T \right|\]</div>
+<p>where <span class="math notranslate nohighlight">\(K_B\)</span> and <span class="math notranslate nohighlight">\(K_T\)</span> are the channel mask values at the base
+and target maps, respectively.</p>
+<p><span class="math notranslate nohighlight">\(\Phi\)</span> is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[\Phi = f_{w,B} \cdot f_{d,T} + f_{d,B} \cdot f_{w,T}\]</div>
+<p>where <span class="math notranslate nohighlight">\(f_{w,B}\)</span> is the fraction of water pixels in the base map,
+<span class="math notranslate nohighlight">\(f_{d,B}\)</span> is the fraction of dry pixels in the base map,
+<span class="math notranslate nohighlight">\(f_{w,T}\)</span> is the fraction of water pixels in the target map, and
+<span class="math notranslate nohighlight">\(f_{d,T}\)</span> is the fraction of dry pixels in the target map.</p>
+<p>The calculation of <span class="math notranslate nohighlight">\(O_\Phi\)</span> is conducted between the base map(s) and
+channel maps (target maps) at each time lag for the duration of the
+time window specified. When multiple base maps are used, this calculation
+is conducted for each base map and its corresponding target maps, and
+the results are returned as an array in which each row represents the
+overlap results for a given base map. Each column represents the overlap
+results for a given time lag relative to the base map.</p>
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="id2" role="note">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>Wickert, Andrew D., John M. Martin, Michal Tal, Wonsuck Kim,
+Ben Sheets, and Chris Paola. “River channel lateral mobility:
+Metrics, time scales, and controls.” Journal of Geophysical
+Research: Earth Surface 118, no. 2 (2013): 396-412.</p>
+</aside>
+</aside>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
