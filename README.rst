@@ -2,8 +2,10 @@
 DeltaMetrics
 ************
 
-.. image:: https://github.com/DeltaRCM/DeltaMetrics/workflows/build/badge.svg
+.. image:: https://github.com/DeltaRCM/DeltaMetrics/actions/workflows/build.yml/badge.svg?branch=develop
   :target: https://github.com/DeltaRCM/DeltaMetrics/actions
+
+[![build](https://github.com/DeltaRCM/DeltaMetrics/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/DeltaRCM/DeltaMetrics/actions/workflows/build.yml)
 
 .. image:: https://codecov.io/gh/DeltaRCM/DeltaMetrics/branch/develop/graph/badge.svg
   :target: https://codecov.io/gh/DeltaRCM/DeltaMetrics
