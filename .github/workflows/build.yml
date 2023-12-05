@@ -32,9 +32,9 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install pytest pytest-cov coveralls
         pip install -r requirements.txt
-    - name: Install DeltaMetrics
-      run: |
-        python setup.py install
+    # - name: Install DeltaMetrics
+    #   run: |
+    #     python setup.py install
     - name: Test with pytest
       run: |
         pytest --cov=deltametrics/ --cov-report=xml
@@ -66,7 +66,7 @@ jobs:
         sudo apt update -y && sudo apt install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended dvipng
     - name: Install DeltaMetrics
       run: |
-        python setup.py install
+        pip install
     - name: Build and test documentation
       run: |
         (cd docs && make docs)
