@@ -1,20 +1,19 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Creating Sections into different types of objects &#8212; DeltaMetrics 0.4.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css?v=d59dc883" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/documentation_options.js?v=ff822928"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="View a planform" href="../plot/show_plan.html" />
@@ -44,7 +43,7 @@
           <div class="body" role="main">
             
   <section id="creating-sections-into-different-types-of-objects">
-<h1>Creating Sections into different types of objects<a class="headerlink" href="#creating-sections-into-different-types-of-objects" title="Permalink to this heading">¶</a></h1>
+<h1>Creating Sections into different types of objects<a class="headerlink" href="#creating-sections-into-different-types-of-objects" title="Link to this heading">¶</a></h1>
 <p>Conventionally, we draw <cite>Section</cite> objects into a <cite>Cube</cite>. However, it is also possible to create <cite>Section</cite> objects into other objects, such as a <cite>Mask</cite> or <cite>Planform</cite> or any arbitrary array-like data.</p>
 <p>First, let’s create a <cite>Section</cite> into a <cite>Cube</cite> and a basic <cite>Planform</cite> and compare.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
@@ -107,7 +106,7 @@
 </figure>
 </div>
 <section id="arbitrary-data">
-<h2>Arbitrary data<a class="headerlink" href="#arbitrary-data" title="Permalink to this heading">¶</a></h2>
+<h2>Arbitrary data<a class="headerlink" href="#arbitrary-data" title="Link to this heading">¶</a></h2>
 <p>You can also create a <cite>Section</cite> into any array-like data.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
 <span class="n">arrss</span> <span class="o">=</span> <span class="n">dm</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">distance_idx</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
@@ -195,8 +194,8 @@
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>

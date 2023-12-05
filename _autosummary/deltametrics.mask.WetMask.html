@@ -1,20 +1,19 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>deltametrics.mask.WetMask &#8212; DeltaMetrics 0.4.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css?v=d59dc883" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/documentation_options.js?v=ff822928"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.mask.ChannelMask" href="deltametrics.mask.ChannelMask.html" />
@@ -45,10 +44,10 @@
           <div class="body" role="main">
             
   <section id="deltametrics-mask-wetmask">
-<h1>deltametrics.mask.WetMask<a class="headerlink" href="#deltametrics-mask-wetmask" title="Permalink to this heading">¶</a></h1>
+<h1>deltametrics.mask.WetMask<a class="headerlink" href="#deltametrics-mask-wetmask" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.mask.</span></span><span class="sig-name descname"><span class="pre">WetMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.mask.</span></span><span class="sig-name descname"><span class="pre">WetMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the wet mask.</p>
 <p>A wet mask object, identifies all wet pixels on the delta topset. Starts
 with the land mask and then uses the topo_threshold defined for the
@@ -74,7 +73,7 @@ wet mask. Otherwise the wet mask can be computed from scratch.</p>
 </figure>
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.__init__" title="Link to this definition">¶</a></dt>
 <dd><p>Initialize the WetMask.</p>
 <p>Intializing the wet mask requires either a 2-D array of data, or it
 can be computed if a <a class="reference internal" href="deltametrics.mask.LandMask.html#deltametrics.mask.LandMask" title="deltametrics.mask.LandMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LandMask</span></code></a> has been previously computed.</p>
@@ -152,7 +151,7 @@ appropriate.</p></li>
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.__getitem__">
-<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.__getitem__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.__getitem__" title="Link to this definition">¶</a></dt>
 <dd><p>Implement slicing.</p>
 <p>Return values directly from the mask. Supported variables are
 only ‘mask’ or ‘integer’.</p>
@@ -160,13 +159,13 @@ only ‘mask’ or ‘integer’.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.from_Planform">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_Planform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_Planform</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.from_Planform" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_Planform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_Planform</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.from_Planform" title="Link to this definition">¶</a></dt>
 <dd><p>Create from a Planform.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.from_array">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_arr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.from_array" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">_arr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.from_array" title="Link to this definition">¶</a></dt>
 <dd><p>Create a WetMask from an array.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -185,7 +184,7 @@ will be coerced to <cite>boolean</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.from_mask">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.from_mask" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.from_mask" title="Link to this definition">¶</a></dt>
 <dd><p>Create a WetMask directly from another mask.</p>
 <p>Needs both an ElevationMask and a LandMask, or just an ElevationMask
 and will make a LandMask internally (creates a
@@ -196,7 +195,7 @@ and will make a LandMask internally (creates a
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.integer_mask">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">integer_mask</span></span><a class="headerlink" href="#deltametrics.mask.WetMask.integer_mask" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">integer_mask</span></span><a class="headerlink" href="#deltametrics.mask.WetMask.integer_mask" title="Link to this definition">¶</a></dt>
 <dd><p>Binary mask values as integer</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -214,7 +213,7 @@ also <a class="reference internal" href="#deltametrics.mask.WetMask.mask" title=
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.mask">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#deltametrics.mask.WetMask.mask" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask</span></span><a class="headerlink" href="#deltametrics.mask.WetMask.mask" title="Link to this definition">¶</a></dt>
 <dd><p>Binary mask values.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -231,13 +230,13 @@ also <a class="reference internal" href="#deltametrics.mask.WetMask.mask" title=
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.mask_type">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask_type</span></span><a class="headerlink" href="#deltametrics.mask.WetMask.mask_type" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask_type</span></span><a class="headerlink" href="#deltametrics.mask.WetMask.mask_type" title="Link to this definition">¶</a></dt>
 <dd><p>Type of the mask (string)</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.show" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.show" title="Link to this definition">¶</a></dt>
 <dd><p>Show the mask.</p>
 <p>The <cite>Mask</cite> is shown in a <cite>matplotlib</cite> axis with <cite>imshow</cite>. The <cite>mask</cite>
 values are accessed from <a class="reference internal" href="#deltametrics.mask.WetMask.integer_mask" title="deltametrics.mask.WetMask.integer_mask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">integer_mask</span></code></a>, so the display will show
@@ -256,7 +255,7 @@ black and white.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.mask.WetMask.trim_mask">
-<span class="sig-name descname"><span class="pre">trim_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.trim_mask" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">trim_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.mask.WetMask.trim_mask" title="Link to this definition">¶</a></dt>
 <dd><p>Replace a part of the mask with a new value.</p>
 <p>This is sometimes necessary before using a mask in certain
 computations. Most often, this method is used to manually correct
@@ -360,8 +359,8 @@ the top domain edge.</p></li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>

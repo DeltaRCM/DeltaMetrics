@@ -1,20 +1,19 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>How to create a LandMask from arbitrary data &#8212; DeltaMetrics 0.4.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css?v=d59dc883" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
     <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-    <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/documentation_options.js?v=ff822928"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Aggradation and preserved time" href="../computations/aggradation_preserved_time.html" />
@@ -44,7 +43,7 @@
           <div class="body" role="main">
             
   <section id="how-to-create-a-landmask-from-arbitrary-data">
-<h1>How to create a LandMask from arbitrary data<a class="headerlink" href="#how-to-create-a-landmask-from-arbitrary-data" title="Permalink to this heading">¶</a></h1>
+<h1>How to create a LandMask from arbitrary data<a class="headerlink" href="#how-to-create-a-landmask-from-arbitrary-data" title="Link to this heading">¶</a></h1>
 <p>Instantiating masks directly can be done as follows.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">proportion</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]:</span>
     <span class="n">anydata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">500</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
@@ -63,19 +62,19 @@
 <figure class="align-default" id="id1">
 <img alt="../../../_images/instantiate_mask_directly-1_00.png" class="plot-directive" src="../../../_images/instantiate_mask_directly-1_00.png" />
 <figcaption>
-<p><span class="caption-text">(<a class="reference download internal" download="" href="../../../_downloads/6374af91bb1f742d8c8da54de7fc7599/instantiate_mask_directly-1_00.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/5af6be26eac9c246a98129e07ac46aa2/instantiate_mask_directly-1_00.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">(<a class="reference download internal" download="" href="../../../_downloads/6374af91bb1f742d8c8da54de7fc7599/instantiate_mask_directly-1_00.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/5af6be26eac9c246a98129e07ac46aa2/instantiate_mask_directly-1_00.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</span><a class="headerlink" href="#id1" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="id2">
 <img alt="../../../_images/instantiate_mask_directly-1_01.png" class="plot-directive" src="../../../_images/instantiate_mask_directly-1_01.png" />
 <figcaption>
-<p><span class="caption-text">(<a class="reference download internal" download="" href="../../../_downloads/91cfeebe8cdee11a1773fd2e28ff59ad/instantiate_mask_directly-1_01.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/4b8b1989196580330446b508c841f8e8/instantiate_mask_directly-1_01.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">(<a class="reference download internal" download="" href="../../../_downloads/91cfeebe8cdee11a1773fd2e28ff59ad/instantiate_mask_directly-1_01.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/4b8b1989196580330446b508c841f8e8/instantiate_mask_directly-1_01.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <figure class="align-default" id="id3">
 <img alt="../../../_images/instantiate_mask_directly-1_02.png" class="plot-directive" src="../../../_images/instantiate_mask_directly-1_02.png" />
 <figcaption>
-<p><span class="caption-text">(<a class="reference download internal" download="" href="../../../_downloads/6649b71a19c61c0f5e0a48b1d52e041b/instantiate_mask_directly-1_02.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/30bbacd8128e285d632a99004ec11036/instantiate_mask_directly-1_02.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p><span class="caption-text">(<a class="reference download internal" download="" href="../../../_downloads/6649b71a19c61c0f5e0a48b1d52e041b/instantiate_mask_directly-1_02.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/30bbacd8128e285d632a99004ec11036/instantiate_mask_directly-1_02.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</span><a class="headerlink" href="#id3" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 </section>
@@ -136,8 +135,8 @@
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>

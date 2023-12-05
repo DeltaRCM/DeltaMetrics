@@ -1,20 +1,19 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>deltametrics.io.NetCDFIO &#8212; DeltaMetrics 0.4.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css?v=d59dc883" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/documentation_options.js?v=ff822928"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Plotting operations" href="../reference/plot/index.html" />
@@ -45,10 +44,10 @@
           <div class="body" role="main">
             
   <section id="deltametrics-io-netcdfio">
-<h1>deltametrics.io.NetCDFIO<a class="headerlink" href="#deltametrics-io-netcdfio" title="Permalink to this heading">¶</a></h1>
+<h1>deltametrics.io.NetCDFIO<a class="headerlink" href="#deltametrics-io-netcdfio" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.io.</span></span><span class="sig-name descname"><span class="pre">NetCDFIO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">io_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.io.</span></span><span class="sig-name descname"><span class="pre">NetCDFIO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">io_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO" title="Link to this definition">¶</a></dt>
 <dd><p>Utility for consistent IO with netCDF4 files.</p>
 <p>This module wraps calls to the netCDF4 python module in a consistent API,
 so the user can work seamlessly with either netCDF4 files or HDF5 files.
@@ -63,7 +62,7 @@ information about the netCDF4 format, visit the netCDF4
 <a class="reference external" href="https://www.unidata.ucar.edu/software/netcdf/docs/faq.html">docs</a>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">io_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">io_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.__init__" title="Link to this definition">¶</a></dt>
 <dd><p>Initialize the NetCDFIO handler.</p>
 <p>Initialize a connection to a NetCDF file.</p>
 <dl class="field-list simple">
@@ -116,7 +115,7 @@ disabled, unless <code class="docutils literal notranslate"><span class="pre">wr
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO.connect">
-<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.connect" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">connect</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.connect" title="Link to this definition">¶</a></dt>
 <dd><p>Connect to the data file.</p>
 <p>Initialize the file if it does not exist, or simply <code class="docutils literal notranslate"><span class="pre">return</span></code> if the
 file already exists. This connection to the data file is “lazy”
@@ -130,7 +129,7 @@ IO object, so it is not necessary to call it directly.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO.data_path">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_path</span></span><a class="headerlink" href="#deltametrics.io.NetCDFIO.data_path" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data_path</span></span><a class="headerlink" href="#deltametrics.io.NetCDFIO.data_path" title="Link to this definition">¶</a></dt>
 <dd><p>Path to data file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -149,27 +148,27 @@ IO object, so it is not necessary to call it directly.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO.get_known_coords">
-<span class="sig-name descname"><span class="pre">get_known_coords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.get_known_coords" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_known_coords</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.get_known_coords" title="Link to this definition">¶</a></dt>
 <dd><p>List known coordinates.</p>
 <p>These coordinates are pulled from the loaded dataset.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO.get_known_variables">
-<span class="sig-name descname"><span class="pre">get_known_variables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.get_known_variables" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">get_known_variables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.get_known_variables" title="Link to this definition">¶</a></dt>
 <dd><p>List known variables.</p>
 <p>These variables are pulled from the loaded dataset.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO.keys">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><a class="headerlink" href="#deltametrics.io.NetCDFIO.keys" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">keys</span></span><a class="headerlink" href="#deltametrics.io.NetCDFIO.keys" title="Link to this definition">¶</a></dt>
 <dd><p>Variable names in file.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO.read">
-<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.read" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">read</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.read" title="Link to this definition">¶</a></dt>
 <dd><p>Read variable from file and into memory.</p>
 <p>Converts <cite>variables</cite> in data file to <cite>xarray</cite> objects for coersion
 into a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> instance.</p>
@@ -182,7 +181,7 @@ into a <code class="xref py py-obj docutils literal notranslate"><span class="pr
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.io.NetCDFIO.write">
-<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.write" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.io.NetCDFIO.write" title="Link to this definition">¶</a></dt>
 <dd><p>Write data to file.</p>
 <p>Take a <code class="xref py py-obj docutils literal notranslate"><span class="pre">Cube</span></code> and write it to file.</p>
 <div class="admonition warning">
@@ -272,8 +271,8 @@ into a <code class="xref py py-obj docutils literal notranslate"><span class="pr
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>

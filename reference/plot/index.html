@@ -1,20 +1,19 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Plotting operations &#8212; DeltaMetrics 0.4.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinxdoc.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinxdoc.css?v=d59dc883" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/documentation_options.js?v=ff822928"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="deltametrics.plot.VariableInfo" href="../../_autosummary/deltametrics.plot.VariableInfo.html" />
@@ -44,7 +43,7 @@
           <div class="body" role="main">
             
   <section id="plotting-operations">
-<h1>Plotting operations<a class="headerlink" href="#plotting-operations" title="Permalink to this heading">¶</a></h1>
+<h1>Plotting operations<a class="headerlink" href="#plotting-operations" title="Link to this heading">¶</a></h1>
 <p>The package uses a few utility classes and functions to make consistent plotting easy thoughout the package.
 This reference page documents the lower-level utilities used to make this happen.</p>
 <div class="admonition note">
@@ -57,7 +56,7 @@ This reference page documents the lower-level utilities used to make this happen
 </div>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.plot</span></code>.</p>
 <section id="default-styling">
-<span id="id1"></span><h2>Default styling<a class="headerlink" href="#default-styling" title="Permalink to this heading">¶</a></h2>
+<span id="id1"></span><h2>Default styling<a class="headerlink" href="#default-styling" title="Link to this heading">¶</a></h2>
 <p>By default, each variable receives a set of styling definitions.
 The default parameters of each styling variable are defined below:</p>
 <p>(<a class="reference download internal" download="" href="../../_downloads/9dfa6a7d76de82511b0f1bbede822734/document_variableset.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../_downloads/ea187f822bb498c97dbe9ca002978b71/document_variableset.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</p>
@@ -66,7 +65,7 @@ The default parameters of each styling variable are defined below:</p>
 </figure>
 </section>
 <section id="plotting-utility-objects">
-<h2>Plotting utility objects<a class="headerlink" href="#plotting-utility-objects" title="Permalink to this heading">¶</a></h2>
+<h2>Plotting utility objects<a class="headerlink" href="#plotting-utility-objects" title="Link to this heading">¶</a></h2>
 <p>These objects are mostly used internally to help make plots appear consistent across the library.
 You may want to examine these to change the style of plotting across the package.</p>
 <table class="autosummary longtable docutils align-default">
@@ -81,12 +80,12 @@ You may want to examine these to change the style of plotting across the package
 </table>
 </section>
 <section id="plotting-convenience-functions">
-<h2>Plotting convenience functions<a class="headerlink" href="#plotting-convenience-functions" title="Permalink to this heading">¶</a></h2>
+<h2>Plotting convenience functions<a class="headerlink" href="#plotting-convenience-functions" title="Link to this heading">¶</a></h2>
 <p>These functions may be helpful in making figures and exploring during analyses.
 Mostly, these functions provide a component of a plot.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.aerial_view">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">aerial_view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elevation_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_kw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_im</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.aerial_view" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">aerial_view</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elevation_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">datum</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_kw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_im</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.aerial_view" title="Link to this definition">¶</a></dt>
 <dd><p>Show an aerial plot of an elevation dataset.</p>
 <p>See also: implementation wrapper for a cube.</p>
 <dl class="field-list simple">
@@ -129,7 +128,7 @@ create a new) <cite>Axes</cite> object.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.overlay_sparse_array">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">overlay_sparse_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparse_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Reds'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">90)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'percentile'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.overlay_sparse_array" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">overlay_sparse_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sparse_array</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'Reds'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha_clip</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(None,</span> <span class="pre">90)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clip_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'percentile'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.overlay_sparse_array" title="Link to this definition">¶</a></dt>
 <dd><p>Convenient plotting method to overlay a sparse 2D array on an image.</p>
 <p>Should only be used with data arrays that are sparse: i.e., where many
 elements take the value 0 (or very near 0).</p>
@@ -215,7 +214,7 @@ of sparse data.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.style_axes_km">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">style_axes_km</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.style_axes_km" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">style_axes_km</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.style_axes_km" title="Link to this definition">¶</a></dt>
 <dd><p>Style axes with kilometers, when initially set as meters.</p>
 <p>This function can be used two ways. Passing an <cite>Axes</cite> object as the first
 argument and optionally a string specifying <cite>‘x’</cite>, <cite>‘y’</cite>, or <cite>‘xy’</cite>
@@ -258,7 +257,7 @@ pass <cite>x</cite> or <cite>y</cite> to only style one axis.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.append_colorbar">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">append_colorbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ci</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">append_colorbar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ci</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pad</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labelsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.append_colorbar" title="Link to this definition">¶</a></dt>
 <dd><p>Append a colorbar, consistently placed.</p>
 <p>Adjusts some parameters of the parent axes as well.</p>
 <dl class="field-list simple">
@@ -285,7 +284,7 @@ For example, <cite>spacing=”proportional”</cite>.</p></li>
 
 </section>
 <section id="deltametrics-plot-routines">
-<h2>DeltaMetrics plot routines<a class="headerlink" href="#deltametrics-plot-routines" title="Permalink to this heading">¶</a></h2>
+<h2>DeltaMetrics plot routines<a class="headerlink" href="#deltametrics-plot-routines" title="Link to this heading">¶</a></h2>
 <p>These functions are similar to the convenience functions above, but mostly produce their own plots entirely, rather than adding a component of a plot.</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -299,10 +298,10 @@ For example, <cite>spacing=”proportional”</cite>.</p></li>
 </table>
 </section>
 <section id="deltametrics-colormaps">
-<h2>DeltaMetrics colormaps<a class="headerlink" href="#deltametrics-colormaps" title="Permalink to this heading">¶</a></h2>
+<h2>DeltaMetrics colormaps<a class="headerlink" href="#deltametrics-colormaps" title="Link to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.cartographic_colormap">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">cartographic_colormap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H_SL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.cartographic_colormap" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">cartographic_colormap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H_SL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.cartographic_colormap" title="Link to this definition">¶</a></dt>
 <dd><p>Colormap for an elevation map style.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -354,7 +353,7 @@ parameters to highlight depth variability (right):</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.aerial_colormap">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">aerial_colormap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.aerial_colormap" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">aerial_colormap</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.aerial_colormap" title="Link to this definition">¶</a></dt>
 <dd><p>Colormap for a pesudorealistic looking aerial shot.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -364,24 +363,24 @@ parameters to highlight depth variability (right):</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.vintage_colormap">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">vintage_colormap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H_SL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.vintage_colormap" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">vintage_colormap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">H_SL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">4.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.vintage_colormap" title="Link to this definition">¶</a></dt>
 <dd><p>Colormap in a vintage map style.</p>
 <p>This colormap uses a set of colors originally used by 1950s maps of the
 Wadden Sea <a class="footnote-reference brackets" href="#id5" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. The colormap is adapted from Stuart Pearson’s matlab version
 of the colormap <a class="footnote-reference brackets" href="#id6" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#id7" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>. That colormap carries a <a class="reference external" href="https://creativecommons.org/licenses/by/4.0/legalcode">CC BY 4.0 license</a>.</p>
 <aside class="footnote-list brackets">
-<aside class="footnote brackets" id="id5" role="note">
+<aside class="footnote brackets" id="id5" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
 <p>Vinckers, J.A. Beckering. Amelander Gat (1943). Report D98 in
 Dutch. Rijkswaterstaat Studiedienst Hoorn, Hoorn.</p>
 </aside>
-<aside class="footnote brackets" id="id6" role="note">
+<aside class="footnote brackets" id="id6" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
 <p>Stuart Pearson. “Custom Colourmapping.” Coastally Curious
 (personal blog). (2022).
 <a class="reference external" href="https://coastallycurious.com/2022/02/20/custom-colourmapping/">https://coastallycurious.com/2022/02/20/custom-colourmapping/</a></p>
 </aside>
-<aside class="footnote brackets" id="id7" role="note">
+<aside class="footnote brackets" id="id7" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">3</a><span class="fn-bracket">]</span></span>
 <p>Elias, Edwin P.L. et al. “Understanding sediment bypassing
 processes through analysis of high-frequency observations of Ameland
@@ -424,11 +423,11 @@ parameters to highlight depth variability (right):</p>
 
 </section>
 <section id="plotting-utility-functions">
-<h2>Plotting utility functions<a class="headerlink" href="#plotting-utility-functions" title="Permalink to this heading">¶</a></h2>
+<h2>Plotting utility functions<a class="headerlink" href="#plotting-utility-functions" title="Link to this heading">¶</a></h2>
 <p>These functions are mostly used internally.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.get_display_arrays">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">get_display_arrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">VarInst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_arrays" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">get_display_arrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">VarInst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_arrays" title="Link to this definition">¶</a></dt>
 <dd><p>Get arrays for display of Variables.</p>
 <p>Function takes as argument a <cite>VariableInstance</cite> from a <cite>Section</cite> or
 <cite>Planform</cite> and an optional <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> argument, which specifies the data
@@ -461,7 +460,7 @@ x-coordinates and 3) display y-coordinates.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.get_display_lines">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">get_display_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">VarInst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_lines" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">get_display_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">VarInst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_lines" title="Link to this definition">¶</a></dt>
 <dd><p>Get lines for display of Variables.</p>
 <p>Function takes as argument a <cite>VariableInstance</cite> from a <cite>Section</cite> or
 <cite>Planform</cite> and an optional <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> argument, which specifies the data
@@ -494,7 +493,7 @@ dimension of the array.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot.get_display_limits">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">get_display_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">VarInst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_limits" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">get_display_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">VarInst</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot.get_display_limits" title="Link to this definition">¶</a></dt>
 <dd><p>Get limits to resize the display of Variables.</p>
 <p>Function takes as argument a <cite>VariableInstance</cite> from a <cite>Section</cite> or
 <cite>Planform</cite> and an optional <code class="xref py py-obj docutils literal notranslate"><span class="pre">data</span></code> argument, which specifies how to
@@ -524,7 +523,7 @@ same value used with either <a class="reference internal" href="#deltametrics.pl
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot._fill_steps">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">_fill_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot._fill_steps" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">_fill_steps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">where</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot._fill_steps" title="Link to this definition">¶</a></dt>
 <dd><p>Fill rectangles where the boolean indicates <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
 <p>Creates an <code class="xref py py-obj docutils literal notranslate"><span class="pre">x</span></code> by <code class="xref py py-obj docutils literal notranslate"><span class="pre">y</span></code> <code class="xref py py-obj docutils literal notranslate"><span class="pre">matplotlib.patches.Rectangle</span></code> at
 each index where the index <cite>i</cite> in boolean <code class="xref py py-obj docutils literal notranslate"><span class="pre">where</span></code> indicates, with the
@@ -557,7 +556,7 @@ at.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.plot._scale_lightness">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">_scale_lightness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_l</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot._scale_lightness" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.plot.</span></span><span class="sig-name descname"><span class="pre">_scale_lightness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale_l</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plot._scale_lightness" title="Link to this definition">¶</a></dt>
 <dd><p>Utility to scale the lightness of some color.</p>
 <p>Make a color perceptually lighter or darker. Adapted from
 <a class="reference external" href="https://stackoverflow.com/a/60562502/4038393">https://stackoverflow.com/a/60562502/4038393</a>.</p>
@@ -676,8 +675,8 @@ greater than 1 brighten the color.</p></li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>

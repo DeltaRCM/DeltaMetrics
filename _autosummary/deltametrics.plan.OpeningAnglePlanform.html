@@ -1,20 +1,19 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>deltametrics.plan.OpeningAnglePlanform &#8212; DeltaMetrics 0.4.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinxdoc.css?v=d59dc883" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" href="../_static/style.css" type="text/css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/documentation_options.js?v=ff822928"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="deltametrics.plan.MorphologicalPlanform" href="deltametrics.plan.MorphologicalPlanform.html" />
@@ -45,10 +44,10 @@
           <div class="body" role="main">
             
   <section id="deltametrics-plan-openingangleplanform">
-<h1>deltametrics.plan.OpeningAnglePlanform<a class="headerlink" href="#deltametrics-plan-openingangleplanform" title="Permalink to this heading">¶</a></h1>
+<h1>deltametrics.plan.OpeningAnglePlanform<a class="headerlink" href="#deltametrics-plan-openingangleplanform" title="Link to this heading">¶</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.plan.</span></span><span class="sig-name descname"><span class="pre">OpeningAnglePlanform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">deltametrics.plan.</span></span><span class="sig-name descname"><span class="pre">OpeningAnglePlanform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform" title="Link to this definition">¶</a></dt>
 <dd><p>Planform for handling the Shaw Opening Angle Method.</p>
 <p>This <cite>Planform</cite> (called <cite>OAP</cite> for short) is a wrapper/handler for the
 input and output from the <a class="reference internal" href="deltametrics.plan.shaw_opening_angle_method.html#deltametrics.plan.shaw_opening_angle_method" title="deltametrics.plan.shaw_opening_angle_method"><code class="xref py py-func docutils literal notranslate"><span class="pre">shaw_opening_angle_method()</span></code></a>. The <cite>OAP</cite> is a
@@ -85,7 +84,7 @@ elevation data (i.e., from an <a class="reference internal" href="deltametrics.m
 </figure>
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.__init__" title="Link to this definition">¶</a></dt>
 <dd><p>Init.</p>
 <p>EXPECTS A BINARY OCEAN MASK AS THE INPUT!</p>
 <div class="admonition note">
@@ -142,7 +141,7 @@ elevation data (i.e., from an <a class="reference internal" href="deltametrics.m
 </table>
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.__getitem__">
-<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.__getitem__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slc</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.__getitem__" title="Link to this definition">¶</a></dt>
 <dd><p>Slice the planform.</p>
 <p>Implements basic slicing for <cite>SpecialtyPlanform</cite> by passing the <cite>slc</cite>
 to <cite>self.data</cite>. I.e., the returned slice is <code class="docutils literal notranslate"><span class="pre">self.data[slc]</span></code>.</p>
@@ -150,7 +149,7 @@ to <cite>self.data</cite>. I.e., the returned slice is <code class="docutils lit
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.below_mask">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">below_mask</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.below_mask" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">below_mask</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.below_mask" title="Link to this definition">¶</a></dt>
 <dd><p>Mask for below sea level pixels.</p>
 <p>This is the starting point for the Opening Angle Method solution.</p>
 <p>See figure in main docstring for visual example.</p>
@@ -158,7 +157,7 @@ to <cite>self.data</cite>. I.e., the returned slice is <code class="docutils lit
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.composite_array">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">composite_array</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.composite_array" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">composite_array</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.composite_array" title="Link to this definition">¶</a></dt>
 <dd><p>Alias to <cite>sea_angles</cite>.</p>
 <p>This is the array that a contour is extracted from using some threshold
 value when making land and shoreline masks.</p>
@@ -166,7 +165,7 @@ value when making land and shoreline masks.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.data">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.data" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">data</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.data" title="Link to this definition">¶</a></dt>
 <dd><p>The public data field.</p>
 <p>This attribute <em>must</em> be implemented as an alias to another attribute.
 The choice of field is up to the developer.</p>
@@ -174,7 +173,7 @@ The choice of field is up to the developer.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.from_ElevationMask">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ElevationMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ElevationMask</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_ElevationMask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ElevationMask</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask" title="Link to this definition">¶</a></dt>
 <dd><p>Create an <cite>OpeningAnglePlanform</cite> from an <cite>ElevationMask</cite>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -201,7 +200,7 @@ thus passed to <a class="reference internal" href="deltametrics.plan.shaw_openin
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.from_arrays">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_arrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_arrays" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_arrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_arrays" title="Link to this definition">¶</a></dt>
 <dd><p>Create directly from arrays.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -211,7 +210,7 @@ thus passed to <a class="reference internal" href="deltametrics.plan.shaw_openin
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.from_elevation_data">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_elevation_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elevation_data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_elevation_data" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_elevation_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elevation_data</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_elevation_data" title="Link to this definition">¶</a></dt>
 <dd><p>Create an <cite>OpeningAnglePlanform</cite> from elevation data.</p>
 <p>This process creates an ElevationMask from the input elevation array,
 and proceeds to make the OAP from the below sea level mask.</p>
@@ -245,33 +244,33 @@ turn used to create the <cite>OpeningAnglePlanform</cite>.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.from_mask">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">UnknownMask</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_mask" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">UnknownMask</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.from_mask" title="Link to this definition">¶</a></dt>
 <dd><p>Wraps <a class="reference internal" href="#deltametrics.plan.OpeningAnglePlanform.from_ElevationMask" title="deltametrics.plan.OpeningAnglePlanform.from_ElevationMask"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_ElevationMask</span></code></a>.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.name">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.name" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.name" title="Link to this definition">¶</a></dt>
 <dd><p>Planform name.</p>
 <p>Helpful to differentiate multiple <cite>Planform</cite> objects.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.sea_angles">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sea_angles</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.sea_angles" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sea_angles</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.sea_angles" title="Link to this definition">¶</a></dt>
 <dd><p>Maximum opening angle view of the sea from a pixel.</p>
 <p>See figure in main docstring for visual example.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.shape">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.shape" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.shape" title="Link to this definition">¶</a></dt>
 <dd><p>Planform shape.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="deltametrics.plan.OpeningAnglePlanform.show">
-<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.show" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">show</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ticks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorbar_label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.plan.OpeningAnglePlanform.show" title="Link to this definition">¶</a></dt>
 <dd><p>Show the planform.</p>
 <p>Display a field of the planform, called by attribute name.</p>
 <dl class="field-list simple">
@@ -385,8 +384,8 @@ create a new) <cite>Axes</cite> object.</p></li>
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>

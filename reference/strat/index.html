@@ -1,20 +1,19 @@
-
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" data-content_root="../../">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>Stratigraphy operations &#8212; DeltaMetrics 0.4.2 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sphinxdoc.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=649a27d8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinxdoc.css?v=d59dc883" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=eafc0fe6" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" href="../../_static/style.css" type="text/css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/documentation_options.js?v=ff822928"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="deltametrics.strat.compute_compensation" href="../../_autosummary/deltametrics.strat.compute_compensation.html" />
@@ -44,12 +43,12 @@
           <div class="body" role="main">
             
   <section id="stratigraphy-operations">
-<h1>Stratigraphy operations<a class="headerlink" href="#stratigraphy-operations" title="Permalink to this heading">¶</a></h1>
+<h1>Stratigraphy operations<a class="headerlink" href="#stratigraphy-operations" title="Link to this heading">¶</a></h1>
 <p>The package makes available functions relating to computing things based on
 stratigraphy.</p>
 <p>The functions are defined in <code class="docutils literal notranslate"><span class="pre">deltametrics.strat</span></code>.</p>
 <section id="stratigraphy-statistics-functions">
-<h2>Stratigraphy statistics functions<a class="headerlink" href="#stratigraphy-statistics-functions" title="Permalink to this heading">¶</a></h2>
+<h2>Stratigraphy statistics functions<a class="headerlink" href="#stratigraphy-statistics-functions" title="Link to this heading">¶</a></h2>
 <p>Metrics and statistics of stratigraphy.</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -69,7 +68,7 @@ stratigraphy.</p>
 </table>
 </section>
 <section id="compute-stratigraphy-routines">
-<h2>Compute stratigraphy routines<a class="headerlink" href="#compute-stratigraphy-routines" title="Permalink to this heading">¶</a></h2>
+<h2>Compute stratigraphy routines<a class="headerlink" href="#compute-stratigraphy-routines" title="Link to this heading">¶</a></h2>
 <p>Routines to compute stratigraphic volumes.</p>
 <table class="autosummary longtable docutils align-default">
 <tbody>
@@ -83,7 +82,7 @@ stratigraphy.</p>
 </table>
 </section>
 <section id="quick-stratigraphy-attributes-classes">
-<h2>Quick-stratigraphy attributes classes<a class="headerlink" href="#quick-stratigraphy-attributes-classes" title="Permalink to this heading">¶</a></h2>
+<h2>Quick-stratigraphy attributes classes<a class="headerlink" href="#quick-stratigraphy-attributes-classes" title="Link to this heading">¶</a></h2>
 <p>The “quick” stratigraphy attributes provide a common API that is accessed by
 <cite>DataCube</cite>, <cite>DataSectionVariable</cite> and <cite>DataPlanformVariable</cite> methods. There
 are two methods of computing quick stratigraphy, with
@@ -103,11 +102,11 @@ are two methods of computing quick stratigraphy, with
 </table>
 </section>
 <section id="low-level-stratigraphy-utility-functions">
-<h2>Low-level stratigraphy utility functions<a class="headerlink" href="#low-level-stratigraphy-utility-functions" title="Permalink to this heading">¶</a></h2>
+<h2>Low-level stratigraphy utility functions<a class="headerlink" href="#low-level-stratigraphy-utility-functions" title="Link to this heading">¶</a></h2>
 <p>The functions outlined in this section are the main functions that do the actual work of computing stratigraphy and preservation, throughout DeltaMetrics. These functions may be useful if you are trying to use parts of DeltaMetrics, but need to customize something for your own use-case.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.strat._compute_elevation_to_preservation">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_compute_elevation_to_preservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._compute_elevation_to_preservation" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_compute_elevation_to_preservation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._compute_elevation_to_preservation" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the preserved elevations of stratigraphy.</p>
 <p>Given elevation data alone, we can compute the preserved stratal surfaces.
 These surfaces depend on the timeseries of bed elevation at any spatial
@@ -137,7 +136,7 @@ To determine whether time from a given <em>timestep</em> is preserved, use
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.strat._compute_preservation_to_time_intervals">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_compute_preservation_to_time_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psvd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._compute_preservation_to_time_intervals" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_compute_preservation_to_time_intervals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psvd</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._compute_preservation_to_time_intervals" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the preserved timesteps.</p>
 <p>The output from <a class="reference internal" href="#deltametrics.strat._compute_elevation_to_preservation" title="deltametrics.strat._compute_elevation_to_preservation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_elevation_to_preservation</span></code></a> records whether
 an instance of time, defined exactly at the data interval, is recorded in
@@ -170,7 +169,7 @@ including partial intervals.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.strat._compute_preservation_to_cube">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_compute_preservation_to_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._compute_preservation_to_cube" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_compute_preservation_to_cube</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._compute_preservation_to_cube" title="Link to this definition">¶</a></dt>
 <dd><p>Compute the cube-data coordinates to strata coordinates.</p>
 <p>Given elevation preservation data (e.g., data from
 <a class="reference internal" href="#deltametrics.strat._compute_elevation_to_preservation" title="deltametrics.strat._compute_elevation_to_preservation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_compute_elevation_to_preservation</span></code></a>), compute
@@ -219,7 +218,7 @@ with rows in <cite>strat_coords</cite>.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.strat._determine_strat_coordinates">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_determine_strat_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._determine_strat_coordinates" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_determine_strat_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nz</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._determine_strat_coordinates" title="Link to this definition">¶</a></dt>
 <dd><p>Return a valid Z array for stratigraphy based on inputs.</p>
 <p>This helper function enables support for user specified <cite>dz</cite>, <cite>nz</cite>, or <cite>z</cite>
 in many functions. The logic for determining how to handle these mutually
@@ -253,7 +252,7 @@ returned unchanged if supplied.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.strat._adjust_elevation_by_subsidence">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_adjust_elevation_by_subsidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_dist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._adjust_elevation_by_subsidence" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_adjust_elevation_by_subsidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elev</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma_dist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._adjust_elevation_by_subsidence" title="Link to this definition">¶</a></dt>
 <dd><p>Adjust elevation array by subsidence rates.
 Given the elevation information and information about the distance
 subsided, the true sedimentation and erosion pattern can be unraveled.
@@ -300,7 +299,7 @@ provided by the input <cite>sigma_dist</cite>.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="deltametrics.strat._determine_deposit_from_background">
-<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_determine_deposit_from_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sediment_volume</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._determine_deposit_from_background" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">deltametrics.strat.</span></span><span class="sig-name descname"><span class="pre">_determine_deposit_from_background</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sediment_volume</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">background</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#deltametrics.strat._determine_deposit_from_background" title="Link to this definition">¶</a></dt>
 <dd><p>Helper for stratigraphic functions.</p>
 <p>Determine the boolean mask of the deposit, i.e., excluding the
 pre-deposition basin topography.</p>
@@ -451,8 +450,8 @@ a background value encoded into it (like <code class="docutils literal notransla
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2020, The DeltaRCM Team.
-      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    &#169; Copyright 2020, The DeltaRCM Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     </div>
   </body>
 </html>
