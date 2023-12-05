@@ -63,7 +63,7 @@ jobs:
         sudo apt update -y && sudo apt install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended dvipng
     - name: Install DeltaMetrics
       run: |
-        pip install .
+        pip install -e .
     - name: Build and test documentation
       run: |
         (cd docs && make docs)
