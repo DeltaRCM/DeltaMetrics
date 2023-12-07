@@ -19,9 +19,9 @@ import deltametrics as dm
 
 # -- Project information -----------------------------------------------------
 
-project = 'DeltaMetrics'
-copyright = '2020, The DeltaRCM Team'
-author = 'The DeltaRCM Team'
+project = "DeltaMetrics"
+copyright = "2020, The DeltaRCM Team"
+author = "The DeltaRCM Team"
 
 # The full version, including alpha/beta/rc tags
 release = dm.__version__
@@ -33,18 +33,20 @@ version = dm.__version__
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ['sphinx.ext.autodoc',
-              'sphinx.ext.doctest',
-              'sphinx.ext.autosummary',
-              'sphinx.ext.napoleon',
-              'sphinx.ext.graphviz',
-              'sphinx.ext.mathjax',
-              'sphinx.ext.githubpages',
-              'matplotlib.sphinxext.plot_directive',
-              'sphinx.ext.todo']
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.doctest",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.napoleon",
+    "sphinx.ext.graphviz",
+    "sphinx.ext.mathjax",
+    "sphinx.ext.githubpages",
+    "matplotlib.sphinxext.plot_directive",
+    "sphinx.ext.todo",
+]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ["_templates"]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -67,28 +69,31 @@ napoleon_use_rtype = True
 # Autosummary / Automodapi settings
 autosummary_generate = True
 automodapi_inheritance_diagram = False
-autodoc_default_options = {'members': True, 'inherited-members': True,
-                           'private-members': False}
+autodoc_default_options = {
+    "members": True,
+    "inherited-members": True,
+    "private-members": False,
+}
 
 # doctest
-doctest_global_setup = '''
+doctest_global_setup = """
 import deltametrics as dm
 import numpy as np
 from matplotlib import pyplot as plt
-'''
+"""
 
 # empty string disables testing all code in any docstring
-doctest_test_doctest_blocks = ''  
+doctest_test_doctest_blocks = ""
 
 # mpl plots
-plot_basedir = 'pyplots'
+plot_basedir = "pyplots"
 plot_html_show_source_link = False
-plot_formats = ['png', ('hires.png', 300)]
-plot_pre_code = '''
+plot_formats = ["png", ("hires.png", 300)]
+plot_pre_code = """
 import numpy as np
 from matplotlib import pyplot as plt
 import deltametrics as dm
-'''
+"""
 
 # img math
 # imgmath_latex_preamble = '\\usepackage{fouriernc}' # newtxsf, mathptmx
@@ -98,9 +103,9 @@ import deltametrics as dm
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'sphinxdoc'
+html_theme = "sphinxdoc"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+html_static_path = ["_static"]

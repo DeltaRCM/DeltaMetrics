@@ -7,30 +7,210 @@ import xarray as xr
 from . import section
 
 
-def compute_compensation(line1, line2):
-    """Compute compensation statistic betwen two lines.
+# def compute_compensation(line1, line2):
+#     """Compute compensation statistic betwen two lines.
 
-    .. warning::
+#     .. warning::
 
-        Not Implemented.
+#         Not Implemented.
 
+#     Parameters
+#     ----------
+#     line1 : ndarray
+#         First surface to use (two-dimensional matrix with x-z coordinates of
+#         line).
+
+#     line2 : ndarray
+#         Second surface to use (two-dimensional matrix with x-z coordinates of
+#         line).
+
+#     Returns
+#     -------
+#     CV : float
+#         Compensation statistic.
+
+#     """
+#     raise NotImplementedError()
+
+
+def compute_compensation(stratal_surfaces, time_idxs=None, clip_ends=0):
+    """Compute compensation, given stratal surfaces.
+
+    This function is an implementation of the compensation statistic [1]_
+    [2]_ that has been widely adapted studies of stratigraphic channelized
+    deposits. The metric is an assessment of the coefficient of
+    variation in accumulation over space, averaged over increasing vertical stratigraphic
+    time [1]_.
+
+    .. math::
+
+        \\sigma_{ss}(T) = \\left( \\int_L \\left[ \\frac{r(T;x)}{\\hat{r}(x)}
+            - 1 \\right]^2 dL \\right)^{1/2}
+
+    where, xxxxx.
+
+    Here, we implement an adaptable and flexible function to help asses
+    compensational stacking. To understand the conceptual meaning of function
+    outputs and how to work with these outputs to assess compensational
+    stacking patterns in stratigraphy, see the :doc:`Example on Compensational
+    Stacking <../guides/examples/computations/compensational_stacking>`
+    and especially references therein.
+
+    This function operates on a three-, two-, or one-dimensional array of
+    stratal surfaces. Time is expected to be oriented along the first axis
+    dimension. Note, that a one-dimensional array will always return a
+    `sigma` array of all ones. See the examples below for function use.
+
+    .. [1] Kyle M. Straub, Chris Paola, David Mohrig, Matthew A. Wolinsky,
+           Terra George; Compensational Stacking of Channelized Sedimentary
+           Deposits. Journal of Sedimentary Research 2009; 79 (9): 673–688.
+           doi: 10.2110/jsr.2009.070
+
+    .. [2] Yinan Wang, Kyle M. Straub, Elizabeth A. Hajek; Scale-dependent
+           compensational stacking: An estimate of autogenic time scales in
+           channelized sedimentary deposits. Geology 2011; 39 (9): 811–814. 
+           doi: 10.1130/G32068.1
+    
     Parameters
     ----------
-    line1 : ndarray
-        First surface to use (two-dimensional matrix with x-z coordinates of
-        line).
+    stratal_surface : :obj:`ndarray` or :obj:`DataArray`
+        Array of stratigraphic surfaces, with vaules in the array representing
+        elevations (i.e., stratigraphic height) and any other dimensions
+        representing a spatial coordinate. This array should record along the
+        first dimension each isochron in the stratigraphic record collapsed
+        to that elevation at which the sedimentary surface at all later times
+        occupied a higher stratigraphic height.
 
-    line2 : ndarray
-        Second surface to use (two-dimensional matrix with x-z coordinates of
-        line).
+    time_idxs : :obj:`ndarray`, optional
+        Which time indices of the :obj:`stratal_surfaces` array to use for
+        computation. I.e., specifying indices will subset the
+        `stratal_surfaces` array for faster computations.
+
+    clip_ends : :obj:`int`, optional
+        How many stratigraphic columns from the edge of the section to ignore
+        from the computation. This can be used to remove columns which have no
+        deposition recorded, or are effected by bouundary conditions and/or 
+        wall effects. Can be `int` or 2-tuple of `int`, specifying the left
+        and right clip indicies. Default is `0`, no clipping.
 
     Returns
     -------
-    CV : float
-        Compensation statistic.
+    sigmas
+        Compensation calculation for all combinations of pairs in 
+        :obj:`stratal_surfaces`.
+
+    window_lengths
+        The averaging windows used for each compensation calculation. These
+        values are returned in the same coordinates as input :obj:`times`.
+        For example, if :obj:`stratal_surfaces` is a `DataArray` then
+        `window_lengths` records the time intervals between surfaces, and
+        if :obj:`stratal_surfaces` is an `ndarray` then `window_lengths`
+        records the number of array indices between surfaces.
+
+    Examples
+    --------
 
     """
-    raise NotImplementedError()
+    if time_idxs is None:
+        time_idxs = np.arange(stratal_surfaces.shape[0])
+    else:
+        raise NotImplementedError('Only works for processing all surfaces right now.')
+        # how do we handle a case where time intervals are known (rather than idxs)
+        #   and the intervals are not equally spaced?
+
+    # pull times for the computation
+    if isinstance(stratal_surfaces, xr.DataArray):
+        dim0 = stratal_surfaces.dims[0]
+        times = stratal_surfaces[dim0][time_idxs]
+    else:
+        # use indexes = 1
+        times = np.arange(len(time_idxs), dtype=float)
+
+    if stratal_surfaces.ndim != 2:
+        raise ValueError('Not able to handle 3d or 1d yet.')
+
+    # clip domain edges if specified
+    if clip_ends == 0:
+        ss = stratal_surfaces      
+    elif isinstance(clip_ends, int) or isinstance(clip_ends, float):
+        ss = stratal_surfaces[:, clip_ends:-clip_ends]
+    elif isinstance(clip_ends, tuple):
+        ss = stratal_surfaces[:, clip_ends[0]:-clip_ends[1]]
+
+    # prepare the data for the jitted (?) computation routine
+    if np.any(np.isnan(stratal_surfaces)):
+        # this could probably be relaxed, to clip out any
+        #    columns with any nans
+        raise ValueError('NaN found in stratal surfaces.')
+
+    # run the computation routine (jitted?)
+    sigmas, windows = _compute_compensation(ss, times)
+
+    return sigmas, windows
+
+
+def _compute_compensation(stratal_surfaces, times):
+    """Compensation statistic implementation.
+
+    Delared private, this method has the actual implementation code of the
+    compensation statistic. If you want a subset of space of time indices
+    from the strigraphic array, this should be taken care of in a preprocessesing
+    step.
+     
+    .. important::
+
+        This helper function is meant to be efficient, so data must be
+        properly prepared in dimensionality. E.g., there can be no `np.nan`
+        values in the array, and `times` must be provided to match the shape
+        of `stratal_surfaces`. There are no data input checks in this
+        function; see public function :obj:`compute_compensation` for a more
+        flexible function.
+
+    Parameters
+    ----------
+    stratal_surfaces : :obj:`ndarray`
+        Array of stratigraphic surfaces. I.e., the values in the array are
+        z (elevation) values, and the first axis is organized as time,
+        and the second and third axes are spatial dimensions; these could be an
+        along-section coordinate or x-y dimensions for a surface.
+
+    times : :obj:`ndarray`
+
+        Times corresponding to each stratigraphic surface
+        in :obj:`stratal_surfaces`. This can be time in real coordinates
+        (seconds, years) or indices (an
+        ``np.arange(stratal_surfaces.shape[0]``).
+
+    Returns
+    -------
+    sigmas
+        Compensation calculation for all combinations of pairs in 
+        :obj:`stratal_surfaces`.
+
+    window_lengths
+        The windows used for each compensation calculation. These values are
+        returned in the same coordinates as input :obj:`times`.
+    """
+    n_surfaces = stratal_surfaces.shape[0]  # number of time indices
+    detabar = np.mean(stratal_surfaces[-1] - stratal_surfaces[0])  # mean aggradation length over the whole section
+    n_sigmas = int((n_surfaces - 1) * (1 + (n_surfaces - 1)) / 2)  # number of sigma we will return (n choose k (k=2))
+    sigmas = np.zeros(n_sigmas)  # preallocate for storage
+    window_lengths = np.zeros(n_sigmas)  # preallocate for storage
+    k = 0  # storage counter
+    total_time = times[-1] - times[0]
+    # for each surface
+    for i in np.arange(1, n_surfaces):
+        # compare with all other surfaces earlier than it
+        for j in np.arange(0, i):
+            # do the compensation calc
+            deta = stratal_surfaces[i] - stratal_surfaces[j]  # elev diff (strat thickness)
+            dt = times[i] - times[j]
+            window_length = (detabar / total_time) * dt
+            norm_deta = (deta / window_length)  # norm elev diff (norm strat thickness)
+            window_lengths[k] = window_length
+            sigmas[k] = np.std(norm_deta)
+            k += 1  # storage counter
+    return sigmas, window_lengths
 
 
 def _determine_deposit_from_background(sediment_volume, background):
