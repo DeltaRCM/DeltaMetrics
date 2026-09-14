@@ -112,22 +112,25 @@ a dictionary.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.register_section" title="sandplover.cube.DataCube.register_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_section</span></code></a>(name, SectionInstance[, ...])</p></td>
 <td><p>Register a section to the <a class="reference internal" href="#sandplover.cube.DataCube.section_set" title="sandplover.cube.DataCube.section_set"><code class="xref py py-attr docutils literal notranslate"><span class="pre">section_set</span></code></a>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.set_aux" title="sandplover.cube.DataCube.set_aux"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_aux</span></code></a>(auxdata)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.register_variable" title="sandplover.cube.DataCube.register_variable"><code class="xref py py-obj docutils literal notranslate"><span class="pre">register_variable</span></code></a>(name, data)</p></td>
+<td><p>Register a variable to the cube.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.set_aux" title="sandplover.cube.DataCube.set_aux"><code class="xref py py-obj docutils literal notranslate"><span class="pre">set_aux</span></code></a>(auxdata)</p></td>
 <td><p>Set a group of the DataIO layer as the 'aux' group.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.show_cube" title="sandplover.cube.DataCube.show_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_cube</span></code></a>(var[, style, ve, ax])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.show_cube" title="sandplover.cube.DataCube.show_cube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_cube</span></code></a>(var[, style, ve, ax])</p></td>
 <td><p>Show the cube in a 3D axis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.show_plan" title="sandplover.cube.DataCube.show_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_plan</span></code></a>(*args, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.show_plan" title="sandplover.cube.DataCube.show_plan"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_plan</span></code></a>(*args, **kwargs)</p></td>
 <td><p>Deprecated.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.show_planform" title="sandplover.cube.DataCube.show_planform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_planform</span></code></a>(name, variable, **kwargs)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.show_planform" title="sandplover.cube.DataCube.show_planform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_planform</span></code></a>(name, variable, **kwargs)</p></td>
 <td><p>Show a registered planform by name and variable.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.show_section" title="sandplover.cube.DataCube.show_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_section</span></code></a>(name, variable, **kwargs)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.show_section" title="sandplover.cube.DataCube.show_section"><code class="xref py py-obj docutils literal notranslate"><span class="pre">show_section</span></code></a>(name, variable, **kwargs)</p></td>
 <td><p>Show a registered section by name and variable.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.stratigraphy_from" title="sandplover.cube.DataCube.stratigraphy_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stratigraphy_from</span></code></a>([variable, style])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.stratigraphy_from" title="sandplover.cube.DataCube.stratigraphy_from"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stratigraphy_from</span></code></a>([variable, style])</p></td>
 <td><p>Compute stratigraphy attributes.</p></td>
 </tr>
 </tbody>
@@ -192,28 +195,31 @@ a dictionary.</p></li>
 <tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.planforms" title="sandplover.cube.DataCube.planforms"><code class="xref py py-obj docutils literal notranslate"><span class="pre">planforms</span></code></a></p></td>
 <td><p>Set of plan instances.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.section_set" title="sandplover.cube.DataCube.section_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_set</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.registered_variables" title="sandplover.cube.DataCube.registered_variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">registered_variables</span></code></a></p></td>
+<td><p>List of variable names as strings, subset to those registered (i.e., not in the underlying data).</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.section_set" title="sandplover.cube.DataCube.section_set"><code class="xref py py-obj docutils literal notranslate"><span class="pre">section_set</span></code></a></p></td>
 <td><p>Set of section instances.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.sections" title="sandplover.cube.DataCube.sections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sections</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.sections" title="sandplover.cube.DataCube.sections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sections</span></code></a></p></td>
 <td><p>Set of section instances.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.shape" title="sandplover.cube.DataCube.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.shape" title="sandplover.cube.DataCube.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">shape</span></code></a></p></td>
 <td><p>Number of elements in data (HxLxW).</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">strata</span></code></p></td>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">strata</span></code></p></td>
 <td><p></p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.t" title="sandplover.cube.DataCube.t"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.t" title="sandplover.cube.DataCube.t"><code class="xref py py-obj docutils literal notranslate"><span class="pre">t</span></code></a></p></td>
 <td><p>time coordinate.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.variables" title="sandplover.cube.DataCube.variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></a></p></td>
-<td><p>List of variable names as strings.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.variables" title="sandplover.cube.DataCube.variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">variables</span></code></a></p></td>
+<td><p>Variable available to DataCube.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.varset" title="sandplover.cube.DataCube.varset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varset</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.varset" title="sandplover.cube.DataCube.varset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">varset</span></code></a></p></td>
 <td><p>Variable styling for plotting.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.z" title="sandplover.cube.DataCube.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.cube.DataCube.z" title="sandplover.cube.DataCube.z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">z</span></code></a></p></td>
 <td><p>Vertical coordinate.</p></td>
 </tr>
 </tbody>
@@ -378,7 +384,7 @@ data off-disk as needed.</p>
 <dt class="sig sig-object py" id="sandplover.cube.DataCube.planforms">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">planforms</span></span><a class="headerlink" href="#sandplover.cube.DataCube.planforms" title="Link to this definition">¶</a></dt>
 <dd><p>Set of plan instances.</p>
-<p>Alias to <code class="xref py py-meth docutils literal notranslate"><span class="pre">plan_set()</span></code>.</p>
+<p>Alias to <a class="reference internal" href="#sandplover.cube.DataCube.planform_set" title="sandplover.cube.DataCube.planform_set"><code class="xref py py-meth docutils literal notranslate"><span class="pre">planform_set()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><cite>dict</cite></p>
@@ -495,6 +501,59 @@ user having to specify <code class="docutils literal notranslate"><span class="p
 the <code class="docutils literal notranslate"><span class="pre">register_section()</span></code> call, and instead can do something like
 <code class="docutils literal notranslate"><span class="pre">golf.register_section('trial',</span> <span class="pre">trace='strike',</span>
 <span class="pre">distance=2000)</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="sandplover.cube.DataCube.register_variable">
+<span class="sig-name descname"><span class="pre">register_variable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#sandplover.cube.DataCube.register_variable" title="Link to this definition">¶</a></dt>
+<dd><p>Register a variable to the cube.</p>
+<p>Add a variable to the cube, which can be accessed and sliced identically
+to underlying data.</p>
+<p>This is generally useful for data that are derived in the course of
+analyses (i.e., not a part of the original dataset) but are useful (in a
+general sense) for subsequent analyses.</p>
+<p>Only variables with identical dimensionality to the underlying dataset
+can be registered. Registered variables should not be modified after
+registration, but can be easily used in subsequent analysis.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Registered variables are stored in memory, and are not recorded to
+underlying data!</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>) – The name to register the variable.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">xr.DataArray</span></code> or <code class="xref py py-obj docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – The data to register. Must have same dimensionality as underying
+data variables.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<p>See the example document <a class="reference internal" href="../guides/examples/create_from/register_variable.html"><span class="doc">Registering Custom Variables to Cubes</span></a>.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">sandplover.sample_data.sample_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">golf</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">golf</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">register_variable</span><span class="p">(</span><span class="s2">"somevar"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">golfcube</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>A list of registered variables can be accessed with:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">golfcube</span><span class="o">.</span><span class="n">registered_variables</span>
+<span class="go">['somevar']</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sandplover.cube.DataCube.registered_variables">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">registered_variables</span></span><a class="headerlink" href="#sandplover.cube.DataCube.registered_variables" title="Link to this definition">¶</a></dt>
+<dd><p>List of variable names as strings, subset to those registered (i.e., not in the underlying data).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><cite>list</cite></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -657,12 +716,9 @@ see :obj:_determine_strat_coordinates`.</p></li>
 <dl class="py property">
 <dt class="sig sig-object py" id="sandplover.cube.DataCube.variables">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">variables</span></span><a class="headerlink" href="#sandplover.cube.DataCube.variables" title="Link to this definition">¶</a></dt>
-<dd><p>List of variable names as strings.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><cite>list</cite></p>
-</dd>
-</dl>
+<dd><p>Variable available to DataCube.</p>
+<p>Includes only underlying data available from DataIO layer and registered
+variables.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -726,6 +782,8 @@ see :obj:_determine_strat_coordinates`.</p></li>
 <li><a class="reference internal" href="#sandplover.cube.DataCube.register_plan"><code class="docutils literal notranslate"><span class="pre">DataCube.register_plan()</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.cube.DataCube.register_planform"><code class="docutils literal notranslate"><span class="pre">DataCube.register_planform()</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.cube.DataCube.register_section"><code class="docutils literal notranslate"><span class="pre">DataCube.register_section()</span></code></a></li>
+<li><a class="reference internal" href="#sandplover.cube.DataCube.register_variable"><code class="docutils literal notranslate"><span class="pre">DataCube.register_variable()</span></code></a></li>
+<li><a class="reference internal" href="#sandplover.cube.DataCube.registered_variables"><code class="docutils literal notranslate"><span class="pre">DataCube.registered_variables</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.cube.DataCube.section_set"><code class="docutils literal notranslate"><span class="pre">DataCube.section_set</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.cube.DataCube.sections"><code class="docutils literal notranslate"><span class="pre">DataCube.sections</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.cube.DataCube.set_aux"><code class="docutils literal notranslate"><span class="pre">DataCube.set_aux()</span></code></a></li>

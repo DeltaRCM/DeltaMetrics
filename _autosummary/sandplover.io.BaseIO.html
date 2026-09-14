@@ -82,9 +82,12 @@ subclass <cite>BaseIO</cite> directly, and you just need to implement the
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#sandplover.io.BaseIO.keys" title="sandplover.io.BaseIO.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a></p></td>
-<td><p>Should link to all key _names_ stored in file.</p></td>
+<td><p>Should link to all key _names_ available in dataio layer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.io.BaseIO.meta" title="sandplover.io.BaseIO.meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.io.BaseIO.known_variables" title="sandplover.io.BaseIO.known_variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">known_variables</span></code></a></p></td>
+<td><p>Variables known to the dataio layer</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.io.BaseIO.meta" title="sandplover.io.BaseIO.meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta</span></code></a></p></td>
 <td><p>alias for backwards compatability</p></td>
 </tr>
 </tbody>
@@ -92,13 +95,24 @@ subclass <cite>BaseIO</cite> directly, and you just need to implement the
 <dl class="py method">
 <dt class="sig sig-object py" id="sandplover.io.BaseIO.__getitem__">
 <span class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#sandplover.io.BaseIO.__getitem__" title="Link to this definition">¶</a></dt>
-<dd><p>Should slice the data from file.</p>
+<dd><p>Should slice the data from underlying data.</p>
+<p>Must be implemented to appropriately slice from file, dict, folder
+structure etc. Must be implemented to appropriately search underlying
+data variables and variables in <code class="xref py py-attr docutils literal notranslate"><span class="pre">_in_memory_data</span></code> during
+slice.</p>
 </dd></dl>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="sandplover.io.BaseIO.keys">
 <span class="property"><span class="k"><span class="pre">abstract</span></span><span class="w"> </span><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">keys</span></span><a class="headerlink" href="#sandplover.io.BaseIO.keys" title="Link to this definition">¶</a></dt>
-<dd><p>Should link to all key _names_ stored in file.</p>
+<dd><p>Should link to all key _names_ available in dataio layer.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sandplover.io.BaseIO.known_variables">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">known_variables</span></span><a class="headerlink" href="#sandplover.io.BaseIO.known_variables" title="Link to this definition">¶</a></dt>
+<dd><p>Variables known to the dataio layer</p>
+<p>Includes underlying data variables and registered variables.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -126,6 +140,7 @@ subclass <cite>BaseIO</cite> directly, and you just need to implement the
 <li><a class="reference internal" href="#sandplover.io.BaseIO.__init__"><code class="docutils literal notranslate"><span class="pre">BaseIO.__init__()</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.io.BaseIO.__getitem__"><code class="docutils literal notranslate"><span class="pre">BaseIO.__getitem__()</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.io.BaseIO.keys"><code class="docutils literal notranslate"><span class="pre">BaseIO.keys</span></code></a></li>
+<li><a class="reference internal" href="#sandplover.io.BaseIO.known_variables"><code class="docutils literal notranslate"><span class="pre">BaseIO.known_variables</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.io.BaseIO.meta"><code class="docutils literal notranslate"><span class="pre">BaseIO.meta</span></code></a></li>
 </ul>
 </li>

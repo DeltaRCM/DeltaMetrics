@@ -20,6 +20,7 @@
       ~BaseCube.register_plan
       ~BaseCube.register_planform
       ~BaseCube.register_section
+      ~BaseCube.register_variable
       ~BaseCube.set_aux
       ~BaseCube.show_cube
       ~BaseCube.show_plan
@@ -52,6 +53,7 @@
       ~BaseCube.meta
       ~BaseCube.planform_set
       ~BaseCube.planforms
+      ~BaseCube.registered_variables
       ~BaseCube.section_set
       ~BaseCube.sections
       ~BaseCube.shape

@@ -121,7 +121,10 @@ disabled, unless <code class="docutils literal notranslate"><span class="pre">wr
 <tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.io.NetCDFIO.keys" title="sandplover.io.NetCDFIO.keys"><code class="xref py py-obj docutils literal notranslate"><span class="pre">keys</span></code></a></p></td>
 <td><p>Variable names in file.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.io.NetCDFIO.meta" title="sandplover.io.NetCDFIO.meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#sandplover.io.NetCDFIO.known_variables" title="sandplover.io.NetCDFIO.known_variables"><code class="xref py py-obj docutils literal notranslate"><span class="pre">known_variables</span></code></a></p></td>
+<td><p>Variables known to the dataio layer</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#sandplover.io.NetCDFIO.meta" title="sandplover.io.NetCDFIO.meta"><code class="xref py py-obj docutils literal notranslate"><span class="pre">meta</span></code></a></p></td>
 <td><p>alias for backwards compatability</p></td>
 </tr>
 </tbody>
@@ -177,6 +180,13 @@ IO object, so it is not necessary to call it directly.</p>
 <dt class="sig sig-object py" id="sandplover.io.NetCDFIO.keys">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">keys</span></span><a class="headerlink" href="#sandplover.io.NetCDFIO.keys" title="Link to this definition">¶</a></dt>
 <dd><p>Variable names in file.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="sandplover.io.NetCDFIO.known_variables">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">known_variables</span></span><a class="headerlink" href="#sandplover.io.NetCDFIO.known_variables" title="Link to this definition">¶</a></dt>
+<dd><p>Variables known to the dataio layer</p>
+<p>Includes underlying data variables and registered variables.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -241,6 +251,7 @@ loaded into memory. Set <cite>force=True</cite> to override this check.</p>
 <li><a class="reference internal" href="#sandplover.io.NetCDFIO.get_known_coords"><code class="docutils literal notranslate"><span class="pre">NetCDFIO.get_known_coords()</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.io.NetCDFIO.get_known_variables"><code class="docutils literal notranslate"><span class="pre">NetCDFIO.get_known_variables()</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.io.NetCDFIO.keys"><code class="docutils literal notranslate"><span class="pre">NetCDFIO.keys</span></code></a></li>
+<li><a class="reference internal" href="#sandplover.io.NetCDFIO.known_variables"><code class="docutils literal notranslate"><span class="pre">NetCDFIO.known_variables</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.io.NetCDFIO.meta"><code class="docutils literal notranslate"><span class="pre">NetCDFIO.meta</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.io.NetCDFIO.read"><code class="docutils literal notranslate"><span class="pre">NetCDFIO.read()</span></code></a></li>
 <li><a class="reference internal" href="#sandplover.io.NetCDFIO.write"><code class="docutils literal notranslate"><span class="pre">NetCDFIO.write()</span></code></a></li>

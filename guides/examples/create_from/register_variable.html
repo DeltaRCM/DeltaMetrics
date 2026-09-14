@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../../../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Registering Custom Variables to Cubes &#8212; sandplover 0.5.1 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d75fae25" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css?v=34905f61" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" href="../../../_static/style.css" type="text/css" />
+    <script src="../../../_static/documentation_options.js?v=b9afe91b"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Creating Sections into Masks and Planforms" href="sections_into_arbitrary.html" />
+    <link rel="prev" title="Aggradation and preserved time" href="../computations/aggradation_preserved_time.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="sections_into_arbitrary.html" title="Creating Sections into Masks and Planforms"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../computations/aggradation_preserved_time.html" title="Aggradation and preserved time"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">sandplover 0.5.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Registering Custom Variables to Cubes</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="registering-custom-variables-to-cubes">
+<h1>Registering Custom Variables to Cubes<a class="headerlink" href="#registering-custom-variables-to-cubes" title="Link to this heading">¶</a></h1>
+<p>This example demonstrates how to generate a custom variable, register it to a
+<a class="reference internal" href="../../../_autosummary/sandplover.cube.DataCube.html#sandplover.cube.DataCube" title="sandplover.cube.DataCube"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataCube</span></code></a> in <code class="docutils literal notranslate"><span class="pre">sandplover</span></code>, and compute derived
+variables directly on a <a class="reference internal" href="../../../_autosummary/sandplover.cube.StratigraphyCube.html#sandplover.cube.StratigraphyCube" title="sandplover.cube.StratigraphyCube"><code class="xref py py-class docutils literal notranslate"><span class="pre">StratigraphyCube</span></code></a>.</p>
+<p>During analyses, it is very common to derive custom data variables. For example,
+grain-size estimates, synthetic tracer concentrations, or any other variable you
+may imagine!</p>
+<p>To seamlessly use <code class="docutils literal notranslate"><span class="pre">sandplover</span></code> built-in tools (such as <cite>Section</cite> slicing,
+stratigraphy mapping, and visualization tools), you can <strong>register</strong> these
+derived variables directly to a <a class="reference internal" href="../../../_autosummary/sandplover.cube.DataCube.html#sandplover.cube.DataCube" title="sandplover.cube.DataCube"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataCube</span></code></a> or a
+<a class="reference internal" href="../../../_autosummary/sandplover.cube.StratigraphyCube.html#sandplover.cube.StratigraphyCube" title="sandplover.cube.StratigraphyCube"><code class="xref py py-class docutils literal notranslate"><span class="pre">StratigraphyCube</span></code></a>.</p>
+<p>Once registered, custom variables can be sliced using <code class="docutils literal notranslate"><span class="pre">sandplover.section</span></code>
+objects (e.g., <a class="reference internal" href="../../../_autosummary/sandplover.section.StrikeSection.html#sandplover.section.StrikeSection" title="sandplover.section.StrikeSection"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrikeSection</span></code></a> or
+<a class="reference internal" href="../../../_autosummary/sandplover.section.DipSection.html#sandplover.section.DipSection" title="sandplover.section.DipSection"><code class="xref py py-class docutils literal notranslate"><span class="pre">DipSection</span></code></a>) just like any native data variable.</p>
+<p>Spacetime data that are registered to a <cite>DataCube</cite> can be used in further
+spatiotemporal analyses, sliced along a section, or mapped to stratigraphy for
+additional analyses in that domain. Stratigraphic data can be registered to a
+<cite>StratigraphyCube</cite> and used in any additional stratigraphic analyses.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Data must match the shape of the <cite>Cube</cite> to which you are attempting to register.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">xarray</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">xr</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sandplover</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spl</span>
+
+<span class="c1"># Load sample data and instantiate Cubes</span>
+<span class="n">test_data</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>  <span class="c1"># DataCube</span>
+<span class="n">test_strat</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">cube</span><span class="o">.</span><span class="n">StratigraphyCube</span><span class="o">.</span><span class="n">from_DataCube</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">dz</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># StratigraphyCube</span>
+
+<span class="c1"># Create a synthetic 3D variable</span>
+<span class="n">new_variable</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="s2">"eta"</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+    <span class="n">new_variable</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="s2">"eta"</span><span class="p">][</span><span class="n">t</span><span class="p">])</span> <span class="o">*</span> <span class="mf">12345.6789</span><span class="p">)</span> <span class="o">*</span> <span class="mf">43758.5453</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="p">)</span>
+
+<span class="c1"># Register the new variable to the DataCube</span>
+<span class="n">test_data</span><span class="o">.</span><span class="n">register_variable</span><span class="p">(</span><span class="s2">"new_var"</span><span class="p">,</span> <span class="n">new_variable</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="../../../_downloads/c96b74a3cac3574e114a262437900de2/register_variable-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>)</p>
+<p>This variable can now be sliced manually, like any other variable of the <cite>DataCube</cite>, or can be sliced with a Section object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># make a strike section</span>
+<span class="n">strike_data</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">test_data</span><span class="p">,</span> <span class="n">distance_idx</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="s2">"new_var"</span><span class="p">][:,</span> <span class="mi">20</span><span class="p">,</span> <span class="p">:],</span> <span class="n">origin</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">)</span>
+<span class="n">strike_data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s2">"new_var"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="../../../_downloads/e87813a17be8c76899f6a8a9d20c7ec6/register_variable-2.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/9667c95385b29c2b7413a293ce705155/register_variable-2.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/956b33bc8d113bef7dbf36dd162891d3/register_variable-2.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../_images/register_variable-2.png" class="plot-directive" src="../../../_images/register_variable-2.png" />
+</figure>
+<p>Similarly, we can register a variable to a StratigraphyCube, making sure that the new data are the correct shape!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Register the square root of the variable directly to the StratigraphyCube</span>
+<span class="n">test_strat</span><span class="o">.</span><span class="n">register_variable</span><span class="p">(</span><span class="s2">"sqrt_new_var"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">test_strat</span><span class="p">[</span><span class="s2">"new_var"</span><span class="p">]))</span>
+
+<span class="c1"># make a strike section</span>
+<span class="n">strike_strat</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">StrikeSection</span><span class="p">(</span><span class="n">test_strat</span><span class="p">,</span> <span class="n">distance_idx</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">test_strat</span><span class="p">[</span><span class="s2">"sqrt_new_var"</span><span class="p">][:,</span> <span class="mi">20</span><span class="p">,</span> <span class="p">:],</span> <span class="n">origin</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">)</span>
+<span class="n">strike_strat</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s2">"sqrt_new_var"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="../../../_downloads/b0f7d709aff77f5bc46a1de6750e0000/register_variable-3.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/1af0f754827cbd03de114aaa916b71f1/register_variable-3.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/8816fc31020cfd30d8ba621a6eee6879/register_variable-3.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../_images/register_variable-3.png" class="plot-directive" src="../../../_images/register_variable-3.png" />
+</figure>
+<p>Note that, because the <cite>StratigraphyCube</cite> shares a <cite>DataIO</cite> layer with the
+<cite>DataCube</cite>, the former can also access <cite>new_var</cite>. But, because the shape would
+be incorrect for the <cite>DataCube</cite>, and we don’t have complete spacetime
+information available, trying to access the <cite>sqrt_new_var</cite> variable of the
+<cite>DataCube</cite> results in an error! (See advanced usage below.)</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">test_strat</span><span class="p">[</span><span class="s2">"new_var"</span><span class="p">]</span>  <span class="c1"># this works</span>
+<span class="n">test_data</span><span class="p">[</span><span class="s2">"sqrt_new_var"</span><span class="p">]</span>  <span class="c1"># this does not work</span>
+</pre></div>
+</div>
+<section id="advanced-usage">
+<h2>Advanced usage<a class="headerlink" href="#advanced-usage" title="Link to this heading">¶</a></h2>
+<p>We don’t recommend it (see below), but if you completely <em>insist</em> on getting
+spacetime-shaped data for a variable that is registered to a <cite>StratigraphyCube</cite>,
+you can manually synthesize a <cite>DataArray</cite> using the method below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># preallocate an array and then populate with stratigraphic data</span>
+<span class="n">sqrt_new_var_spacetime</span> <span class="o">=</span> <span class="n">xr</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">test_data</span><span class="p">[</span><span class="s2">"eta"</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+<span class="n">sqrt_new_var_spacetime</span><span class="o">.</span><span class="n">data</span><span class="p">[</span>
+    <span class="n">test_strat</span><span class="o">.</span><span class="n">data_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="n">test_strat</span><span class="o">.</span><span class="n">data_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">test_strat</span><span class="o">.</span><span class="n">data_coords</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
+<span class="p">]</span> <span class="o">=</span> <span class="n">test_strat</span><span class="o">.</span><span class="n">dataio</span><span class="p">[</span><span class="s2">"sqrt_new_var"</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">[</span>
+    <span class="n">test_strat</span><span class="o">.</span><span class="n">strata_coords</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+    <span class="n">test_strat</span><span class="o">.</span><span class="n">strata_coords</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+    <span class="n">test_strat</span><span class="o">.</span><span class="n">strata_coords</span><span class="p">[:,</span> <span class="mi">2</span><span class="p">],</span>
+<span class="p">]</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="../../../_downloads/12359c43f881f125024d98c95b248732/register_variable-4.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>)</p>
+<p>You can even register this new spacetime data to the <cite>DataCube</cite> and slice /
+section it:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_data</span><span class="o">.</span><span class="n">register_variable</span><span class="p">(</span><span class="s2">"sqrt_new_var_spacetime"</span><span class="p">,</span> <span class="n">sqrt_new_var_spacetime</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sqrt_new_var_spacetime</span><span class="p">[:,</span> <span class="mi">20</span><span class="p">,</span> <span class="p">:],</span> <span class="n">origin</span><span class="o">=</span><span class="s2">"lower"</span><span class="p">)</span>
+<span class="n">strike_data</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="s2">"sqrt_new_var_spacetime"</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="../../../_downloads/e5fab616a47e7d0077a9132c4cd98641/register_variable-5.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/f5b6d4acd9106ee4efb4768b917ed410/register_variable-5.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/aa85d967ab792e3d4e3a7773e1d47ae2/register_variable-5.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../_images/register_variable-5.png" class="plot-directive" src="../../../_images/register_variable-5.png" />
+</figure>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Make sure to register the spacetime variable under a new name, because the <cite>Cube`s share an underlying `DataIO</cite>!</p>
+</div>
+<p><strong>Whenever possible, we recommend avoiding this method</strong>. Instead, try to
+calculate the derived variable directly on spacetime data, then register that
+data to the <cite>DataCube</cite>, and then access via a derived <cite>StratigraphyCube</cite> as
+needed.</p>
+</section>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+  <div>
+    <h3><a href="../../../index.html">Table of Contents</a></h3>
+    <ul>
+<li><a class="reference internal" href="#">Registering Custom Variables to Cubes</a><ul>
+<li><a class="reference internal" href="#advanced-usage">Advanced usage</a></li>
+</ul>
+</li>
+</ul>
+
+  </div>
+  <div>
+    <h4>Previous topic</h4>
+    <p class="topless"><a href="../computations/aggradation_preserved_time.html"
+                          title="previous chapter">Aggradation and preserved time</a></p>
+  </div>
+  <div>
+    <h4>Next topic</h4>
+    <p class="topless"><a href="sections_into_arbitrary.html"
+                          title="next chapter">Creating Sections into Masks and Planforms</a></p>
+  </div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/guides/examples/create_from/register_variable.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="Related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="sections_into_arbitrary.html" title="Creating Sections into Masks and Planforms"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../computations/aggradation_preserved_time.html" title="Aggradation and preserved time"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">sandplover 0.5.1 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Examples</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Registering Custom Variables to Cubes</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+    &#169; Copyright 2025, The sandpiper-toolchain Team.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.1.0.
+    </div>
+  </body>
+</html>

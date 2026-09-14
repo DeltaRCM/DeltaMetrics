@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Creating Sections into different types of objects &#8212; sandplover 0.5.1 documentation</title>
+    <title>Creating Sections into Masks and Planforms &#8212; sandplover 0.5.1 documentation</title>
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=d75fae25" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinxdoc.css?v=34905f61" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
@@ -17,7 +17,7 @@
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Creating Sections into different types of objects" href="masks_from_planforms.html" />
-    <link rel="prev" title="Aggradation and preserved time" href="../computations/aggradation_preserved_time.html" /> 
+    <link rel="prev" title="Registering Custom Variables to Cubes" href="register_variable.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="Related">
       <h3>Navigation</h3>
@@ -29,11 +29,11 @@
           <a href="masks_from_planforms.html" title="Creating Sections into different types of objects"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="../computations/aggradation_preserved_time.html" title="Aggradation and preserved time"
+          <a href="register_variable.html" title="Registering Custom Variables to Cubes"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">sandplover 0.5.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Examples</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Creating Sections into different types of objects</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Creating Sections into Masks and Planforms</a></li> 
       </ul>
     </div>  
 
@@ -42,10 +42,13 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <section id="creating-sections-into-different-types-of-objects">
-<h1>Creating Sections into different types of objects<a class="headerlink" href="#creating-sections-into-different-types-of-objects" title="Link to this heading">¶</a></h1>
-<p>Conventionally, we draw <cite>Section</cite> objects into a <cite>Cube</cite>. However, it is also possible to create <cite>Section</cite> objects into other objects, such as a <cite>Mask</cite> or <cite>Planform</cite> or any arbitrary array-like data.</p>
-<p>First, let’s create a <cite>Section</cite> into a <cite>Cube</cite> and a basic <cite>Planform</cite> and compare.</p>
+  <section id="creating-sections-into-masks-and-planforms">
+<h1>Creating Sections into Masks and Planforms<a class="headerlink" href="#creating-sections-into-masks-and-planforms" title="Link to this heading">¶</a></h1>
+<p>Conventionally, we draw <cite>Section</cite> objects into a <cite>Cube</cite>. However, it is also
+possible to create <cite>Section</cite> objects into other objects, such as a <cite>Mask</cite> or
+<cite>Planform</cite>, as well as any arbitrary array-like data.</p>
+<p>First, let’s create a <cite>Section</cite> into a <cite>Cube</cite> and a basic <cite>Planform</cite> and
+compare.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">golfcube</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">sample_data</span><span class="o">.</span><span class="n">golf</span><span class="p">()</span>
 <span class="n">pl</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">plan</span><span class="o">.</span><span class="n">Planform</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">idx</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
@@ -63,8 +66,12 @@
 <figure class="align-default">
 <img alt="../../../_images/sections_into_arbitrary-1.png" class="plot-directive" src="../../../_images/sections_into_arbitrary-1.png" />
 </figure>
-<p>Because the <cite>css</cite> section is underlain by a <cite>Cube</cite>, it returns variables with dimensions <cite>time x along section</cite>. Whereas, the <cite>pss</cite> section is underlain by a <cite>Planform</cite> at time index <cite>-1</cite>, it returns variables with dimensions <cite>along section</cite>.</p>
-<p>If we plot the elevation returned from <cite>pss</cite> and the last time index of the <cite>css</cite>, we can see that the underlying data are the same!</p>
+<p>Because the <cite>css</cite> section is underlain by a <cite>Cube</cite>, it returns variables with
+dimensions <cite>time x along section</cite>. Whereas, the <cite>pss</cite> section is underlain by a
+<cite>Planform</cite> at time index <cite>-1</cite>, it returns variables with dimensions <cite>along
+section</cite>.</p>
+<p>If we plot the elevation returned from <cite>pss</cite> and the last time index of the
+<cite>css</cite>, we can see that the underlying data are the same!</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">css</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">css</span><span class="p">[</span><span class="s1">'eta'</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span>
@@ -77,7 +84,8 @@
 <figure class="align-default">
 <img alt="../../../_images/sections_into_arbitrary-2.png" class="plot-directive" src="../../../_images/sections_into_arbitrary-2.png" />
 </figure>
-<p>Similarly to creating a <cite>Section</cite> into the <cite>Planform</cite>, we can use an underlying <cite>Mask</cite>.</p>
+<p>Similarly to creating a <cite>Section</cite> into the <cite>Planform</cite>, we can use an underlying
+<cite>Mask</cite>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">EM</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">mask</span><span class="o">.</span><span class="n">ElevationMask</span><span class="p">(</span>
     <span class="n">golfcube</span><span class="p">[</span><span class="s2">"eta"</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
     <span class="n">elevation_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
@@ -94,8 +102,15 @@
 </figure>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>A common “gotcha” is forgetting that some <cite>Section</cite> types (e.g., <a class="reference internal" href="../../../_autosummary/sandplover.section.CircularSection.html#sandplover.section.CircularSection" title="sandplover.section.CircularSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CircularSection</span></code></a> and <a class="reference internal" href="../../../_autosummary/sandplover.section.RadialSection.html#sandplover.section.RadialSection" title="sandplover.section.RadialSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RadialSection</span></code></a>) will try to guess a useful <cite>origin</cite> during instantiation, by reading various attributes of an underlying <cite>DataCube</cite>. These attributes are not available during instantiation of a <cite>Section</cite> that reads into a <cite>Planform</cite> or <cite>Mask</cite>. This can lead to discrepencies in the locations of the Section objects!</p>
-<p>In this example, the <cite>Section</cite> into the <cite>Planform</cite> is offset by <cite>L0</cite>, because this attribute is not known to the <cite>Planform</cite>.</p>
+<p>A common “gotcha” is forgetting that some <cite>Section</cite> types (e.g.,
+<a class="reference internal" href="../../../_autosummary/sandplover.section.CircularSection.html#sandplover.section.CircularSection" title="sandplover.section.CircularSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CircularSection</span></code></a> and
+<a class="reference internal" href="../../../_autosummary/sandplover.section.RadialSection.html#sandplover.section.RadialSection" title="sandplover.section.RadialSection"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RadialSection</span></code></a>) will try to guess a useful
+<cite>origin</cite> during instantiation, by reading various attributes of an
+underlying <cite>DataCube</cite>. These attributes are not available during
+instantiation of a <cite>Section</cite> that reads into a <cite>Planform</cite> or <cite>Mask</cite>. This
+can lead to discrepencies in the locations of the Section objects!</p>
+<p>In this example, the <cite>Section</cite> into the <cite>Planform</cite> is offset by <cite>L0</cite>,
+because this attribute is not known to the <cite>Planform</cite>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ccs</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">CircularSection</span><span class="p">(</span><span class="n">golfcube</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 <span class="n">pcs</span> <span class="o">=</span> <span class="n">spl</span><span class="o">.</span><span class="n">section</span><span class="o">.</span><span class="n">CircularSection</span><span class="p">(</span><span class="n">pl</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
@@ -137,6 +152,11 @@
 <img alt="../../../_images/sections_into_arbitrary-6.png" class="plot-directive" src="../../../_images/sections_into_arbitrary-6.png" />
 </figure>
 </div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Instead of manually creating sections into data in this way, consider the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">register_variable()</span></code> capabilities of the <cite>Cube</cite>. <a class="reference external" href="register_variable">See an example here</a>.</p>
+</div>
 </section>
 </section>
 
@@ -150,7 +170,7 @@
   <div>
     <h3><a href="../../../index.html">Table of Contents</a></h3>
     <ul>
-<li><a class="reference internal" href="#">Creating Sections into different types of objects</a><ul>
+<li><a class="reference internal" href="#">Creating Sections into Masks and Planforms</a><ul>
 <li><a class="reference internal" href="#arbitrary-data">Arbitrary data</a></li>
 </ul>
 </li>
@@ -159,8 +179,8 @@
   </div>
   <div>
     <h4>Previous topic</h4>
-    <p class="topless"><a href="../computations/aggradation_preserved_time.html"
-                          title="previous chapter">Aggradation and preserved time</a></p>
+    <p class="topless"><a href="register_variable.html"
+                          title="previous chapter">Registering Custom Variables to Cubes</a></p>
   </div>
   <div>
     <h4>Next topic</h4>
@@ -198,11 +218,11 @@
           <a href="masks_from_planforms.html" title="Creating Sections into different types of objects"
              >next</a> |</li>
         <li class="right" >
-          <a href="../computations/aggradation_preserved_time.html" title="Aggradation and preserved time"
+          <a href="register_variable.html" title="Registering Custom Variables to Cubes"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">sandplover 0.5.1 documentation</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../index.html" >Examples</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Creating Sections into different types of objects</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Creating Sections into Masks and Planforms</a></li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

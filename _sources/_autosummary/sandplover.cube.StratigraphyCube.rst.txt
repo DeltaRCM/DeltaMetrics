@@ -21,6 +21,7 @@
       ~StratigraphyCube.register_plan
       ~StratigraphyCube.register_planform
       ~StratigraphyCube.register_section
+      ~StratigraphyCube.register_variable
       ~StratigraphyCube.set_aux
       ~StratigraphyCube.show_cube
       ~StratigraphyCube.show_plan
@@ -53,6 +54,7 @@
       ~StratigraphyCube.meta
       ~StratigraphyCube.planform_set
       ~StratigraphyCube.planforms
+      ~StratigraphyCube.registered_variables
       ~StratigraphyCube.section_set
       ~StratigraphyCube.sections
       ~StratigraphyCube.shape

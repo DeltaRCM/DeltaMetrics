@@ -20,6 +20,7 @@
       ~DataCube.register_plan
       ~DataCube.register_planform
       ~DataCube.register_section
+      ~DataCube.register_variable
       ~DataCube.set_aux
       ~DataCube.show_cube
       ~DataCube.show_plan
@@ -54,6 +55,7 @@
       ~DataCube.meta
       ~DataCube.planform_set
       ~DataCube.planforms
+      ~DataCube.registered_variables
       ~DataCube.section_set
       ~DataCube.sections
       ~DataCube.shape

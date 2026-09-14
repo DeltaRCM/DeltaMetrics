@@ -25,6 +25,7 @@
    
       ~BaseIO.aux
       ~BaseIO.keys
+      ~BaseIO.known_variables
       ~BaseIO.meta
    
    
