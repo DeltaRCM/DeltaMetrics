@@ -44,9 +44,8 @@ Connecting to a netCDF file on disk is as simple as:
 
     >>> acube = spl.cube.DataCube("/path/to/data/file.nc")
 
-.. hint::
-
-    For more information about data files, and how to configure your data to work with sandplover, please visit the ``Examples/io`` section of the documentation.
+You can also connect to data already loaded in your workflow, for example as `numpy` arrays.
+For more information about data files, and how to configure your data to work with sandplover, please visit the ``Examples/io`` section of the documentation.
 
 For this guide to be easy to follow along with, we will use some sample data that comes with sandplover.
 
@@ -318,6 +317,41 @@ You can also create a standalone section, which is not registered to the cube, b
     ...     sass["velocity"] == golfcube.sections["demo"]["velocity"]
     ... )  # doctest: +SKIP
     True
+
+
+Auxiliary information
+---------------------
+
+Many datasets, especially those that have been carefully formatted into the
+NetCDF format likely include metadata and auxiliary information. In
+`sandplover`, we generally follow the `sandsuet
+<https://github.com/sandpiper-toolchain/sandsuet>`_ data model, so auxiliary
+data are thought of as those that support analyses, but are not main variables
+of interest.
+
+Auxiliary information can be stored in an attribute of the :obj:`~sandplover.cube.DataCube` and
+:obj:`~sandplover.cube.StratigraphyCube` called `aux`. If your dataset includes auxiliary information,
+it is a best practice to specify `auxdata=<path>` during instantiation of the
+cube; see the cube documentation for complete details. So, the first example
+from this guide then becomes:
+
+.. code::
+
+    >>> acube = spl.cube.DataCube("/path/to/data/file.nc", auxdata="group_name")
+
+Several of the sample datasets include auxiliary information, and the `auxdata=`
+argument is specified when those datasets are provided to the user (like within this guide!).
+
+If you forget to specify an auxiliary data group during instantiation, you can
+add one to an existing cube with the :meth:`~sandplover.cube.DataCube.set_aux`
+method. Or if you prefer to access groups in your underlying dataset directly,
+or if your data contains multiple groups with supporting information, you can
+always access this information as:
+
+.. code::
+
+    >>> acube.dataio.dataset["group_name"]
+
 
 
 .. _userguide_quick_stratigraphy:

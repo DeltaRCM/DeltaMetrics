@@ -16,7 +16,7 @@ See the effect of an increasing number of `RadialSection` objects used in the co
 
     golf = spl.sample_data.golf()
     origin = (
-        np.array([golf.meta["L0"].data, golf.meta["CTR"].data]) * golf.meta["dx"].data
+        np.array([golf.aux["L0"].data, golf.aux["CTR"].data]) * golf.aux["dx"].data
     )
 
     # make a map with just five sections to see how this would look

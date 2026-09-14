@@ -40,7 +40,7 @@ class BaseCube(abc.ABC):
 
     """
 
-    def __init__(self, data, read=(), varset=None, dimensions=None):
+    def __init__(self, data, auxdata=None, read=(), varset=None, dimensions=None):
         """Initialize the BaseCube.
 
         Parameters
@@ -51,6 +51,10 @@ class BaseCube(abc.ABC):
             output from the pyDeltaRCM model. Alternatively, pass a
             :obj:`dict` with keys indicating variable names, and values with
             corresponding t-x-y `ndarray` of data.
+
+        auxdata : :obj:`str`, optional
+            The information `data` is searched for a key matching the string
+            `auxdata`, and if found, this key is assigned to `cube.aux`.
 
         read : :obj:`bool`, optional
             Which variables to read from dataset into memory. Special option
@@ -68,23 +72,27 @@ class BaseCube(abc.ABC):
         if type(data) is str:
             # handle a path to netCDF file
             self._data_path = data
-            self._connect_to_file(data_path=data)
-            self._read_meta_from_file()
+            self._dataio = NetCDFIO(data_path=data, auxdata_path=auxdata)
+            self._read_coords_dims_variables_from_dataio()
         elif type(data) is dict:
             # handle a dict, arrays set up already, make an io class to wrap it
             self._data_path = None
-            self._dataio = DictionaryIO(data, dimensions=dimensions)
-            self._read_meta_from_file()
+            self._dataio = DictionaryIO(
+                data, dimensions=dimensions, auxdata_path=auxdata
+            )
+            self._read_coords_dims_variables_from_dataio()
         elif isinstance(data, DataCube):
             # handle initializing one cube type from another
             self._data_path = data.data_path
             self._dataio = data._dataio
-            self._read_meta_from_file()
+            self._read_coords_dims_variables_from_dataio()
         else:
             raise TypeError('Invalid type for "data": %s' % type(data))
 
-        self._planform_set = {}
-        self._section_set = {}
+        self._planform_set = {}  # registered planforms
+        self._section_set = {}  # registered sections
+
+        self._registered_variables = []  # list of names registered variables
 
         if varset is not None:
             raise ValueError(
@@ -109,28 +117,13 @@ class BaseCube(abc.ABC):
         """
         ...
 
-    def _connect_to_file(self, data_path):
-        """Connect to file.
-
-        This method is used internally to send the ``data_path`` to the
-        correct IO handler.
-        """
-        _, ext = os.path.splitext(data_path)
-        if ext == ".nc":
-            self._dataio = NetCDFIO(data_path, "netcdf")
-        elif ext == ".hdf5":
-            self._dataio = NetCDFIO(data_path, "hdf5")
-        else:
-            raise ValueError('Invalid file extension for "data_path": %s' % data_path)
-
-    def _read_meta_from_file(self):
-        """Read metadata information from variables in file.
+    def _read_coords_dims_variables_from_dataio(self):
+        """Read coordinate and dimension information from variables in file.
 
         Robustly determine dimension names by preferring explicitly
         provided dims, otherwise by scanning for the first 3-D data variable.
         """
         self._coords = self._dataio.known_coords
-        self._variables = self._dataio.known_variables
 
         # 1) Determine (d0, d1, d2)
         if hasattr(self._dataio, "dims") and len(self._dataio.dims) >= 3:
@@ -199,7 +192,7 @@ class BaseCube(abc.ABC):
         NOT be loaded into memory. Set `force=True` to override this check.
         """
         if variables is True:  # special case, read all variables
-            variables = self.variables
+            variables = self.dataio.known_variables
         elif type(variables) is str:
             variables = [variables]
         else:
@@ -210,7 +203,22 @@ class BaseCube(abc.ABC):
 
     @property
     def meta(self):
-        return self._dataio.meta
+        warnings.warn(
+            DeprecationWarning(
+                "The `meta` property of the Cube has been replaced by the "
+                "`aux` property, and will be removed in a future release."
+            )
+        )
+        return self._dataio.aux
+
+    @property
+    def aux(self):
+        return self._dataio.aux
+
+    @property
+    def auxdata(self):
+        """simple alias"""
+        return self._dataio.aux
 
     @property
     def varset(self):
@@ -244,9 +252,15 @@ class BaseCube(abc.ABC):
         return self._coords
 
     @property
+    @abc.abstractmethod
     def variables(self):
         """`list` : List of variable names as strings."""
-        return self._variables
+        ...
+
+    @property
+    def registered_variables(self):
+        """`list` : List of variable names as strings, subset to those registered (i.e., not in the underlying data)."""
+        return self._registered_variables
 
     @property
     def planform_set(self):
@@ -257,9 +271,13 @@ class BaseCube(abc.ABC):
     def planforms(self):
         """`dict` : Set of plan instances.
 
-        Alias to :meth:`plan_set`.
+        Alias to :meth:`planform_set`.
         """
         return self._planform_set
+
+    def set_aux(self, auxdata):
+        """Set a group of the DataIO layer as the 'aux' group."""
+        self.dataio._set_aux(auxdata)
 
     def register_plan(self, *args, **kwargs):
         """wrapper, might not really need this."""
@@ -348,6 +366,69 @@ class BaseCube(abc.ABC):
         self._section_set[name] = SectionInstance
         if return_section:
             return self._section_set[name]
+
+    def register_variable(self, name, data):
+        """Register a variable to the cube.
+
+        Add a variable to the cube, which can be accessed and sliced identically
+        to underlying data.
+
+        This is generally useful for data that are derived in the course of
+        analyses (i.e., not a part of the original dataset) but are useful (in a
+        general sense) for subsequent analyses.
+
+        Only variables with identical dimensionality to the underlying dataset
+        can be registered. Registered variables should not be modified after
+        registration, but can be easily used in subsequent analysis.
+
+        .. important::
+
+            Registered variables are stored in memory, and are not recorded to
+            underlying data!
+
+        Parameters
+        ----------
+        name : :obj:`str`
+            The name to register the variable.
+
+        data : :obj:`xr.DataArray` or :obj:`np.ndarray`
+            The data to register. Must have same dimensionality as underying
+            data variables.
+
+        Examples
+        --------
+        See the example document :doc:`/guides/examples/create_from/register_variable`.
+
+        >>> from sandplover.sample_data.sample_data import golf
+
+        >>> golfcube = golf()
+        >>> golfcube.register_variable("somevar", np.zeros(golfcube.shape))
+
+        A list of registered variables can be accessed with:
+
+        >>> golfcube.registered_variables
+        ['somevar']
+        """
+        if not isinstance(name, str):
+            raise TypeError(f"Input 'name' was not a string, but was {type(name)}")
+
+        # verify shape is identical
+        if np.all(data.shape != self.shape):
+            raise ValueError(
+                f"Input 'data' was incorrect shape {data.shape}. "
+                f"Must match cube shape {self.shape}."
+            )
+
+        if isinstance(data, np.ndarray):
+            # convert to xarray
+            data = xr.DataArray(
+                data, coords=self._view_coordinates, dims=self._view_dimensions
+            )
+
+        # pass to dataio layer to add as needed
+        self.dataio._register_variable(name, data)
+        # append to list of registered variables
+        self._registered_variables.append(name)
 
     @property
     def dim0_coords(self):
@@ -668,7 +749,13 @@ class DataCube(BaseCube):
     """
 
     def __init__(
-        self, data, read=(), varset=None, stratigraphy_from=None, dimensions=None
+        self,
+        data,
+        auxdata=None,
+        read=(),
+        varset=None,
+        stratigraphy_from=None,
+        dimensions=None,
     ):
         """Initialize the BaseCube.
 
@@ -677,32 +764,40 @@ class DataCube(BaseCube):
         data : :obj:`str`, :obj:`dict`
             If data is type `str`, the string points to a NetCDF or HDF5 file
             that can be read. Typically this is used to directly import files
-            output from the pyDeltaRCM model. Alternatively, pass a
-            :obj:`dict` with keys indicating variable names, and values with
-            corresponding t-x-y `ndarray` of data.
+            output from the pyDeltaRCM model. Alternatively, pass a :obj:`dict`
+            with keys indicating variable names, and values with corresponding
+            t-x-y `ndarray` of data.
+
+        auxdata : :obj:`str`, :obj:`dict`, optional
+            If `data` is a `str` pointing to a file, then `auxdata` shall be a
+            string specifying a group within the file with auxiliary
+            information. If `data` is a dictionary, `auxdata` may be either
+            another dictionary with auxiliary information, or a `str` specifying
+            a key within `data` to be treated as auxiliary informationl; note
+            that the last case does not remove the key from `data` variables.
+            Default is `None`, no auxiliary information.
 
         read : :obj:`bool`, optional
-            Which variables to read from dataset into memory. Special option
-            for ``read=True`` to read all available variables into memory.
+            Which variables to read from dataset into memory. Special option for
+            ``read=True`` to read all available variables into memory.
 
         varset : deprecated
             Deprecated in v0.6.0. Plot styling is to be handled manually
             by the user.
 
         stratigraphy_from : :obj:`str`, optional
-            Pass a string that matches a variable name in the dataset to
-            compute preservation and stratigraphy using that variable as
-            elevation data. Typically, this is ``'eta'`` in pyDeltaRCM model
-            outputs. Stratigraphy can be computed on an existing data cube
-            with the :meth:`~sandplover.cube.DataCube.stratigraphy_from`
-            method.
+            Pass a string that matches a variable name in the dataset to compute
+            preservation and stratigraphy using that variable as elevation data.
+            Typically, this is ``'eta'`` in pyDeltaRCM model outputs.
+            Stratigraphy can be computed on an existing data cube with the
+            :meth:`~sandplover.cube.DataCube.stratigraphy_from` method.
 
         dimensions : `dict`, optional
             A dictionary with names and coordinates for dimensions of the
-            `DataCube`, if instantiating the cube from data loaded in memory
-            in a dictionary.
+            `DataCube`, if instantiating the cube from data loaded in memory in
+            a dictionary.
         """
-        super().__init__(data, read, varset, dimensions=dimensions)
+        super().__init__(data, auxdata, read, varset, dimensions=dimensions)
 
         # Set up the time mesh (DataCube is t–x–y)
         _, self._T, _ = np.meshgrid(
@@ -745,24 +840,26 @@ class DataCube(BaseCube):
         CubeVariable : `~sandplover.cube.CubeVariable`
             The instantiated CubeVariable.
         """
-        if var == "time":  # special case for time
+        # special case for time
+        if var == "time":
             # use the name of the first dimension, to enable
             #   unlabeled np.ndarrays and flexible name for time
             dim0_name = self.dataio.dims[0]
             dim0_coord = np.array(self.dataio.dataset[dim0_name])
             _t = np.expand_dims(dim0_coord, axis=(1, 2))
-            _xrt = xr.DataArray(
+            _obj = xr.DataArray(
                 np.tile(_t, (1, *self.shape[1:])),
                 coords=self._view_coordinates,
                 dims=self._view_dimensions,
             )
-            _obj = _xrt
-        elif (var in self._coords) or (var in self._variables):
+        # if the variable is part of the underlying dataio layer
+        elif (var in self._coords) or (var in self.dataio._underlying_variables):
             # ensure coords can be called by cube[var]
             _obj = self._dataio[var]
-
+        elif var in self.registered_variables:
+            _obj = self._dataio[var]
         else:
-            raise AttributeError(f"No variable of {str(self)} named {var}")
+            raise AttributeError(f"No variable of '{str(self)}' named '{var}'")
 
         # make _obj xarray if it not already
         if isinstance(_obj, np.ndarray):
@@ -801,6 +898,15 @@ class DataCube(BaseCube):
         else:
             raise ValueError('Bad "style" argument supplied: %s' % str(style))
         self._knows_stratigraphy = True
+
+    @property
+    def variables(self):
+        """Variable available to DataCube.
+
+        Includes only underlying data available from DataIO layer and registered
+        variables.
+        """
+        return self.dataio._underlying_variables + self._registered_variables
 
     @property
     def z(self):
@@ -916,6 +1022,7 @@ class StratigraphyCube(BaseCube):
     def __init__(
         self,
         data,
+        auxdata=None,
         read=(),
         varset=None,
         stratigraphy_from=None,
@@ -938,6 +1045,15 @@ class StratigraphyCube(BaseCube):
             :obj:`dict` with keys indicating variable names, and values with
             corresponding t-x-y `ndarray` of data.
 
+        auxdata : :obj:`str`, :obj:`dict`, optional
+            If `data` is a `str` pointing to a file, then `auxdata` shall be a
+            string specifying a group within the file with auxiliary
+            information. If `data` is a dictionary, `auxdata` may be either
+            another dictionary with auxiliary information, or a `str` specifying
+            a key within `data` to be treated as auxiliary informationl; note
+            that the last case does not remove the key from `data` variables.
+            Default is `None`, no auxiliary information.
+
         read : :obj:`bool`, optional
             Which variables to read from dataset into memory. Special option
             for ``read=True`` to read all available variables into memory.
@@ -946,7 +1062,7 @@ class StratigraphyCube(BaseCube):
             Deprecated in v0.6.0. Plot styling is to be handled manually
             by the user.
         """
-        super().__init__(data, read, varset)
+        super().__init__(data, auxdata, read, varset)
         if isinstance(data, str):
             raise NotImplementedError("Precomputed NetCDF?")
         elif isinstance(data, np.ndarray):
@@ -1009,12 +1125,20 @@ class StratigraphyCube(BaseCube):
             _t = np.expand_dims(dim0_coord, axis=(1, 2))
             _arr = np.full(self.shape, np.nan)
             _var = np.tile(_t, (1, *self.shape[1:]))
-        elif var in self._variables:
+        elif var in self._dataio.known_variables:
             _arr = np.full(self.shape, np.nan)
-            # _var = np.array(self.dataio[var], copy=True)
             _var = self.dataio[var]
         else:
             raise AttributeError(f"No variable of {str(self)} named {var}")
+
+        # check if the var registered and correct shape, return it
+        if var in self.registered_variables:
+            if np.all(_var.shape == self.shape):
+                return _var
+            else:
+                raise RuntimeError(
+                    f"Registered variable '{var}' sliced, but has incorrect shape: expect {self.shape}, got {_var.shape}"
+                )
 
         # the following lines apply the data to stratigraphy mapping
         if isinstance(_var, xr.core.dataarray.DataArray):
@@ -1031,6 +1155,20 @@ class StratigraphyCube(BaseCube):
             _arr, coords=self._view_coordinates, dims=self._view_dimensions
         )
         return _obj
+
+    @property
+    def variables(self):
+        """Variable available to StratigraphyCube.
+
+        Includes underlying data available from DataIO layer (including those
+        registered to a DataCube sharing the same DataIO layer), and registered
+        variables.
+        """
+        return (
+            self.dataio._underlying_variables
+            + list(self.dataio._in_memory_variables)
+            + self._registered_variables
+        )
 
     @property
     def strata(self):

@@ -925,7 +925,7 @@ class MorphologicalPlanform(SpecialtyPlanform):
             The second argument is the maximum disk size for morphological
             operations in pixels. If a cube is connected and this argument is
             not supplied, the inlet width will be pulled from the cube's
-            metadata and used to set this parameter.
+            auxiliary information and used to set this parameter.
 
         **kwargs
             Current supported key-word argument is 'allow_empty' which is a
@@ -988,10 +988,10 @@ class MorphologicalPlanform(SpecialtyPlanform):
                 )
         elif isinstance(self.cube, BaseCube):
             try:
-                self._max_disk = self.cube.meta["N0"].data
+                self._max_disk = self.cube.aux["N0"].data
             except Exception as err:
                 raise TypeError(
-                    "Data cube does not contain metadata, you must "
+                    "Data cube does not contain auxiliary data, you must "
                     "specify the inlet size."
                 ) from err
         else:
@@ -1093,11 +1093,11 @@ def compute_land_area(land_mask):
 
         >>> lm = LandMask(
         ...     golf["eta"][-1, :, :],
-        ...     elevation_threshold=golf.meta["H_SL"][-1],
+        ...     elevation_threshold=golf.aux["H_SL"][-1],
         ...     elevation_offset=-0.5,
         ... )
 
-        >>> lm.trim_mask(length=golf.meta["L0"].data + 1)
+        >>> lm.trim_mask(length=golf.aux["L0"].data + 1)
 
         >>> land_area = compute_land_area(lm)
 
@@ -1260,10 +1260,10 @@ def compute_shoreline_roughness_area(
         land-water boundary that is not really a part of the delta. We use the
         :meth:`~sandplover.mask.BaseMask.trim_mask` method to trim a mask.
 
-        >>> lm0.trim_mask(length=golf.meta["L0"].data + 1)
-        >>> sm0.trim_mask(length=golf.meta["L0"].data + 1)
-        >>> lm1.trim_mask(length=golf.meta["L0"].data + 1)
-        >>> sm1.trim_mask(length=golf.meta["L0"].data + 1)
+        >>> lm0.trim_mask(length=golf.aux["L0"].data + 1)
+        >>> sm0.trim_mask(length=golf.aux["L0"].data + 1)
+        >>> lm1.trim_mask(length=golf.aux["L0"].data + 1)
+        >>> sm1.trim_mask(length=golf.aux["L0"].data + 1)
 
         >>> fig, ax = plt.subplots(1, 2, figsize=(8, 3))
         >>> lm0.show(ax=ax[0])
@@ -1413,10 +1413,10 @@ def compute_shoreline_roughness_coefvar(shore_mask, origin=(0, 0)):
         >>> sm = ShorelineMask(
         ...     golf["eta"][-1, :, :], elevation_threshold=0, elevation_offset=-0.5
         ... )
-        >>> sm.trim_mask(length=golf.meta["L0"].data + 1)
+        >>> sm.trim_mask(length=golf.aux["L0"].data + 1)
         >>> origin = (
-        ...     np.array([golf.meta["L0"].data, golf.meta["CTR"].data])
-        ...     * golf.meta["dx"].data
+        ...     np.array([golf.aux["L0"].data, golf.aux["CTR"].data])
+        ...     * golf.aux["dx"].data
         ... )
 
         Compute roughness
@@ -1543,10 +1543,10 @@ def compute_shoreline_roughness_radius(
         >>> sm = ShorelineMask(
         ...     golf["eta"][-1, :, :], elevation_threshold=0, elevation_offset=-0.5
         ... )
-        >>> sm.trim_mask(length=golf.meta["L0"].data + 1)
+        >>> sm.trim_mask(length=golf.aux["L0"].data + 1)
         >>> origin = (
-        ...     np.array([golf.meta["L0"].data, golf.meta["CTR"].data])
-        ...     * golf.meta["dx"].data
+        ...     np.array([golf.aux["L0"].data, golf.aux["CTR"].data])
+        ...     * golf.aux["dx"].data
         ... )
 
         Compute roughness
@@ -1668,14 +1668,14 @@ def compute_shoreline_roughness_OAM(
 
         golf = spl.sample_data.golf()
         origin = (
-            np.array([golf.meta["L0"].data, golf.meta["CTR"].data])
-            * golf.meta["dx"].data
+            np.array([golf.aux["L0"].data, golf.aux["CTR"].data])
+            * golf.aux["dx"].data
         )
 
         em = spl.mask.ElevationMask(
             golf["eta"][30, :, :], elevation_threshold=0, elevation_offset=-0.1
         )
-        em.trim_mask(length=golf.meta["L0"].data + 1, value=1)
+        em.trim_mask(length=golf.aux["L0"].data + 1, value=1)
         oam = spl.plan.OpeningAnglePlanform.from_mask(em)
 
         sm45 = spl.mask.ShorelineMask.from_Planform(oam, contour_threshold=45)
@@ -2110,7 +2110,7 @@ def compute_shoreline_distance(shore_mask, origin=(0, 0), return_distances=False
         Compute mean and stddev distance
 
         >>> mean, stddev = compute_shoreline_distance(
-        ...     sm, origin=[golf.meta["L0"].data, golf.meta["CTR"].data]
+        ...     sm, origin=[golf.aux["L0"].data, golf.aux["CTR"].data]
         ... )
 
         Make the plot
@@ -2118,9 +2118,9 @@ def compute_shoreline_distance(shore_mask, origin=(0, 0), return_distances=False
         >>> import matplotlib.pyplot as plt
         >>> fig, ax = plt.subplots()
         >>> golf.quick_show("eta", idx=-1, ticks=True, ax=ax)
-        >>> dx = golf.meta["dx"].data
-        >>> origin_x = golf.meta["CTR"].data * dx
-        >>> origin_y = golf.meta["L0"].data * dx
+        >>> dx = golf.aux["dx"].data
+        >>> origin_x = golf.aux["CTR"].data * dx
+        >>> origin_y = golf.aux["L0"].data * dx
         >>> _ = ax.plot(origin_x, origin_y, "ro")
         >>> _ = ax.set_title("mean = {:.2f}".format(mean))
 
@@ -2293,8 +2293,8 @@ def compute_shoreline_radius(shore_mask, origin=(0, 0), return_radii=False, **kw
 
         golf = spl.sample_data.golf()
         origin = (
-            np.array([golf.meta["L0"].data, golf.meta["CTR"].data])
-            * golf.meta["dx"].data
+            np.array([golf.aux["L0"].data, golf.aux["CTR"].data])
+            * golf.aux["dx"].data
         )
 
         azimuth_kwargs = {"num": 7}
@@ -2428,8 +2428,8 @@ def compute_topset_slope(
         >>>
         >>> azimuth_kwargs = {"num": 5, "start": 90, "end": 180}
         >>> origin = (
-        ...     np.array([golf.meta["L0"].data, golf.meta["CTR"].data])
-        ...     * golf.meta["dx"].data
+        ...     np.array([golf.aux["L0"].data, golf.aux["CTR"].data])
+        ...     * golf.aux["dx"].data
         ... )
         >>> mean_slope, std_slope = compute_topset_slope(
         ...     golf["eta"][-1, :, :], origin=origin, **azimuth_kwargs

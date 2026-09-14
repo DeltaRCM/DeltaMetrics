@@ -71,7 +71,7 @@ NetCDF was designed with dimensional data in mind, so that we can use common dim
 
 This guide is not meant to be an exhaustive guide on the netCDF format, so we provide only a simple overview of some core components that affect sandplover.
 
-* `dataset`: the file, including all of the data and metadata to describe that data
+* `dataset`: the file, including all of the data and auxiliary data to describe that data
 * `variable`: a field in the `dataset` that contains numeric information
 * `dimension`: a field in the `dataset` describing one dimension of the underlying data variables
 * `group`: a mechanism for constructing a hierarchy of information within the `dataset`.
@@ -85,7 +85,7 @@ For sandplover to correctly work with underlying data, you must properly configu
 * sandplover expects *at least* three `dimensions` defined in the `dataset`, one of which must be named ``time``, and the other two can have any name that describes the spatial dimensions of the data (e.g., `x`, `lon`, `easting`, etc.).
 * sandplover expects a `variable` with name *exactly matching* the name of each of the three previous `dimensions`.
 * sandplover expects some number of `variables` with arbitrary names that each contain a 3D array of spatiotemporal data of interest. I.e., this is the actual model/field/experiment data.
-* sandplover expects there to be a `group` with name `meta`, which contains any information relevant to the spatiotemporal data. E.g., sea level, coordinates of sediment feed location.
+* sandplover is compatible with (optionally) a `group` that contains any auxiliary information relevant to the spatiotemporal data. E.g., sea level, coordinates of sediment feed location.
 
 
 Sample code for creating a sandplover NetCDF file with Python
@@ -153,14 +153,14 @@ Now, we write out the data to a netCDF file.
     v_eta[:] = eta
     v_velocity[:] = velocity
 
-    # set up metadata group and populate variables
-    output_netcdf.createGroup('meta')
+    # set up auxdata group and populate variables
+    output_netcdf.createGroup('auxdata')
     v_L0 = output_netcdf.createVariable(  # a scalar, the inlet length
-        'meta/L0', 'f4', ())  # no dims for scalar
+        'auxdata/L0', 'f4', ())  # no dims for scalar
     v_L0.units = 'cell'
     v_L0[:] = 5
     v_H_SL = output_netcdf.createVariable( # an array, the sea level
-        'meta/H_SL', 'f4', ('time',))  # only has time dimensions
+        'auxdata/H_SL', 'f4', ('time',))  # only has time dimensions
     v_H_SL.units = 'meters'
     v_H_SL[:] = H_SL
 
@@ -174,7 +174,7 @@ Now, let's load the NetCDF file with sandplover. Make a cube by pointing to the 
     :include-source:
     :context: close-figs
 
-    nc_datacube = spl.cube.DataCube(os.path.join(output_folder, 'model_output.nc'))
+    nc_datacube = spl.cube.DataCube(os.path.join(output_folder, 'model_output.nc'), auxdata="auxdata")
 
     fig, ax = plt.subplots(2, len(t), figsize=(8, 3))
     for i, _ in enumerate(t):
@@ -196,7 +196,7 @@ To show that the components of sea level and elevation have been connected:
 
     spl.plot.aerial_view(
         nc_datacube['eta'][-1, :, :],
-        datum=nc_datacube.meta['H_SL'][-1],
+        datum=nc_datacube.aux['H_SL'][-1],
         ticks=True)
 
 
@@ -235,23 +235,6 @@ If you are not at all concerned with the size of your data, and loading all of t
 
 Notice that dimensions (range of `x` from 0 to 6) are properly handled, and variables are styled according to the sandplover default.
 
-.. warning::
-
-    The `meta` data model is not integrated into the dictionary input method.
-
-You cannot use integrated metadata to a `DataCube` created from a dictionary; you will need to manage and integrate this metadata manually as needed.
-We do not anticipate this will affect many users, but if you need the ability to add metadata to the `DataCube` from dictionary input, please open an issue request or submit a pull request.
-
-If you want a basic workaround, you can create a dictionary inside the input dictionary, named `meta`. For example:
-
-.. code::
-
-    dict_datacube = spl.cube.DataCube(
-        data_dict, dimensions={"time": t, "y": y, "x": x, "meta": {"H_SL": H_SL}}
-    )
-
-But be aware that dimensions will not be attached to the metadata (unless you pass in a `DataArray`), and you cannot use the `.meta` accessor, and instead would need to use ``dict_datacube['meta']['H_SL']``.
-
 
 Conventions for data and information
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -266,12 +249,12 @@ Spatiotemporal variable conventions
 * Organize model data so that an inlet of sediment and water (if present) is located along the the `dim1==0` domain edge. This is not strictly necessary, but some sandplover default values will work best this way.
 
 
-Metadata variable naming conventions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Auxiliary variable naming conventions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If any of the following information is available or relevant for your model, experiment, or field site, we recommend adding this information to the `meta` group in an input NetCDF file.
+If any of the following information is available or relevant for your model, experiment, or field site, we recommend adding this information to the `aux` group in an input NetCDF file.
 
-* `H_SL`: name any basin-wide water level as `H_SL` in the metadata, and define it in the same coordinate system as `eta` (e.g., use meters and the same elevation datum).
+* `H_SL`: name any basin-wide water level as `H_SL` in the auxiliary, and define it in the same coordinate system as `eta` (e.g., use meters and the same elevation datum).
 * `L0`: the `dim1` inlet length, number of indices from the starting edge of `dim1`. Do not include this field if inlet not located along `dim1==0` edge.
 * `CTR`: the `dim2` inlet center, number of indices from the starting edge of `dim2`. Do not include this field if inlet not located along `dim1==0` edge.
 

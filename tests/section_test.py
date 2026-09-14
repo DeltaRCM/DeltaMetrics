@@ -10,6 +10,7 @@ from sandplover.cube import StratigraphyCube
 from sandplover.mask import ElevationMask
 from sandplover.plan import Planform
 from sandplover.sample_data.sample_data import _get_golf_path
+from sandplover.sample_data.sample_data import golf_sandsuet
 from sandplover.section import CircularSection
 from sandplover.section import DipSection
 from sandplover.section import PathSection
@@ -50,7 +51,8 @@ class TestStrikeSection:
             _ = StrikeSection(badcube, distance=1000)
 
     def test_StrikeSection_standalone_instantiation(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         sass = StrikeSection(golfcube, distance_idx=12)
         assert sass.name == "strike"
         assert sass.distance_idx == 12
@@ -59,7 +61,8 @@ class TestStrikeSection:
         assert len(sass.variables) > 0
 
     def test_StrikeSection_register_section_distance_idx(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test", StrikeSection(distance_idx=5))
         assert golfcube.sections["test"].name == "test"
         assert golfcube.sections["test"]._input_distance is None
@@ -90,7 +93,8 @@ class TestStrikeSection:
         assert isinstance(_sect, StrikeSection)
 
     def test_StrikeSection_register_section_distance(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test", StrikeSection(distance=2000))
         assert golfcube.sections["test"].name == "test"
         assert golfcube.sections["test"]._input_distance == 2000
@@ -114,12 +118,14 @@ class TestStrikeSection:
         assert golfcube.sections["lengthtest"].distance == 2000
 
     def test_StrikeSection_register_section_either_distance_distance_idx(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         with pytest.raises(ValueError, match=r"Must specify `distance` or .*"):
             golfcube.register_section("test", StrikeSection())
 
     def test_StrikeSection_register_section_notboth_distance_distance_idx(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         with pytest.raises(
             ValueError, match=r"Cannot specify both `distance` .*"
         ):  # noqa: E501
@@ -128,7 +134,8 @@ class TestStrikeSection:
             )
 
     def test_StrikeSection_register_section_deprecated(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         with pytest.warns(UserWarning, match=r"Arguments `y` and `x` are .*"):
             golfcube.register_section("warn", StrikeSection(y=5))
         # the section should still work though, so check on the attrs
@@ -150,7 +157,8 @@ class TestStrikeSection:
             )
 
     def test_StrikeSection_register_section_x_limits(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section(
             "tuple", StrikeSection(distance_idx=5, length=(10, 110))
         )
@@ -204,7 +212,8 @@ class TestPathSection:
             _ = PathSection(badcube, path_idx=self.test_path)
 
     def test_standalone_instantiation(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         saps = PathSection(golfcube, path_idx=self.test_path)
         assert saps.name == "path"
         assert saps._underlying == golfcube
@@ -225,7 +234,8 @@ class TestPathSection:
             _ = PathSection(golfcube)  # no arguments
 
     def test_register_section(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.stratigraphy_from("eta")
         golfcube.register_section("test", PathSection(path_idx=self.test_path))
         assert golfcube.sections["test"].name == "test"
@@ -245,7 +255,8 @@ class TestPathSection:
 
     def test_return_path(self):
         # test that returned path and trace are the same
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         saps = PathSection(golfcube, path_idx=self.test_path)
         _t = saps.trace
         _p = saps.path
@@ -253,7 +264,8 @@ class TestPathSection:
 
     def test_path_reduced_unique(self):
         # test a first case with a straight line
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         xy = np.column_stack(
             (
                 np.linspace(10, 90, num=4000, dtype=int),
@@ -296,14 +308,15 @@ class TestCircularSection:
             _ = CircularSection(badcube, radius_idx=30)
 
     def test_standalone_instantiation(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         sacs = CircularSection(golfcube, radius_idx=30)
         assert sacs.name == "circular"
         assert sacs._underlying == golfcube
         assert sacs.trace.shape[0] == 85
         assert sacs._input_radius_idx == 30
         assert len(sacs.variables) > 0
-        assert sacs._origin_idx[0] == golfcube.meta["L0"]
+        assert sacs._origin_idx[0] == golfcube.aux["L0"]
         assert sacs.radius == 1500
 
         sacs2 = CircularSection(golfcube, radius_idx=30, origin_idx=(0, 10))
@@ -318,7 +331,7 @@ class TestCircularSection:
         assert sacs3._underlying == golfcube
         assert sacs3.trace.shape[0] == 143
         assert len(sacs3.variables) > 0
-        assert sacs3._origin_idx == (int(golfcube.meta["L0"]), golfcube.shape[2] // 2)
+        assert sacs3._origin_idx == (int(golfcube.aux["L0"]), golfcube.shape[2] // 2)
         assert sacs3._radius_idx == 50
         assert sacs3.radius == 2500
         assert sacs3.radius == sacs3._radius
@@ -334,10 +347,11 @@ class TestCircularSection:
         assert sacs4.radius == sacs4._radius
 
     def test_standalone_instantiation_legacy_nometa(self):
-        golfcube = DataCube(golf_path)
-        # augment the cube to drop the connection to metadata, emulating a
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
+        # modify the cube to drop the connection to metadata, emulating a
         # cube without metadata
-        golfcube._dataio.meta = None
+        golfcube._dataio._aux = None
         # test that it guesses the origin
         with pytest.warns(UserWarning, match=r"Trying to guess.*"):
             sacs = CircularSection(golfcube, radius_idx=30)
@@ -354,14 +368,16 @@ class TestCircularSection:
         assert sacs2._origin_idx == (0, 10)
 
     def test_standalone_instantiation_both_coord_idx_inputs(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         with pytest.raises(ValueError, match=r".*`radius` and `radius_idx`"):
             _ = CircularSection(golfcube, radius=2500, radius_idx=30)
         with pytest.raises(ValueError, match=r".*`origin` and `origin_idx`"):
             _ = CircularSection(golfcube, origin=(2500, 1500), origin_idx=(3, 100))
 
     def test_register_section(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.stratigraphy_from("eta")
         golfcube.register_section("test", CircularSection(radius_idx=30))
         assert len(golfcube.sections["test"].variables) > 0
@@ -381,7 +397,8 @@ class TestCircularSection:
 
     def test_all_idx_reduced_unique(self):
         # we try this for a bunch of different radii
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         sacs1 = CircularSection(golfcube, radius_idx=40)
         assert len(sacs1.trace_idx) == len(np.unique(sacs1.trace_idx, axis=0))
         sacs2 = CircularSection(golfcube, radius_idx=23)
@@ -427,12 +444,13 @@ class TestRadialSection:
             _ = RadialSection(badcube, azimuth=30)
 
     def test_standalone_instantiation(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         sars = RadialSection(golfcube)
         assert sars.name == "radial"
         assert sars._underlying == golfcube
         assert (
-            sars.trace.shape[0] == golfcube.shape[1] - golfcube.meta["L0"]
+            sars.trace.shape[0] == golfcube.shape[1] - golfcube.aux["L0"]
         )  # 120 - L0 = 120 - 3
         assert len(sars.variables) > 0
         assert sars.azimuth == 90
@@ -470,11 +488,12 @@ class TestRadialSection:
             )
 
     def test_standalone_instantiation_withmeta(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         sars = RadialSection(golfcube)
-        assert sars._origin_idx[0] == golfcube.meta["L0"]
+        assert sars._origin_idx[0] == golfcube.aux["L0"]
         sars1 = RadialSection(golfcube, azimuth=30)
-        assert sars1._origin_idx[0] == golfcube.meta["L0"]
+        assert sars1._origin_idx[0] == golfcube.aux["L0"]
         sars2 = RadialSection(golfcube, azimuth=103, origin_idx=(90, 2))
         assert sars2._origin_idx == (90, 2)
         sars3 = RadialSection(
@@ -484,7 +503,8 @@ class TestRadialSection:
         assert sars3._origin_idx == (18, 143)
 
     def test_register_section(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test", RadialSection(azimuth=30))
         assert len(golfcube.sections["test"].variables) > 0
         assert isinstance(golfcube.sections["test"], RadialSection)
@@ -503,9 +523,10 @@ class TestRadialSection:
         assert _section2 is None
 
     def test_autodetect_origin_0_aziumth(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test", RadialSection(azimuth=0))
-        _cshp, L0 = golfcube.shape, float(golfcube.meta["L0"])
+        _cshp, L0 = golfcube.shape, float(golfcube.aux["L0"])
         assert isinstance(golfcube.sections["test"], RadialSection)
         assert golfcube.sections["test"].trace.shape[0] == _cshp[2] // 2
         assert golfcube.sections["test"]._dim2_idx[-1] == _cshp[2] - 1
@@ -513,9 +534,10 @@ class TestRadialSection:
         assert golfcube.sections["test"]["velocity"].shape == (_cshp[0], _cshp[1])
 
     def test_autodetect_origin_180_aziumth(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test", RadialSection(azimuth=180))
-        _cshp, L0 = (golfcube.shape, float(golfcube.meta["L0"]))
+        _cshp, L0 = (golfcube.shape, float(golfcube.aux["L0"]))
         assert isinstance(golfcube.sections["test"], RadialSection)
         assert (
             golfcube.sections["test"].trace.shape[0] == (_cshp[2] // 2) + 1
@@ -525,9 +547,10 @@ class TestRadialSection:
         assert golfcube.sections["test"]["velocity"].shape == (_cshp[0], _cshp[1] + 1)
 
     def test_autodetect_origin_90_aziumth(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test", RadialSection(azimuth=90))
-        _cshp, L0 = golfcube.shape, float(golfcube.meta["L0"])
+        _cshp, L0 = golfcube.shape, float(golfcube.aux["L0"])
         assert isinstance(golfcube.sections["test"], RadialSection)
         assert golfcube.sections["test"].trace.shape[0] == _cshp[1] - L0
         assert golfcube.sections["test"]._dim2_idx[-1] == _cshp[2] // 2
@@ -543,9 +566,10 @@ class TestRadialSection:
         ),
     )
     def test_autodetect_origin_45_aziumth(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test2", RadialSection(azimuth=45))
-        _cshp, L0 = golfcube.shape, float(golfcube.meta["L0"])
+        _cshp, L0 = golfcube.shape, float(golfcube.aux["L0"])
 
         assert isinstance(golfcube.sections["test2"], RadialSection)
         assert golfcube.sections["test2"].trace.shape[0] == _cshp[1] - L0
@@ -554,9 +578,10 @@ class TestRadialSection:
         assert golfcube.sections["test2"]["velocity"].shape == (_cshp[0], _cshp[1] - L0)
 
     def test_autodetect_origin_85_aziumth(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test3", RadialSection(azimuth=85))
-        _cshp, _ = golfcube.shape, float(golfcube.meta["L0"])
+        _cshp, _ = golfcube.shape, float(golfcube.aux["L0"])
         assert isinstance(golfcube.sections["test3"], RadialSection)
         assert golfcube.sections["test3"].trace.shape[0] < _cshp[1]  # slight oblique
         assert (
@@ -568,9 +593,10 @@ class TestRadialSection:
         assert golfcube.sections["test3"]["velocity"].shape[0] == _cshp[0]
 
     def test_autodetect_origin_115_aziumth(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test4", RadialSection(azimuth=115))
-        _cshp, _ = golfcube.shape, float(golfcube.meta["L0"])
+        _cshp, _ = golfcube.shape, float(golfcube.aux["L0"])
         assert isinstance(golfcube.sections["test4"], RadialSection)
         assert golfcube.sections["test4"].trace.shape[0] < _cshp[1]  # slight oblique
         assert (
@@ -582,9 +608,10 @@ class TestRadialSection:
         assert golfcube.sections["test4"]["velocity"].shape[0] == _cshp[0]
 
     def test_autodetect_origin_165_aziumth(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test5", RadialSection(azimuth=165))
-        _cshp, _ = golfcube.shape, float(golfcube.meta["L0"])
+        _cshp, _ = golfcube.shape, float(golfcube.aux["L0"])
         assert isinstance(golfcube.sections["test5"], RadialSection)
         assert golfcube.sections["test5"].trace.shape[0] > _cshp[1]  # obtuse
         assert golfcube.sections["test5"]._dim2_idx[-1] == 0
@@ -593,14 +620,16 @@ class TestRadialSection:
         assert golfcube.sections["test5"]["velocity"].shape[0] == _cshp[0]
 
     def test_autodetect_origin_OOB_aziumth(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         with pytest.raises(ValueError, match=r"Azimuth must be *."):
             golfcube.register_section("testfail", RadialSection(azimuth=-10))
         with pytest.raises(ValueError, match=r"Azimuth must be *."):
             golfcube.register_section("testfail", RadialSection(azimuth=190))
 
     def test_specify_origin_and_azimuth(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section(
             "test", RadialSection(azimuth=145, origin_idx=(3, 20))
         )
@@ -613,14 +642,15 @@ class TestRadialSection:
 
 
 class TestCubesWithManySections:
-    golfcube = DataCube(golf_path)
+    # golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
     sc8cube = StratigraphyCube.from_DataCube(golfcube, dz=0.1)
     #                     [dim1, dim2]
     test_path = np.array([[60, 120], [30, 40]])
 
     def test_data_equivalence(self):
         assert self.golfcube.dataio is self.sc8cube.dataio
-        assert np.all(self.golfcube.dataio["time"] == self.sc8cube.dataio["time"])
+        assert np.all(self.golfcube.dataio["seconds"] == self.sc8cube.dataio["seconds"])
         assert np.all(
             self.golfcube.dataio["velocity"] == self.sc8cube.dataio["velocity"]
         )
@@ -663,6 +693,14 @@ class TestCubesWithManySections:
         self.golfcube.sections["show_test2"].show_trace("r--")
         self.golfcube.sections["show_test1"].show_trace("g--", ax=ax[0])
         plt.close()
+
+    def test_registered_variables_section(self):
+        self.golfcube.register_section("test1", StrikeSection(distance_idx=5))
+        # create and register synthetic 3D variable
+        new_variable = xr.zeros_like(self.golfcube["eta"])
+        self.golfcube.register_variable("new_var", new_variable)
+
+        assert np.all(self.golfcube.sections["test1"]["new_var"] == 0)
 
 
 # test the core functionality common to all section types, for different
@@ -814,7 +852,8 @@ class TestSectionFromDataCubeNoStratigraphyPlotting:
 
 
 class TestSectionFromDataCubeWithStratigraphy:
-    golfcube = DataCube(golf_path)
+    # golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
     golfcube.stratigraphy_from("eta", dz=0.1)
     golfcube.register_section("test", StrikeSection(distance_idx=5))
 
@@ -902,7 +941,8 @@ class TestSectionFromDataCubeWithStratigraphy:
 class TestSectionFromDataCubeWithStratigraphyPlotting:
     """same as above class, but all "show" related tests"""
 
-    golfcube = DataCube(golf_path)
+    # golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
     golfcube.stratigraphy_from("eta", dz=0.1)
     golfcube.register_section("test", StrikeSection(distance_idx=5))
 
@@ -955,7 +995,8 @@ class TestSectionFromDataCubeWithStratigraphyPlotting:
 
 
 class TestSectionFromStratigraphyCube:
-    golfcube = DataCube(golf_path)
+    # golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
     sc8cube = StratigraphyCube.from_DataCube(golfcube, dz=0.1)
     golfcube.register_section("test", StrikeSection(distance_idx=5))
     sc8cube.register_section("test", StrikeSection(distance_idx=5))
@@ -1013,7 +1054,8 @@ class TestSectionFromStratigraphyCube:
 class TestSectionFromStratigraphyCube_SHOW:
     """same as above class, but all "show" related tests"""
 
-    golfcube = DataCube(golf_path)
+    # golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
     sc8cube = StratigraphyCube.from_DataCube(golfcube, dz=0.1)
     golfcube.register_section("test", StrikeSection(distance_idx=5))
     sc8cube.register_section("test", StrikeSection(distance_idx=5))
@@ -1078,7 +1120,8 @@ class TestSectionFromStratigraphyCube_SHOW:
 
 
 class TestSectionVariableNoStratigraphy:
-    golfcube = DataCube(golf_path)
+    # golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
     golfcube.register_section("test", StrikeSection(distance_idx=5))
     dsv = golfcube.sections["test"]["velocity"]
 
@@ -1107,7 +1150,8 @@ class TestSectionVariableNoStratigraphy:
 
 
 class TestSectionVariableWithStratigraphy:
-    golfcube = DataCube(golf_path)
+    # golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
     golfcube.stratigraphy_from("eta", dz=0.1)
     golfcube.register_section("test", StrikeSection(distance_idx=5))
     dsv = golfcube.sections["test"]["velocity"]
@@ -1134,7 +1178,8 @@ class TestSectionVariableWithStratigraphy:
 
 
 class TestSectionVariableStratigraphyCube:
-    golfcube = DataCube(golf_path)
+    # golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
     sc8cube = StratigraphyCube.from_DataCube(golfcube, dz=0.1)
     sc8cube.register_section("test", StrikeSection(distance_idx=5))
     ssv = sc8cube.sections["test"]["velocity"]
@@ -1185,7 +1230,8 @@ class TestDipSection:
             _ = StrikeSection(badcube, distance=1000)
 
     def test_DipSection_standalone_instantiation(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         sass = DipSection(golfcube, distance_idx=120)
         assert sass.name == "dip"
         assert sass.distance_idx == 120
@@ -1200,7 +1246,8 @@ class TestDipSection:
             assert sass.x == 12
 
     def test_DipSection_register_section_distance_idx(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test", DipSection(distance_idx=150))
         assert golfcube.sections["test"].name == "test"
         assert len(golfcube.sections["test"].variables) > 0
@@ -1221,7 +1268,8 @@ class TestDipSection:
         assert isinstance(_sect, DipSection)
 
     def test_DipSection_register_section_distance(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section("test", DipSection(distance=4000))
         assert golfcube.sections["test"].name == "test"
         assert golfcube.sections["test"]._input_distance == 4000
@@ -1251,14 +1299,16 @@ class TestDipSection:
         assert golfcube.sections["lengthtest"].distance == 7000
 
     def test_DipSection_register_section_notboth_distance_distance_idx(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         with pytest.raises(
             ValueError, match=r"Cannot specify both `distance` .*"
         ):  # noqa: E501
             golfcube.register_section("test", DipSection(distance=2000, distance_idx=2))
 
     def test_DipSection_register_section_deprecated(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         with pytest.warns(UserWarning, match=r"Arguments `y` and `x` are .*"):
             golfcube.register_section("warn", DipSection(x=5))
         # the section should still work though, so check on the attrs
@@ -1282,7 +1332,8 @@ class TestDipSection:
             )
 
     def test_DipSection_register_section_length_limits(self):
-        golfcube = DataCube(golf_path)
+        # golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         golfcube.register_section(
             "tuple", DipSection(distance_idx=150, length=(10, 50))
         )
@@ -1295,7 +1346,8 @@ class TestDipSection:
 
 
 class TestSectionsIntoMasks:
-    golfcube = DataCube(golf_path)
+    # golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
     EM = ElevationMask(golfcube["eta"][-1], elevation_threshold=0)
 
     def test_section_types(self):
@@ -1328,7 +1380,8 @@ class TestSectionsIntoMasks:
 
 
 class TestSectionsIntoPlans:
-    golfcube = DataCube(golf_path)
+    # golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
     pl = Planform(golfcube, idx=-1)
 
     def test_section_types(self):

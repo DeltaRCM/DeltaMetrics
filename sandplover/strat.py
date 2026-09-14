@@ -120,7 +120,7 @@ def compute_compensation(stratal_surfaces, time_idxs=None, clip_ends=0):
         ss = stratal_surfaces[:, clip_ends[0] : -clip_ends[1]]
 
     # prepare the data for the jitted (?) computation routine
-    if np.any(np.isnan(stratal_surfaces)):
+    if np.any(np.isnan(ss)):
         # this could probably be relaxed, to clip out any
         #    columns with any nans
         raise ValueError(

@@ -28,7 +28,7 @@ By default, the function will generate two bins for the data input for the ``sed
         num_sections=50,
         last_section_radius=2750,
         background=background,
-        origin_idx=[golfcube.meta['L0'], golfcube.meta['CTR']])
+        origin_idx=[golfcube.aux['L0'], golfcube.aux['CTR']])
 
     fig, ax = plt.subplots()
     ax.plot(

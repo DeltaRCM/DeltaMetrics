@@ -34,6 +34,7 @@ from sandplover.plan import compute_surface_deposit_time
 from sandplover.plan import compute_topset_slope
 from sandplover.plan import shaw_opening_angle_method
 from sandplover.sample_data.sample_data import _get_golf_path
+from sandplover.sample_data.sample_data import golf_sandsuet
 from sandplover.section import CircularSection
 
 # a simple custom layout
@@ -60,8 +61,7 @@ dists_flat = dists.flatten()
 in_idx = np.where(dists_flat <= 3000)[0]
 hcirc.flat[in_idx] = True
 
-# golf
-golf_path = _get_golf_path()
+# gol
 
 
 class TestPlanform:
@@ -84,7 +84,7 @@ class TestPlanform:
             _ = Planform(badcube, idx=12)
 
     def test_Planform_idx(self):
-        golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         plnfrm = Planform(golfcube, idx=40)
         assert plnfrm.name == "data"
         assert plnfrm.idx == 40
@@ -92,7 +92,7 @@ class TestPlanform:
         assert len(plnfrm.variables) > 0
 
     def test_Planform_z_t_thesame(self):
-        golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         plnfrm = Planform(golfcube, t=3e6)
         plnfrm2 = Planform(golfcube, z=3e6)
         assert plnfrm.name == "data"
@@ -102,7 +102,7 @@ class TestPlanform:
         assert len(plnfrm.variables) > 0
 
     def test_Planform_idx_z_t_mutual_exclusive(self):
-        golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         with pytest.raises(TypeError, match=r"Cannot .* `z` and `idx`."):
             _ = Planform(golfcube, z=5e6, idx=30)
         with pytest.raises(TypeError, match=r"Cannot .* `t` and `idx`."):
@@ -112,8 +112,8 @@ class TestPlanform:
 
     def test_Planform_slicing(self):
         # make the planforms
-        golfcube = DataCube(golf_path)
-        golfcubestrat = DataCube(golf_path)
+        golfcube = golf_sandsuet()
+        golfcubestrat = golf_sandsuet()
         golfcubestrat.stratigraphy_from("eta", dz=0.1)
         golfstrat = StratigraphyCube.from_DataCube(golfcube, dz=0.1)
         plnfrm1 = Planform(golfcube, idx=-1)
@@ -129,7 +129,7 @@ class TestPlanform:
         just checks that the function runs.
         """
         # make the planforms
-        golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         plnfrm = Planform(golfcube, idx=-1)
         _field = plnfrm["eta"]
         # with axis
@@ -158,7 +158,7 @@ class TestPlanform:
 
     @pytest.mark.skipif(sys.platform == "win32", reason="TCL install error common.")
     def test_Planform_public_show(self):
-        golfcube = DataCube(golf_path)
+        golfcube = golf_sandsuet()
         plnfrm = Planform(golfcube, idx=-1)
         plnfrm._show = mock.MagicMock()
         # test with ax
@@ -180,8 +180,7 @@ class TestPlanform:
 class TestOpeningAnglePlanform:
     simple_ocean = 1 - simple_land
 
-    golf_path = _get_golf_path()
-    golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
 
     def test_allblack(self):
         with pytest.raises(ValueError, match=r"No pixels identified in below_mask.*"):
@@ -296,8 +295,7 @@ class TestOpeningAnglePlanform:
 
 class TestMorphologicalPlanform:
     simple_land = simple_land
-    golf_path = _get_golf_path()
-    golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
 
     def test_defaults_array_int(self):
         mpm = MorphologicalPlanform(self.simple_land.astype(int), 2)
@@ -391,15 +389,14 @@ class TestShawOpeningAngleMethod:
 
 
 class TestDeltaArea:
-    golf_path = _get_golf_path()
-    golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
 
     lm = LandMask(
         golfcube["eta"][-1, :, :],
-        elevation_threshold=golfcube.meta["H_SL"][-1],
+        elevation_threshold=golfcube.aux["H_SL"][-1],
         elevation_offset=-0.5,
     )
-    lm.trim_mask(length=golfcube.meta["L0"].data + 1)
+    lm.trim_mask(length=golfcube.aux["L0"].data + 1)
 
     def test_simple_case(self):
         land_area = compute_land_area(simple_land)
@@ -429,8 +426,7 @@ class TestShorelineRoughness:
 
 
 class TestShorelineRoughnessArea:
-    golf_path = _get_golf_path()
-    golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
 
     em = ElevationMask(golfcube["eta"][-1, :, :], elevation_threshold=0)
     em.trim_mask(value=1, length=3)
@@ -527,8 +523,7 @@ class TestShorelineRoughnessArea:
 
 
 class TestShorelineRoughnessVariation:
-    golf_path = _get_golf_path()
-    golf = DataCube(golf_path)
+    golf = golf_sandsuet()
 
     em = ElevationMask(golf["eta"][-1, :, :], elevation_threshold=0)
     em.trim_mask(value=1, length=3)
@@ -579,8 +574,7 @@ class TestShorelineRoughnessVariation:
 
 
 class TestShorelineRoughnessRadius:
-    golf_path = _get_golf_path()
-    golf = DataCube(golf_path)
+    golf = golf_sandsuet()
 
     em = ElevationMask(golf["eta"][-1, :, :], elevation_threshold=0)
     em.trim_mask(value=1, length=3)
@@ -589,7 +583,7 @@ class TestShorelineRoughnessRadius:
     sm = ShorelineMask.from_Planform(OAP)
 
     golf_origin = (
-        np.array([golf.meta["L0"].data, golf.meta["CTR"].data]) * golf.meta["dx"].data
+        np.array([golf.aux["L0"].data, golf.aux["CTR"].data]) * golf.aux["dx"].data
     )
 
     super_simple_shore = np.zeros((5, 5))
@@ -657,8 +651,7 @@ class TestShorelineRoughnessRadius:
 
 
 class TestShorelineRoughnessOAM:
-    golf_path = _get_golf_path()
-    golf = DataCube(golf_path)
+    golf = golf_sandsuet()
 
     em = ElevationMask(golf["eta"][-1, :, :], elevation_threshold=0)
     em.trim_mask(value=1, length=3)
@@ -715,8 +708,7 @@ class TestShorelineRugosity:
 
 
 class TestShorelineLength:
-    golf_path = _get_golf_path()
-    golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
 
     sm = ShorelineMask(golfcube["eta"][-1, :, :], elevation_threshold=0)
     sm0 = ShorelineMask(golfcube["eta"][0, :, :], elevation_threshold=0)
@@ -769,8 +761,7 @@ class TestShorelineLength:
 
 
 class TestShorelineDistance:
-    golf_path = _get_golf_path()
-    golf = DataCube(golf_path)
+    golf = golf_sandsuet()
 
     sm = ShorelineMask(
         golf["eta"][-1, :, :], elevation_threshold=0, elevation_offset=-0.5
@@ -801,7 +792,7 @@ class TestShorelineDistance:
 
     def test_simple_case(self):
         mean, stddev = compute_shoreline_distance(
-            self.sm, origin=[self.golf.meta["CTR"].data, self.golf.meta["L0"].data]
+            self.sm, origin=[self.golf.aux["CTR"].data, self.golf.aux["L0"].data]
         )
 
         assert mean > stddev
@@ -809,11 +800,11 @@ class TestShorelineDistance:
 
     def test_golf_distances_depends_on_origin(self):
         m, s = compute_shoreline_distance(
-            self.sm, origin=[self.golf.meta["CTR"].data, self.golf.meta["L0"].data]
+            self.sm, origin=[self.golf.aux["CTR"].data, self.golf.aux["L0"].data]
         )
         m2, s2, dists = compute_shoreline_distance(
             self.sm,
-            origin=[self.golf.meta["CTR"].data, self.golf.meta["L0"].data],
+            origin=[self.golf.aux["CTR"].data, self.golf.aux["L0"].data],
             return_distances=True,
         )
 
@@ -870,11 +861,8 @@ class TestDetermineEquallySpacedAzimuths:
 
 
 class TestComputeShorelineRadius:
-    golf_path = _get_golf_path()
-    golf = DataCube(golf_path)
-    origin = (
-        np.array([golf.meta["L0"].data, golf.meta["CTR"].data]) * golf.meta["dx"].data
-    )
+    golf = golf_sandsuet()
+    origin = np.array([golf.aux["L0"].data, golf.aux["CTR"].data]) * golf.aux["dx"].data
 
     empty_shore_mask = ShorelineMask(golf["eta"][0], elevation_threshold=0)
     shore_mask = ShorelineMask(golf["eta"][0], elevation_threshold=0)
@@ -885,7 +873,7 @@ class TestComputeShorelineRadius:
 
         mean, std = compute_shoreline_radius(self.empty_shore_mask)
         assert mean == pytest.approx(
-            (self.golf.meta["L0"].data - 1) * self.golf.meta["dx"].data,
+            (self.golf.aux["L0"].data - 1) * self.golf.aux["dx"].data,
             abs=10,
         )
         # assert std == pytest.approx(0.0)
@@ -913,11 +901,8 @@ class TestComputeShorelineRadius:
 
 
 class TestComputeTopsetSlope:
-    golf_path = _get_golf_path()
-    golf = DataCube(golf_path)
-    origin = (
-        np.array([golf.meta["L0"].data, golf.meta["CTR"].data]) * golf.meta["dx"].data
-    )
+    golf = golf_sandsuet()
+    origin = np.array([golf.aux["L0"].data, golf.aux["CTR"].data]) * golf.aux["dx"].data
 
     def test_compute_topset_slope_insufficient_count(self):
         """
@@ -994,8 +979,7 @@ class TestComputeChannelWidth:
         (np.zeros(simple_cm.shape[1]), np.arange(simple_cm.shape[1]))
     ).astype(int)
 
-    golf_path = _get_golf_path()
-    golf = DataCube(golf_path)
+    golf = golf_sandsuet()
 
     cm = ChannelMask(
         golf["eta"][-1, :, :],
@@ -1064,8 +1048,7 @@ class TestComputeChannelDepth:
         (np.zeros(simple_cm.shape[1]), np.arange(simple_cm.shape[1]))
     ).astype(int)
 
-    golf_path = _get_golf_path()
-    golf = DataCube(golf_path)
+    golf = golf_sandsuet()
 
     cm = ChannelMask(
         golf["eta"][-1, :, :],
@@ -1162,7 +1145,7 @@ class TestComputeChannelDepth:
 
 
 class TestComputeSurfaceDepositTime:
-    golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
 
     def test_with_diff_indices(self):
         with pytest.raises(ValueError):
@@ -1202,7 +1185,7 @@ class TestComputeSurfaceDepositTime:
 
 
 class TestComputeSurfaceDepositAge:
-    golfcube = DataCube(golf_path)
+    golfcube = golf_sandsuet()
 
     def test_idx_minus_date(self):
         with pytest.raises(ValueError):

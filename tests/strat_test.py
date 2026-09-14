@@ -7,6 +7,7 @@ import xarray as xr
 from sandplover.cube import DataCube
 from sandplover.cube import StratigraphyCube
 from sandplover.sample_data.sample_data import _get_golf_path
+from sandplover.sample_data.sample_data import golf_sandsuet
 from sandplover.strat import _adjust_elevation_by_subsidence
 from sandplover.strat import _compute_elevation_to_preservation
 from sandplover.strat import _compute_preservation_to_cube
@@ -18,8 +19,7 @@ from sandplover.strat import compute_net_to_gross
 from sandplover.strat import compute_sedimentograph
 from sandplover.strat import compute_thickness_surfaces
 
-golf_path = _get_golf_path()
-golfcube = DataCube(golf_path)
+golfcube = golf_sandsuet()
 
 
 class TestComputeBoxyStratigraphyVolume:
@@ -562,7 +562,7 @@ class TestComputeThicknessSurfaces:
             golfcube["eta"][-1, :, :], np.min(golfcube["eta"], axis=0)
         )
         # zeros = (deposit_thickness == 0)
-        gtr_hb = deposit_thickness > golfcube.meta["hb"].data
+        gtr_hb = deposit_thickness > golfcube.aux["hb"].data
         # nans = np.isnan(deposit_thickness)
         assert np.any(gtr_hb)  # any greater than thickness
 
@@ -674,6 +674,20 @@ class TestCompensation:
         data[0, 0] = np.nan
         with pytest.raises(ValueError, match="NaN found in stratal surfaces."):
             compute_compensation(data)
+
+    def test_compute_compensation_clips_nans_at_ends(self):
+        data = np.array(
+            [
+                [np.nan, 0.0, 0.0, 0.0, np.nan],
+                [np.nan, 1.0, 2.0, 1.0, np.nan],
+                [np.nan, 2.0, 4.0, 2.0, np.nan],
+            ]
+        )
+
+        actual = compute_compensation(data, clip_ends=1)
+        expected = compute_compensation(data[:, 1:-1])
+
+        np.testing.assert_allclose(actual, expected)
 
     def test_compute_compensation_not_implemented_time_idxs(self):
         # Test that passing time_idxs (not yet supported) raises error

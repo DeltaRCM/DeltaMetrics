@@ -26,7 +26,7 @@ For functions that depend on the "shoreline length", the result is computed usin
 
     golf = spl.sample_data.golf()
 
-    origin = np.array([golf.meta["L0"].data, golf.meta["CTR"].data]) * golf.meta["dx"].data
+    origin = np.array([golf.aux["L0"].data, golf.aux["CTR"].data]) * golf.aux["dx"].data
 
     time_idxs = np.linspace(5, golf.shape[0] - 1, num=30, dtype=int)
 
@@ -42,7 +42,7 @@ For functions that depend on the "shoreline length", the result is computed usin
         em = spl.mask.ElevationMask(
             golf["eta"][time_idx, :, :], elevation_threshold=0, elevation_offset=-0.5
         )
-        em.trim_mask(length=golf.meta["L0"].data + 1, value=1)
+        em.trim_mask(length=golf.aux["L0"].data + 1, value=1)
         oam = spl.plan.OpeningAnglePlanform.from_mask(em)
 
         sm = spl.mask.ShorelineMask.from_Planform(oam, contour_threshold=75)
@@ -50,10 +50,10 @@ For functions that depend on the "shoreline length", the result is computed usin
         sm120 = spl.mask.ShorelineMask.from_Planform(oam, contour_threshold=120)
         lm = spl.mask.LandMask.from_Planform(oam, contour_threshold=75)
 
-        sm.trim_mask(length=golf.meta["L0"].data + 1)
-        sm45.trim_mask(length=golf.meta["L0"].data + 1)
-        sm120.trim_mask(length=golf.meta["L0"].data + 1)
-        lm.trim_mask(length=golf.meta["L0"].data + 1)
+        sm.trim_mask(length=golf.aux["L0"].data + 1)
+        sm45.trim_mask(length=golf.aux["L0"].data + 1)
+        sm120.trim_mask(length=golf.aux["L0"].data + 1)
+        lm.trim_mask(length=golf.aux["L0"].data + 1)
 
         if np.sum(sm.mask) > 0 and np.sum(lm.mask) > 0:
             # compute roughness area

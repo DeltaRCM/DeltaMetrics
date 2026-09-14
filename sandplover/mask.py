@@ -2246,7 +2246,7 @@ class GeometricMask(BaseMask):
             # try to infer it from the input type
             if self._input_flag == "cube":
                 raise NotImplementedError
-                # get the value from CTR and L0 if meta present
+                # get the value from CTR and L0 if aux present
             else:
                 self._xc = 0
                 self._yc = int(self._W / 2)

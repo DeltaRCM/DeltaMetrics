@@ -8,7 +8,9 @@ from sandplover.cube import DataCube
 from sandplover.cube import StratigraphyCube
 from sandplover.plan import BasePlanform
 from sandplover.plan import Planform
+from sandplover.sample_data.sample_data import _get_aeolian_path
 from sandplover.sample_data.sample_data import _get_golf_path
+from sandplover.sample_data.sample_data import _get_golf_sandsuet_path
 from sandplover.sample_data.sample_data import _get_landsat_path
 from sandplover.sample_data.sample_data import _get_rcm8_path
 from sandplover.sample_data.sample_data import rcm8
@@ -16,15 +18,41 @@ from sandplover.section import BaseSection
 from sandplover.section import StrikeSection
 from sandplover.utils import NoStratigraphyError
 
-golf_path = _get_golf_path()
+golf_path = _get_golf_sandsuet_path()
+aeolian_path = _get_aeolian_path()
 hdf_path = _get_landsat_path()
 
 
+@mock.patch("sandplover.cube.NetCDFIO")
+class TestDataCubeInitializationArguments:
+
+    def test_initializing_without_argument_nc(self, mock_netcdfio):
+        # cube = DataCube(tdb12_path)
+        # assert cube.aux is None
+        ## NO SAMPLE DATA AVAILABLE TO TEST
+        pass
+
+    def test_initializing_without_argument_warns_autodetect(self, mock_netcdfio):
+        with pytest.raises(Exception):
+            # the functions following instantiation will error out, so just
+            # check that argument was passed to io
+            golf = DataCube(golf_path)
+        mock_netcdfio.assert_called_once_with(data_path=mock.ANY, auxdata_path=None)
+
+    def test_initializing_with_argument(self, mock_netcdfio):
+        with pytest.raises(Exception):
+            # the functions following instantiation will error out, so just
+            # check that argument was passed to io
+            golf = DataCube(golf_path, auxdata="meta")
+        mock_netcdfio.assert_called_once_with(data_path=mock.ANY, auxdata_path="meta")
+
+
 class TestDataCubeNoStratigraphy:
-    def test_init_cube_from_path_rcm8(self):
+
+    def test_init_cube_from_path_golf(self):
         golf = DataCube(golf_path)
         assert golf._data_path == golf_path
-        assert golf.dataio.io_type == "netcdf"
+        assert golf.dataio.io_type == "file"
         assert golf._planform_set == {}
         assert golf._section_set == {}
 
@@ -37,7 +65,7 @@ class TestDataCubeNoStratigraphy:
             _ = DataCube("./nonexistent/path.nc")
 
     def test_error_init_bad_extension(self):
-        with pytest.raises(ValueError):
+        with pytest.raises(FileNotFoundError):
             _ = DataCube("./nonexistent/path.doc")
 
     def test_error_init_bad_type(self):
@@ -74,7 +102,6 @@ class TestDataCubeNoStratigraphy:
 
     def test_register_section(self):
         golf = DataCube(golf_path)
-        golf.stratigraphy_from("eta", dz=0.1)
         golf.register_section("testsection", StrikeSection(distance_idx=10))
         assert golf.sections is golf.section_set
         assert len(golf.sections) == 1
@@ -88,7 +115,6 @@ class TestDataCubeNoStratigraphy:
 
     def test_sections_slice_op(self):
         golf = DataCube(golf_path)
-        golf.stratigraphy_from("eta", dz=0.1)
         golf.register_section("testsection", StrikeSection(distance_idx=10))
         assert "testsection" in golf.sections
         slc = golf.sections["testsection"]
@@ -96,7 +122,6 @@ class TestDataCubeNoStratigraphy:
 
     def test_register_planform(self):
         golf = DataCube(golf_path)
-        golf.stratigraphy_from("eta", dz=0.1)
         golf.register_planform("testplanform", Planform(idx=10))
         assert golf.planforms is golf.planform_set
         assert len(golf.planforms) == 1
@@ -122,7 +147,6 @@ class TestDataCubeNoStratigraphy:
 
     def test_planforms_slice_op(self):
         golf = DataCube(golf_path)
-        golf.stratigraphy_from("eta", dz=0.1)
         golf.register_planform("testplanform", Planform(idx=10))
         assert "testplanform" in golf.planforms
         slc = golf.planforms["testplanform"]
@@ -138,6 +162,25 @@ class TestDataCubeNoStratigraphy:
         assert golf._knows_stratigraphy is False
         with pytest.raises(NoStratigraphyError):
             golf.sections["testsection"]["velocity"].strat.as_stratigraphy()
+
+    def test_register_variable(self):
+        golf = DataCube(golf_path)
+        golf.register_variable("testvar", np.zeros(golf.shape))
+        assert "testvar" in golf.variables
+        assert np.all(golf["testvar"].shape == golf.shape)
+
+    def test_register_variable_bad_inputs(self):
+        golf = DataCube(golf_path)
+        with pytest.raises(ValueError, match=r"Input 'data' was incorrect"):
+            golf.register_variable("testvar", np.zeros((10, 10, 10)))
+        with pytest.raises(ValueError, match=r"Input 'data' was incorrect"):
+            golf.register_variable("testvar", np.zeros((10, 10)))
+        with pytest.raises(TypeError, match=r"Input 'name' was not"):
+            golf.register_variable(33, "name")
+
+    def test_fixeddatacube_init_varset(self):
+        fixeddatacube = DataCube(golf_path)
+        assert type(fixeddatacube.varset) is VariableSet
 
     def test_fixeddatacube_init_data_path(self):
         fixeddatacube = DataCube(golf_path)
@@ -171,9 +214,11 @@ class TestDataCubeNoStratigraphy:
         assert type(fixeddatacube.sections) is dict
         assert fixeddatacube.sections is fixeddatacube.section_set
 
-    def test_metadata_present(self):
+    def test_auxadata_present(self):
         fixeddatacube = DataCube(golf_path)
-        assert fixeddatacube.meta is fixeddatacube._dataio.meta
+        assert fixeddatacube.aux is fixeddatacube._dataio.aux
+        with pytest.warns(DeprecationWarning, match=r"The `meta` property"):
+            fixeddatacube.meta
 
     def test_fixeddatacube_dim1_coords(self):
         fixeddatacube = DataCube(golf_path)
@@ -293,8 +338,33 @@ class TestDataCubeNoStratigraphy:
         assert isinstance(golf.extent_flipud, list)
         assert isinstance(golf.extent_flipud[0], float)
 
+    def test_access_groups_manually(self):
+        golf = DataCube(golf_path, auxdata="auxdata")
+        assert np.all(golf.dataio.dataset["auxdata"]["H_SL"] == golf.aux["H_SL"])
+
+    def test_set_aux_data(self):
+        golf = DataCube(golf_path)
+        golf.set_aux("auxdata")
+        assert np.all(golf.dataio.dataset["auxdata"]["H_SL"] == golf.aux["H_SL"])
+
 
 class TestDataCubeWithStratigraphy:
+    def test_stratigraphy_from_eta(self):
+        golf0 = DataCube(golf_path)
+        golf1 = DataCube(golf_path)
+        golf0.stratigraphy_from("eta")
+        assert golf0._knows_stratigraphy is True
+        assert golf1._knows_stratigraphy is False
+
+    def test_init_cube_stratigraphy_argument(self):
+        golf = DataCube(golf_path, stratigraphy_from="eta")
+        assert golf._knows_stratigraphy is True
+
+    def test_stratigraphy_from_default_noargument(self):
+        golf = DataCube(golf_path)
+        golf.stratigraphy_from()
+        assert golf._knows_stratigraphy is True
+
     # test setting all the properties / attributes
 
     def test_fixeddatacube_set_data_path(self):
@@ -378,6 +448,13 @@ class TestDataCubeWithStratigraphy:
             fixeddatacube.shape[2],
         )
 
+    def test_register_variable(self):
+        golf = DataCube(golf_path)
+        golf.stratigraphy_from("eta", dz=0.1)
+        golf.register_variable("testvar", np.zeros(golf.shape))
+        assert "testvar" in golf.variables
+        assert np.all(golf["testvar"].shape == golf.shape)
+
 
 class TestStratigraphyCube:
     def test_no_tT_StratigraphyCube(self):
@@ -395,6 +472,76 @@ class TestStratigraphyCube:
         fixedstratigraphycube = StratigraphyCube.from_DataCube(fixeddatacube, dz=0.1)
         frzn = fixedstratigraphycube.export_frozen_variable("time")
         assert frzn.ndim == 3
+
+    def test_StratigraphyCube_inherit_varset(self):
+        # create a fixed cube for variable existing, type checks
+        fixeddatacube = DataCube(golf_path)
+        # when creating from DataCube, varset should be inherited
+        tempsc = StratigraphyCube.from_DataCube(fixeddatacube, dz=1)
+        assert tempsc.varset is fixeddatacube.varset
+
+    def test_auxiliary_data(self):
+        fixeddatacube = DataCube(golf_path, auxdata="auxdata")
+        fixedstratigraphycube = StratigraphyCube.from_DataCube(fixeddatacube, dz=0.1)
+        assert fixedstratigraphycube.aux is fixeddatacube.aux
+
+    def test_access_groups_manually(self):
+        fixeddatacube = DataCube(golf_path, auxdata="auxdata")
+        fixedstratigraphycube = StratigraphyCube.from_DataCube(fixeddatacube, dz=0.1)
+        assert np.all(
+            fixedstratigraphycube.dataio.dataset["auxdata"]["H_SL"]
+            == fixedstratigraphycube.aux["H_SL"]
+        )
+
+    def test_set_aux_data(self):
+        fixeddatacube = DataCube(golf_path)
+        fixedstratigraphycube = StratigraphyCube.from_DataCube(fixeddatacube, dz=0.1)
+        fixedstratigraphycube.set_aux("auxdata")
+        assert np.all(
+            fixedstratigraphycube.dataio.dataset["auxdata"]["H_SL"]
+            == fixedstratigraphycube.aux["H_SL"]
+        )
+
+    def test_register_variable_self(self):
+        fixeddatacube = DataCube(golf_path)
+        fixedstratigraphycube = StratigraphyCube.from_DataCube(fixeddatacube, dz=0.1)
+        fixedstratigraphycube.register_variable(
+            "testvar", np.zeros(fixedstratigraphycube.shape)
+        )
+        assert "testvar" in fixedstratigraphycube.variables
+        assert "testvar" not in fixeddatacube.variables
+        assert np.all(
+            fixedstratigraphycube["testvar"].shape == fixedstratigraphycube.shape
+        )
+        with pytest.raises(AttributeError):
+            # parent cannot access var registered because would be wrong shape
+            fixeddatacube["testvar"]
+        with pytest.raises(ValueError):
+            # try to register the wrong shape to the strat cube
+            fixedstratigraphycube.register_variable(
+                "testvar", np.zeros(fixeddatacube.shape)
+            )
+
+    def test_register_variable_parent(self):
+        fixeddatacube = DataCube(golf_path)
+        fixedstratigraphycube = StratigraphyCube.from_DataCube(fixeddatacube, dz=0.1)
+        fixeddatacube.register_variable("testvar", np.zeros(fixeddatacube.shape))
+        assert "testvar" in fixeddatacube.variables
+        assert "testvar" in fixedstratigraphycube.variables
+        # both can slice and both get "correct" shape
+        assert np.all(fixeddatacube["testvar"].shape == fixeddatacube.shape)
+        assert np.all(
+            fixedstratigraphycube["testvar"].shape == fixedstratigraphycube.shape
+        )
+
+    def test_register_variable_bad_inputs(self):
+        golf = DataCube(golf_path)
+        with pytest.raises(ValueError, match=r"Input 'data' was incorrect"):
+            golf.register_variable("testvar", np.zeros((10, 10, 10)))
+        with pytest.raises(ValueError, match=r"Input 'data' was incorrect"):
+            golf.register_variable("testvar", np.zeros((10, 10)))
+        with pytest.raises(TypeError, match=r"Input 'name' was not"):
+            golf.register_variable(33, "name")
 
 
 class TestStratigraphyCubeSubsidence:
@@ -496,8 +643,9 @@ class TestCubesFromDictionary:
         fixeddatacube = DataCube(golf_path)
         eta_data = fixeddatacube["eta"][:30, :, :]
         dict_cube = DataCube({"eta": eta_data})
-        with pytest.raises(AttributeError):
-            dict_cube.meta
+        assert dict_cube.aux is None
+        with pytest.warns(DeprecationWarning):
+            assert dict_cube.meta is None  # to be deprecated
 
     @pytest.mark.parametrize(
         "order",
@@ -532,7 +680,7 @@ class TestCubesFromDictionary:
 
 class TestReadMetaFallbacks:
     class FakeIO:
-        """Very small IO stub exposing only what _read_meta_from_file uses."""
+        """Very small IO stub exposing only what _read_coords_dims_variables_from_dataio uses."""
 
         def __init__(
             self,
@@ -624,7 +772,7 @@ class TestReadMetaFallbacks:
 
         # Swap in the stub IO and re-run metadata discovery
         cube._dataio = fake_io
-        cube._read_meta_from_file()
+        cube._read_coords_dims_variables_from_dataio()
 
         # Indices/coords should come from the stubbed 1-D arrays
         assert np.array_equal(cube._dim0_coords, np.arange(t))
@@ -641,7 +789,7 @@ class TestReadMetaFallbacks:
         cube = self._fresh_cube(t, y, x)
 
         cube._dataio = fake_io
-        cube._read_meta_from_file()
+        cube._read_coords_dims_variables_from_dataio()
 
         # Collapsed coords must match the original 1-D ranges that produced the mesh
         assert np.array_equal(cube._dim1_coords, np.arange(y))  # from [:, 0]
@@ -657,7 +805,7 @@ class TestReadMetaFallbacks:
             TypeError,
             match=r"(?i)shape of coordinate array was not 1[-\s]?d or 2[-\s]?d",
         ):
-            cube._read_meta_from_file()
+            cube._read_coords_dims_variables_from_dataio()
 
     def test_scan_3d_var_handles_getitem_error(self):
         """Cover the `except: continue` branch while scanning known_variables."""
@@ -672,7 +820,7 @@ class TestReadMetaFallbacks:
             three_d={"temperature"},  # second var is the 3-D one
         )
         cube._dataio = fake_io
-        cube._read_meta_from_file()
+        cube._read_coords_dims_variables_from_dataio()
 
         # Confirm we built coords successfully from the stub
         assert np.array_equal(cube._dim0_coords, np.arange(t))
@@ -693,21 +841,21 @@ class TestReadMetaFallbacks:
         )
         cube._dataio = fake_io
         with pytest.raises(ValueError, match=r"Could not infer 3-D dimensions"):
-            cube._read_meta_from_file()
+            cube._read_coords_dims_variables_from_dataio()
 
 
 class TestLandsatCube:
     def test_init_cube_from_path_hdf5(self):
-        with pytest.warns(UserWarning, match=r"No associated metadata"):
-            hdfcube = DataCube(hdf_path)
+        # with pytest.warns(UserWarning, match=r"Group with.*"):
+        hdfcube = DataCube(hdf_path)
         assert hdfcube._data_path == hdf_path
-        assert hdfcube.dataio.io_type == "hdf5"
+        assert hdfcube.dataio.io_type == "file"
         assert hdfcube._planform_set == {}
         assert hdfcube._section_set == {}
 
     def test_read_Blue_intomemory(self):
-        with pytest.warns(UserWarning, match=r"No associated metadata"):
-            landsatcube = DataCube(hdf_path)
+        # with pytest.warns(UserWarning, match=r"Group with.*"):
+        landsatcube = DataCube(hdf_path)
         assert landsatcube._dataio._in_memory_data == {}
         assert landsatcube.variables == ["Blue", "Green", "NIR", "Red"]
         assert len(landsatcube.variables) == 4
@@ -716,8 +864,8 @@ class TestLandsatCube:
         assert len(landsatcube.dataio._in_memory_data) == 1
 
     def test_read_all_intomemory(self):
-        with pytest.warns(UserWarning, match=r"No associated metadata"):
-            landsatcube = DataCube(hdf_path)
+        # with pytest.warns(UserWarning, match=r"Group with.*"):
+        landsatcube = DataCube(hdf_path)
         assert landsatcube.variables == ["Blue", "Green", "NIR", "Red"]
         assert len(landsatcube.variables) == 4
 
@@ -725,13 +873,13 @@ class TestLandsatCube:
         assert len(landsatcube.dataio._in_memory_data) == 4
 
     def test_read_invalid(self):
-        with pytest.warns(UserWarning, match=r"No associated metadata"):
-            landsatcube = DataCube(hdf_path)
+        # with pytest.warns(UserWarning, match=r"Group with.*"):
+        landsatcube = DataCube(hdf_path)
         with pytest.raises(TypeError):
             landsatcube.read(5)
 
     def test_get_coords(self):
-        with pytest.warns(UserWarning, match=r"No associated metadata"):
-            landsatcube = DataCube(hdf_path)
+        # with pytest.warns(UserWarning, match=r"Group with.*"):
+        landsatcube = DataCube(hdf_path)
         assert landsatcube.coords == ["time", "x", "y"]
         assert landsatcube._coords == ["time", "x", "y"]

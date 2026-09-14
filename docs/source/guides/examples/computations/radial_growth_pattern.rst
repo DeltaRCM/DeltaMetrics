@@ -36,7 +36,7 @@ The expectation is that a delta's planform area grows according to a power law t
 
         # compute the mean shoreline distance
         shoredist_mean[i], shoredist_std[i] = spl.plan.compute_shoreline_distance(
-            SM_mpm, origin=(golf.meta['CTR'].data, golf.meta['L0'].data))
+            SM_mpm, origin=(golf.aux['CTR'].data, golf.aux['L0'].data))
 
 Now plot
 
@@ -51,12 +51,12 @@ Now plot
         return np.sqrt((2*t*Qs) / (hb * np.pi))
 
     # set up the parameters
-    hb = golf.meta['hb'].data  # basin depth, m
-    Qs = (golf.meta['h0'].data *
-          golf.meta['u0'][0].data *
-          golf.meta['N0'].data *
-          golf.meta['dx'].data *
-          (golf.meta['C0_percent'][0].data / 100))  # sediment input, m3/s
+    hb = golf.aux['hb'].data  # basin depth, m
+    Qs = (golf.aux['h0'].data *
+          golf.aux['u0'][0].data *
+          golf.aux['N0'].data *
+          golf.aux['dx'].data *
+          (golf.aux['C0_percent'][0].data / 100))  # sediment input, m3/s
     t = np.linspace(0, float(golf.t[time_idxs[-1]]), num=100)
 
     # make the figure

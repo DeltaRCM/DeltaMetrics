@@ -77,7 +77,7 @@ def golf():
         >>> _ = ax[0].set_xlabel("dim2 direction")
     """
     golf_path = _get_golf_path()
-    return DataCube(golf_path)
+    return DataCube(golf_path, auxdata="meta")
 
 
 def _get_golf_sandsuet_path():
@@ -129,7 +129,7 @@ def golf_sandsuet():
         >>> _ = ax[0].set_xlabel("dim2 direction")
     """
     golf_path = _get_golf_sandsuet_path()
-    return DataCube(golf_path)
+    return DataCube(golf_path, auxdata="auxdata")
 
 
 def _get_xslope_path():
