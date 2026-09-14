@@ -32,9 +32,21 @@ class BaseIO(abc.ABC):
         self.io_type = io_type
         self._aux = None  # default None
 
+        # set of variables in underlying data
+        self._underlying_variables = []  # static list to be a populated,
+        # set of variables that can be added through registration after instantiation
+        self._in_memory_variables = {}
+        self._in_memory_data = self._in_memory_variables  # alias for backwards compat
+
     @abc.abstractmethod
     def __getitem__(self):
-        """Should slice the data from file."""
+        """Should slice the data from underlying data.
+
+        Must be implemented to appropriately slice from file, dict, folder
+        structure etc. Must be implemented to appropriately search underlying
+        data variables and variables in :attr:`_in_memory_data` during
+        slice.
+        """
         return
 
     @abc.abstractmethod
@@ -42,11 +54,31 @@ class BaseIO(abc.ABC):
         """Should set auxiliary group."""
         return
 
+    def _register_variable(self, name, data):
+        """Adds variable to DataIO layer.
+
+        This function is declared private. Assumed to have already been checked
+        for shape and type etc.
+
+        Always in memory variable at first. Could implement options to write to
+        disk in future releases.
+        """
+        # self._registered_variables[name] = data
+        self._in_memory_variables[name] = data
+
     @property
     @abc.abstractmethod
     def keys(self):
-        """Should link to all key _names_ stored in file."""
+        """Should link to all key _names_ available in dataio layer."""
         return
+
+    @property
+    def known_variables(self):
+        """Variables known to the dataio layer
+
+        Includes underlying data variables and registered variables.
+        """
+        return self._underlying_variables + [*self._in_memory_variables]
 
     @property
     def aux(self):
@@ -226,8 +258,6 @@ class NetCDFIO(FileIO):
 
         super().__init__(data_path=data_path, auxdata_path=auxdata_path, write=write)
 
-        self._in_memory_data = {}
-
     def connect(self):
         """Connect to the data file.
 
@@ -315,7 +345,7 @@ class NetCDFIO(FileIO):
         _coords = list(self.dataset.coords)
         if ("strata_age" in _vars) or ("strata_depth" in _vars):
             _coords += ["strata_age", "strata_depth"]
-        self.known_variables = [item for item in _vars if item not in _coords]
+        self._underlying_variables = [item for item in _vars if item not in _coords]
 
     def get_known_coords(self):
         """List known coordinates.
@@ -380,7 +410,7 @@ class NetCDFIO(FileIO):
                 )
                 return  # Exit without loading
 
-        self._in_memory_data[var] = _arr.load()
+        self._in_memory_variables[var] = _arr.load()
 
     def write(self):
         """Write data to file.
@@ -394,8 +424,8 @@ class NetCDFIO(FileIO):
         raise NotImplementedError
 
     def __getitem__(self, var):
-        if var in self._in_memory_data:
-            return self._in_memory_data[var]
+        if var in self._in_memory_variables:
+            return self._in_memory_variables[var]
         else:
             return self.dataset[var]
 
@@ -439,7 +469,9 @@ class DictionaryIO(BaseIO):
         super().__init__(io_type="dictionary")
 
         self.dataset = data_dictionary
-        self._in_memory_data = self.dataset
+        # in DictionaryIO, overwrite the existing in_memory_variables with the full dataset
+        self._in_memory_variables = self.dataset
+        self._in_memory_data = self._in_memory_variables  # alias for backwards compat
 
         # set the auxiliary group
         self._set_aux(auxdata_path)
@@ -480,7 +512,7 @@ class DictionaryIO(BaseIO):
     def get_known_variables(self):
         """List known variables."""
         _vars = self.dataset.keys()
-        self.known_variables = list(_vars)
+        self._underlying_variables = list(_vars)
 
     def get_known_coords(self, dimensions):
         """List known coordinates.

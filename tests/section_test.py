@@ -694,6 +694,14 @@ class TestCubesWithManySections:
         self.golfcube.sections["show_test1"].show_trace("g--", ax=ax[0])
         plt.close()
 
+    def test_registered_variables_section(self):
+        self.golfcube.register_section("test1", StrikeSection(distance_idx=5))
+        # create and register synthetic 3D variable
+        new_variable = xr.zeros_like(self.golfcube["eta"])
+        self.golfcube.register_variable("new_var", new_variable)
+
+        assert np.all(self.golfcube.sections["test1"]["new_var"] == 0)
+
 
 # test the core functionality common to all section types, for different
 # Cubes and strat

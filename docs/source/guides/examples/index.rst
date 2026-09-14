@@ -25,6 +25,7 @@ Sections
    :maxdepth: 1
 
    computations/aggradation_preserved_time
+   create_from/register_variable
    create_from/sections_into_arbitrary
 
 Masks
