@@ -17,8 +17,6 @@ from sandplover.mask import ChannelMask
 from sandplover.mask import ElevationMask
 from sandplover.mask import LandMask
 from sandplover.mask import ShorelineMask
-from sandplover.plot import VariableInfo
-from sandplover.plot import VariableSet
 from sandplover.plot import append_colorbar
 from sandplover.section import BaseSection
 from sandplover.section import RadialSection
@@ -95,7 +93,7 @@ class BasePlanform(abc.ABC):
         """Planform shape."""
         return self._shape
 
-    def _show(self, field, varinfo, **kwargs):
+    def _show(self, field, **kwargs):
         """Internal method for showing a planform.
 
         Each planform may implement it's own method to determine what field to
@@ -106,13 +104,10 @@ class BasePlanform(abc.ABC):
         field : :obj:`DataArray`
             The data to show.
 
-        varinfo : :obj:`VariableInfo`
-            A :obj:`VariableInfo` instance describing how to color `field`.
-
         **kwargs
             Acceptable kwargs are `ax`, `title`, `ticks`, `colorbar`,
-            `colorbar_label`. See description for `DataPlanform.show` for
-            more information.
+            `colorbar_label`, and any other keyword arguments passed to
+            matplotlib `imshow`.
         """
         # process arguments and inputs
         ax = kwargs.pop("ax", None)
@@ -136,19 +131,14 @@ class BasePlanform(abc.ABC):
 
         im = ax.imshow(
             field,
-            cmap=varinfo.cmap,
-            norm=varinfo.norm,
-            vmin=varinfo.vmin,
-            vmax=varinfo.vmax,
             extent=_extent,
+            **kwargs,
         )
 
         if colorbar:
             cb = append_colorbar(im, ax)
             if colorbar_label:
-                _colorbar_label = (
-                    varinfo.label if (colorbar_label is True) else str(colorbar_label)
-                )  # use custom if passed
+                _colorbar_label = str(colorbar_label)  # use custom if passed
                 cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
 
         if not ticks:
@@ -334,20 +324,18 @@ class Planform(BasePlanform):
             Which attribute to show. Can be a string for a named `Cube`
             attribute.
 
-        label : :obj:`bool`, `str`, optional
-            Display a label of the variable name on the plot. Default is
-            False, display nothing. If ``label=True``, the label name from the
-            :obj:`~sandplover.plot.VariableSet` is used. Other arguments are
-            attempted to coerce to `str`, and the literal is diplayed.
+        label : :obj:`str`, optional
+            A string to display as a label of the variable name on the plot.
+            Default is False, display nothing. Other arguments are coerced to
+            `str`, and the literal is diplayed.
 
         colorbar : :obj:`bool`, optional
             Whether a colorbar is appended to the axis.
 
-        colorbar_label : :obj:`bool`, `str`, optional
-            Display a label of the variable name along the colorbar. Default is
-            False, display nothing. If ``label=True``, the label name from the
-            :obj:`~sandplover.plot.VariableSet` is used. Other arguments are
-            attempted to coerce to `str`, and the literal is diplayed.
+        colorbar_label : :obj:`str`, optional
+            A string to display as a label of the variable name along the
+            colorbar. Default is False, display nothing. Other arguments are
+            coerced to `str`, and the literal is diplayed.
 
         ax : :obj:`~matplotlib.pyplot.Axes` object, optional
             A `matplotlib` `Axes` object to plot the section. Optional; if not
@@ -370,20 +358,11 @@ class Planform(BasePlanform):
             >>> _ = planform.show("eta", ax=ax[0])
             >>> _ = planform.show("velocity", ax=ax[1])
         """
-        from sandplover.cube import BaseCube
-
-        # process the planform attribute to a field
-        _varinfo = (
-            self.cube.varset[var]
-            if issubclass(type(self.cube), BaseCube)
-            else VariableSet()[var]
-        )
         _field = self[var]
 
         # call the internal _show method
         im = self._show(
             _field,
-            _varinfo,
             ax=ax,
             title=title,
             ticks=ticks,
@@ -418,17 +397,7 @@ class SpecialtyPlanform(BasePlanform):
       * the `show` method takes (optionally) a string argument specifying the
         field to display, which can match any attriute of the
         `SpecialtyPlanform`. If no argument is passed to `show`, the `data`
-        field is displayed. A :obj:`VariableInfo` object
-        `self._default_varinfo` is created on instantiating a subclass, which
-        will be used to style the displayed field. You can add different
-        `VariableInfo` objects with the name matching any other field of the
-        planform to use that style instead; for example, OAP implements
-        `self._opening_angles_varinfo`, which is used if the `opening_angles` field
-        is specified to :meth:`show`.
-      * The `self._default_varinfo` can be overwritten in a subclass
-        (after ``super().__init__``) to style the `show` default field
-        (`data`) a certain way. For example, OAP sets ``self._default_varinfo
-        = self._opening_angles_varinfo``.
+        field is displayed.
     """
 
     def __init__(self, planform_type, *args, **kwargs):
@@ -449,8 +418,6 @@ class SpecialtyPlanform(BasePlanform):
             Passed to `BasePlanform.__init__`.
         """
         super().__init__(planform_type, *args, **kwargs)
-
-        self._default_varinfo = VariableInfo("data", label="data")
 
     @property
     @abc.abstractmethod
@@ -486,26 +453,20 @@ class SpecialtyPlanform(BasePlanform):
         Parameters
         ----------
         var : :obj:`str`
-            Which field to show. Must be an attribute of the planform. `show`
-            will look for another attribute describing
-            the :obj:`VariableInfo` for that attribute named
-            ``self._<var>_varinfo`` and use that to style the plot, if
-            found. If this `VariableInfo` is not found, the default is used.
+            Which field to show. Must be an attribute of the planform.
 
-        label : :obj:`bool`, `str`, optional
-            Display a label of the variable name on the plot. Default is
-            False, display nothing. If ``label=True``, the label name from the
-            :obj:`~sandplover.plot.VariableSet` is used. Other arguments are
-            attempted to coerce to `str`, and the literal is diplayed.
+        label : :obj:`str`, optional
+            A string to display as a label of the variable name on the plot.
+            Default is False, display nothing. Other arguments are coerced to
+            `str`, and the literal is diplayed.
 
         colorbar : :obj:`bool`, optional
             Whether a colorbar is appended to the axis.
 
-        colorbar_label : :obj:`bool`, `str`, optional
-            Display a label of the variable name along the colorbar. Default is
-            False, display nothing. If ``label=True``, the label name from the
-            :obj:`~sandplover.plot.VariableSet` is used. Other arguments are
-            attempted to coerce to `str`, and the literal is diplayed.
+        colorbar_label : :obj:`str`, optional
+            A string to display as a label of the variable name along the
+            colorbar. Default is False, display nothing. Other arguments are
+            coerced to `str`, and the literal is diplayed.
 
         ax : :obj:`~matplotlib.pyplot.Axes` object, optional
             A `matplotlib` `Axes` object to plot the section. Optional; if not
@@ -513,21 +474,14 @@ class SpecialtyPlanform(BasePlanform):
             create a new) `Axes` object.
         """
         if var is None:
-            _varinfo = self._default_varinfo
             _field = self.data
         elif isinstance(var, str):
             _field = self.__getattribute__(var)  # will error if var not attr
-            _expected_varinfo = "_" + var + "_varinfo"
-            if hasattr(self, _expected_varinfo):
-                _varinfo = self.__getattribute__(_expected_varinfo)
-            else:
-                _varinfo = self._default_varinfo
         else:
             raise TypeError(f"Bad value for `var`: {var}")
 
         self._show(
             _field,
-            _varinfo,
             ax=ax,
             title=title,
             ticks=ticks,
@@ -701,15 +655,6 @@ class OpeningAnglePlanform(SpecialtyPlanform):
         self._shape = None
         self._opening_angles = None
         self._below_mask = None
-
-        # set variable info display options
-        self._opening_angles_varinfo = VariableInfo(
-            "opening_angles", cmap=plt.cm.jet, label="opening angle"
-        )
-        self._below_mask_varinfo = VariableInfo(
-            "below_mask", cmap=plt.cm.gray, label="where below"
-        )
-        self._default_varinfo = self._opening_angles_varinfo
 
         # check for inputs to return or proceed
         if len(args) == 0:
@@ -1003,10 +948,6 @@ class MorphologicalPlanform(SpecialtyPlanform):
         self._elevation_mask = None
         self._max_disk = None
         self._below_mask = None
-
-        # set variable info display options
-        self._mean_image_varinfo = VariableInfo("mean_image", label="mean image")
-        self._default_varinfo = self._mean_image_varinfo
 
         # check for input or allowable emptiness
         if len(args) == 0:

@@ -105,6 +105,7 @@ of the Cube at the fortieth (40th) timestep:
     >>> plt.show()  # doctest: +SKIP
 
 .. plot:: guides/10min_three_plans.py
+    :include-source: false
 
 
 Section data
@@ -152,3 +153,4 @@ Using the "quick" stratigraphy, we can visualize a few of the available data var
     >>> plt.show()  # doctest: +SKIP
 
 .. plot:: guides/10min_all_sections_strat.py
+    :include-source: false

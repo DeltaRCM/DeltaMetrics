@@ -12,7 +12,6 @@ from sandplover.io import DictionaryIO
 from sandplover.io import NetCDFIO
 from sandplover.plan import BasePlanform
 from sandplover.plan import Planform
-from sandplover.plot import VariableSet
 from sandplover.section import BaseSection
 from sandplover.section import DipSection
 from sandplover.section import StrikeSection
@@ -61,9 +60,9 @@ class BaseCube(abc.ABC):
             Which variables to read from dataset into memory. Special option
             for ``read=True`` to read all available variables into memory.
 
-        varset : :class:`~sandplover.plot.VariableSet`, optional
-            Pass a `~sandplover.plot.VariableSet` instance if you wish
-            to style this cube similarly to another cube.
+        varset : deprecated
+            Deprecated in v0.6.0. Plot styling is to be handled manually
+            by the user.
 
         dimensions : `dict`, optional
             A dictionary with names and coordinates for dimensions of the
@@ -95,10 +94,11 @@ class BaseCube(abc.ABC):
 
         self._registered_variables = []  # list of names registered variables
 
-        if varset:
-            self.varset = varset
-        else:
-            self.varset = VariableSet()
+        if varset is not None:
+            raise ValueError(
+                "The `varset` argument is deprecated. Plot styling is to be "
+                "handled manually by the user."
+            )
 
         # some undocumented aliases
         self.plans = self._planform_set
@@ -228,14 +228,9 @@ class BaseCube(abc.ABC):
         ``VariableSetInstance`` is a valid instance of
         :class:`~sandplover.plot.VariableSet`.
         """
-        return self._varset
-
-    @varset.setter
-    def varset(self, var):
-        if type(var) is VariableSet:
-            self._varset = var
-        else:
-            raise TypeError("Pass a valid VariableSet instance.")
+        raise AttributeError(
+            "The `varset` attribute is deprecated. Plot styling is to be handled manually by the user."
+        )
 
     @property
     def data_path(self):
@@ -658,13 +653,13 @@ class BaseCube(abc.ABC):
         p.add_mesh(mesh.outline(), color="k")
         if style == "mesh":
             threshed = mesh.threshold([-np.inf, np.inf], all_scalars=True)
-            p.add_mesh(threshed, cmap=self.varset[var].cmap)
+            p.add_mesh(threshed)
 
         elif style == "fence":
             # todo, improve this to manually create the sections so you can
             #   do more than three slices
             slices = mesh.slice_orthogonal()
-            p.add_mesh(slices, cmap=self.varset[var].cmap)
+            p.add_mesh(slices)
 
         else:
             raise ValueError(f"Bad value for style: {style}")
@@ -786,10 +781,9 @@ class DataCube(BaseCube):
             Which variables to read from dataset into memory. Special option for
             ``read=True`` to read all available variables into memory.
 
-        varset : :class:`~sandplover.plot.VariableSet`, optional
-            Pass a `~sandplover.plot.VariableSet` instance if you wish to style
-            this cube similarly to another cube. If no argument is supplied, a
-            new default VariableSet instance is created.
+        varset : deprecated
+            Deprecated in v0.6.0. Plot styling is to be handled manually
+            by the user.
 
         stratigraphy_from : :obj:`str`, optional
             Pass a string that matches a variable name in the dataset to compute
@@ -1018,7 +1012,6 @@ class StratigraphyCube(BaseCube):
         """
         return StratigraphyCube(
             DataCubeInstance,
-            varset=DataCubeInstance.varset,
             stratigraphy_from=stratigraphy_from,
             sigma_dist=sigma_dist,
             dz=dz,
@@ -1065,10 +1058,9 @@ class StratigraphyCube(BaseCube):
             Which variables to read from dataset into memory. Special option
             for ``read=True`` to read all available variables into memory.
 
-        varset : :class:`~sandplover.plot.VariableSet`, optional
-            Pass a `~sandplover.plot.VariableSet` instance if you wish
-            to style this cube similarly to another cube. If no argument is
-            supplied, a new default VariableSet instance is created.
+        varset : deprecated
+            Deprecated in v0.6.0. Plot styling is to be handled manually
+            by the user.
         """
         super().__init__(data, auxdata, read, varset)
         if isinstance(data, str):

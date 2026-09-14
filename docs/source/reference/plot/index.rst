@@ -17,37 +17,13 @@ This reference page documents the lower-level utilities used to make this happen
 
 The functions are defined in ``sandplover.plot``.
 
-.. _default_styling:
-
-Default styling
-===============
-
-By default, each variable receives a set of styling definitions.
-The default parameters of each styling variable are defined below:
-
-.. plot:: plot/document_variableset.py
-
-
-Plotting utility objects
-========================
-
-These objects are mostly used internally to help make plots appear consistent across the library.
-You may want to examine these to change the style of plotting across the package.
-
-.. currentmodule:: sandplover.plot
-
-.. autosummary::
-    :toctree: ../../_autosummary
-
-    VariableInfo
-    VariableSet
-
-
 Plotting convenience functions
 ==============================
 
 These functions may be helpful in making figures and exploring during analyses.
 Mostly, these functions provide a component of a plot.
+
+.. currentmodule:: sandplover.plot
 
 .. autofunction:: aerial_view
 .. autofunction:: overlay_sparse_array

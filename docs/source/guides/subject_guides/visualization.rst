@@ -10,32 +10,12 @@ For example, to visualize a section:
 
     spl.section.RadialSection(golfcube, azimuth=70).show("velocity")
 
-There are also built-in visualization style configurations that control the display of certian variables throughout the software.
-The goal with these style configurations is to reduce the number of steps needed to make visualizations during data analysis and figure production.
-
-This guide is broken into two sections, first explaining these visualization style configurations, then explaining the various built-in methods for displaying data.
-
-Style Configurations
-~~~~~~~~~~~~~~~~~~~~
-
-Style configurations for different variables in the underlying data of a `Cube` are determined by :obj:`~sandplover.plot.VariableInfo` objects that are organized into a dictionary-like :obj:`~sandpover.plot.VariableSet` object.
-The `VariableSet` is created during instantiation of every `Cube`; an existing `VariableSet` can be provided as an optional argument during `Cube` instantiation.
-
-There are several variable names that are recognized by the `VariableSet` and receive specific styling (e.g., `eta`, `velocity`).
 
 .. warning::
 
-    The automatic detection of variable names may be removed in the future.
-
-
-Default styling
----------------
-
-By default, each variable receives a set of styling definitions.
-The default parameters of each styling variable are defined below:
-
-.. plot:: plot/document_variableset.py
-
+    The automatic detection and styling of variables by name was removed in
+    v0.6.0. Future updates may provide similar functionality in an improved
+    manner.
 
 
 
@@ -86,6 +66,7 @@ Section display methods
     >>> golfcube.sections["demo"].show(
     ...     _v, style="shaded", data="stratigraphy", ax=ax[2, 1]
     ... )  # doctest: +SKIP
-    >>> plt.show(block=False)  # doctest +SKIP
+    >>> plt.show(block=False)  # doctest: +SKIP
 
 .. plot:: guides/visualization_datacube_section_display_style.py
+    :include-source: false
