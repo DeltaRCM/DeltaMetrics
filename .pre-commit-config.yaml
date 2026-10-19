@@ -1,6 +1,6 @@
 repos:
 - repo: https://github.com/psf/black-pre-commit-mirror
-  rev: 26.5.1
+  rev: 26.10.1
   hooks:
   - id: black
     name: black
@@ -17,11 +17,11 @@ repos:
   hooks:
   - id: blackdoc
     description: "Black for doctests"
-    additional_dependencies: ["black==26.5.1"]
+    additional_dependencies: ["black==26.10.1"]
   - id: blackdoc-autoupdate-black
 
 - repo: https://github.com/pycqa/flake8
-  rev: 7.3.0
+  rev: 7.4.1
   hooks:
   - id: flake8
     additional_dependencies:
@@ -31,13 +31,13 @@ repos:
     exclude: ^docs/source/pyplots/guides/.*$
 
 - repo: https://github.com/asottile/pyupgrade
-  rev: v3.21.2
+  rev: v3.22.0
   hooks:
   - id: pyupgrade
     args: [--py311-plus]
 
 - repo: https://github.com/PyCQA/isort
-  rev: 9.0.1
+  rev: 10.0.0b1
   hooks:
   - id: isort
     name: isort (python)
