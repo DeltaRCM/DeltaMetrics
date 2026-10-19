@@ -560,6 +560,7 @@ class BaseSection(abc.ABC):
         colorbar=True,
         colorbar_label=False,
         ax=None,
+        **kwargs,
     ):
         """Show the section.
 
@@ -569,9 +570,9 @@ class BaseSection(abc.ABC):
 
         .. note::
 
-            The colors for `style='lines'` are determined from the left-end
-            edge node, and colors for the `style='shaded'` mesh are determined
-            from the lower-left-end edge node of the quad.
+            The colors for `style='lines'` are determined from the left-end edge
+            node, and colors for the `style='shaded'` mesh are determined from
+            the lower-left-end edge node of the quad.
 
         Parameters
         ----------
@@ -587,33 +588,34 @@ class BaseSection(abc.ABC):
 
         data : :obj:`str`, optional
             Argument passed to
-            :obj:`~sandplover.section.DataSectionVariable.get_display_arrays`
-            or
+            :obj:`~sandplover.section.DataSectionVariable.get_display_arrays` or
             :obj:`~sandplover.section.DataSectionVariable.get_display_lines`.
             Supported options are `'spacetime'`, `'preserved'`, and
             `'stratigraphy'`. Default is to display full spacetime plot for
             section generated from a `DataCube`, and stratigraphy for a
             `StratigraphyCube` section.
 
-        label : :obj:`bool`, `str`, optional
-            Display a label of the variable name on the plot. Default is
-            False, display nothing. If ``label=True``, the label name from the
-            :obj:`~sandplover.plot.VariableSet` is used. Other arguments are
-            attempted to coerce to `str`, and the literal is diplayed.
+        label : :obj:`str`, optional
+            A string to display as a label of the variable name on the plot.
+            Default is False, display nothing. Other arguments are coerced to
+            `str`, and the literal is diplayed.
 
         colorbar : :obj:`bool`, optional
             Whether a colorbar is appended to the axis.
 
-        colorbar_label : :obj:`bool`, `str`, optional
-            Display a label of the variable name along the colorbar. Default is
-            False, display nothing. If ``label=True``, the label name from the
-            :obj:`~sandplover.plot.VariableSet` is used. Other arguments are
-            attempted to coerce to `str`, and the literal is diplayed.
+        colorbar_label : :obj:`str`, optional
+            A string to display as a label of the variable name along the
+            colorbar. Default is False, display nothing. Other arguments are
+            coerced to `str`, and the literal is diplayed.
 
         ax : :obj:`~matplotlib.pyplot.Axes` object, optional
             A `matplotlib` `Axes` object to plot the section. Optional; if not
             provided, a call is made to ``plt.gca()`` to get the current (or
             create a new) `Axes` object.
+
+        **kwargs
+            Any other keyword arguments passed to
+            :obj:`~matplotlib.pyplot.pcolormesh()` or `LineCollection`
 
         Examples
         --------
@@ -658,7 +660,6 @@ class BaseSection(abc.ABC):
             ... )  # noqa: E501
         """
         from sandplover.cube import BaseCube
-        from sandplover.plot import VariableSet
         from sandplover.plot import append_colorbar
         from sandplover.plot import get_display_arrays
         from sandplover.plot import get_display_limits
@@ -686,28 +687,15 @@ class BaseSection(abc.ABC):
         if self._underlying_type == "cube":
             # if te underlying is a cube
             SectionVariableInstance = self[SectionAttribute]
-            _varinfo = (
-                self._underlying.varset[SectionAttribute]
-                if issubclass(type(self._underlying), BaseCube)
-                else VariableSet()[SectionAttribute]
-            )
             # main routines for plot styles
             if style in ["shade", "shaded"]:
                 _data, _X, _Y = get_display_arrays(SectionVariableInstance, data=data)
                 ci = ax.pcolormesh(
-                    _X,
-                    _Y,
-                    _data,
-                    cmap=_varinfo.cmap,
-                    norm=_varinfo.norm,
-                    vmin=_varinfo.vmin,
-                    vmax=_varinfo.vmax,
-                    shading="flat",
-                    rasterized=True,
+                    _X, _Y, _data, shading="flat", rasterized=True, **kwargs
                 )
             elif style in ["line", "lines"]:
                 _data, _segments = get_display_lines(SectionVariableInstance, data=data)
-                lc = LineCollection(_segments, cmap=_varinfo.cmap)
+                lc = LineCollection(_segments, **kwargs)
                 lc.set_array(_data.flatten())
                 lc.set_linewidth(1.25)
                 ci = ax.add_collection(lc)
@@ -718,16 +706,16 @@ class BaseSection(abc.ABC):
             if colorbar:
                 cb = append_colorbar(ci, ax)
                 if colorbar_label:
-                    _colorbar_label = (
-                        _varinfo.label
-                        if (colorbar_label is True)
-                        else str(colorbar_label)
+                    _colorbar_label = _label = (
+                        colorbar_label
+                        if isinstance(colorbar_label, str)
+                        else str(SectionAttribute)
                     )  # use custom if passed
                     cb.ax.set_ylabel(_colorbar_label, rotation=-90, va="bottom")
             ax.margins(y=0.2)
             if label:
                 _label = (
-                    _varinfo.label if (label is True) else str(label)
+                    label if isinstance(label, str) else str(SectionAttribute)
                 )  # use custom if passed
                 ax.text(
                     0.99,

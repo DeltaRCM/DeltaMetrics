@@ -369,8 +369,6 @@ def compute_net_to_gross(sediment_volume, net_threshold=None, background=None):
         >>> _ = append_colorbar(im0, ax=ax[0])
         >>> im1 = ax[1].imshow(
         ...     net_to_gross,
-        ...     cmap=golfstrat.varset["net_to_gross"].cmap,
-        ...     norm=golfstrat.varset["net_to_gross"].norm,
         ...     extent=golfstrat.extent,
         ... )
         >>> _ = append_colorbar(im1, ax=ax[1])
