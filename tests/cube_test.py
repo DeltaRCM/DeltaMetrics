@@ -900,7 +900,7 @@ class TestLandsatCube:
         assert len(landsatcube.variables) == 4
 
         landsatcube.read(["Blue", "Green"])
-        assert len(landsatcube.dataio._in_memory_data) == 2             
+        assert len(landsatcube.dataio._in_memory_data) == 2
 
     def test_read_tuple_intomemory(self):
         # with pytest.warns(UserWarning, match=r"Group with.*"):
