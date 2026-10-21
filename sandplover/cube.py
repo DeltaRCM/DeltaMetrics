@@ -195,6 +195,8 @@ class BaseCube(abc.ABC):
             variables = self.dataio.known_variables
         elif type(variables) is str:
             variables = [variables]
+        elif isinstance(variables, (list, tuple)):
+            variables = list(variables)
         else:
             raise TypeError('Invalid type for "variables": %s ' % variables)
 
