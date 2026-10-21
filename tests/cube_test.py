@@ -893,6 +893,24 @@ class TestLandsatCube:
         landsatcube.read(True)
         assert len(landsatcube.dataio._in_memory_data) == 4
 
+    def test_read_list_intomemory(self):
+        # with pytest.warns(UserWarning, match=r"Group with.*"):
+        landsatcube = DataCube(hdf_path)
+        assert landsatcube.variables == ["Blue", "Green", "NIR", "Red"]
+        assert len(landsatcube.variables) == 4
+
+        landsatcube.read(["Blue", "Green"])
+        assert len(landsatcube.dataio._in_memory_data) == 2
+
+    def test_read_tuple_intomemory(self):
+        # with pytest.warns(UserWarning, match=r"Group with.*"):
+        landsatcube = DataCube(hdf_path)
+        assert landsatcube.variables == ["Blue", "Green", "NIR", "Red"]
+        assert len(landsatcube.variables) == 4
+
+        landsatcube.read(("Blue", "Green"))
+        assert len(landsatcube.dataio._in_memory_data) == 2
+
     def test_read_invalid(self):
         # with pytest.warns(UserWarning, match=r"Group with.*"):
         landsatcube = DataCube(hdf_path)
